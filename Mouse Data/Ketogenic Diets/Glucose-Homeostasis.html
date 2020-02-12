@@ -389,7 +389,7 @@ summary {
 </ul>
 </div>
 
-<p>This script was most recently run on Wed Feb 12 11:39:10 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.</p>
+<p>This script was most recently run on Wed Feb 12 11:50:42 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.</p>
 <div id="purpose" class="section level1">
 <h1>Purpose</h1>
 <p>To determine insulin responsiveness of wild-type and GDF15 knockout mice.</p>
@@ -400,7 +400,7 @@ summary {
 </div>
 <div id="raw-data" class="section level1">
 <h1>Raw Data</h1>
-<p>The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets. This script was most recently updated on Wed Feb 12 11:39:11 2020.</p>
+<p>The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets. This script was most recently updated on Wed Feb 12 11:50:42 2020.</p>
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
@@ -419,6 +419,53 @@ summary {
 </div>
 <div id="fasting-glucose-stats" class="section level3">
 <h3>Fasting Glucose Stats</h3>
+<table>
+<caption>Summary statistics for effects on fasting blood glucose</caption>
+<thead>
+<tr class="header">
+<th align="left">Genotype</th>
+<th align="left">Sex</th>
+<th align="right">Avg</th>
+<th align="right">SE</th>
+<th align="right">n</th>
+<th align="right">shapiro</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">+/+</td>
+<td align="left">F</td>
+<td align="right">211</td>
+<td align="right">20.56</td>
+<td align="right">7</td>
+<td align="right">0.778</td>
+</tr>
+<tr class="even">
+<td align="left">+/+</td>
+<td align="left">M</td>
+<td align="right">198</td>
+<td align="right">7.07</td>
+<td align="right">10</td>
+<td align="right">0.571</td>
+</tr>
+<tr class="odd">
+<td align="left">-/-</td>
+<td align="left">F</td>
+<td align="right">172</td>
+<td align="right">6.39</td>
+<td align="right">13</td>
+<td align="right">0.459</td>
+</tr>
+<tr class="even">
+<td align="left">-/-</td>
+<td align="left">M</td>
+<td align="right">204</td>
+<td align="right">11.43</td>
+<td align="right">9</td>
+<td align="right">0.333</td>
+</tr>
+</tbody>
+</table>
 <table>
 <caption>2x2 ANOVA with interaction between genotype and sex for fasting glucose</caption>
 <thead>
@@ -466,6 +513,7 @@ summary {
 </tr>
 </tbody>
 </table>
+<p>Female knockout mice had a 18.373% reduction in fasting glucose (p=XXX) but the male mice did not (-3.351%; p=XXX). All groups were found to be normally distributed by a Shapiro-Wilk test (see above). Only males could be assumed to have equal variance via Levene’s tests (males p=0.176; females p=0.034).</p>
 </div>
 </div>
 <div id="insulin-tolerance-test" class="section level2">

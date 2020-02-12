@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Wed Feb 12 11:39:10 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
+This script was most recently run on Wed Feb 12 11:50:42 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
 
 # Purpose
 
@@ -30,7 +30,7 @@ These were all ITTs done around 2PM after a 6h fast.
 
 
 
-The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 11:39:11 2020.
+The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 11:50:42 2020.
 
 # Analysis
 
@@ -45,6 +45,17 @@ The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folde
 ### Fasting Glucose Stats
 
 
+Table: Summary statistics for effects on fasting blood glucose
+
+Genotype   Sex    Avg      SE    n   shapiro
+---------  ----  ----  ------  ---  --------
++/+        F      211   20.56    7     0.778
++/+        M      198    7.07   10     0.571
+-/-        F      172    6.39   13     0.459
+-/-        M      204   11.43    9     0.333
+
+
+
 Table: 2x2 ANOVA with interaction between genotype and sex for fasting glucose
 
 term            df   sumsq   meansq   statistic   p.value
@@ -53,6 +64,8 @@ Genotype         1    3045     3045        2.80     0.103
 Sex              1    1460     1460        1.34     0.254
 Genotype:Sex     1    4770     4770        4.39     0.043
 Residuals       35   38027     1086          NA        NA
+
+Female knockout mice had a 18.373% reduction in fasting glucose (p=XXX) but the male mice did not (-3.351%; p=XXX).  All groups were found to be normally distributed by a Shapiro-Wilk test (see above).  Only males could be assumed to have equal variance via Levene's tests (males p=0.176; females p=0.034).
 
 
 ## Insulin Tolerance Test

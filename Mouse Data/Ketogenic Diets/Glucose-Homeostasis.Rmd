@@ -96,10 +96,15 @@ ggplot(filter(glucose.data, ITT=="Yes"),
 
 ```{r fasting-glucose-barplot, fig.cap="6h fasting glucose, by genotype"}
 library(ggplot2)
-filter(glucose.data, ITT=="Yes") %>%
+fg.summary <- 
+  filter(glucose.data, ITT=="Yes") %>%
   group_by(Genotype,Sex) %>%
   summarize(Avg = mean(FG),
-            SE = se(FG)) %>%
+            SE = se(FG),
+            n = length(FG),
+            shapiro = shapiro.test(FG)$p.value)
+
+fg.summary %>%
   ggplot(aes(y=Avg,
              ymin=Avg-SE,
              ymax=Avg+SE,
@@ -117,8 +122,17 @@ filter(glucose.data, ITT=="Yes") %>%
 
 ```{r fg-stats}
 library(broom)
+fg.summary %>% kable(caption="Summary statistics for effects on fasting blood glucose")
+
 aov(FG~Genotype*Sex, data=filter(glucose.data, ITT=="Yes")) %>% tidy %>% kable(caption="2x2 ANOVA with interaction between genotype and sex for fasting glucose")
+library(car)
+
+female.fg <- fg.summary %>% filter(Sex=='F') %>% pull(Avg)
+male.fg <- fg.summary %>% filter(Sex=='M') %>% pull(Avg)
+
 ```
+
+Female knockout mice had a `r (female.fg[1]-female.fg[2])/female.fg[1] * 100`% reduction in fasting glucose (p=XXX) but the male mice did not (`r (male.fg[1]-male.fg[2])/male.fg[1] * 100`%; p=XXX).  All groups were found to be normally distributed by a Shapiro-Wilk test (see above).  Only males could be assumed to have equal variance via Levene's tests (males p=`r leveneTest(FG ~ Genotype, data=filter(glucose.data, ITT=="Yes",Sex=="M"))$"Pr(>F)"[1]`; females p=`r leveneTest(FG ~ Genotype, data=filter(glucose.data, ITT=="Yes",Sex=="F"))$"Pr(>F)"[1]`).
 
 
 ## Insulin Tolerance Test
