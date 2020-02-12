@@ -132,7 +132,7 @@ male.fg <- fg.summary %>% filter(Sex=='M') %>% pull(Avg)
 
 ```
 
-Female knockout mice had a `r (female.fg[1]-female.fg[2])/female.fg[1] * 100`% reduction in fasting glucose (p=XXX) but the male mice did not (`r (male.fg[1]-male.fg[2])/male.fg[1] * 100`%; p=XXX).  All groups were found to be normally distributed by a Shapiro-Wilk test (see above).  Only males could be assumed to have equal variance via Levene's tests (males p=`r leveneTest(FG ~ Genotype, data=filter(glucose.data, ITT=="Yes",Sex=="M"))$"Pr(>F)"[1]`; females p=`r leveneTest(FG ~ Genotype, data=filter(glucose.data, ITT=="Yes",Sex=="F"))$"Pr(>F)"[1]`).
+Female knockout mice had a `r (female.fg[1]-female.fg[2])/female.fg[1] * 100`% reduction in fasting glucose (p=`r t.test(FG ~ Genotype, var.equal=T, data=filter(glucose.data, ITT=="Yes",Sex=="F"))$p.value` ) but the male mice did not (`r (male.fg[1]-male.fg[2])/male.fg[1] * 100`%; p=`r t.test(FG ~ Genotype, var.equal=T, data=filter(glucose.data, ITT=="Yes",Sex=="M"))$p.value`).  All groups were found to be normally distributed by a Shapiro-Wilk test (see above).  Only males could be assumed to have equal variance via Levene's tests (males p=`r leveneTest(FG ~ Genotype, data=filter(glucose.data, ITT=="Yes",Sex=="M"))$"Pr(>F)"[1]`; females p=`r leveneTest(FG ~ Genotype, data=filter(glucose.data, ITT=="Yes",Sex=="F"))$"Pr(>F)"[1]`).
 
 
 ## Insulin Tolerance Test

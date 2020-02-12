@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Wed Feb 12 11:50:42 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
+This script was most recently run on Wed Feb 12 11:52:54 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
 
 # Purpose
 
@@ -30,7 +30,7 @@ These were all ITTs done around 2PM after a 6h fast.
 
 
 
-The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 11:50:42 2020.
+The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 11:52:54 2020.
 
 # Analysis
 
@@ -65,7 +65,7 @@ Sex              1    1460     1460        1.34     0.254
 Genotype:Sex     1    4770     4770        4.39     0.043
 Residuals       35   38027     1086          NA        NA
 
-Female knockout mice had a 18.373% reduction in fasting glucose (p=XXX) but the male mice did not (-3.351%; p=XXX).  All groups were found to be normally distributed by a Shapiro-Wilk test (see above).  Only males could be assumed to have equal variance via Levene's tests (males p=0.176; females p=0.034).
+Female knockout mice had a 18.373% reduction in fasting glucose (p=0.037 ) but the male mice did not (-3.351%; p=0.621).  All groups were found to be normally distributed by a Shapiro-Wilk test (see above).  Only males could be assumed to have equal variance via Levene's tests (males p=0.176; females p=0.034).
 
 
 ## Insulin Tolerance Test
