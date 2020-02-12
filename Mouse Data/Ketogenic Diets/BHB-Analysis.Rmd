@@ -1,0 +1,259 @@
+---
+title: "Analysis of Total Ketone Body Levels in A/J Mice on a Ketogenic Diet"
+author: "Dave Bridges, JeAnna Redd and Cody Cousineau"
+date: '2017-07-20'
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Mice retained access to food.  Blood was drawn by retro-orbital bleed and stored at -80 at about 3 PM (ZT8).
+
+* Protocol for blood preparation is at http://bridgeslab.sph.umich.edu/protocols/index.php?title=Measuring_Fasting_Insulin&oldid=206
+* Protocol for BHB assay is at http://bridgeslab.sph.umich.edu/protocols/index.php?title=BHB_Assay&oldid=1360
+
+# Raw Data
+
+```{r data-input}
+standard.curve.filename.1 <- 'bhb-standard-curve.csv'
+standard.curve.filename.2 <- 'bhb-standard-curve-second-run.csv'
+data.filename.1 <- 'bhb-data.csv'
+data.filename.2 <- 'bhb-data-second-run.csv'
+library(readr) #loads the readr package
+std.data.1 <- read_csv(standard.curve.filename.1)
+std.data.2 <- read_csv(standard.curve.filename.2)
+assay.data.1 <- read_csv(data.filename.1)
+assay.data.2 <- read_csv(data.filename.2)
+
+#pulled from the body composition script
+mapping.filename <- 'Body Composition Data.csv'
+mapping.data <- read_csv(mapping.filename,
+                         col_types = cols(animal.Gender=col_factor(levels=NULL),
+                                          Diet=col_factor(levels=NULL))) %>% 
+  distinct(animal.MouseID, .keep_all=TRUE) %>% 
+  select(animal.MouseID, animal.Gender, animal.Cage, Diet)
+```
+
+These data can be found in `r getwd()`.  This script was most recently updated on `r date()`.
+
+The standard curve is in the file `r standard.curve.filename.1` and `r standard.curve.filename.1`  The mouse data is in a file `r data.filename.1` and `r data.filename.2`.  The mapping file is in `r mapping.filename`.
+
+# Analysis
+
+## Standard Curve
+
+For the first batch the standard curve was:
+
+```{r standard-curve}
+with(std.data.1, plot (Rate,Concentration, 
+                     pch=18,
+                     las=1,
+                     ylab="BHB (pmoles)"))
+
+std.fit.1 <- lm(Concentration~Rate, data=std.data.1)
+abline(std.fit.1)
+```
+
+The standard curve paramaeters are shown below.  The curve had an R2 value of `r summary(std.fit.1)$r.squared`.:
+
+```{r standard-curve-fit}
+library(broom)
+kable(tidy(std.fit.1))
+```
+
+The standard curve was well below the highest samples which will need to be re-analysed.  The highest rate on the standard curve ws `r max(std.data.1$Rate, na.rm=T)`.  The animals that need to be re-analyzed included:
+
+```{r samples-above-curve}
+kable(assay.data.1 %>% filter(Rate>max(std.data.1$Rate, na.rm=T)), caption="Samples with assay rates higher than the standard curve")
+```
+
+For the second batch of samples the standard curve was:
+
+```{r standard-curve-second}
+with(std.data.2, plot (Rate,Concentration, 
+                     pch=18,
+                     las=1,
+                     ylab="BHB (pmoles)"))
+
+std.fit.2 <- lm(Concentration~Rate, data=std.data.2)
+abline(std.fit.2)
+```
+
+The standard curve paramaeters are shown below.  The curve had an R2 value of `r summary(std.fit.2)$r.squared`.:
+
+```{r standard-curve-fit-second}
+kable(tidy(std.fit.2), caption="Second batch standard curve data.")
+```
+
+BHB levels were determined by extrapolating from the standard curves.
+
+For the first batch:
+```{r data-analysis-first-batch}
+assay.data.1$BHB.pmoles <- predict(std.fit.1, newdata = list(Rate=assay.data.1$Rate)) 
+assay.data.1$BHB <- assay.data.1$BHB.pmoles/4 #this is in uM, not this run used 4 uL per sample
+```
+
+for the second batch
+```{r data-analysis-second-batch}
+assay.data.2$BHB.pmoles <- predict(std.fit.2, newdata = list(Rate=assay.data.2$Rate)) 
+assay.data.2$BHB <- assay.data.2$BHB.pmoles/1 #this is in uM, note this assay used 1 uL per sample
+```
+
+We then combined the assay data and filtered to override with the second BHB value rather than the first
+
+```{r combined-data}
+combined.data <-
+  rbind(assay.data.2, assay.data.1) %>%
+  distinct(Mouse, .keep_all=T) %>%
+  full_join(mapping.data, by=c("Mouse"="animal.MouseID"))
+output_file <- 'Analysed BHB Data.csv'
+write.csv(combined.data, output_file)
+```
+
+The combined data was written to the file `r output_file`.
+
+The data was then summarized after combining.
+
+```{r data-summary}
+summary.data <-
+  combined.data %>%
+  na.omit() %>%
+  group_by(animal.Gender, Diet) %>%
+  summarize(BHB.mean = mean(BHB),
+            BHB.se = se(BHB),
+            BHB.sd = sd(BHB),
+            n = length(BHB),
+            Shapiro = shapiro.test(BHB)$p.value)
+
+kable(summary.data, caption="Summary Data")
+```
+
+```{r bhb-boxplot}
+library(ggplot2)
+plot <- ggplot(combined.data, aes(x=animal.Gender, y=BHB, fill=Diet))
+plot + geom_boxplot() +
+  geom_point(position=position_jitterdodge()) +
+  scale_fill_manual(values=color.scheme) +
+  labs(x='Sex', y='Total Ketone Bodies (uM)')
+```
+
+```{r bhb-boxplot-cage}
+plot <- ggplot(combined.data, aes(x=Diet, y=BHB))
+plot + geom_boxplot(aes(fill=as.factor(animal.Cage))) +
+  labs(x='Sex', y='Total Ketone Bodies (uM)')
+```
+
+```{r bhb-barplot}
+plot.data <- summary.data %>%
+  select(BHB.mean, animal.Gender, Diet) %>%
+  spread(animal.Gender, BHB.mean)
+
+plot.data.se <- summary.data %>%
+  select(BHB.se, animal.Gender, Diet) %>%
+  spread(animal.Gender, BHB.se)
+
+ymax <- max(as.matrix(plot.data[2:3])) + max(as.matrix(plot.data.se[2:3]))
+
+plot <- barplot(as.matrix(plot.data[2:3]),
+                beside=T,
+                las=1,
+                col=color.scheme,
+                ylim=c(0,ymax),
+                ylab="Total Ketone Bodies (uM)")
+
+superpose.eb(plot,
+             as.matrix(plot.data[2:3]),
+             as.matrix(plot.data.se[2:3]))
+
+library(ggplot2)
+p <-ggplot(summary.data, aes(y=BHB.mean, 
+                             x=animal.Gender,
+                             ymin=BHB.mean-BHB.se,
+                             ymax=BHB.mean+BHB.se,
+                             fill=Diet))
+
+p + geom_bar(stat='identity', position='dodge') +
+  geom_errorbar(position=position_dodge(width=0.9), colour="black", width=0.25) +
+  labs(y="Total Ketone Bodies (uM)",
+       x="") +
+  scale_fill_manual(values = color.scheme)
+
+
+p <-ggplot(summary.data, aes(y=BHB.mean, 
+                             x=animal.Gender,
+                             ymin=BHB.mean-BHB.se,
+                             ymax=BHB.mean+BHB.se,
+                             fill=Diet))
+
+p + geom_bar(stat='identity', position='dodge') +
+  geom_errorbar(position=position_dodge(width=0.9), colour="black", width=0.25) +
+  labs(y="Total Ketone Bodies (uM)",
+       x="Sex",
+       title="Serum Ketone Levels at 3 Weeks") +
+  scale_fill_manual(values = color.scheme) +
+      scale_fill_manual(values=color.scheme) +
+    theme(legend.position=c(0.20, 0.85),
+    legend.background = element_blank(),
+    legend.box.background = element_blank(),
+    legend.key = element_blank(),
+    text = element_text(size=20))
+```
+
+### Statistics
+
+A two-way anova between Sex and Diet with an interaction yielded a significant effect of diet but no significant effect of gender.
+
+```{r anova}
+bhb.aov <- aov(BHB~Diet*animal.Gender, data=combined.data)
+kable(tidy(bhb.aov))
+```
+
+The main effect of diet was p=`r summary(bhb.aov)[[1]]$"Pr(>F)"[1]`.  There was a `r subset(summary.data, animal.Gender=='M')$BHB.mean[2]/subset(summary.data, animal.Gender=='M')$BHB.mean[1]` fold increase in males and a `r subset(summary.data, animal.Gender=='F')$BHB.mean[2]/subset(summary.data, animal.Gender=='F')$BHB.mean[1]` fold increase in females.
+
+# Interpretation
+
+Clear elevations in ketone bodies in semi-fasted animals after 3 weeks on ketogenic diet.  Need to confirm whether these levels represent physiologically relevant amounts of ketosis.  There is a trend toward a  differences between males and females, with females having higher baseline and KD-induced total ketone levels.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
