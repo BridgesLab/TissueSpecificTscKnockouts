@@ -8,5 +8,5 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   1A     |       |     |
 |   1B     |       |     |
 |   1C     |       |     |
-|   1D     |   BHB-Analysis.Rmd    |     |
-|   1B     |       |     |
+|   1D     |       |     |
+|   1E     |     Mouse Data/Ketogenic Diets/BHB-Analysis.Rmd    |   bhb-barplot-4  |

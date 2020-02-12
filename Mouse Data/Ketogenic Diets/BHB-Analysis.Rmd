@@ -82,7 +82,7 @@ The standard curve is in the file `r standard.curve.filename.1` and `r standard.
 
 For the first batch the standard curve was:
 
-```{r standard-curve}
+```{r bhb-standard-curve}
 with(std.data.1, plot (Rate,Concentration, 
                      pch=18,
                      las=1,
@@ -94,7 +94,7 @@ abline(std.fit.1)
 
 The standard curve paramaeters are shown below.  The curve had an R2 value of `r summary(std.fit.1)$r.squared`.:
 
-```{r standard-curve-fit}
+```{r bhb-standard-curve-fit}
 library(broom)
 kable(tidy(std.fit.1))
 ```
@@ -246,6 +246,22 @@ p + geom_bar(stat='identity', position='dodge') +
     legend.box.background = element_blank(),
     legend.key = element_blank(),
     text = element_text(size=20))
+
+ggplot(summary.data, aes(y=BHB.mean, 
+                             x=animal.Gender,
+                             ymin=BHB.mean-BHB.se,
+                             ymax=BHB.mean+BHB.se,
+                             fill=Diet)) +
+  geom_bar(stat='identity', position='dodge') +
+  geom_errorbar(position=position_dodge(width=0.9), colour="black", width=0.25) +
+  labs(y="Total Ketone Bodies (uM)",
+       x="Sex",
+       title="") +
+  expand_limits(y=0) +
+  scale_fill_grey() +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.2,0.9)) 
 ```
 
 ### Statistics
