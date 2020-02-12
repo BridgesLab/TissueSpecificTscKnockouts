@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Wed Feb 12 12:03:10 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
+This script was most recently run on Wed Feb 12 12:07:24 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
 
 # Purpose
 
@@ -30,7 +30,7 @@ These were all ITTs done around 2PM after a 6h fast.
 
 
 
-The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 12:03:11 2020.
+The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 12:07:24 2020.
 
 # Analysis
 
