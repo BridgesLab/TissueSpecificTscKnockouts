@@ -1,0 +1,218 @@
+---
+title: "LCHF GDF15 Glucose Measurements"
+author: "Claire Gleason, Cody Cousineau and JeAnna Redd and Dave Bridges"
+date: "July 7, 2018"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(readr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05','#d6bf91')
+```
+
+This script was most recently run on `r date()` and can be found in `r getwd()`.
+
+# Purpose
+
+To determine insulin responsiveness of wild-type and GDF15 knockout mice.
+
+# Experimental Details
+
+These were all ITTs done around 2PM after a 6h fast.
+
+# Raw Data
+
+
+```{r data-entry}
+raw_data_file <- "KD GDF15 Knockout Raw Glucose Data.csv"
+
+library(readr) 
+measurement.data <- read_csv(raw_data_file,col_types = cols(values=col_character()))
+
+library(lubridate)
+measurement.data$parsed.experiment.date <- ymd(measurement.data$experiment.date)
+measurement.data$experiment.time <- measurement.data$parsed.experiment.date - ymd('2017-06-28')
+
+glucose.data <- 
+  filter(measurement.data, assay=='Plasma Glucose') %>%
+  separate(values, sep=',', into=paste0("t",seq(0,120, by=15))) %>%
+  select(age,Sex,Genotype,t0:t120,animal.id, MouseID) %>%
+  mutate(ITT = if_else(is.na(t15), "No","Yes")) %>%
+  mutate(FG = as.numeric(t0)) %>%
+  mutate(Genotype = relevel(as.factor(Genotype), ref="+/+"))
+glucose.data$AUC <- glucose.data %>% select(t0:t105) %>% mutate_all(as.numeric) %>% rowSums(., na.rm=F)
+```
+
+The raw data can be found in `r raw_data_file` in the folder `r getwd()`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+## Fasting Glucose Levels
+
+### From a 6h Fast
+
+```{r fasting-glucose-boxplot-itt, fig.cap="6h fasting glucose, by treatment"}
+library(ggplot2)
+ggplot(filter(glucose.data, ITT=="Yes"),
+            aes(y=FG, x=Genotype)) +
+  geom_boxplot(aes(fill=Genotype)) +
+  facet_grid(.~Sex) +
+  labs(title="Fasting Glucose (6h Fast)",
+       y="Blood Glucose (mg/dL)",
+       x="Genotype")
+```
+
+```{r fasting-glucose-barplot, fig.cap="6h fasting glucose, by genotype"}
+library(ggplot2)
+filter(glucose.data, ITT=="Yes") %>%
+  group_by(Genotype,Sex) %>%
+  summarize(Avg = mean(FG),
+            SE = se(FG)) %>%
+  ggplot(aes(y=Avg,
+             ymin=Avg-SE,
+             ymax=Avg+SE,
+             x=Genotype,
+             fill=Genotype)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  facet_grid(.~Sex) +
+  labs(title="Fasting Glucose (6h Fast)",
+       y="Blood Glucose (mg/dL)",
+       x="Genotype")
+```
+
+### Fasting Glucose Stats
+
+```{r fg-stats}
+library(broom)
+aov(FG~Genotype*Sex, data=filter(glucose.data, ITT=="Yes")) %>% tidy %>% kable(caption="2x2 ANOVA with interaction between genotype and sex for fasting glucose")
+```
+
+
+## Insulin Tolerance Test
+
+```{r itt-wt, fig.cap="Insulin tolerance tests by genotype"}
+time <- seq(0,120,by=15)
+itt.data.long <- 
+  glucose.data %>%
+  filter(ITT=="Yes") %>%
+  select(-age) %>%
+  group_by(Genotype,Sex) %>%
+  gather('t0:t120', Glucose,-Genotype,-Sex,-AUC,-FG,-ITT,-MouseID) %>%
+  separate(`t0:t120`, sep="t", into=c("Letter","Time")) %>%
+  mutate(Glucose = as.numeric(Glucose)) %>%
+  mutate(Time = as.numeric(Time))
+
+ggplot(itt.data.long,
+            aes(y=Glucose, x=Time, col=Genotype)) + 
+  geom_point() +
+  geom_smooth(method="loess") +
+  facet_grid(.~Sex) +
+  ylim(0,240) +
+  labs(title="Insulin Tolerance Test")
+```
+
+
+```{r itt-line, fig.cap="Insulin tolerance tests by genotype"}
+itt.data.summary <-
+  itt.data.long %>%
+  group_by(Genotype,Sex,Time) %>%
+  summarize(Glucose.mean = mean(Glucose,na.rm=T),
+            Glucose.se = se(Glucose))
+
+
+ggplot(itt.data.summary %>% filter(!(is.na(Time))),
+            aes(y=Glucose.mean, 
+                x=Time, 
+                ymin=Glucose.mean-Glucose.se, 
+                ymax=Glucose.mean+Glucose.se, 
+                col=Genotype)) + 
+  geom_errorbar() +
+  geom_line() +
+  expand_limits(y=0) +
+  facet_grid(.~Sex)  +
+  labs(title="Insulin Tolerance Test")
+```
+
+
+
+
+### ITT Stats
+
+Used mixed linear models to analyze ITT's
+
+```{r lme}
+library(lme4)
+library(lmerTest)
+lmer(Glucose ~ as.factor(Time) + Genotype *Sex + (1|MouseID), data=itt.data.long %>% filter(!is.na(Time))) %>% anova %>% kable(caption="Mixed linear models for effects on ITT")
+```
+
+## Normalized ITT Data
+
+```{r itt-normalization}
+itt.data.long.norm <-
+  itt.data.long %>%
+  select(-AUC) %>%
+  mutate(Glucose.norm = Glucose/FG*100) %>%
+  filter(!(is.na(Time))) 
+
+itt.data.summary.norm <-
+  itt.data.long.norm %>%
+  group_by(Genotype,Sex,Time) %>%
+  summarize(Glucose.mean = mean(Glucose.norm,na.rm=T),
+            Glucose.se = se(Glucose.norm))
+
+
+ggplot(itt.data.summary.norm %>% filter(!(is.na(Time))),
+            aes(y=Glucose.mean, 
+                x=Time, 
+                ymin=Glucose.mean-Glucose.se, 
+                ymax=Glucose.mean+Glucose.se, 
+                col=Genotype)) + 
+  geom_errorbar() +
+  geom_line() +
+  expand_limits(y=0) +
+  facet_grid(.~Sex)  +
+  labs(title="Insulin Tolerance Test",
+       subtitle="Normalized to fasting glucose")
+```
+
+
+
+
+# Interpretation
+
+# References
+

@@ -6,6 +6,7 @@ output:
   html_document:
     df_print: paged
     toc: yes
+    keep_md: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
