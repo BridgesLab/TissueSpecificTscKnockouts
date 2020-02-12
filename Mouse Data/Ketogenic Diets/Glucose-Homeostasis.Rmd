@@ -116,6 +116,23 @@ fg.summary %>%
   labs(title="Fasting Glucose (6h Fast)",
        y="Blood Glucose (mg/dL)",
        x="Genotype")
+
+fg.summary %>%
+  ggplot(aes(y=Avg,
+             ymin=Avg-SE,
+             ymax=Avg+SE,
+             x=Genotype,
+             fill=Genotype)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  facet_grid(.~Sex) +
+  labs(title="",
+       y="Fasting Blood Glucose (mg/dL)",
+       x="") +
+  scale_fill_grey() +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="bottom") 
 ```
 
 ### Fasting Glucose Stats
@@ -178,6 +195,23 @@ ggplot(itt.data.summary %>% filter(!(is.na(Time))),
   expand_limits(y=0) +
   facet_grid(.~Sex)  +
   labs(title="Insulin Tolerance Test")
+
+ggplot(itt.data.summary %>% filter(!(is.na(Time))),
+            aes(y=Glucose.mean, 
+                x=Time, 
+                ymin=Glucose.mean-Glucose.se, 
+                ymax=Glucose.mean+Glucose.se, 
+                col=Genotype)) + 
+  geom_errorbar() +
+  geom_line() +
+  expand_limits(y=0) +
+  facet_grid(.~Sex)  +
+  labs(y="Blood Glucose (mg/dL)",
+       x="Insulin (min)") + 
+ scale_color_grey() +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.5,0.2)) 
 ```
 
 

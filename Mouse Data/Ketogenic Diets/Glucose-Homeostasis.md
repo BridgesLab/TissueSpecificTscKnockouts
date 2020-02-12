@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Wed Feb 12 11:52:54 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
+This script was most recently run on Wed Feb 12 12:03:10 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
 
 # Purpose
 
@@ -30,7 +30,7 @@ These were all ITTs done around 2PM after a 6h fast.
 
 
 
-The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 11:52:54 2020.
+The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 12:03:11 2020.
 
 # Analysis
 
@@ -40,7 +40,7 @@ The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folde
 
 ![6h fasting glucose, by treatment](figures/fasting-glucose-boxplot-itt-1.png)
 
-![6h fasting glucose, by genotype](figures/fasting-glucose-barplot-1.png)
+![6h fasting glucose, by genotype](figures/fasting-glucose-barplot-1.png)![6h fasting glucose, by genotype](figures/fasting-glucose-barplot-2.png)
 
 ### Fasting Glucose Stats
 
@@ -73,7 +73,7 @@ Female knockout mice had a 18.373% reduction in fasting glucose (p=0.037 ) but t
 ![Insulin tolerance tests by genotype](figures/itt-wt-1.png)
 
 
-![Insulin tolerance tests by genotype](figures/itt-line-1.png)
+![Insulin tolerance tests by genotype](figures/itt-line-1.png)![Insulin tolerance tests by genotype](figures/itt-line-2.png)
 
 
 

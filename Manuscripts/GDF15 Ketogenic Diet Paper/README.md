@@ -10,3 +10,14 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   1C     |       |     |
 |   1D     |       |     |
 |   1E     |     Mouse Data/Ketogenic Diets/BHB-Analysis.Rmd    |   bhb-barplot-4  |
+|   2A     |       |     |
+|   2B     |       |     |
+|   2C     |       |     |
+|   2D     |       |     |
+|   2E     |       |     |
+|   3A     |       |     |
+|   3B     |       |     |
+|   3C     |       |     |
+|   3D     |       |     |
+|   3E     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  fasting-glucose-barplot-2  |
+|   3F     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  itt-line-2 |
