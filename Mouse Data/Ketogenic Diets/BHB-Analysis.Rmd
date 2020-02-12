@@ -152,6 +152,17 @@ The combined data was written to the file `r output_file`.
 
 The data was then summarized after combining.
 
+# Sample Size
+
+```{r sample-size}
+combined.data %>%
+  na.omit %>% 
+  group_by(animal.Gender, Diet) %>%
+  count %>%
+  kable(caption="Number of animals in each group")
+```
+
+
 ```{r data-summary}
 summary.data <-
   combined.data %>%
