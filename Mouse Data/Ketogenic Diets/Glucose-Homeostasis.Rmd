@@ -223,9 +223,12 @@ Used mixed linear models to analyze ITT's
 
 ```{r lme}
 library(lme4)
+lmer.model.formula <- formula(Glucose ~ as.factor(Time) + Genotype *Sex + (1|MouseID))
 library(lmerTest)
-lmer(Glucose ~ as.factor(Time) + Genotype *Sex + (1|MouseID), data=itt.data.long %>% filter(!is.na(Time))) %>% anova %>% kable(caption="Mixed linear models for effects on ITT")
+lmer(lmer.model.formula, data=itt.data.long %>% filter(!is.na(Time))) %>% anova %>% kable(caption="Mixed linear models for effects on ITT")
 ```
+
+The model used was: **`r format(lmer.model.formula)`**.
 
 ## Normalized ITT Data
 
@@ -258,9 +261,27 @@ ggplot(itt.data.summary.norm %>% filter(!(is.na(Time))),
 ```
 
 
+## Area Under Curve
 
+```{r auc}
+glucose.data %>%
+  group_by(Genotype,Sex) %>%
+  summarize(AUC.mean = mean(AUC,na.rm=T),
+            AUC.se = se(AUC)) %>%
+  ggplot( aes(y=AUC.mean, 
+                x=Genotype, 
+                ymin=AUC.mean-AUC.se, 
+                ymax=AUC.mean+AUC.se, 
+                fill=Genotype)) + 
+  geom_bar(stat='identity') +
+  facet_grid(~Sex) +
+  geom_errorbar(width=0.5) +
+  labs(title="",
+       y="Blood Glucose (Area Under Curve)",
+       x="Genotype")
+  
+```
 
 # Interpretation
 
-# References
-
+There was a sex-specific reduction in fasting blood glucose, but no significant difference in glucose levels during the insulin tolerance test

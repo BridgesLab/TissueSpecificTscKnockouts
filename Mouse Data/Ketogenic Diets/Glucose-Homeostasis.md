@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Wed Feb 12 12:07:24 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
+This script was most recently run on Wed Feb 12 15:39:37 2020 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
 
 # Purpose
 
@@ -30,7 +30,7 @@ These were all ITTs done around 2PM after a 6h fast.
 
 
 
-The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 12:07:24 2020.
+The raw data can be found in KD GDF15 Knockout Raw Glucose Data.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Wed Feb 12 15:39:37 2020.
 
 # Analysis
 
@@ -92,14 +92,17 @@ Genotype               78.8      78.8       1    33.9     0.049    0.826
 Sex                   779.2     779.2       1    33.9     0.485    0.491
 Genotype:Sex          209.5     209.5       1    33.9     0.131    0.720
 
+The model used was: **Glucose ~ as.factor(Time) + Genotype * Sex + (1 | MouseID)**.
+
 ## Normalized ITT Data
 
 ![](figures/itt-normalization-1.png)<!-- -->
 
 
+## Area Under Curve
 
+![](figures/auc-1.png)<!-- -->
 
 # Interpretation
 
-# References
-
+There was a sex-specific reduction in fasting blood glucose, but no significant difference in glucose levels during the insulin tolerance test
