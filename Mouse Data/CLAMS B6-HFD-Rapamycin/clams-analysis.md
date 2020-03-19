@@ -17,7 +17,7 @@ output:
 After having been acclimitized in the CLAMS at the normal temperature (25C) for 2 days then treatment and diet started simulataneously. 
 
 
-The input files were 2015-10-07-C57BL6J-Rapa-HFD-PreCLAMSEchoMRI.XLSX for the echoMRI data and 2015-10-07-C57BL6J-Rapa-HFD-OxymaxDataFile1.csv  and 2015-10-07-C57BL6J-Rapa-HFD-OxymaxDataFile2.csv for the CLAMS data.  These data can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/CLAMS B6-HFD-Rapamycin.  This script was most recently updated on Mon Jul 29 08:51:03 2019 and includes the following number of animals:
+The input files were 2015-10-07-C57BL6J-Rapa-HFD-PreCLAMSEchoMRI.XLSX for the echoMRI data and 2015-10-07-C57BL6J-Rapa-HFD-OxymaxDataFile1.csv  and 2015-10-07-C57BL6J-Rapa-HFD-OxymaxDataFile2.csv for the CLAMS data.  These data can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/CLAMS B6-HFD-Rapamycin.  This script was most recently updated on Thu Mar 19 10:53:42 2020 and includes the following number of animals:
 
 
 Treatment    Males
@@ -44,6 +44,10 @@ We first checked whether normality was maintained in the residuals from the ANCO
 
 
 ![Oxygen consumption over time.](figures/vo2-time-course-1.png)
+
+## Averaged Daily Time Course
+
+
 
 This data was averaged for the VO2 before the HFD switch and after the HFD switch
 
@@ -88,6 +92,8 @@ TreatmentRapamycin:HFDTRUE      -3.959        1.440    -2.750   0.006
 ## Heat
 
 ![Thermogenesis Before and After High Fat Diet Treatment](figures/heat-barplot-1.png)
+
+![The respiratory exchange ratio over time.](figures/heat-time-course-1.png)![The respiratory exchange ratio over time.](figures/heat-time-course-2.png)
 
 
 
@@ -178,13 +184,13 @@ CHO oxidation is (4.585 * VCO2) - (3.226 * VO2)
 
 
 ```
-## R version 3.5.0 (2018-04-23)
+## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS  10.14.6
+## Running under: macOS Catalina 10.15.3
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -193,24 +199,22 @@ CHO oxidation is (4.585 * VCO2) - (3.226 * VO2)
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] car_3.0-3        carData_3.0-2    arm_1.10-1       MASS_7.3-51.4   
-##  [5] lme4_1.1-21      Matrix_1.2-17    lubridate_1.7.4  dplyr_0.8.3     
-##  [9] readxl_1.3.1     tidyr_0.8.3.9000 knitr_1.23      
+##  [1] ggplot2_3.3.0   car_3.0-7       carData_3.0-3   arm_1.10-1     
+##  [5] MASS_7.3-51.5   lme4_1.1-21     Matrix_1.2-18   lubridate_1.7.4
+##  [9] dplyr_0.8.5     readxl_1.3.1    tidyr_1.0.2     knitr_1.28     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zip_2.0.2         Rcpp_1.0.1        cellranger_1.1.0 
-##  [4] pillar_1.4.2      compiler_3.5.0    nloptr_1.2.1     
-##  [7] highr_0.8         forcats_0.4.0     tools_3.5.0      
-## [10] boot_1.3-22       zeallot_0.1.0     digest_0.6.20    
-## [13] evaluate_0.14     tibble_2.1.3      nlme_3.1-140     
-## [16] lattice_0.20-38   pkgconfig_2.0.2   rlang_0.4.0      
-## [19] openxlsx_4.1.0.1  curl_3.3          yaml_2.2.0       
-## [22] haven_2.1.0       xfun_0.7          rio_0.5.16       
-## [25] coda_0.19-2       stringr_1.4.0     hms_0.4.2        
-## [28] vctrs_0.2.0       grid_3.5.0        tidyselect_0.2.5 
-## [31] data.table_1.12.2 glue_1.3.1        R6_2.4.0         
-## [34] foreign_0.8-71    rmarkdown_1.13    minqa_1.2.4      
-## [37] purrr_0.3.2       magrittr_1.5      backports_1.1.4  
-## [40] htmltools_0.3.6   splines_3.5.0     abind_1.4-5      
-## [43] assertthat_0.2.1  stringi_1.4.3     crayon_1.3.4
+##  [1] tidyselect_1.0.0  xfun_0.12         purrr_0.3.3       splines_3.6.2    
+##  [5] haven_2.2.0       lattice_0.20-40   colorspace_1.4-1  vctrs_0.2.4      
+##  [9] htmltools_0.4.0   yaml_2.2.1        rlang_0.4.5       nloptr_1.2.2.1   
+## [13] pillar_1.4.3      withr_2.1.2       foreign_0.8-76    glue_1.3.2       
+## [17] lifecycle_0.2.0   stringr_1.4.0     munsell_0.5.0     gtable_0.3.0     
+## [21] cellranger_1.1.0  zip_2.0.4         coda_0.19-3       evaluate_0.14    
+## [25] labeling_0.3      rio_0.5.16        forcats_0.5.0     curl_4.3         
+## [29] highr_0.8         Rcpp_1.0.4        scales_1.1.0      abind_1.4-5      
+## [33] farver_2.0.3      hms_0.5.3         digest_0.6.25     stringi_1.4.6    
+## [37] openxlsx_4.1.4    grid_3.6.2        tools_3.6.2       magrittr_1.5     
+## [41] tibble_2.1.3      crayon_1.3.4      pkgconfig_2.0.3   data.table_1.12.8
+## [45] assertthat_0.2.1  minqa_1.2.4       rmarkdown_2.1     R6_2.4.1         
+## [49] boot_1.3-24       nlme_3.1-145      compiler_3.6.2
 ```

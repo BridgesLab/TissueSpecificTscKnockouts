@@ -200,6 +200,17 @@ with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[2]), li
 legend("topleft", levels(animal.time.course$Treatment), bty="n", lty=1, col=palette()[1:2])
 ```
 
+## Averaged Daily Time Course
+
+```{r time-course-aggregating}
+daily.animal.time.course <-
+  animal.time.course %>%
+  mutate(Diet = if_else(Interval < 172, "NCD", "HFD")) %>%
+  group_by(Diet, Time, Treatment) %>%
+  summarize_at(.vars=vars(VO2:Total.Activity), .funs=list(mean=mean,se=se))
+  
+```
+
 This data was averaged for the VO2 before the HFD switch and after the HFD switch
 
 ```{r vo2-barplot, fig.cap="Energy Expenditure Before and After High Fat Diet Treatment"}
@@ -290,6 +301,31 @@ superpose.eb(plot,
              as.matrix(plotted.data),
              as.matrix(plotted.data.se))
 legend("topright", c("NCD", "HFD-Vehicle", "HFD-Rapamycin"), bty="n", fill=c("grey",palette()[1:2]))
+```
+
+```{r heat-time-course, fig.cap="The respiratory exchange ratio over time."}
+with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[1]), plot(Time.Elapsed,HEAT, type="l", xlab="Time (h)", ylab="Heat Production (W)", las=1))
+with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[2]), lines(Time.Elapsed,HEAT, col=palette()[2]))
+with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[3]), lines(Time.Elapsed,HEAT, col=palette()[3]))
+legend("topleft", levels(merged_data$Treatment), bty="n", lty=1, col=palette()[1:2])
+
+library(ggplot2)
+daily.animal.time.course %>%
+  filter(Diet=='HFD') %>%
+  ggplot(aes(y=HEAT_mean,
+             ymin=HEAT_mean-HEAT_se,
+             ymax=HEAT_mean+HEAT_se,
+             x=Time,col=Treatment)) +
+  geom_line() +
+  geom_errorbar() +
+  labs(y="Heat Production (W)",
+       x="Time (24h clock",
+       title="Energy Expenditure After 1-3 Days HFD") +
+  scale_color_manual(values=c("black","red")) +
+  theme_classic() +
+  theme(text = element_text(size=18),
+        legend.position = c(0.9,0.15))
+
 ```
 
 ```{r heat-diagnostic-plots, fig.cap="Diagnostic model plots for effects of drug treatment on thermogenesis  This analysis only includes HFD fed animals."}

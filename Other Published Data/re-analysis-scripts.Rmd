@@ -6,17 +6,37 @@ output: html_document
 bibliography: references.bib
 ---
 
+
 ```{r global_options, include=FALSE}
 library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
                echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
-options(digits=3, scipen=8)
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
 
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.set <- c('#00274c', '#ffcb05')
 library("knitcitations")
 cleanbib()
 options("citation_format" = "pandoc")
 
-color.set <- c('#f77f00','#006a4d')
 ```
 
 This script is for the re-analysis of previously published data from other groups.  This is often for presentations wherein the data was presented as a table or something and we want to draw attention to a particular aspect.  This script was most recently run on `r date()`.
@@ -108,6 +128,58 @@ superpose.eb(plot,
 legend('topright',levels(bray.data$Condition), bty='n', fill=color.set)
 ```
 
+
+## Ravussin AJCN
+
+Ravussin *et al*, `r citet('10.1093/ajcn/35.3.566')` looked at the energy expenditure in men and women of differing obesity status.
+
+```{r ravussin-energy-expenditure}
+ravussin.paper <- 'Ravussin AJCN 1982.csv' 
+
+ravussin.data <- read.csv(ravussin.paper)
+
+library(ggplot2)
+ravussin.data %>%
+  ggplot(aes(y=TDEE,
+             x=Group,
+             fill=Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter() +
+  facet_grid(~Sex) +
+  labs(y="TDEE (kJ/24h)",
+       x="",
+       title="Data from Ravussin et al, 1982") +
+  theme_classic() +
+  theme(text = element_text(size=14),
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+  
+tdee.lm <- lm(TDEE ~ Sex + Age, data=ravussin.data)
+
+ravussin.data <-
+  ravussin.data %>%
+  mutate(Residuals= residuals(tdee.lm),
+         Predicted = predict(tdee.lm))
+
+ravussin.data %>%
+  ggplot(aes(y=Residuals,
+             x=Group,
+             fil=Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter() +
+  facet_grid(~Sex) +
+  labs(y="Total Daily Energy Expenditure",
+       x="",
+       title="Data from Ravussin et al, 1982",
+       subtitle="After adjustment for Age and Sex") +
+  theme_classic() +
+  theme(text = element_text(size=14),
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+```
 
 ```{r bibliography, results='asis'}
 write.bibtex(file="references.bib")
