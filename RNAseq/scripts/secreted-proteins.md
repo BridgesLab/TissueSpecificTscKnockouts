@@ -58,19 +58,28 @@ signalp.genes <-
   signalp.data %>%
   filter(signalp %in% c('SignalP-noTM')) %>%
   pull(ensembl_gene_id)
+
+membrane.genes <- getBM(attributes=c('ensembl_gene_id', 'go_id'),
+                        filters = 'go', 
+                        values = 'GO:0016020',
+                        mart = mouse.data) %>%
+  pull(ensembl_gene_id)
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/scripts**.  The normalized RNAseq data can be found in a file named **../data/processed/Binary DESeq Results.csv**.  This script was most recently updated on **Thu Mar 26 18:44:25 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/scripts**.  The normalized RNAseq data can be found in a file named **../data/processed/Binary DESeq Results.csv**.  This script was most recently updated on **Thu Mar 26 19:28:10 2020**.
 
 # Analysis
 
 The ENSEMBL dataset with genes annotated as having a signalP annotation includes 3766 or 15.447% of all genes.
 
+Out of these I filtered out those with the GO annotation of 0016020, cellular component - membrane.  This removed 1906 genes.
+
 
 ```r
 rnaseq.secreted <-
   rnaseq.stats %>%
-  filter(Row.names %in% signalp.genes) 
+  filter(Row.names %in% signalp.genes)  %>% #keep proteins with signal peptide
+  filter(!(Row.names %in% membrane.genes))  #remove membrane proteins
 
 library(ggplot2)
 
@@ -90,18 +99,40 @@ sig.secreted %>%
 
 Table: Top differentially expressed secreted proteins
 
-    X1  Row.names             baseMean   log2FoldChange   lfcSE    stat   pvalue   padj  external_gene_name       FC
-------  -------------------  ---------  ---------------  ------  ------  -------  -----  -------------------  ------
-  7784  ENSMUSG00000030483        7.32             7.24   0.679   10.67        0      0  Cyp2b10               151.1
- 11042  ENSMUSG00000038508        3.23             5.53   0.750    7.38        0      0  Gdf15                  46.3
- 16480  ENSMUSG00000060882        2.91             5.17   0.687    7.54        0      0  Kcnd2                  36.1
-  2594  ENSMUSG00000020598       39.14             5.14   0.244   21.09        0      0  Nrcam                  35.2
- 14549  ENSMUSG00000050808        3.95             4.98   0.726    6.86        0      0  Muc15                  31.5
-   200  ENSMUSG00000001131       13.98             4.24   0.445    9.53        0      0  Timp1                  18.9
-  5404  ENSMUSG00000026253        5.21             4.23   0.426    9.93        0      0  Chrng                  18.7
-  9326  ENSMUSG00000033676        2.16             4.17   0.614    6.79        0      0  Gabrb3                 18.0
-  5375  ENSMUSG00000026204        2.52             4.16   0.664    6.27        0      0  Ptprn                  17.9
- 17555  ENSMUSG00000068547        2.30             4.08   0.617    6.62        0      0  Clca4a                 17.0
+    X1  Row.names             baseMean   log2FoldChange   lfcSE    stat   pvalue    padj  external_gene_name         FC
+------  -------------------  ---------  ---------------  ------  ------  -------  ------  -------------------  --------
+  7784  ENSMUSG00000030483        7.32             7.24   0.679   10.67    0.000   0.000  Cyp2b10               151.080
+ 11042  ENSMUSG00000038508        3.23             5.53   0.750    7.38    0.000   0.000  Gdf15                  46.343
+   200  ENSMUSG00000001131       13.98             4.24   0.445    9.53    0.000   0.000  Timp1                  18.925
+ 10293  ENSMUSG00000036564       78.11             3.98   0.549    7.25    0.000   0.000  Ndrg4                  15.790
+ 14364  ENSMUSG00000050069       37.19            -3.90   0.892   -4.38    0.000   0.000  Grem2                   0.067
+ 16151  ENSMUSG00000059201       18.23            -3.82   1.349   -2.83    0.005   0.021  Lep                     0.071
+  7947  ENSMUSG00000030772      115.02            -3.69   0.446   -8.27    0.000   0.000  Dkk3                    0.077
+ 14285  ENSMUSG00000049723        5.99             3.58   0.438    8.15    0.000   0.000  Mmp12                  11.914
+  8783  ENSMUSG00000032289       21.70             3.32   0.256   12.94    0.000   0.000  Thsd4                   9.966
+  4002  ENSMUSG00000023031        2.91             3.12   0.722    4.33    0.000   0.000  Cela1                   8.710
+
+```r
+gdf15.data <- filter(rnaseq.secreted, external_gene_name=="Gdf15")  
+ggplot(rnaseq.secreted,
+       aes(x=log2FoldChange,
+           y=-log10(padj))) +
+  geom_point(aes(col=padj>0.05)) +
+  labs(y="P-value (-log10)",
+       x="mRNA Fold Change (log2)",
+       title="Volcano Plot of Potentially Secreted Genes") +
+  geom_segment(
+     xend = gdf15.data$log2FoldChange-0.05, yend = -log10(gdf15.data$padj)+1,
+     x=5, y=25,
+     arrow=arrow(length=unit(0.1,'cm'))) +
+  geom_text(label="Gdf15", x=5, y=27) +
+  scale_color_grey() +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position='none')
+```
+
+![](figure/potential-secreted-proteins-1.png)<!-- -->
 
 
 # Session Information
@@ -141,18 +172,18 @@ sessionInfo()
 ## [19] BiocGenerics_0.32.0  bit64_0.9-7          dbplyr_1.4.2        
 ## [22] lifecycle_0.2.0      plyr_1.8.6           stringr_1.4.0       
 ## [25] munsell_0.5.0        gtable_0.3.0         evaluate_0.14       
-## [28] memoise_1.1.0        Biobase_2.46.0       IRanges_2.20.2      
-## [31] curl_4.3             parallel_3.6.2       AnnotationDbi_1.48.0
-## [34] highr_0.8            Rcpp_1.0.4           scales_1.1.0        
-## [37] openssl_1.4.1        S4Vectors_0.24.3     jsonlite_1.6.1      
-## [40] bit_1.1-15.2         hms_0.5.3            askpass_1.1         
-## [43] digest_0.6.25        stringi_1.4.6        grid_3.6.2          
-## [46] bibtex_0.4.2.2       tools_3.6.2          magrittr_1.5        
-## [49] tibble_2.1.3         RSQLite_2.2.0        RefManageR_1.2.12   
-## [52] crayon_1.3.4         pkgconfig_2.0.3      xml2_1.2.5          
-## [55] prettyunits_1.1.1    lubridate_1.7.4      assertthat_0.2.1    
-## [58] rmarkdown_2.1        httr_1.4.1           R6_2.4.1            
-## [61] compiler_3.6.2
+## [28] memoise_1.1.0        labeling_0.3         Biobase_2.46.0      
+## [31] IRanges_2.20.2       curl_4.3             parallel_3.6.2      
+## [34] AnnotationDbi_1.48.0 highr_0.8            Rcpp_1.0.4          
+## [37] scales_1.1.0         openssl_1.4.1        S4Vectors_0.24.3    
+## [40] jsonlite_1.6.1       farver_2.0.3         bit_1.1-15.2        
+## [43] hms_0.5.3            askpass_1.1          digest_0.6.25       
+## [46] stringi_1.4.6        grid_3.6.2           bibtex_0.4.2.2      
+## [49] tools_3.6.2          magrittr_1.5         tibble_2.1.3        
+## [52] RSQLite_2.2.0        RefManageR_1.2.12    crayon_1.3.4        
+## [55] pkgconfig_2.0.3      xml2_1.2.5           prettyunits_1.1.1   
+## [58] lubridate_1.7.4      assertthat_0.2.1     rmarkdown_2.1       
+## [61] httr_1.4.1           R6_2.4.1             compiler_3.6.2
 ```
 
 # Bibliography
