@@ -201,7 +201,8 @@ ggplot(aes(y=GDF15, x=Knockout,
   theme(text = element_text(size=18),
         legend.position = c(0.25,0.75)) +
     scale_fill_manual(values=color.scheme,
-                      labels=c("Wild-Type","Muscle Tsc1 Knockout")) +
+                      labels=c("Wild-Type","Muscle Tsc1 Knockout"),
+                      name="Genotype") +
   geom_bar(stat='identity', 
              position='dodge',
              width=0.75) +
@@ -209,6 +210,26 @@ ggplot(aes(y=GDF15, x=Knockout,
   labs(y="Serum GDF15 (pg/mL)",
        x="",
        title="GDF15 Levels")
+
+filter(summary.data, 
+                     Diet=="NCD",
+                   `Feeding State`!='unknown',
+                   !(is.na(`Feeding State`)),
+                   !(is.na(Sex)),
+                   !(is.na(Knockout))) %>% #fills in missing NA
+ggplot(aes(y=GDF15, x=Knockout, 
+                ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se)) +
+  theme_classic()  +
+  theme(text = element_text(size=18),
+        legend.position = 'none') +
+  geom_bar(stat='identity', 
+             position='dodge',
+             width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y="Serum GDF15 (pg/mL)",
+       x="",
+       title="")
 ```    
     
     

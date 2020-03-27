@@ -29,7 +29,7 @@ The absorbance values were converted to amounts of serum GDF15 using the MyAssay
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout** in a file named **mTSC GDF15 ELISA.csv**.  This script was most recently updated on **Fri Mar 27 09:30:51 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout** in a file named **mTSC GDF15 ELISA.csv**.  This script was most recently updated on **Fri Mar 27 09:34:47 2020**.
 
 # Analysis
 
@@ -86,7 +86,7 @@ Graphed these as barplots, looking at effects of knockout, diet and sex.
 
 
 
-![Effects of Knockout on GDF15 Levels, NCD Animals Only](figures/gdf15-barplot-knockout-ncd-1.png)
+![Effects of Knockout on GDF15 Levels, NCD Animals Only](figures/gdf15-barplot-knockout-ncd-1.png)![Effects of Knockout on GDF15 Levels, NCD Animals Only](figures/gdf15-barplot-knockout-ncd-2.png)
     
     
 
