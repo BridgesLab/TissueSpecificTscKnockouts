@@ -64,16 +64,27 @@ membrane.genes <- getBM(attributes=c('ensembl_gene_id', 'go_id'),
                         values = 'GO:0016020',
                         mart = mouse.data) %>%
   pull(ensembl_gene_id)
+
+
+secreted.genes <-
+  rnaseq.stats %>%
+  mutate(SignalP=Row.names %in% signalp.genes,
+         GO_Membrane=Row.names %in% membrane.genes) %>%
+  mutate(Secreted=if_else(SignalP==TRUE&GO_Membrane==FALSE, 'Secreted','Non-Secreted'))
+  
+secreted.genes %>%  
+  count(Secreted) %>%
+  kable(caption="Predicted secreted gene products")
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/scripts**.  The normalized RNAseq data can be found in a file named **../data/processed/Binary DESeq Results.csv**.  This script was most recently updated on **Thu Mar 26 19:28:10 2020**.
 
-# Analysis
 
-The ENSEMBL dataset with genes annotated as having a signalP annotation includes 3766 or 15.447% of all genes.
+Table: Predicted secreted gene products
 
-Out of these I filtered out those with the GO annotation of 0016020, cellular component - membrane.  This removed 1906 genes.
-
+Secreted            n
+-------------  ------
+Non-Secreted    19610
+Secreted         1780
 
 ```r
 rnaseq.secreted <-
@@ -81,6 +92,29 @@ rnaseq.secreted <-
   filter(Row.names %in% signalp.genes)  %>% #keep proteins with signal peptide
   filter(!(Row.names %in% membrane.genes))  #remove membrane proteins
 
+secreted.output.file <- '../data/processed/Potential Secreted Genes.csv'
+
+rnaseq.secreted %>%
+  rename('ENSEMBL Gene ID'='Row.names',
+         'Gene Name'='external_gene_name') %>%
+  dplyr::select(-X1) %>%
+  dplyr::select('Gene Name', everything()) %>%
+  arrange(-abs(log2FoldChange)) %>%
+  write_csv(secreted.output.file)
+```
+
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/scripts**.  The normalized RNAseq data can be found in a file named **../data/processed/Binary DESeq Results.csv**.  This script was most recently updated on **Thu Mar 26 20:03:20 2020**.
+
+# Analysis
+
+The ENSEMBL dataset with genes annotated as having a signalP annotation includes 3766 and 157001 that are filtered with the GO annotation of 0016020, cellular component - membrane.  This resulted in 1780 secreted genes.
+
+Among 4403 genes that were differentially expressed in *Tsc1* knockout muscles, 253 were potential secreted proteins.
+
+These differentially expressed secreted proteins can be found in ../data/processed/Potential Secreted Genes.csv. 
+
+
+```r
 library(ggplot2)
 
 sig.secreted <- 
@@ -163,27 +197,28 @@ sessionInfo()
 ## [7] knitr_1.28          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] progress_1.2.2       tidyselect_1.0.0     xfun_0.12           
-##  [4] purrr_0.3.3          colorspace_1.4-1     vctrs_0.2.4         
-##  [7] htmltools_0.4.0      stats4_3.6.2         BiocFileCache_1.10.2
-## [10] yaml_2.2.1           blob_1.2.1           XML_3.99-0.3        
-## [13] rlang_0.4.5          pillar_1.4.3         withr_2.1.2         
-## [16] glue_1.3.2           DBI_1.1.0            rappdirs_0.3.1      
-## [19] BiocGenerics_0.32.0  bit64_0.9-7          dbplyr_1.4.2        
-## [22] lifecycle_0.2.0      plyr_1.8.6           stringr_1.4.0       
-## [25] munsell_0.5.0        gtable_0.3.0         evaluate_0.14       
-## [28] memoise_1.1.0        labeling_0.3         Biobase_2.46.0      
-## [31] IRanges_2.20.2       curl_4.3             parallel_3.6.2      
-## [34] AnnotationDbi_1.48.0 highr_0.8            Rcpp_1.0.4          
-## [37] scales_1.1.0         openssl_1.4.1        S4Vectors_0.24.3    
-## [40] jsonlite_1.6.1       farver_2.0.3         bit_1.1-15.2        
-## [43] hms_0.5.3            askpass_1.1          digest_0.6.25       
-## [46] stringi_1.4.6        grid_3.6.2           bibtex_0.4.2.2      
-## [49] tools_3.6.2          magrittr_1.5         tibble_2.1.3        
-## [52] RSQLite_2.2.0        RefManageR_1.2.12    crayon_1.3.4        
-## [55] pkgconfig_2.0.3      xml2_1.2.5           prettyunits_1.1.1   
-## [58] lubridate_1.7.4      assertthat_0.2.1     rmarkdown_2.1       
-## [61] httr_1.4.1           R6_2.4.1             compiler_3.6.2
+##  [1] Rcpp_1.0.4           lubridate_1.7.4      prettyunits_1.1.1   
+##  [4] assertthat_0.2.1     digest_0.6.25        utf8_1.1.4          
+##  [7] BiocFileCache_1.10.2 R6_2.4.1             plyr_1.8.6          
+## [10] stats4_3.6.2         RSQLite_2.2.0        evaluate_0.14       
+## [13] httr_1.4.1           highr_0.8            pillar_1.4.3        
+## [16] rlang_0.4.5          progress_1.2.2       curl_4.3            
+## [19] blob_1.2.1           S4Vectors_0.24.3     rmarkdown_2.1       
+## [22] labeling_0.3         RefManageR_1.2.12    stringr_1.4.0       
+## [25] bit_1.1-15.2         munsell_0.5.0        compiler_3.6.2      
+## [28] xfun_0.12            pkgconfig_2.0.3      askpass_1.1         
+## [31] BiocGenerics_0.32.0  htmltools_0.4.0      openssl_1.4.1       
+## [34] tidyselect_1.0.0     tibble_2.1.3         IRanges_2.20.2      
+## [37] XML_3.99-0.3         fansi_0.4.1          crayon_1.3.4        
+## [40] dbplyr_1.4.2         withr_2.1.2          rappdirs_0.3.1      
+## [43] grid_3.6.2           jsonlite_1.6.1       gtable_0.3.0        
+## [46] lifecycle_0.2.0      DBI_1.1.0            magrittr_1.5        
+## [49] scales_1.1.0         bibtex_0.4.2.2       cli_2.0.2           
+## [52] stringi_1.4.6        farver_2.0.3         xml2_1.2.5          
+## [55] vctrs_0.2.4          tools_3.6.2          bit64_0.9-7         
+## [58] Biobase_2.46.0       glue_1.3.2           purrr_0.3.3         
+## [61] hms_0.5.3            parallel_3.6.2       yaml_2.2.1          
+## [64] AnnotationDbi_1.48.0 colorspace_1.4-1     memoise_1.1.0
 ```
 
 # Bibliography
