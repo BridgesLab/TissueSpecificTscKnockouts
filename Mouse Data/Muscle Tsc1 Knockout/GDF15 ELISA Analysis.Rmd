@@ -1,0 +1,266 @@
+---
+title: "Effects of Muscle Tsc1 Knockout on Serum GDF15"
+author: "Detrick Snyder and Dave Bridges"
+date: "May 30, 2018"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: no
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Used Quantikine ELISA Assay (catalog number MGD150), following manufacturers instructions available at https://resources.rndsystems.com/pdfs/datasheets/mgd150.pdf.  Used 15 uL of frozen serum in each case unless otherwise noted in the datasheet.
+
+# Raw Data
+
+The absorbance values were converted to amounts of serum GDF15 using the MyAssays webtool at https://www.myassays.com/.  
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- 'mTSC GDF15 ELISA.csv' #make this a separate line, you can use any variable you want
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+if(filename %in% dir()){
+  exp.data <- read_csv(filename, col_types=
+                         cols(
+  X1 = col_character(),
+  Mouse = col_factor(levels=NULL),
+  Sex = col_factor(levels=NULL),
+  Genotype = col_factor(levels=NULL),
+  `Feeding State` = col_factor(levels=NULL),
+  Diet = col_factor(levels=NULL),
+  Volume = col_integer(),
+  Dilution = col_double(),
+  Well = col_character(),
+  Raw = col_double(),
+  `Background
+ Corrected` = col_double(),
+  Conc. = col_double()
+))
+}
+
+disregard.mice <- c('[868] 0','[837] 0') #had no liquid remaining in the serum
+
+exp.data <-
+  exp.data %>%
+  filter(!Mouse %in% disregard.mice) %>%
+  mutate(Knockout = ifelse(Genotype %in% c('fl/fl;tg/+','fl/+;tg/+'), 'Knockout','Wild-Type')) %>% #set knockouts
+  mutate(Knockout = relevel(as.factor(Knockout), ref="Wild-Type")) %>% #set reference value
+  mutate(Conc.adj = Conc.*50/15) #adjusted for dilution
+
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+First we summarized the data by feeding state, sex, diet and genotype.
+
+```{r analysis}
+summary.data <- 
+  exp.data %>%
+  filter(!is.na(Sex)) %>%
+  group_by(Diet,Sex,`Feeding State`,Knockout) %>%
+  summarize(GDF15 = mean(Conc.adj),
+            GDF15.se = se(Conc.adj),
+            GDF15.n = length(Conc.adj),
+            GDF15.shapiro = tryCatch(shapiro.test(Conc.)$p.value, error=function(e) {NA})) #doing because some groups <3
+
+kable(summary.data, caption="Summary of GDF15 by group")
+```
+
+Normality could not be assumed for the following groups:
+
+```{r normality}
+not.normal <- summary.data %>% filter(GDF15.shapiro<0.05)
+
+kable(not.normal, caption="Groups wherin GDF15 normality cannot be assumed")
+```
+
+## Lack of Normality Visualizations
+
+```{r normality-plot, fig.cap="Plots of groups that do not fit a normal distribution"}
+library(ggplot2)
+p1 <- ggplot(
+  exp.data %>% filter(Diet=="HFD", Sex=="M", `Feeding State`=="fast", Knockout=="Knockout"),
+  aes(Conc.adj)
+)
+
+p1 + geom_density(fill='cadetblue') +
+  geom_rug() +
+  expand_limits(x=c(0,3000)) +
+  labs(title="HFD, M, fasted, knockouts")
+
+p2 <- ggplot(
+  exp.data %>% filter(Diet=="NCD", Sex=="M", `Feeding State`=="fast", Knockout=="Wild-Type"),
+  aes(Conc.adj)
+)
+
+p2 + geom_density(fill='cadetblue') +
+  geom_rug() +
+  expand_limits(x=c(0,300)) +
+  labs(title="NCD, M, fasted, wild-type")
+```
+
+The only groups that were not normally distributed was a small group (n=4) with a single outlier.  These were the HFD, M, fasted, knockout group and the NCD, M, fasted, wild-type group.  Any comparasons to using these groups would use the Mann-Whitney non-parametric test.
+
+Here are the respective pairwise tests
+
+```{r pairwise-tests}
+library(car)
+pairwise.tests <- 
+  exp.data %>%
+  filter(!is.na(Sex)) %>%
+  group_by(Diet,Sex,`Feeding State`) %>%
+  mutate(Conc.adj = Conc.*50/15)  %>%
+  summarize(Fold.Increase=(mean(Conc.adj[Knockout=='Knockout'])-mean(Conc.adj[Knockout=='Wild-Type']))/mean(Conc.adj[Knockout=='Wild-Type']),
+            Mann.Whitney = wilcox.test(Conc.adj ~ Knockout)$p.value,
+            Levene = leveneTest(Conc.adj ~ Knockout)$"Pr(>F)"[1],
+            Welch=t.test(Conc.adj ~ Knockout,var.equal=F)$p.value,
+            Student=t.test(Conc.adj ~ Knockout,var.equal=T)$p.value)
+
+kable(pairwise.tests, caption="Pairwise tests for effects of knockout in each group, unadjusted", digits=c(0,0,0,1,9,3,9,9))
+```
+
+Graphed these as barplots, looking at effects of knockout, diet and sex.
+
+```{r gdf15-barplot-knockout, fig.cap="Effects of Knockout on GDF15 Levels"}
+data.graph <- filter(summary.data, 
+                   `Feeding State`!='unknown',
+                   !(is.na(`Feeding State`)),
+                   !(is.na(Sex)),
+                   !(is.na(Knockout))) %>%
+              complete(Diet,`Feeding State`,Knockout,Sex) #fills in missing NA
+
+p <- ggplot(data.graph,
+            aes(y=GDF15, x=Sex, 
+                ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se,
+                fill=Knockout))
+
+p + geom_bar(stat='identity', 
+             position='dodge',
+             width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  facet_grid(`Feeding State`~Diet) +
+  labs(y="GDF15 (pg/mL)")
+```
+
+
+
+```{r gdf15-barplot-knockout-ncd, fig.cap="Effects of Knockout on GDF15 Levels, NCD Animals Only"}
+filter(summary.data, 
+                     Diet=="NCD",
+                   `Feeding State`!='unknown',
+                   !(is.na(`Feeding State`)),
+                   !(is.na(Sex)),
+                   !(is.na(Knockout))) %>% #fills in missing NA
+ggplot(aes(y=GDF15, x=Knockout, 
+                ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se,
+                fill=Knockout)) +
+  theme_classic()  +
+  theme(text = element_text(size=18),
+        legend.position = c(0.25,0.75)) +
+    scale_fill_manual(values=color.scheme,
+                      labels=c("Wild-Type","Muscle Tsc1 Knockout")) +
+  geom_bar(stat='identity', 
+             position='dodge',
+             width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y="Serum GDF15 (pg/mL)",
+       x="",
+       title="GDF15 Levels")
+```    
+    
+    
+
+```{r gdf15-barplot-sex, fig.cap="Effects of Sex on GDF15 Levels"}
+p <- ggplot(data.graph,
+            aes(y=GDF15, x=Diet, 
+                ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se,
+                fill=Sex))
+p + geom_bar(stat='identity', 
+             position='dodge',
+             width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  facet_grid(`Feeding State`~Knockout) +
+  labs(y="GDF15 (pg/mL)")
+```
+
+```{r gdf15-barplot-diet, fig.cap="Effects of Diet on GDF15 Levels"}
+p <- ggplot(data.graph,
+            aes(y=GDF15, x=Sex, 
+                ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se,
+                fill=Diet))
+p + geom_bar(stat='identity', 
+             position='dodge',
+             width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  facet_grid(`Feeding State`~Knockout) +
+  labs(y="GDF15 (pg/mL)")
+```
+
+```{r gdf15-barplot-fast, fig.cap="Effects of Feeding State on GDF15 Levels"}
+p <- ggplot(data.graph,
+            aes(y=GDF15, x=Sex, 
+                ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se,
+                fill=`Feeding State`))
+p + geom_bar(stat='identity', 
+             position='dodge',
+             width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  facet_grid(Diet~Knockout) +
+  labs(y="GDF15 (pg/mL)")
+```
+
+# Interpretation
+
+There was a dramatic approximately 10 fold increase in GDF15 levels accross all conditions.  All the effects were significant between wild-type and knockouts.  There was only modest effects of diet, which could be confounded by the different ages of the animals and no apparent effects of sex.  Being in the fed state slightly, but not significantly reduced GDF15 levels.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
