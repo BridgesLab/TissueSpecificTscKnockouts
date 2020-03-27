@@ -7,7 +7,7 @@ This document indicates where the raw data for each Figure panel can be found, a
 |--------|--------|-------|
 |   1A     |    RNAseq/scripts/secreted-proteins.Rmd   |  potential-secreted-proteins-1   |
 |   1B     |    Mouse Data/Muscle Tsc1 Knockout/GDF15 ELISA Analysis.Rmd   | gdf15-barplot-knockout-ncd-2    |
-|   1C     |       |     |
+|   1C     |    Mouse Data/Muscle Tsc1 Knockout/Food-Preference-Analysis.Rmd   |   knockout-effects-barplot-relative-preference-males-4  |
 |   2A     |       |     |
 |   2B     |       |     |
 |   2C     |       |     |
