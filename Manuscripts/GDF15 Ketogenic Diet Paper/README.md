@@ -5,19 +5,22 @@ This document indicates where the raw data for each Figure panel can be found, a
 
 | Figure | Script | Image |
 |--------|--------|-------|
-|   1A     |       |     |
+|   1A     |    RNAseq/scripts/secreted-proteins.Rmd   |  potential-secreted-proteins-1   |
 |   1B     |       |     |
 |   1C     |       |     |
-|   1D     |       |     |
-|   1E     |     Mouse Data/Ketogenic Diets/BHB-Analysis.Rmd    |   bhb-barplot-4  |
 |   2A     |       |     |
 |   2B     |       |     |
 |   2C     |       |     |
 |   2D     |       |     |
-|   2E     |       |     |
+|   2E     |     Mouse Data/Ketogenic Diets/BHB-Analysis.Rmd    |   bhb-barplot-4  |
 |   3A     |       |     |
 |   3B     |       |     |
 |   3C     |       |     |
 |   3D     |       |     |
-|   3E     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  fasting-glucose-barplot-2  |
-|   3F     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  itt-line-2 |
+|   3E     |       |     |
+|   4A     |       |     |
+|   4B     |       |     |
+|   4C     |       |     |
+|   4D     |       |     |
+|   4E     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  fasting-glucose-barplot-2  |
+|   4F     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  itt-line-2 |

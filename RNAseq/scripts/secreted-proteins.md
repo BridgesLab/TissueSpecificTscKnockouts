@@ -103,7 +103,7 @@ rnaseq.secreted %>%
   write_csv(secreted.output.file)
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/scripts**.  The normalized RNAseq data can be found in a file named **../data/processed/Binary DESeq Results.csv**.  This script was most recently updated on **Thu Mar 26 20:03:20 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/scripts**.  The normalized RNAseq data can be found in a file named **../data/processed/Binary DESeq Results.csv**.  This script was most recently updated on **Thu Mar 26 20:09:33 2020**.
 
 # Analysis
 
@@ -168,6 +168,7 @@ ggplot(rnaseq.secreted,
 
 ![](figure/potential-secreted-proteins-1.png)<!-- -->
 
+Gdf15 was upregulated 46.343 fold (p=8.236&times; 10^-12^)
 
 # Session Information
 
