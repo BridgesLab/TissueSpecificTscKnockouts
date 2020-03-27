@@ -229,7 +229,7 @@ ggplot(aes(y=GDF15, x=Knockout,
   geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
   labs(y="Serum GDF15 (pg/mL)",
        x="",
-       title="")
+       title=" ")
 ```    
     
     

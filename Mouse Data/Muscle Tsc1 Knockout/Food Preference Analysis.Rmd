@@ -1,0 +1,252 @@
+---
+title: "Muscle Tsc1 Knockout Food Preference Test"
+author: "Detrick Snyder and Dave Bridges"
+date: "January 2, 2018"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+
+
+```{r data-input}
+library(readr) #loads the readr package
+
+file_saved <- 'mTSC Macronutrient Preference.csv'
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+exp.data <- read_csv(file_saved)
+
+exp.data <- mutate(exp.data, Sex = relevel(as.factor(sex),ref='M'),
+                   Diet = relevel(as.factor(diet), ref='KDC'),
+                   Genotype = relevel(as.factor(genotype), ref='fl/fl;tg/+'),
+                   Intake = `intake (total g)`,
+                   Cage = as.factor(cage))
+
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(file_saved %in% dir(), file_saved, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+```{r analysis}
+intake.data <-
+  exp.data %>%
+  #filter(is.na(discard)) %>% #remove wells marked as discard
+  filter(!is.na(`food final (g)`)) %>% #removed cages with no final food data
+  #filter(`intake (kcal per day)`!=0) %>%
+  select(ear.tag,Diet,Sex,Genotype,Intake) %>%
+  distinct(ear.tag,Diet, .keep_all = T) %>%
+  mutate(Genotype = relevel(Genotype, ref="fl/fl;+/+")) %>%
+  spread(Diet,Intake) %>%
+  mutate(Total = KDC + KD) %>%
+  mutate(KD.Pref = KD/KDC,
+         KD.Pct = KD/Total*100) #calculate relative preference between diets
+
+intake.data %>% group_by(Sex,Genotype) %>% count() %>% kable(caption="Animals enrolled in this study")
+
+intake.data %>% arrange(Genotype,Sex) %>% kable(caption="Calculated data for each cage.")
+
+summary.data.all <-
+  intake.data %>%
+  group_by(Sex,Genotype) %>%
+  summarize(Preference = mean(KD.Pref, na.rm=T),
+            Preference.Error = se(KD.Pref),
+            PReference.SD = sd(KD.Pref),
+            Percent = mean(KD.Pct, na.rm=T),
+            Percent.Error = se(KD.Pct),
+            N = length(KD.Pref))
+
+kable(summary.data.all)
+```
+
+## Statistics
+
+```{r anova}
+pref.lm <- lm(KD.Pref ~ Sex + Genotype, data=intake.data)
+library(broom)
+tidy(pref.lm) %>% kable(caption="Genotype and Sex Dependent Effects on Relative Preference.")
+
+pref.lm.int <- lm(KD.Pref ~ Sex * Genotype, data=intake.data)
+tidy(pref.lm.int) %>% kable(caption="Genotype and Sex Dependent Effects on Relative Preference.  Model with moderating effect of sex on genotype.")
+
+pref.lm.sex <- lm(KD.Pref ~ Sex , data=intake.data %>% filter(Genotype=='fl/fl;+/+'))
+tidy(pref.lm.sex) %>% kable(caption="Sex Dependent Effects on Relative Preference, wild-type only.")
+```
+
+## Boxplots
+
+```{r knockout-effects-boxplot}
+library(ggplot2)
+ggplot(data=intake.data,
+       aes(y=KD.Pref,
+           x=Sex,
+           fill=Genotype)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_dodge(width=0.75),aes(group=Genotype)) +
+  expand_limits(y=0) +
+  geom_hline(yintercept=1, lty=2) +
+  labs(title="Diet Preference",
+       y="Relative Preference of KD")
+```
+
+```{r sex-effects-boxplot}
+ggplot(data=intake.data %>% filter(Genotype == 'fl/fl;+/+'),
+       aes(y=KD.Pref,
+           x=Sex)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_dodge(width=0.75)) +
+  expand_limits(y=0) +
+  geom_hline(yintercept=1, lty=2) +
+  labs(title="Diet Preference",
+       y="Relative Preference of KD")
+```
+
+
+
+## Barplots
+
+```{r knockout-effects-barplot-relative-preference, fig.cap="Effects of genotype on macronutrient preference"}
+ggplot(data=summary.data.all,
+       aes(y=Preference,
+           ymin=Preference-Preference.Error,
+           ymax=Preference+Preference.Error,
+           x=Sex,
+           fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  expand_limits(y=0) +
+  geom_hline(yintercept=1, lty=2) +
+  labs(title="Diet Preference",
+              subtitle="Muscle Tsc1 Knockout Mice",
+       y="Relative Preference of KD")
+```
+
+```{r knockout-effects-barplot-relative-preference-males, fig.cap="Effects of genotype on macronutrient preference, males only"}
+library(forcats)
+ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_recode(Genotype, 'Wild-Type'='fl/fl;+/+', 'Knockout'='fl/fl;tg/+')),
+       aes(y=Preference,
+           ymin=Preference-Preference.Error,
+           ymax=Preference+Preference.Error,
+           x=Sex,
+           fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  expand_limits(y=0) +
+  geom_hline(yintercept=1, lty=2) +
+  labs(title="Diet Preference",
+              subtitle="Muscle Tsc1 Knockout Mice",
+       y="Relative Preference of KD over CD") 
+
+ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_recode(Genotype, 'Wild-Type'='fl/fl;+/+', 'Knockout'='fl/fl;tg/+')),
+       aes(y=Preference,
+           ymin=Preference-Preference.Error,
+           ymax=Preference+Preference.Error,
+           x=Genotype,
+           fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  expand_limits(y=0) +
+  geom_hline(yintercept=1, lty=2) +
+  labs(title="LCHF Diet Preference",
+       y="Preference of LCHF over CD",
+       x="") +
+  scale_fill_manual(values=color.scheme,
+                     labels=c("Wild-Type","Muscle Tsc1 Knockout")) +
+  theme_classic() +
+  theme(legend.position=c(0.75,0.75),
+        text=element_text(size=18))
+
+ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_recode(Genotype, 'Wild-Type'='fl/fl;+/+', 'Knockout'='fl/fl;tg/+')),
+       aes(y=Preference,
+           ymin=Preference-Preference.Error,
+           ymax=Preference+Preference.Error,
+           x=Genotype,
+           fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  expand_limits(y=0) +
+  geom_hline(yintercept=1, lty=2) +
+  labs(title="Diet Preference",
+       y="Preference of Fat over Carbohydrates",
+       x="") +
+  scale_fill_manual(values=color.scheme,
+                     labels=c("Wild-Type","Muscle Tsc1 Knockout")) +
+  theme_classic() +
+  theme(legend.position=c(0.75,0.75),
+        text=element_text(size=18))
+```
+
+```{r knockout-effects-barplot-percent, fig.cap="Effects of genotype on macronutrient percent of calories from KD"}
+ggplot(data=summary.data.all,
+       aes(y=Percent,
+           ymin=Percent-Percent.Error,
+           ymax=Percent+Percent.Error,
+           x=Sex,
+           fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  expand_limits(y=0) +
+  labs(title="Diet Preference",
+       y="Percent of Calories from KD")
+```
+
+```{r sex-effects-barplot, fig.cap="Effects of sex on macronutrient preference"}
+ggplot(data=summary.data.all %>% filter(Genotype == 'fl/fl;+/+'),
+       aes(y=Preference,
+           ymin=Preference-Preference.Error,
+           ymax=Preference+Preference.Error,
+           x=Sex)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  expand_limits(y=0) +
+  geom_hline(yintercept=1, lty=2) +
+  labs(title="Diet Preference",
+       y="Relative Preference of KD")
+```
+
+# Interpretation
+
+There is a preference towards ketogenic diet over its control diet.
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
