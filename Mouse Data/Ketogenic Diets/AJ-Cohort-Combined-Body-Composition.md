@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Mar 30 16:14:41 2020.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Mar 30 16:23:49 2020.
 
 
 # Data Entry
@@ -380,7 +380,7 @@ exp.data %>%
   geom_errorbar(width=0.5) +
   geom_line() +
     facet_grid(.~Sex) +
-  labs(title="Fat Mass",
+  labs(title="",
        x="Time on Diet (Weeks)",
        y="Fat Mass (g)") +
   scale_color_grey() +

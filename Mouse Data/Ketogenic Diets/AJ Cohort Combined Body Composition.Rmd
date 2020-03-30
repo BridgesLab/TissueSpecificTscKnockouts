@@ -291,7 +291,7 @@ exp.data %>%
   geom_errorbar(width=0.5) +
   geom_line() +
     facet_grid(.~Sex) +
-  labs(title="Fat Mass",
+  labs(title="",
        x="Time on Diet (Weeks)",
        y="Fat Mass (g)") +
   scale_color_grey() +
