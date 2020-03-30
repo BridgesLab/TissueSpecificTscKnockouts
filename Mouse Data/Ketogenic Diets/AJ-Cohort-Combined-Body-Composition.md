@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Mar 30 16:10:10 2020.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Mar 30 16:14:41 2020.
 
 
 # Data Entry
@@ -201,6 +201,30 @@ exp.data %>%
 
 ![Line Plot of Body Weights](figures/body-weight-lineplot-1.png)
 
+```r
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  group_by(Diet,Sex,diet.time) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="",
+       x="Time on Diet (Weeks)",
+       y="Body Weight (g)") +
+  scale_color_grey() +
+  theme_classic() +
+    theme(text=element_text(size=18),
+          legend.position = c(0.75,0.75))
+```
+
+![Line Plot of Body Weights](figures/body-weight-lineplot-2.png)
+
 
 ```r
 exp.data %>%
@@ -260,6 +284,30 @@ exp.data %>%
 
 ![Line Plot of Lean Mass](figures/lean-mass-lineplot-1.png)
 
+```r
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  group_by(Diet,Sex,diet.time) %>%
+  summarize(Average = mean(Mass, na.rm=T),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="",
+       x="Time on Diet (Weeks)",
+       y="Lean Mass (g)") +
+  scale_color_grey() +
+  theme_classic() +
+    theme(text=element_text(size=18),
+          legend.position = c(0.75,0.75))
+```
+
+![Line Plot of Lean Mass](figures/lean-mass-lineplot-2.png)
+
 
 ```r
 exp.data %>%
@@ -318,6 +366,30 @@ exp.data %>%
 ```
 
 ![Line Plot of Fat Mass](figures/fat-mass-lineplot-1.png)
+
+```r
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  group_by(Diet,Sex,diet.time) %>%
+  summarize(Average = mean(Mass,na.rm=T),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Fat Mass",
+       x="Time on Diet (Weeks)",
+       y="Fat Mass (g)") +
+  scale_color_grey() +
+  theme_classic() +
+    theme(text=element_text(size=18),
+          legend.position = c(0.75,0.75))
+```
+
+![Line Plot of Fat Mass](figures/fat-mass-lineplot-2.png)
 
 
 ```r

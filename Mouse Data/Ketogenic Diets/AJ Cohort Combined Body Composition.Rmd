@@ -138,6 +138,26 @@ exp.data %>%
   labs(title="Body Weight",
        x="Time on Diet (Weeks)",
        y="Body Weight (g)")
+
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  group_by(Diet,Sex,diet.time) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="",
+       x="Time on Diet (Weeks)",
+       y="Body Weight (g)") +
+  scale_color_grey() +
+  theme_classic() +
+    theme(text=element_text(size=18),
+          legend.position = c(0.75,0.75))
 ```
 
 ```{r body-weight-lineplot-change, fig.cap="Line Plot of Change in Body Weights"}
@@ -188,6 +208,26 @@ exp.data %>%
   labs(title="Lean Mass",
        x="Time on Diet (Weeks)",
        y="Lean Mass (g)") 
+
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  group_by(Diet,Sex,diet.time) %>%
+  summarize(Average = mean(Mass, na.rm=T),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="",
+       x="Time on Diet (Weeks)",
+       y="Lean Mass (g)") +
+  scale_color_grey() +
+  theme_classic() +
+    theme(text=element_text(size=18),
+          legend.position = c(0.75,0.75))
 ```
 
 ```{r lean-mass-lineplot-change, fig.cap="Line Plot of Change in Lean Mass"}
@@ -238,6 +278,26 @@ exp.data %>%
   labs(title="Fat Mass",
        x="Time on Diet (Weeks)",
        y="Fat Mass (g)") 
+
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  group_by(Diet,Sex,diet.time) %>%
+  summarize(Average = mean(Mass,na.rm=T),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Fat Mass",
+       x="Time on Diet (Weeks)",
+       y="Fat Mass (g)") +
+  scale_color_grey() +
+  theme_classic() +
+    theme(text=element_text(size=18),
+          legend.position = c(0.75,0.75))
 ```
 
 ```{r fat-mass-lineplot-change, fig.cap="Line Plot of Change in Fat Mass"}
