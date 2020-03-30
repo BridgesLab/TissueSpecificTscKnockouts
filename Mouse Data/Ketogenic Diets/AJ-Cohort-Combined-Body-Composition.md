@@ -16,42 +16,15 @@ output:
 ---
 
 
-```{r global_options, include=FALSE}
-library(knitr)
-#figures makde will go to directory called figures, will make them as both png and pdf files 
-opts_chunk$set(fig.path='figures/',
-               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
-options(scipen = 2, digits = 3)
-# set echo and message to TRUE if you want to display code blocks and code output respectively
-
-knitr::knit_hooks$set(inline = function(x) {
-  knitr:::format_sci(x, 'md')
-})
 
 
-superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
-  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
-         length = length, ...)
-
-
-se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
-
-#load these packages, nearly always needed
-library(tidyr)
-library(dplyr)
-library(readr)
-
-# sets maize and blue color scheme
-color.scheme <- c('#00274c', '#ffcb05')
-```
-
-This script can be found in `r getwd()` and was most recently run on `r date()`.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Mar 30 16:10:10 2020.
 
 
 # Data Entry
 
-```{r data-entry}
 
+```r
 col.types <- cols(
   age = col_double(),
   animal.id = col_factor(level=NULL),
@@ -72,19 +45,33 @@ exp.data <- read_csv(filename, col_types = col.types) %>%
   filter(!(MouseID %in% sick.mice)) # removed sick mice
 ```
 
-This script pulled in a total of `r dim(exp.data)[1]` observations.  This includes the following number of animals in each treatment group. 
+This script pulled in a total of 868 observations.  This includes the following number of animals in each treatment group. 
 
 # Enrolled Animals
 
 This is for animals where wer have any body composition data.
 
-```{r enrollees}
+
+```r
 exp.data %>%
   group_by(Sex,Diet) %>%
   distinct(animal.id, .keep_all = T) %>%
   count %>%
   kable(caption="Animals in each group of this cohort")
+```
 
+
+
+Table: Animals in each group of this cohort
+
+Sex   Diet               n
+----  ---------------  ---
+M     Control Diet      15
+M     Ketogenic Diet    27
+F     Control Diet       8
+F     Ketogenic Diet     8
+
+```r
 exp.data %>%
   group_by(Sex,Diet) %>%
   distinct(animal.id, .keep_all = T) %>%
@@ -93,9 +80,75 @@ exp.data %>%
   kable(caption="Animals in each group of this cohort")
 ```
 
+
+
+Table: Animals in each group of this cohort
+
+MouseID   Sex   Diet           
+--------  ----  ---------------
+4086      M     Control Diet   
+4087      M     Control Diet   
+4088      M     Control Diet   
+4089      M     Control Diet   
+4094      M     Control Diet   
+4095      M     Control Diet   
+4096      M     Control Diet   
+4097      M     Control Diet   
+1738      M     Control Diet   
+1745      M     Control Diet   
+1749      M     Control Diet   
+1750      M     Control Diet   
+8063      M     Control Diet   
+8064      M     Control Diet   
+8065      M     Control Diet   
+4090      M     Ketogenic Diet 
+4091      M     Ketogenic Diet 
+4092      M     Ketogenic Diet 
+4093      M     Ketogenic Diet 
+4098      M     Ketogenic Diet 
+4100      M     Ketogenic Diet 
+4101      M     Ketogenic Diet 
+1739      M     Ketogenic Diet 
+1740      M     Ketogenic Diet 
+1741      M     Ketogenic Diet 
+1742      M     Ketogenic Diet 
+1743      M     Ketogenic Diet 
+1744      M     Ketogenic Diet 
+1746      M     Ketogenic Diet 
+1747      M     Ketogenic Diet 
+1748      M     Ketogenic Diet 
+1751      M     Ketogenic Diet 
+1752      M     Ketogenic Diet 
+1753      M     Ketogenic Diet 
+8066      M     Ketogenic Diet 
+8068      M     Ketogenic Diet 
+8069      M     Ketogenic Diet 
+8070      M     Ketogenic Diet 
+8071      M     Ketogenic Diet 
+8072      M     Ketogenic Diet 
+8073      M     Ketogenic Diet 
+8074      M     Ketogenic Diet 
+4106      F     Control Diet   
+4107      F     Control Diet   
+4108      F     Control Diet   
+4109      F     Control Diet   
+4114      F     Control Diet   
+4115      F     Control Diet   
+4116      F     Control Diet   
+4117      F     Control Diet   
+4102      F     Ketogenic Diet 
+4103      F     Ketogenic Diet 
+4104      F     Ketogenic Diet 
+4105      F     Ketogenic Diet 
+4110      F     Ketogenic Diet 
+4111      F     Ketogenic Diet 
+4112      F     Ketogenic Diet 
+4113      F     Ketogenic Diet 
+
 # Body Weight
 
-```{r body-weight-scatterplot, fig.cap="Scatter Plot of Body Weights"}
+
+```r
 library(ggplot2)
 
 exp.data %>%
@@ -109,7 +162,10 @@ exp.data %>%
        y="Body Weight (g)")
 ```
 
-```{r body-weight-individual, fig.cap="Line Plot of Individual Body Weights"}
+![Scatter Plot of Body Weights](figures/body-weight-scatterplot-1.png)
+
+
+```r
 exp.data %>%
   filter(assay=='Body Weight') %>%
   ggplot(aes(y=Mass,x=diet.time,col=Diet,group=animal.id)) +
@@ -122,7 +178,10 @@ exp.data %>%
        y="Body Weight (g)") 
 ```
 
-```{r body-weight-lineplot, fig.cap="Line Plot of Body Weights"}
+![Line Plot of Individual Body Weights](figures/body-weight-individual-1.png)
+
+
+```r
 exp.data %>%
   filter(assay=='Body Weight') %>%
   group_by(Diet,Sex,diet.time) %>%
@@ -140,7 +199,10 @@ exp.data %>%
        y="Body Weight (g)")
 ```
 
-```{r body-weight-lineplot-change, fig.cap="Line Plot of Change in Body Weights"}
+![Line Plot of Body Weights](figures/body-weight-lineplot-1.png)
+
+
+```r
 exp.data %>%
   filter(assay=='Body Weight') %>%
   group_by(Diet,Sex,diet.time) %>%
@@ -158,9 +220,12 @@ exp.data %>%
        y="Change in Body Weight (g)")
 ```
 
+![Line Plot of Change in Body Weights](figures/body-weight-lineplot-change-1.png)
+
 # Lean Mass
 
-```{r lean-mass-scatterplot, fig.cap="Scatter Plot of Lean Mass"}
+
+```r
 exp.data %>%
   filter(assay=='Lean Mass') %>%
   ggplot(aes(y=Mass,x=diet.time,col=Diet)) +
@@ -172,7 +237,10 @@ exp.data %>%
        y="Lean Mass (g)")
 ```
 
-```{r lean-mass-lineplot, fig.cap="Line Plot of Lean Mass"}
+![Scatter Plot of Lean Mass](figures/lean-mass-scatterplot-1.png)
+
+
+```r
 exp.data %>%
   filter(assay=='Lean Mass') %>%
   group_by(Diet,Sex,diet.time) %>%
@@ -190,7 +258,10 @@ exp.data %>%
        y="Lean Mass (g)") 
 ```
 
-```{r lean-mass-lineplot-change, fig.cap="Line Plot of Change in Lean Mass"}
+![Line Plot of Lean Mass](figures/lean-mass-lineplot-1.png)
+
+
+```r
 exp.data %>%
   filter(assay=='Lean Mass') %>%
   group_by(Diet,Sex,diet.time) %>%
@@ -208,9 +279,12 @@ exp.data %>%
        y="Change in Lean Mass (g)") 
 ```
 
+![Line Plot of Change in Lean Mass](figures/lean-mass-lineplot-change-1.png)
+
 # Fat Mass
 
-```{r fat-mass-scatterplot, fig.cap="Scatter Plot of Fat Mass"}
+
+```r
 exp.data %>%
   filter(assay=='Total Fat Mass') %>%
   ggplot(aes(y=Mass,x=diet.time,col=Diet)) +
@@ -222,7 +296,10 @@ exp.data %>%
        y="Fat Mass (g)")
 ```
 
-```{r fat-mass-lineplot, fig.cap="Line Plot of Fat Mass"}
+![Scatter Plot of Fat Mass](figures/fat-mass-scatterplot-1.png)
+
+
+```r
 exp.data %>%
   filter(assay=='Total Fat Mass') %>%
   group_by(Diet,Sex,diet.time) %>%
@@ -240,7 +317,10 @@ exp.data %>%
        y="Fat Mass (g)") 
 ```
 
-```{r fat-mass-lineplot-change, fig.cap="Line Plot of Change in Fat Mass"}
+![Line Plot of Fat Mass](figures/fat-mass-lineplot-1.png)
+
+
+```r
 exp.data %>%
   filter(assay=='Total Fat Mass') %>%
   group_by(Diet,Sex,diet.time) %>%
@@ -257,3 +337,5 @@ exp.data %>%
        x="Time on Diet (Weeks)",
        y="Change in Fat Mass (g)") 
 ```
+
+![Line Plot of Change in Fat Mass](figures/fat-mass-lineplot-change-1.png)
