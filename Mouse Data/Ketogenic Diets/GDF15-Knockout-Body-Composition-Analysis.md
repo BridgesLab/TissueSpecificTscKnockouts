@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr  6 14:14:59 2020.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr  6 14:21:43 2020.
 
 
 # Data Entry
@@ -102,23 +102,23 @@ MouseID   Sex   Diet   Genotype
 
 # Body Weight
 
-![Scatter Plot of Body Weights](figures/body-weight-scatterplot-1.png)
+![Scatter Plot of Body Weights](figures/gdf15-ko-body-weight-scatterplot-1.png)
 
-![Line Plot of Individual Body Weights](figures/body-weight-individual-1.png)
+![Line Plot of Individual Body Weights](figures/gdf15-ko-body-weight-individual-1.png)
 
-![Line Plot of Body Weights](figures/body-weight-lineplot-1.png)
+![Line Plot of Body Weights](figures/gdf15-ko-body-weight-lineplot-1.png)
 
 # Lean Mass
 
-![Scatter Plot of Lean Mass](figures/lean-mass-scatterplot-1.png)
+![Scatter Plot of Lean Mass](figures/gdf15-ko-lean-mass-scatterplot-1.png)
 
-![Line Plot of Lean Mass](figures/lean-mass-lineplot-1.png)
+![Line Plot of Lean Mass](figures/gdf15-ko-lean-mass-lineplot-1.png)
 
 # Fat Mass
 
-![Scatter Plot of Fat Mass](figures/fat-mass-scatterplot-1.png)![Scatter Plot of Fat Mass](figures/fat-mass-scatterplot-2.png)
+![Scatter Plot of Fat Mass](figures/gdf15-ko-fat-mass-scatterplot-1.png)![Scatter Plot of Fat Mass](figures/gdf15-ko-fat-mass-scatterplot-2.png)
 
-![Line Plot of Fat Mass](figures/fat-mass-lineplot-1.png)![Line Plot of Fat Mass](figures/fat-mass-lineplot-2.png)![Line Plot of Fat Mass](figures/fat-mass-lineplot-3.png)
+![Line Plot of Fat Mass](figures/gdf15-ko-fat-mass-lineplot-1.png)![Line Plot of Fat Mass](figures/gdf15-ko-fat-mass-lineplot-2.png)![Line Plot of Fat Mass](figures/gdf15-ko-fat-mass-lineplot-3.png)
 
 ## Fat Mass Linear Models
 

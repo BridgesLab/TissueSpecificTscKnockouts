@@ -100,7 +100,7 @@ exp.data %>%
 
 # Body Weight
 
-```{r body-weight-scatterplot, fig.cap="Scatter Plot of Body Weights"}
+```{r gdf15-ko-body-weight-scatterplot, fig.cap="Scatter Plot of Body Weights"}
 library(ggplot2)
 
 exp.data %>%
@@ -114,7 +114,7 @@ exp.data %>%
        y="Body Weight (g)")
 ```
 
-```{r body-weight-individual, fig.cap="Line Plot of Individual Body Weights"}
+```{r gdf15-ko-body-weight-individual, fig.cap="Line Plot of Individual Body Weights"}
 exp.data %>%
   filter(assay=='Body Weight') %>%
   ggplot(aes(y=Mass,x=age.weeks,group=animal.id,lty=Genotype)) + #add col=Diet once diets are assessed
@@ -127,7 +127,7 @@ exp.data %>%
        y="Body Weight (g)") 
 ```
 
-```{r body-weight-lineplot, fig.cap="Line Plot of Body Weights"}
+```{r gdf15-ko-body-weight-lineplot, fig.cap="Line Plot of Body Weights"}
 exp.data %>%
   filter(assay=='Body Weight') %>%
   group_by(Diet,Sex,Genotype,age.weeks) %>%
@@ -147,7 +147,7 @@ exp.data %>%
 
 # Lean Mass
 
-```{r lean-mass-scatterplot, fig.cap="Scatter Plot of Lean Mass"}
+```{r gdf15-ko-lean-mass-scatterplot, fig.cap="Scatter Plot of Lean Mass"}
 exp.data %>%
   filter(assay=='Lean Mass') %>%
   ggplot(aes(y=Mass,x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
@@ -159,7 +159,7 @@ exp.data %>%
        y="Lean Mass (g)")
 ```
 
-```{r lean-mass-lineplot, fig.cap="Line Plot of Lean Mass"}
+```{r gdf15-ko-lean-mass-lineplot, fig.cap="Line Plot of Lean Mass"}
 exp.data %>%
   filter(assay=='Lean Mass') %>%
   group_by(Diet,Sex,Genotype,age.weeks) %>%
@@ -179,7 +179,7 @@ exp.data %>%
 
 # Fat Mass
 
-```{r fat-mass-scatterplot, fig.cap="Scatter Plot of Fat Mass"}
+```{r gdf15-ko-fat-mass-scatterplot, fig.cap="Scatter Plot of Fat Mass"}
 exp.data %>%
   filter(assay=='Total Fat Mass') %>%
   ggplot(aes(y=Mass,x=age.weeks,lty=Genotype, shape=Genotype)) + #add col=Diet once diets are assessed
@@ -201,7 +201,7 @@ exp.data %>%
        y="Fat Mass (g)")
 ```
 
-```{r fat-mass-lineplot, fig.cap="Line Plot of Fat Mass"}
+```{r gdf15-ko-fat-mass-lineplot, fig.cap="Line Plot of Fat Mass"}
 exp.data %>%
   filter(assay=='Total Fat Mass') %>%
   group_by(Diet,Sex,Genotype,age.weeks) %>%
