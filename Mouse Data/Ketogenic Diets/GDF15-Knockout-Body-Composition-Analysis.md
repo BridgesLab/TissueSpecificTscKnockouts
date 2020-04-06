@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr  6 14:53:05 2020.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr  6 15:01:03 2020.
 
 
 # Data Entry
@@ -540,3 +540,40 @@ Table: Chi-squared test betweenn models with and without the genotype term, acco
 ----------------  ---  ----  ----  -------  ---------  ------  -------  -----------
 sex.fat.lm.geno     6   417   438     -203        405      NA       NA           NA
 sex.fat.lm         10   406   440     -193        386    19.3        4      0.00068
+
+### Modifying Effect of Sex Independent of Genotype
+
+
+```r
+sex.fat.wt.lm <- lmer(Mass ~ Diet.Weeks*Sex + (1|animal.id), 
+                   data = diet.data %>% filter(Genotype=='+/+'), REML=F)
+sex.fat.wt.lm.null <- lmer(Mass ~ Diet.Weeks + (1|animal.id), 
+                        data = diet.data %>% filter(Genotype=='+/+'), REML=F)
+
+
+coef(summary(sex.fat.wt.lm)) %>% kable(caption="Mixed linear models for fat mass changes of wild-type mice on diet, including moderation by sex")
+```
+
+
+
+Table: Mixed linear models for fat mass changes of wild-type mice on diet, including moderation by sex
+
+                   Estimate   Std. Error     df   t value   Pr(>|t|)
+----------------  ---------  -----------  -----  --------  ---------
+(Intercept)           2.013        0.242   24.7     8.323      0.000
+Diet.Weeks            0.332        0.048   77.1     6.966      0.000
+SexF                 -0.222        0.360   23.5    -0.615      0.545
+Diet.Weeks:SexF      -0.233        0.069   77.1    -3.388      0.001
+
+```r
+anova(sex.fat.wt.lm, sex.fat.wt.lm.null) %>% kable(caption="Chi-squared test between wild-type models with and without the inclusion of sex")
+```
+
+
+
+Table: Chi-squared test between wild-type models with and without the inclusion of sex
+
+                      Df   AIC   BIC   logLik   deviance   Chisq   Chi Df   Pr(>Chisq)
+-------------------  ---  ----  ----  -------  ---------  ------  -------  -----------
+sex.fat.wt.lm.null     4   192   202    -91.8        184      NA       NA           NA
+sex.fat.wt.lm          6   181   196    -84.3        169    14.9        2        0.001

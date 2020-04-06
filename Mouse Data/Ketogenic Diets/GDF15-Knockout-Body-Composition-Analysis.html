@@ -435,12 +435,13 @@ summary {
 <li><a href="#fat-mass-linear-models">Fat Mass Linear Models</a><ul>
 <li><a href="#summary-of-fat-mass-accretion">Summary of Fat Mass Accretion</a></li>
 <li><a href="#modifying-effect-of-sex-on-fat-mass-changes">Modifying Effect of Sex on Fat Mass Changes</a></li>
+<li><a href="#modifying-effect-of-sex-independent-of-genotype">Modifying Effect of Sex Independent of Genotype</a></li>
 </ul></li>
 </ul></li>
 </ul>
 </div>
 
-<p>This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr 6 14:53:05 2020.</p>
+<p>This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr 6 15:01:03 2020.</p>
 <div id="data-entry" class="section level1">
 <h1>Data Entry</h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">raw_data_file &lt;-<span class="st"> &quot;KD GDF15 Knockout Raw MRI Data.csv&quot;</span></a>
@@ -1460,6 +1461,104 @@ summary {
 <td align="right">19.3</td>
 <td align="right">4</td>
 <td align="right">0.00068</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="modifying-effect-of-sex-independent-of-genotype" class="section level3">
+<h3>Modifying Effect of Sex Independent of Genotype</h3>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">sex.fat.wt.lm &lt;-<span class="st"> </span><span class="kw">lmer</span>(Mass <span class="op">~</span><span class="st"> </span>Diet.Weeks<span class="op">*</span>Sex <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>animal.id), </a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">                   <span class="dt">data =</span> diet.data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(Genotype<span class="op">==</span><span class="st">'+/+'</span>), <span class="dt">REML=</span>F)</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">sex.fat.wt.lm.null &lt;-<span class="st"> </span><span class="kw">lmer</span>(Mass <span class="op">~</span><span class="st"> </span>Diet.Weeks <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>animal.id), </a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">                        <span class="dt">data =</span> diet.data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(Genotype<span class="op">==</span><span class="st">'+/+'</span>), <span class="dt">REML=</span>F)</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb25-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb25-7" data-line-number="7"><span class="kw">coef</span>(<span class="kw">summary</span>(sex.fat.wt.lm)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Mixed linear models for fat mass changes of wild-type mice on diet, including moderation by sex&quot;</span>)</a></code></pre></div>
+<table>
+<caption>Mixed linear models for fat mass changes of wild-type mice on diet, including moderation by sex</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Estimate</th>
+<th align="right">Std. Error</th>
+<th align="right">df</th>
+<th align="right">t value</th>
+<th align="right">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(Intercept)</td>
+<td align="right">2.013</td>
+<td align="right">0.242</td>
+<td align="right">24.7</td>
+<td align="right">8.323</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td>Diet.Weeks</td>
+<td align="right">0.332</td>
+<td align="right">0.048</td>
+<td align="right">77.1</td>
+<td align="right">6.966</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td>SexF</td>
+<td align="right">-0.222</td>
+<td align="right">0.360</td>
+<td align="right">23.5</td>
+<td align="right">-0.615</td>
+<td align="right">0.545</td>
+</tr>
+<tr class="even">
+<td>Diet.Weeks:SexF</td>
+<td align="right">-0.233</td>
+<td align="right">0.069</td>
+<td align="right">77.1</td>
+<td align="right">-3.388</td>
+<td align="right">0.001</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">anova</span>(sex.fat.wt.lm, sex.fat.wt.lm.null) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Chi-squared test between wild-type models with and without the inclusion of sex&quot;</span>)</a></code></pre></div>
+<table>
+<caption>Chi-squared test between wild-type models with and without the inclusion of sex</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Df</th>
+<th align="right">AIC</th>
+<th align="right">BIC</th>
+<th align="right">logLik</th>
+<th align="right">deviance</th>
+<th align="right">Chisq</th>
+<th align="right">Chi Df</th>
+<th align="right">Pr(&gt;Chisq)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sex.fat.wt.lm.null</td>
+<td align="right">4</td>
+<td align="right">192</td>
+<td align="right">202</td>
+<td align="right">-91.8</td>
+<td align="right">184</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>sex.fat.wt.lm</td>
+<td align="right">6</td>
+<td align="right">181</td>
+<td align="right">196</td>
+<td align="right">-84.3</td>
+<td align="right">169</td>
+<td align="right">14.9</td>
+<td align="right">2</td>
+<td align="right">0.001</td>
 </tr>
 </tbody>
 </table>

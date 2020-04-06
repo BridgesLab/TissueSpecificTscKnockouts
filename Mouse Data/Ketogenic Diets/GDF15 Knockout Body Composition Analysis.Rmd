@@ -352,3 +352,17 @@ coef(summary(sex.fat.lm)) %>% kable(caption="Mixed linear models for fat mass ch
 anova(sex.fat.lm, sex.fat.lm.null) %>% kable(caption="Chi-squared test between full models with and without the inclusion of sex", digits=15)
 anova(sex.fat.lm, sex.fat.lm.geno) %>% kable(caption="Chi-squared test betweenn models with and without the genotype term, accounting for the modifying effects of sex", digits=5)
 ```
+
+### Modifying Effect of Sex Independent of Genotype
+
+```{r fm-wt-sex-interaction}
+sex.fat.wt.lm <- lmer(Mass ~ Diet.Weeks*Sex + (1|animal.id), 
+                   data = diet.data %>% filter(Genotype=='+/+'), REML=F)
+sex.fat.wt.lm.null <- lmer(Mass ~ Diet.Weeks + (1|animal.id), 
+                        data = diet.data %>% filter(Genotype=='+/+'), REML=F)
+
+
+coef(summary(sex.fat.wt.lm)) %>% kable(caption="Mixed linear models for fat mass changes of wild-type mice on diet, including moderation by sex")
+
+anova(sex.fat.wt.lm, sex.fat.wt.lm.null) %>% kable(caption="Chi-squared test between wild-type models with and without the inclusion of sex")
+```
