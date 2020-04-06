@@ -11,8 +11,8 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   2A     |    Mouse Data/Ketogenic Diets/AJ Cohort Combined Body Composition.Rmd   | body-weight-lineplot-2    |
 |   2B     |    Mouse Data/Ketogenic Diets/AJ Cohort Combined Body Composition.Rmd   | lean-mass-lineplot-2    |
 |   2C     |    Mouse Data/Ketogenic Diets/AJ Cohort Combined Body Composition.Rmd   | fat-mass-lineplot-2    |
-|   2D     |       |     |
-|   2E     |     Mouse Data/Ketogenic Diets/BHB-Analysis.Rmd    |   bhb-barplot-4  |
+|   2D     |    Mouse Data/Ketogenic Diets/BHB-Analysis.Rmd    |   bhb-barplot-4  | 
+|   2E     |    Mouse Data/Ketogenic Diets/GDF15-KD-ELISA-analysis.Rmd | kd-gdf15-barplots-3 |
 |   3A     |       |     |
 |   3B     |       |     |
 |   3C     |       |     |
