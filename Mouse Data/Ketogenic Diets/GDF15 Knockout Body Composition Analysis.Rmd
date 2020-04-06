@@ -143,6 +143,26 @@ exp.data %>%
   labs(title="Body Weight",
        x="Age (Weeks)",
        y="Body Weight (g)")
+
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  group_by(Diet,Sex,Genotype,age.weeks) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="",
+       x="Age (Weeks)",
+       y="Body Weight (g)") +
+  geom_vline(xintercept=10,lty=2) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position = c(0.75,0.25))
 ```
 
 # Lean Mass
@@ -175,6 +195,26 @@ exp.data %>%
   labs(title="Lean Mass",
        x="Age (Weeks)",
        y="Lean Mass (g)") 
+
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  group_by(Diet,Sex,Genotype,age.weeks) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="",
+       x="Age (Weeks)",
+       y="Lean Mass (g)") +
+  geom_vline(xintercept=10,lty=2) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position = c(0.75,0.25))
 ```
 
 # Fat Mass
@@ -230,9 +270,10 @@ exp.data %>%
   geom_errorbar(width=0.5) +
   geom_line() +
     facet_grid(.~Sex) +
-  labs(title="Fat Mass",
+  labs(title="",
        x="Age (Weeks)",
        y="Fat Mass (g)") +
+  geom_vline(xintercept=10, lty=2) +
   theme_classic() +
   theme(text = element_text(size=18),
         legend.position=c(0.15,0.75))
