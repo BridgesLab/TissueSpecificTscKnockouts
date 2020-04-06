@@ -362,3 +362,26 @@ exp.data %>%
        x="Time on Diet (Weeks)",
        y="Change in Fat Mass (g)") 
 ```
+
+# Summary of Changes
+
+```{r summary-changes}
+exp.data %>%
+  filter(diet.time %in% c(1,3)) %>%
+  arrange(diet.time) %>%
+  filter(assay!='Plasma Glucose') %>%
+  group_by(assay,MouseID,Diet,Sex) %>%
+  summarize(Difference = (Mass[2]-Mass[1])/Mass[1]*100,
+            Start=Mass[1]) %>%
+  group_by(assay,Diet,Sex) %>%
+  summarize(Mean.Difference = mean(Difference, na.rm=T)) %>%
+  pivot_wider(names_from=Diet, values_from=Mean.Difference) %>%
+  mutate(Difference = `Control Diet` - `Ketogenic Diet`) %>%
+  kable(caption="Percent changes in body composition over the diets")
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```

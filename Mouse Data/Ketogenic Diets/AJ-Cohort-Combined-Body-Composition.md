@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr  6 10:08:18 2020.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr  6 10:31:54 2020.
 
 
 # Data Entry
@@ -570,3 +570,78 @@ exp.data %>%
 ```
 
 ![Line Plot of Change in Fat Mass](figures/fat-mass-lineplot-change-1.png)
+
+# Summary of Changes
+
+
+```r
+exp.data %>%
+  filter(diet.time %in% c(1,3)) %>%
+  arrange(diet.time) %>%
+  filter(assay!='Plasma Glucose') %>%
+  group_by(assay,MouseID,Diet,Sex) %>%
+  summarize(Difference = (Mass[2]-Mass[1])/Mass[1]*100,
+            Start=Mass[1]) %>%
+  group_by(assay,Diet,Sex) %>%
+  summarize(Mean.Difference = mean(Difference, na.rm=T)) %>%
+  pivot_wider(names_from=Diet, values_from=Mean.Difference) %>%
+  mutate(Difference = `Control Diet` - `Ketogenic Diet`) %>%
+  kable(caption="Percent changes in body composition over the diets")
+```
+
+
+
+Table: Percent changes in body composition over the diets
+
+assay            Sex    Control Diet   Ketogenic Diet   Difference
+---------------  ----  -------------  ---------------  -----------
+Body Weight      M             3.615           -0.147        3.761
+Body Weight      F             6.062            7.773       -1.711
+Total Fat Mass   M            18.104           -5.002       23.107
+Total Fat Mass   F            34.725           11.196       23.529
+Lean Mass        M             0.424            1.048       -0.624
+Lean Mass        F             3.388            8.243       -4.855
+
+# Session Information
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 3.6.3 (2020-02-29)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS Catalina 10.15.3
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] lmerTest_3.1-1     lme4_1.1-21        Matrix_1.2-18      ggplot2_3.3.0.9000
+## [5] readr_1.3.1        dplyr_0.8.5        tidyr_1.0.2        knitr_1.28        
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.4          nloptr_1.2.2.1      pillar_1.4.3       
+##  [4] compiler_3.6.3      highr_0.8           tools_3.6.3        
+##  [7] boot_1.3-24         digest_0.6.25       evaluate_0.14      
+## [10] lifecycle_0.2.0     tibble_2.1.3        gtable_0.3.0       
+## [13] nlme_3.1-144        lattice_0.20-38     mgcv_1.8-31        
+## [16] pkgconfig_2.0.3     rlang_0.4.5         yaml_2.2.1         
+## [19] xfun_0.12           withr_2.1.2         stringr_1.4.0      
+## [22] vctrs_0.2.4         hms_0.5.3           grid_3.6.3         
+## [25] tidyselect_1.0.0    glue_1.3.2          R6_2.4.1           
+## [28] rmarkdown_2.1       minqa_1.2.4         farver_2.0.3       
+## [31] purrr_0.3.3         magrittr_1.5        MASS_7.3-51.5      
+## [34] scales_1.1.0        htmltools_0.4.0     splines_3.6.3      
+## [37] assertthat_0.2.1    colorspace_1.4-1    numDeriv_2016.8-1.1
+## [40] labeling_0.3        stringi_1.4.6       munsell_0.5.0      
+## [43] crayon_1.3.4
+```
