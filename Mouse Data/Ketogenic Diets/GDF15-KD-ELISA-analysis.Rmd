@@ -19,7 +19,7 @@ output:
 library(knitr)
 #figures makde will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
-               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
 options(scipen = 2, digits = 3)
 # set echo and message to TRUE if you want to display code blocks and code output respectively
 
@@ -88,48 +88,58 @@ exp.data <-
 
 summary.data <- 
   exp.data %>%
-  group_by(Diet,Sex,Cohort,Treatment) %>%
+  group_by(Diet,Sex,Cohort) %>%
   summarize(GDF15 = mean(Concentration, na.rm=T),
             Error = se(Concentration),
             N = length(Concentration)) 
 
 summary.data.no.cht <- 
   exp.data %>%
-  group_by(Diet,Sex,Treatment) %>%
-  summarize(GDF15 = mean(Conc., na.rm=T),
-            Error = se(Conc.),
-            N = length(Conc.))
+  group_by(Diet,Sex) %>%
+  summarize(GDF15 = mean(Concentration, na.rm=T),
+            Error = se(Concentration),
+            N = length(Concentration))
 
 
 kd.data <- exp.data %>% filter(Diet %in% c("CD",'KD')) %>% select(Diet,Sex, Concentration)
 
 library(car)
 #for female mice
-
+library(broom)
 shapiro.test(log(subset(kd.data, Sex=="F"&Diet=="CD")$Concentration))
 wilcox.test(Concentration ~ Diet, filter(kd.data, Sex=="F")) 
 shapiro.test(subset(kd.data, Sex=="F"&Diet=="CD")$Concentration)
 shapiro.test(subset(kd.data, Sex=="F"&Diet=="KD")$Concentration)
 #since neither can be presumed to NOT be normally distributed we can go ahead with a t-test, if fails then wilocox
 leveneTest(Concentration ~ Diet, filter(kd.data, Sex=="F")) #to test for equal variance
-t.test(Concentration ~ Diet, filter(kd.data, Sex=="F"), var.equal=T) #Welch vs Student is var.equal=T/F
+t.test(Concentration ~ Diet, filter(kd.data, Sex=="F"), var.equal=T) %>%
+  tidy %>% kable(caption="Female t-test")#Welch vs Student is var.equal=T/F
 
 #for male mice
 shapiro.test(subset(kd.data, Sex=="M"&Diet=="CD")$Concentration)
 shapiro.test(subset(kd.data, Sex=="M"&Diet=="KD")$Concentration)
 #since neither can be presumed to NOT be normally distributed we can go ahead with a t-test
 leveneTest(Concentration ~ Diet, filter(kd.data, Sex=="M")) #to test for equal variance
-t.test(Concentration ~ Diet, filter(kd.data, Sex=="M"), var.equal=T) #Welch vs Student is var.equal=T/F
+t.test(Concentration ~ Diet, filter(kd.data, Sex=="M"), var.equal=T) %>%
+  tidy %>% kable(caption="Male t-test")#Welch vs Student is var.equal=T/F
 
 
-summary.data.no.cht %>% filter(Diet %in% c('CD','KD')) %>% select(-Treatment) %>% kable(caption="Summary statistics for effects of a ketogenic diet")
+summary.data.no.cht %>% filter(Diet %in% c('CD','KD')) %>%  kable(caption="Summary statistics for effects of a ketogenic diet")
 
 library(broom)
-lm(Concentration ~ Sex + Diet,
-    exp.data %>% filter(Diet %in% c('CD','KD'))) %>%
+gdf15.lm <- lm(Concentration ~ Sex + Diet,exp.data %>% filter(Diet %in% c('CD','KD')))
+
+gdf15.lm%>%
   tidy %>% 
   kable(caption="ANOVA for effects of sex and ketogenic diet on GDF15 levels")
+
+lm(Concentration ~ Sex * Diet,
+    exp.data %>% filter(Diet %in% c('CD','KD'))) %>%
+  tidy %>% 
+  kable(caption="ANOVA for interacti g effects of sex and ketogenic diet on GDF15 levels")
 ```
+
+There was a `r coef(gdf15.lm)['DietKD']/coef(gdf15.lm)['(Intercept)']*100`% sex adjusted increase in GDF15 levels.
 
 ```{r kd-gdf15-barplots, fig.cap="Effects of Ketogenic Diet on GDF15 Levels in Serum"}
 library(ggplot2)
@@ -171,7 +181,7 @@ ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
   geom_bar(stat='identity', position='dodge', width=0.75) +
   geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
   expand_limits(y=0) +
-  labs(title="GDF15 Levels",
+  labs(title="",
        y="Serum GDF15 (pg/mL)") +
   scale_fill_grey(labels=c("Control Diet","Ketogenic Diet"), name="") +
   theme_classic() +

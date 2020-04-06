@@ -139,10 +139,27 @@ concentration) is:
 
 \[ Concentration = c\left ( \frac{a-d}{y-d} -1 \right )^{\frac{1}{b}} \]
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(readr) }\CommentTok{#loads the readr package}
+\NormalTok{filename <-}\StringTok{ 'GDF15 ELISA Results.csv'} 
+
+\CommentTok{#this loads whatever the file is into a dataframe called exp.data if it exists}
+\NormalTok{exp.data <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(filename, }\DataTypeTok{skip=}\DecValTok{30}\NormalTok{,}
+                       \DataTypeTok{na =} \StringTok{'< Curve'}\NormalTok{,}
+                       \DataTypeTok{col_types=}\KeywordTok{cols}\NormalTok{(}\DataTypeTok{Mouse =} \KeywordTok{col_factor}\NormalTok{(}\DataTypeTok{levels=}\OtherTok{NULL}\NormalTok{),}
+                                      \DataTypeTok{Diet =} \KeywordTok{col_factor}\NormalTok{(}\DataTypeTok{levels=}\OtherTok{NULL}\NormalTok{),}
+                                      \DataTypeTok{Sex =} \KeywordTok{col_factor}\NormalTok{(}\DataTypeTok{levels=}\OtherTok{NULL}\NormalTok{),}
+                                      \DataTypeTok{Cohort =} \KeywordTok{col_factor}\NormalTok{(}\DataTypeTok{levels=}\OtherTok{NULL}\NormalTok{),}
+                                      \DataTypeTok{Treatment =} \KeywordTok{col_factor}\NormalTok{(}\DataTypeTok{levels=}\OtherTok{NULL}\NormalTok{),}
+                                      \DataTypeTok{Conc=} \KeywordTok{col_double}\NormalTok{()))}
+\end{Highlighting}
+\end{Shaded}
+
 These data can be found in
 \textbf{/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse
 Data/Ketogenic Diets} in a file named \textbf{GDF15 ELISA Results.csv}.
-This script was most recently updated on \textbf{Mon Apr 6 11:01:47
+This script was most recently updated on \textbf{Mon Apr 6 11:18:03
 2020}.
 
 \hypertarget{analysis}{%
@@ -154,6 +171,37 @@ This script was most recently updated on \textbf{Mon Apr 6 11:01:47
 We had serum from the two cohorts of ketogenic mice, some with males and
 females
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(forcats)}
+\NormalTok{exp.data <-}
+\StringTok{  }\NormalTok{exp.data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Concentration =}\NormalTok{ Conc.}\OperatorTok{*}\DecValTok{50}\OperatorTok{/}\NormalTok{Volume) }
+
+\NormalTok{summary.data <-}\StringTok{ }
+\StringTok{  }\NormalTok{exp.data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Diet,Sex,Cohort) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{GDF15 =} \KeywordTok{mean}\NormalTok{(Concentration, }\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{Error =} \KeywordTok{se}\NormalTok{(Concentration),}
+            \DataTypeTok{N =} \KeywordTok{length}\NormalTok{(Concentration)) }
+
+\NormalTok{summary.data.no.cht <-}\StringTok{ }
+\StringTok{  }\NormalTok{exp.data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Diet,Sex) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{GDF15 =} \KeywordTok{mean}\NormalTok{(Concentration, }\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{Error =} \KeywordTok{se}\NormalTok{(Concentration),}
+            \DataTypeTok{N =} \KeywordTok{length}\NormalTok{(Concentration))}
+
+
+\NormalTok{kd.data <-}\StringTok{ }\NormalTok{exp.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"CD"}\NormalTok{,}\StringTok{'KD'}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(Diet,Sex, Concentration)}
+
+\KeywordTok{library}\NormalTok{(car)}
+\CommentTok{#for female mice}
+\KeywordTok{library}\NormalTok{(broom)}
+\KeywordTok{shapiro.test}\NormalTok{(}\KeywordTok{log}\NormalTok{(}\KeywordTok{subset}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"F"}\OperatorTok{&}\NormalTok{Diet}\OperatorTok{==}\StringTok{"CD"}\NormalTok{)}\OperatorTok{$}\NormalTok{Concentration))}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ## 
 ##  Shapiro-Wilk normality test
@@ -161,6 +209,12 @@ females
 ## data:  log(subset(kd.data, Sex == "F" & Diet == "CD")$Concentration)
 ## W = 0.9, p-value = 0.1
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{wilcox.test}\NormalTok{(Concentration }\OperatorTok{~}\StringTok{ }\NormalTok{Diet, }\KeywordTok{filter}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"F"}\NormalTok{)) }
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -171,6 +225,12 @@ females
 ## alternative hypothesis: true location shift is not equal to 0
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(}\KeywordTok{subset}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"F"}\OperatorTok{&}\NormalTok{Diet}\OperatorTok{==}\StringTok{"CD"}\NormalTok{)}\OperatorTok{$}\NormalTok{Concentration)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ## 
 ##  Shapiro-Wilk normality test
@@ -178,6 +238,12 @@ females
 ## data:  subset(kd.data, Sex == "F" & Diet == "CD")$Concentration
 ## W = 0.9, p-value = 0.2
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(}\KeywordTok{subset}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"F"}\OperatorTok{&}\NormalTok{Diet}\OperatorTok{==}\StringTok{"KD"}\NormalTok{)}\OperatorTok{$}\NormalTok{Concentration)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -187,6 +253,13 @@ females
 ## W = 0.9, p-value = 0.3
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#since neither can be presumed to NOT be normally distributed we can go ahead with a t-test, if fails then wilocox}
+\KeywordTok{leveneTest}\NormalTok{(Concentration }\OperatorTok{~}\StringTok{ }\NormalTok{Diet, }\KeywordTok{filter}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"F"}\NormalTok{)) }\CommentTok{#to test for equal variance}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ## Levene's Test for Homogeneity of Variance (center = median)
 ##       Df F value Pr(>F)
@@ -194,56 +267,102 @@ females
 ##       11
 \end{verbatim}
 
-\begin{verbatim}
-## 
-##  Two Sample t-test
-## 
-## data:  Concentration by Diet
-## t = -2, df = 11, p-value = 0.06
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -34.12   1.06
-## sample estimates:
-## mean in group CD mean in group KD 
-##             14.6             31.1
-\end{verbatim}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{t.test}\NormalTok{(Concentration }\OperatorTok{~}\StringTok{ }\NormalTok{Diet, }\KeywordTok{filter}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"F"}\NormalTok{), }\DataTypeTok{var.equal=}\NormalTok{T) }\OperatorTok{%>%}
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Female t-test"}\NormalTok{)}\CommentTok{#Welch vs Student is var.equal=T/F}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrrll@{}}
+\caption{Female t-test}\tabularnewline
+\toprule
+estimate1 & estimate2 & statistic & p.value & parameter & conf.low &
+conf.high & method & alternative\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+estimate1 & estimate2 & statistic & p.value & parameter & conf.low &
+conf.high & method & alternative\tabularnewline
+\midrule
+\endhead
+14.6 & 31.1 & -2.07 & 0.063 & 11 & -34.1 & 1.06 & Two Sample t-test &
+two.sided\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#for male mice}
+\KeywordTok{shapiro.test}\NormalTok{(}\KeywordTok{subset}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"M"}\OperatorTok{&}\NormalTok{Diet}\OperatorTok{==}\StringTok{"CD"}\NormalTok{)}\OperatorTok{$}\NormalTok{Concentration)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  subset(kd.data, Sex == "M" & Diet == "CD")$Concentration
-## W = 0.9, p-value = 0.5
+## W = 1, p-value = 0.7
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(}\KeywordTok{subset}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"M"}\OperatorTok{&}\NormalTok{Diet}\OperatorTok{==}\StringTok{"KD"}\NormalTok{)}\OperatorTok{$}\NormalTok{Concentration)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  subset(kd.data, Sex == "M" & Diet == "KD")$Concentration
-## W = 0.9, p-value = 0.1
+## W = 0.9, p-value = 0.008
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#since neither can be presumed to NOT be normally distributed we can go ahead with a t-test}
+\KeywordTok{leveneTest}\NormalTok{(Concentration }\OperatorTok{~}\StringTok{ }\NormalTok{Diet, }\KeywordTok{filter}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"M"}\NormalTok{)) }\CommentTok{#to test for equal variance}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## Levene's Test for Homogeneity of Variance (center = median)
 ##       Df F value Pr(>F)
-## group  1    1.87   0.19
-##       18
+## group  1    1.86   0.18
+##       27
 \end{verbatim}
 
-\begin{verbatim}
-## 
-##  Two Sample t-test
-## 
-## data:  Concentration by Diet
-## t = -1, df = 18, p-value = 0.2
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -49.6  11.4
-## sample estimates:
-## mean in group CD mean in group KD 
-##             31.2             50.3
-\end{verbatim}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{t.test}\NormalTok{(Concentration }\OperatorTok{~}\StringTok{ }\NormalTok{Diet, }\KeywordTok{filter}\NormalTok{(kd.data, Sex}\OperatorTok{==}\StringTok{"M"}\NormalTok{), }\DataTypeTok{var.equal=}\NormalTok{T) }\OperatorTok{%>%}
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Male t-test"}\NormalTok{)}\CommentTok{#Welch vs Student is var.equal=T/F}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrrll@{}}
+\caption{Male t-test}\tabularnewline
+\toprule
+estimate1 & estimate2 & statistic & p.value & parameter & conf.low &
+conf.high & method & alternative\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+estimate1 & estimate2 & statistic & p.value & parameter & conf.low &
+conf.high & method & alternative\tabularnewline
+\midrule
+\endhead
+28.7 & 46.2 & -1.61 & 0.119 & 27 & -39.8 & 4.8 & Two Sample t-test &
+two.sided\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{summary.data.no.cht }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)) }\OperatorTok{%>%}\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Summary statistics for effects of a ketogenic diet"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{longtable}[]{@{}llrrr@{}}
 \caption{Summary statistics for effects of a ketogenic
@@ -256,12 +375,23 @@ Diet & Sex & GDF15 & Error & N\tabularnewline
 Diet & Sex & GDF15 & Error & N\tabularnewline
 \midrule
 \endhead
-CD & M & 9.35 & 2.00 & 7\tabularnewline
-CD & F & 4.37 & 1.78 & 7\tabularnewline
-KD & M & 14.70 & 3.10 & 13\tabularnewline
-KD & F & 9.01 & 1.72 & 6\tabularnewline
+CD & M & 28.7 & 4.72 & 10\tabularnewline
+CD & F & 14.6 & 5.92 & 7\tabularnewline
+KD & M & 46.2 & 7.43 & 19\tabularnewline
+KD & F & 31.1 & 5.16 & 6\tabularnewline
 \bottomrule
 \end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(broom)}
+\NormalTok{gdf15.lm <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Concentration }\OperatorTok{~}\StringTok{ }\NormalTok{Sex }\OperatorTok{+}\StringTok{ }\NormalTok{Diet,exp.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)))}
+
+\NormalTok{gdf15.lm}\OperatorTok{%>%}
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"ANOVA for effects of sex and ketogenic diet on GDF15 levels"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{longtable}[]{@{}lrrrr@{}}
 \caption{ANOVA for effects of sex and ketogenic diet on GDF15
@@ -274,17 +404,135 @@ term & estimate & std.error & statistic & p.value\tabularnewline
 term & estimate & std.error & statistic & p.value\tabularnewline
 \midrule
 \endhead
-(Intercept) & 31.9 & 8.24 & 3.87 & 0.001\tabularnewline
-SexF & -18.0 & 9.25 & -1.95 & 0.061\tabularnewline
-DietKD & 18.0 & 9.15 & 1.97 & 0.058\tabularnewline
+(Intercept) & 28.9 & 6.82 & 4.24 & 0.000\tabularnewline
+SexF & -14.6 & 8.27 & -1.77 & 0.085\tabularnewline
+DietKD & 17.2 & 7.79 & 2.21 & 0.033\tabularnewline
 \bottomrule
 \end{longtable}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lm}\NormalTok{(Concentration }\OperatorTok{~}\StringTok{ }\NormalTok{Sex }\OperatorTok{*}\StringTok{ }\NormalTok{Diet,}
+\NormalTok{    exp.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{))) }\OperatorTok{%>%}
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"ANOVA for interacti g effects of sex and ketogenic diet on GDF15 levels"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{ANOVA for interacti g effects of sex and ketogenic diet on
+GDF15 levels}\tabularnewline
+\toprule
+term & estimate & std.error & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & estimate & std.error & statistic & p.value\tabularnewline
+\midrule
+\endhead
+(Intercept) & 28.692 & 7.81 & 3.675 & 0.001\tabularnewline
+SexF & -14.114 & 12.17 & -1.160 & 0.253\tabularnewline
+DietKD & 17.498 & 9.64 & 1.814 & 0.078\tabularnewline
+SexF:DietKD & -0.966 & 16.78 & -0.058 & 0.954\tabularnewline
+\bottomrule
+\end{longtable}
+
+There was a 59.44\% sex adjusted increase in GDF15 levels.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{summary.data.no.cht }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)),}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{GDF15,}
+           \DataTypeTok{ymin=}\NormalTok{GDF15}\OperatorTok{-}\NormalTok{Error,}
+           \DataTypeTok{ymax=}\NormalTok{GDF15}\OperatorTok{+}\NormalTok{Error,}
+           \DataTypeTok{x=}\NormalTok{Sex,}
+           \DataTypeTok{fill=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{, }\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{, }\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_errorbar}\NormalTok{(}\DataTypeTok{position=}\KeywordTok{position_dodge}\NormalTok{(}\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{),}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{group=}\NormalTok{Diet), }\DataTypeTok{width=}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{expand_limits}\NormalTok{(}\DataTypeTok{y=}\DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"GDF15 Levels in Serum"}\NormalTok{,}
+       \DataTypeTok{y=}\StringTok{"Serum GDF15 (pg/mL)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{values=}\NormalTok{color.scheme)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
 \includegraphics{figures/kd-gdf15-barplots-1.png}
+\caption{Effects of Ketogenic Diet on GDF15 Levels in Serum}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{summary.data.no.cht }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)),}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{GDF15,}
+           \DataTypeTok{ymin=}\NormalTok{GDF15}\OperatorTok{-}\NormalTok{Error,}
+           \DataTypeTok{ymax=}\NormalTok{GDF15}\OperatorTok{+}\NormalTok{Error,}
+           \DataTypeTok{x=}\NormalTok{Sex,}
+           \DataTypeTok{fill=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{, }\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{, }\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_errorbar}\NormalTok{(}\DataTypeTok{position=}\KeywordTok{position_dodge}\NormalTok{(}\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{),}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{group=}\NormalTok{Diet), }\DataTypeTok{width=}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{expand_limits}\NormalTok{(}\DataTypeTok{y=}\DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"GDF15 Levels"}\NormalTok{,}
+       \DataTypeTok{y=}\StringTok{"Serum GDF15 (pg/mL)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{values=}\NormalTok{color.scheme, }\DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{"Control Diet"}\NormalTok{,}\StringTok{"LCHF Diet"}\NormalTok{), }\DataTypeTok{name=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{18}\NormalTok{),}
+        \DataTypeTok{legend.position=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.75}\NormalTok{,}\FloatTok{0.95}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
 \includegraphics{figures/kd-gdf15-barplots-2.png}
+\caption{Effects of Ketogenic Diet on GDF15 Levels in Serum}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{summary.data.no.cht }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)),}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{GDF15,}
+           \DataTypeTok{ymin=}\NormalTok{GDF15}\OperatorTok{-}\NormalTok{Error,}
+           \DataTypeTok{ymax=}\NormalTok{GDF15}\OperatorTok{+}\NormalTok{Error,}
+           \DataTypeTok{x=}\NormalTok{Sex,}
+           \DataTypeTok{fill=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{, }\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{, }\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_errorbar}\NormalTok{(}\DataTypeTok{position=}\KeywordTok{position_dodge}\NormalTok{(}\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{),}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{group=}\NormalTok{Diet), }\DataTypeTok{width=}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{expand_limits}\NormalTok{(}\DataTypeTok{y=}\DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{""}\NormalTok{,}
+       \DataTypeTok{y=}\StringTok{"Serum GDF15 (pg/mL)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_grey}\NormalTok{(}\DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{"Control Diet"}\NormalTok{,}\StringTok{"Ketogenic Diet"}\NormalTok{), }\DataTypeTok{name=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{18}\NormalTok{),}
+        \DataTypeTok{legend.position=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.75}\NormalTok{,}\FloatTok{0.95}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
 \includegraphics{figures/kd-gdf15-barplots-3.png}
+\caption{Effects of Ketogenic Diet on GDF15 Levels in Serum}
+\end{figure}
 
 We also separated the samples by cohort
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{summary.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)),}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{GDF15,}
+           \DataTypeTok{ymin=}\NormalTok{GDF15}\OperatorTok{-}\NormalTok{Error,}
+           \DataTypeTok{ymax=}\NormalTok{GDF15}\OperatorTok{+}\NormalTok{Error,}
+           \DataTypeTok{x=}\NormalTok{Sex,}
+           \DataTypeTok{fill=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{, }\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{, }\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_errorbar}\NormalTok{(}\DataTypeTok{position=}\KeywordTok{position_dodge}\NormalTok{(}\DataTypeTok{width=}\FloatTok{0.75}\NormalTok{),}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{group=}\NormalTok{Diet), }\DataTypeTok{width=}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{expand_limits}\NormalTok{(}\DataTypeTok{y=}\DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_grid}\NormalTok{(}\OperatorTok{~}\NormalTok{Cohort) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"GDF15 Levels in Serum by Cohort"}\NormalTok{,}
+       \DataTypeTok{y=}\StringTok{"Serum GDF15 (pg/mL)"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
 
 \begin{figure}
 \centering
@@ -293,8 +541,38 @@ We also separated the samples by cohort
 by Cohort}
 \end{figure}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(exp.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)),}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{Concentration, }\DataTypeTok{x=}\NormalTok{Sex, }\DataTypeTok{color=}\NormalTok{Diet)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{outlier.shape =} \OtherTok{NA}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{position =} \KeywordTok{position_jitterdodge}\NormalTok{()) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Serum GDF15 (pg/mL)"}\NormalTok{,}\DataTypeTok{x=}\StringTok{"Diet"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
 \includegraphics{figures/kd-gdf15-boxplots-1.png}
+\caption{Effects of Ketogenic Diet on GDF15 Levels in Serum}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(exp.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'CD'}\NormalTok{,}\StringTok{'KD'}\NormalTok{)),}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{Concentration, }\DataTypeTok{x=}\NormalTok{Sex, }\DataTypeTok{color=}\NormalTok{Diet)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{outlier.shape =} \OtherTok{NA}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{position =} \KeywordTok{position_jitterdodge}\NormalTok{()) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_grid}\NormalTok{(}\OperatorTok{~}\NormalTok{Cohort) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Relative Expression"}\NormalTok{,}\DataTypeTok{x=}\StringTok{"Diet"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
 \includegraphics{figures/kd-gdf15-boxplots-2.png}
+\caption{Effects of Ketogenic Diet on GDF15 Levels in Serum}
+\end{figure}
 
 \hypertarget{interpretation}{%
 \section{Interpretation}\label{interpretation}}
@@ -334,8 +612,8 @@ cohorts.
 ## [9] knitr_1.28        
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zip_2.0.4         Rcpp_1.0.4        pillar_1.4.3      compiler_3.6.3   
-##  [5] cellranger_1.1.0  highr_0.8         tools_3.6.3       digest_0.6.25    
+##  [1] zip_2.0.4         Rcpp_1.0.4        highr_0.8         pillar_1.4.3     
+##  [5] compiler_3.6.3    cellranger_1.1.0  tools_3.6.3       digest_0.6.25    
 ##  [9] gtable_0.3.0      lattice_0.20-38   nlme_3.1-144      evaluate_0.14    
 ## [13] lifecycle_0.2.0   tibble_2.1.3      pkgconfig_2.0.3   rlang_0.4.5      
 ## [17] openxlsx_4.1.4    magick_2.3        curl_4.3          yaml_2.2.1       
