@@ -160,6 +160,22 @@ exp.data %>%
           legend.position = c(0.75,0.75))
 ```
 
+## Body Weight Statistics
+
+```{r weight-stats}
+library(lme4)
+library(lmerTest)
+male.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="M"))
+male.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="M"))
+anova(male.lme.weight,male.lme.weight.null) %>% kable(caption="Male weight stats")
+
+female.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="F"))
+female.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="F"))
+anova(female.lme.weight,female.lme.weight.null) %>% kable(caption="Female weight stats")
+
+lmer(Mass ~ diet.time*Diet*Sex + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0)) %>% summary %>% coef%>% kable(caption="Interaction of sex on body weight")
+```
+
 ```{r body-weight-lineplot-change, fig.cap="Line Plot of Change in Body Weights"}
 exp.data %>%
   filter(assay=='Body Weight') %>%
@@ -230,6 +246,20 @@ exp.data %>%
           legend.position = c(0.75,0.75))
 ```
 
+## Lean Mass Statistics
+
+```{r lean-stats}
+male.lme.lean.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="M"))
+male.lme.lean <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="M"))
+anova(male.lme.lean,male.lme.lean.null) %>% kable(caption="Male lean mass stats")
+
+female.lme.lean.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="F"))
+female.lme.lean <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="F"))
+anova(female.lme.lean,female.lme.lean.null) %>% kable(caption="Female lean mass stats")
+
+lmer(Mass ~ diet.time*Diet*Sex + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0)) %>% summary %>% coef%>% kable(caption="Interaction of sex on lean mass")
+```
+
 ```{r lean-mass-lineplot-change, fig.cap="Line Plot of Change in Lean Mass"}
 exp.data %>%
   filter(assay=='Lean Mass') %>%
@@ -298,6 +328,21 @@ exp.data %>%
   theme_classic() +
     theme(text=element_text(size=18),
           legend.position = c(0.75,0.75))
+```
+
+
+## Fat Mass Statistics
+
+```{r fat-stats}
+male.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="M"))
+male.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="M"))
+anova(male.lme.weight,male.lme.weight.null) %>% kable(caption="Male fat mass stats")
+
+female.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="F"))
+female.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="F"))
+anova(female.lme.weight,female.lme.weight.null) %>% kable(caption="Female fat mass stats")
+
+lmer(Mass ~ diet.time*Diet*Sex + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0)) %>% summary %>% coef%>% kable(caption="Interaction of sex on fat mass")
 ```
 
 ```{r fat-mass-lineplot-change, fig.cap="Line Plot of Change in Fat Mass"}

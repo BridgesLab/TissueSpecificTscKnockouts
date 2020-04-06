@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Mar 30 16:23:49 2020.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets and was most recently run on Mon Apr  6 10:08:18 2020.
 
 
 # Data Entry
@@ -225,6 +225,60 @@ exp.data %>%
 
 ![Line Plot of Body Weights](figures/body-weight-lineplot-2.png)
 
+## Body Weight Statistics
+
+
+```r
+library(lme4)
+library(lmerTest)
+male.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="M"))
+male.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="M"))
+anova(male.lme.weight,male.lme.weight.null) %>% kable(caption="Male weight stats")
+```
+
+
+
+Table: Male weight stats
+
+                        Df   AIC   BIC   logLik   deviance   Chisq   Chi Df   Pr(>Chisq)
+---------------------  ---  ----  ----  -------  ---------  ------  -------  -----------
+male.lme.weight.null     4   586   598     -289        578      NA       NA           NA
+male.lme.weight          6   573   591     -280        561    17.1        2            0
+
+```r
+female.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="F"))
+female.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0&Sex=="F"))
+anova(female.lme.weight,female.lme.weight.null) %>% kable(caption="Female weight stats")
+```
+
+
+
+Table: Female weight stats
+
+                          Df   AIC   BIC   logLik   deviance   Chisq   Chi Df   Pr(>Chisq)
+-----------------------  ---  ----  ----  -------  ---------  ------  -------  -----------
+female.lme.weight.null     4   196   205    -94.1        188      NA       NA           NA
+female.lme.weight          6   187   200    -87.3        175    13.6        2        0.001
+
+```r
+lmer(Mass ~ diet.time*Diet*Sex + (1|animal.id), data=filter(exp.data, assay=='Body Weight'&diet.time>=0)) %>% summary %>% coef%>% kable(caption="Interaction of sex on body weight")
+```
+
+
+
+Table: Interaction of sex on body weight
+
+                                     Estimate   Std. Error      df   t value   Pr(>|t|)
+----------------------------------  ---------  -----------  ------  --------  ---------
+(Intercept)                            24.309        0.465    69.0    52.268      0.000
+diet.time                               0.807        0.111   162.6     7.289      0.000
+DietKetogenic Diet                      0.308        0.584    68.8     0.527      0.600
+SexF                                   -4.489        0.787    68.6    -5.702      0.000
+diet.time:DietKetogenic Diet           -0.613        0.140   162.7    -4.375      0.000
+diet.time:SexF                         -0.206        0.187   162.6    -1.100      0.273
+DietKetogenic Diet:SexF                -0.343        1.071    68.5    -0.320      0.750
+diet.time:DietKetogenic Diet:SexF       0.041        0.256   162.6     0.159      0.874
+
 
 ```r
 exp.data %>%
@@ -308,6 +362,58 @@ exp.data %>%
 
 ![Line Plot of Lean Mass](figures/lean-mass-lineplot-2.png)
 
+## Lean Mass Statistics
+
+
+```r
+male.lme.lean.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="M"))
+male.lme.lean <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="M"))
+anova(male.lme.lean,male.lme.lean.null) %>% kable(caption="Male lean mass stats")
+```
+
+
+
+Table: Male lean mass stats
+
+                      Df   AIC   BIC   logLik   deviance   Chisq   Chi Df   Pr(>Chisq)
+-------------------  ---  ----  ----  -------  ---------  ------  -------  -----------
+male.lme.lean.null     4   388   400     -190        380      NA       NA           NA
+male.lme.lean          6   387   405     -187        375    5.49        2        0.064
+
+```r
+female.lme.lean.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="F"))
+female.lme.lean <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0&Sex=="F"))
+anova(female.lme.lean,female.lme.lean.null) %>% kable(caption="Female lean mass stats")
+```
+
+
+
+Table: Female lean mass stats
+
+                        Df   AIC   BIC   logLik   deviance   Chisq   Chi Df   Pr(>Chisq)
+---------------------  ---  ----  ----  -------  ---------  ------  -------  -----------
+female.lme.lean.null     4   154   162    -72.8        146      NA       NA           NA
+female.lme.lean          6   150   163    -69.0        138    7.71        2        0.021
+
+```r
+lmer(Mass ~ diet.time*Diet*Sex + (1|animal.id), data=filter(exp.data, assay=='Lean Mass'&diet.time>=0)) %>% summary %>% coef%>% kable(caption="Interaction of sex on lean mass")
+```
+
+
+
+Table: Interaction of sex on lean mass
+
+                                     Estimate   Std. Error      df   t value   Pr(>|t|)
+----------------------------------  ---------  -----------  ------  --------  ---------
+(Intercept)                            19.273        0.268    70.9    71.787      0.000
+diet.time                               0.050        0.067   162.5     0.744      0.458
+DietKetogenic Diet                     -0.420        0.337    70.7    -1.248      0.216
+SexF                                   -3.775        0.454    70.4    -8.308      0.000
+diet.time:DietKetogenic Diet           -0.126        0.085   162.6    -1.478      0.141
+diet.time:SexF                          0.216        0.114   162.5     1.904      0.059
+DietKetogenic Diet:SexF                 0.273        0.618    70.3     0.441      0.660
+diet.time:DietKetogenic Diet:SexF      -0.160        0.155   162.5    -1.031      0.304
+
 
 ```r
 exp.data %>%
@@ -390,6 +496,59 @@ exp.data %>%
 ```
 
 ![Line Plot of Fat Mass](figures/fat-mass-lineplot-2.png)
+
+
+## Fat Mass Statistics
+
+
+```r
+male.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="M"))
+male.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="M"))
+anova(male.lme.weight,male.lme.weight.null) %>% kable(caption="Male fat mass stats")
+```
+
+
+
+Table: Male fat mass stats
+
+                        Df   AIC   BIC   logLik   deviance   Chisq   Chi Df   Pr(>Chisq)
+---------------------  ---  ----  ----  -------  ---------  ------  -------  -----------
+male.lme.weight.null     4   480   493     -236        472      NA       NA           NA
+male.lme.weight          6   472   490     -230        460    12.7        2        0.002
+
+```r
+female.lme.weight.null <- lmer(Mass ~ diet.time + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="F"))
+female.lme.weight <- lmer(Mass ~ diet.time*Diet + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0&Sex=="F"))
+anova(female.lme.weight,female.lme.weight.null) %>% kable(caption="Female fat mass stats")
+```
+
+
+
+Table: Female fat mass stats
+
+                          Df   AIC   BIC   logLik   deviance   Chisq   Chi Df   Pr(>Chisq)
+-----------------------  ---  ----  ----  -------  ---------  ------  -------  -----------
+female.lme.weight.null     4   110   118    -50.9      101.8      NA       NA           NA
+female.lme.weight          6   101   114    -44.4       88.8    12.9        2        0.002
+
+```r
+lmer(Mass ~ diet.time*Diet*Sex + (1|animal.id), data=filter(exp.data, assay=='Total Fat Mass'&diet.time>=0)) %>% summary %>% coef%>% kable(caption="Interaction of sex on fat mass")
+```
+
+
+
+Table: Interaction of sex on fat mass
+
+                                     Estimate   Std. Error      df   t value   Pr(>|t|)
+----------------------------------  ---------  -----------  ------  --------  ---------
+(Intercept)                             3.278        0.288    77.7    11.378      0.000
+diet.time                               0.681        0.081   162.9     8.393      0.000
+DietKetogenic Diet                      0.668        0.361    77.4     1.848      0.068
+SexF                                   -0.714        0.487    77.1    -1.464      0.147
+diet.time:DietKetogenic Diet           -0.422        0.103   163.1    -4.108      0.000
+diet.time:SexF                         -0.364        0.137   162.9    -2.651      0.009
+DietKetogenic Diet:SexF                -0.542        0.663    77.0    -0.817      0.416
+diet.time:DietKetogenic Diet:SexF       0.121        0.187   163.0     0.645      0.520
 
 
 ```r
