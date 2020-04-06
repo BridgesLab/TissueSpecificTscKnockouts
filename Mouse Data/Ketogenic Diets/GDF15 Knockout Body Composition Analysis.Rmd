@@ -1,0 +1,293 @@
+---
+title: "Body Composition of GDF15 Knockout Mice on KD"
+author: "Claire Gleason, JeAnna Redd and Dave Bridges"
+date: "June 17, 2019"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    toc: yes
+    fig_caption: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    toc: yes
+    fig_caption: yes
+---
+
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+         length = length, ...)
+
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(readr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This script can be found in `r getwd()` and was most recently run on `r date()`.
+
+
+# Data Entry
+
+```{r data-entry}
+
+raw_data_file <- "KD GDF15 Knockout Raw MRI Data.csv"
+
+
+exp.data <- read_csv(raw_data_file, col_types = 
+                       cols(
+  age = col_double(),
+  MouseID = col_factor(levels=NULL),
+  Sex = col_factor(levels=NULL),
+  values = col_double(),
+  assay = col_factor(levels=NULL),
+  Diet = col_factor(levels=NULL),
+  experiment.date = col_date(format = "")
+)) %>%
+  arrange(experiment.date) %>%
+  group_by(MouseID) 
+
+```
+
+This script pulled in a total of `r dim(exp.data)[1]` observations.  This includes the following number of animals in each treatment group.
+
+# Enrolled Animals
+
+This is for animals where wer have any body composition data.
+
+```{r enrollees}
+exp.data %>%
+  group_by(Sex,Diet, Genotype) %>%
+  distinct(animal.id, .keep_all = T) %>%
+  count %>%
+  kable(caption="Animals in each group of this cohort")
+
+exp.data %>%
+  filter(age.weeks>=10) %>%
+  group_by(Sex,Diet, Genotype) %>%
+  distinct(animal.id, .keep_all = T) %>%
+  count %>%
+  kable(caption="Animals in each group of this cohort that have been put on KD")
+
+exp.data %>%
+  group_by(Sex,Diet, Genotype) %>%
+  distinct(animal.id, .keep_all = T) %>%
+  arrange(Sex,Diet,Genotype) %>%
+  select(MouseID,Sex,Diet,Genotype) %>%
+  kable(caption="Animals in each group of this cohort")
+```
+
+# Body Weight
+
+```{r body-weight-scatterplot, fig.cap="Scatter Plot of Body Weights"}
+library(ggplot2)
+
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  ggplot(aes(y=Mass,x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_point() +
+  facet_grid(.~Sex) +
+  stat_smooth() +
+  labs(title="Body Weight",
+       x="Age (Weeks)",
+       y="Body Weight (g)")
+```
+
+```{r body-weight-individual, fig.cap="Line Plot of Individual Body Weights"}
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  ggplot(aes(y=Mass,x=age.weeks,group=animal.id,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_line() +
+  geom_point() +
+  facet_grid(.~Sex) +
+  labs(title="Body Weight",
+       subtitle="Individual Trajectories",
+       x="Age (Weeks)",
+       y="Body Weight (g)") 
+```
+
+```{r body-weight-lineplot, fig.cap="Line Plot of Body Weights"}
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  group_by(Diet,Sex,Genotype,age.weeks) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Body Weight",
+       x="Age (Weeks)",
+       y="Body Weight (g)")
+```
+
+# Lean Mass
+
+```{r lean-mass-scatterplot, fig.cap="Scatter Plot of Lean Mass"}
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  ggplot(aes(y=Mass,x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_point() +
+  facet_grid(.~Sex) +
+  stat_smooth() +
+  labs(title="Lean Mass",
+       x="Age (Weeks)",
+       y="Lean Mass (g)")
+```
+
+```{r lean-mass-lineplot, fig.cap="Line Plot of Lean Mass"}
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  group_by(Diet,Sex,Genotype,age.weeks) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Lean Mass",
+       x="Age (Weeks)",
+       y="Lean Mass (g)") 
+```
+
+# Fat Mass
+
+```{r fat-mass-scatterplot, fig.cap="Scatter Plot of Fat Mass"}
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  ggplot(aes(y=Mass,x=age.weeks,lty=Genotype, shape=Genotype)) + #add col=Diet once diets are assessed
+  geom_point() +
+  facet_grid(.~Sex) +
+  stat_smooth() +
+  labs(title="Fat Mass",
+       x="Age (Weeks)",
+       y="Fat Mass (g)")
+
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  ggplot(aes(y=Mass,x=age.weeks,lty=Genotype, group=animal.id)) + #add col=Diet once diets are assessed
+  geom_line() +
+  facet_grid(.~Sex) +
+  stat_smooth() +
+  labs(title="Fat Mass",
+       x="Age (Weeks)",
+       y="Fat Mass (g)")
+```
+
+```{r fat-mass-lineplot, fig.cap="Line Plot of Fat Mass"}
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  group_by(Diet,Sex,Genotype,age.weeks) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Fat Mass",
+       x="Age (Weeks)",
+       y="Fat Mass (g)") 
+
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  group_by(Diet,Sex,Genotype,age.weeks) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Fat Mass",
+       x="Age (Weeks)",
+       y="Fat Mass (g)") +
+  theme_classic() +
+  theme(text = element_text(size=18),
+        legend.position=c(0.15,0.75))
+
+exp.data %>%
+  filter(assay=='Total Fat Mass'&Sex=="F") %>%
+  group_by(Diet,Sex,Genotype,age.weeks) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=age.weeks,lty=Genotype)) + #add col=Diet once diets are assessed
+  geom_errorbar(width=0.5) +
+  geom_line() +
+  labs(title="Fat Mass",
+       x="Age (Weeks)",
+       y="Fat Mass (g)") +
+  theme_classic() +
+  theme(text = element_text(size=18),
+        legend.position=c(0.15,0.75))
+```
+
+## Fat Mass Linear Models
+
+```{r fm-lm}
+diet.data <-
+  exp.data %>%
+  filter(age.weeks>=10) %>%
+  filter(assay=='Total Fat Mass') %>%
+  mutate(Diet.Weeks = age.weeks-10)
+
+library(lme4)
+library(lmerTest)
+male.fat.lm <- lmer(Mass ~ Genotype*Diet.Weeks + (1|animal.id), data = diet.data %>% filter(Sex=="M"), REML=F)
+male.fat.lm.null <- lmer(Mass ~ Diet.Weeks + (1|animal.id), data = diet.data %>% filter(Sex=="M"), REML=F)
+female.fat.lm <- lmer(Mass ~ Genotype*Diet.Weeks + (1|animal.id), data = diet.data %>% filter(Sex=="F"), REML=F)
+female.fat.lm.null <- lmer(Mass ~ Diet.Weeks + (1|animal.id), data = diet.data %>% filter(Sex=="F"), REML=F)
+
+coef(summary(male.fat.lm)) %>% kable(caption="Mixed linear models for fat mass changes on diet for males")
+coef(summary(female.fat.lm))%>% kable(caption="Mixed linear models for fat mass changes on diet for females")
+
+anova(male.fat.lm, male.fat.lm.null) %>% kable(caption="Chi-squared test between models with and without the genotype term and interaction for male mice")
+anova(female.fat.lm, female.fat.lm.null) %>% kable(caption="Chi-squared test between models with and without the genotype term and interaction for female mice")
+```
+
+### Modifying Effect of Sex on Fat Mass Changes
+
+```{r fm-sex-interaction}
+sex.fat.lm <- lmer(Mass ~ Genotype*Diet.Weeks*Sex + (1|animal.id), data = diet.data, REML=F)
+sex.fat.lm.null <- lmer(Mass ~ Genotype*Diet.Weeks + (1|animal.id), data = diet.data, REML=F)
+sex.fat.lm.geno <- lmer(Mass ~ Diet.Weeks*Sex + (1|animal.id), data = diet.data, REML=F)
+
+coef(summary(sex.fat.lm)) %>% kable(caption="Mixed linear models for fat mass changes on diet including interaction variable")
+
+anova(sex.fat.lm, sex.fat.lm.null) %>% kable(caption="Chi-squared test between full models with and without the inclusion of sex", digits=15)
+anova(sex.fat.lm, sex.fat.lm.geno) %>% kable(caption="Chi-squared test betweenn models with and without the genotype term, accounting for the modifying effects of sex", digits=5)
+```
