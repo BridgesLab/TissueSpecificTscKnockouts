@@ -20,7 +20,7 @@ output:
 library(knitr)
 #figures makde will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
-               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
 options(scipen = 2, digits = 3)
 # set echo and message to TRUE if you want to display code blocks and code output respectively
 
@@ -318,6 +318,26 @@ coef(summary(female.fat.lm))%>% kable(caption="Mixed linear models for fat mass 
 
 anova(male.fat.lm, male.fat.lm.null) %>% kable(caption="Chi-squared test between models with and without the genotype term and interaction for male mice")
 anova(female.fat.lm, female.fat.lm.null) %>% kable(caption="Chi-squared test between models with and without the genotype term and interaction for female mice")
+```
+
+### Summary of Fat Mass Accretion
+
+```{r fat-mass-acretion}
+diet.data %>%
+  filter(Diet.Weeks %in% c(0,5)) %>%
+  select(animal.id,Sex,Genotype,Mass, Diet.Weeks) %>%
+  pivot_wider(names_from=Diet.Weeks, 
+              values_from = Mass, 
+              id_cols=c(Sex,Genotype,animal.id), 
+              values_fn = list(Mass = mean)) %>%
+  rename(First=`0`,
+         Last=`5`) %>%
+  mutate(Change = Last-First) %>%
+  mutate(Pct.Change = Change/First*100) %>%
+  group_by(Sex,Genotype) %>%
+  summarize_at(.vars=vars(Change,Pct.Change),
+               .funs=list(~mean(.,na.rm=T),~se(.))) %>%
+  kable(caption="Change in fat mass by sex and genotype")
 ```
 
 ### Modifying Effect of Sex on Fat Mass Changes

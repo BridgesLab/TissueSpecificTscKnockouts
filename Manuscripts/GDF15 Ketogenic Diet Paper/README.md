@@ -18,9 +18,9 @@ This document indicates where the raw data for each Figure panel can be found, a
 |   3C     |       |     |
 |   3D     |       |     |
 |   3E     |       |     |
-|   4A     |       |     |
-|   4B     |       |     |
-|   4C     |       |     |
+|   4A     |     Mouse Data/Ketogenic Diets/GDF15-Knockout-Body-Composition-Analysis/gdf15-ko-body-weight-lineplot-2  |     |
+|   4B     |     Mouse Data/Ketogenic Diets/GDF15-Knockout-Body-Composition-Analysis/gdf15-ko-lean-mass-lineplot-2  |     |
+|   4C     |     Mouse Data/Ketogenic Diets/GDF15-Knockout-Body-Composition-Analysis/gdf15-ko-fat-mass-lineplot-2  |     |
 |   4D     |       |     |
 |   4E     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  fasting-glucose-barplot-2  |
 |   4F     |     Mouse Data/Ketogenic Diets/Glucose-Homeostasis.Rmd    |  itt-line-2 |
