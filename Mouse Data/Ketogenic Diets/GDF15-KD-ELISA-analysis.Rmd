@@ -1,0 +1,225 @@
+---
+title: "GDF15 ELISA Assay for Ketogenic Diet"
+author: "Claire Gleason, Molly Carter and Dave Bridges"
+date: "January 2, 2018"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To determine the levels of GDF15 from either ketogenic diet or dexamethasone treatments.
+
+# Experimental Details
+
+Used the Quantikine kit, used 15 uL serum rather than 50 uL.
+
+# Raw Data
+
+The input data is calculated from MyAssays from a four parameter logistic regression calculation (https://www.myassays.com/) and annotated with cohort, sex and groups.  The equation (solved for concentration) is:
+
+$$ Concentration = c\left ( \frac{a-d}{y-d} -1 \right )^{\frac{1}{b}} $$
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- 'GDF15 ELISA Results.csv' 
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+exp.data <- read_csv(filename, skip=30,
+                       na = '< Curve',
+                       col_types=cols(Mouse = col_factor(levels=NULL),
+                                      Diet = col_factor(levels=NULL),
+                                      Sex = col_factor(levels=NULL),
+                                      Cohort = col_factor(levels=NULL),
+                                      Treatment = col_factor(levels=NULL),
+                                      Conc= col_double()))
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+## Ketogenic Diets
+
+We had serum from the two cohorts of ketogenic mice, some with males and females
+
+```{r kd-analysis}
+library(forcats)
+exp.data <-
+  exp.data %>%
+  mutate(Concentration = Conc.*50/Volume) 
+
+summary.data <- 
+  exp.data %>%
+  group_by(Diet,Sex,Cohort,Treatment) %>%
+  summarize(GDF15 = mean(Concentration, na.rm=T),
+            Error = se(Concentration),
+            N = length(Concentration)) 
+
+summary.data.no.cht <- 
+  exp.data %>%
+  group_by(Diet,Sex,Treatment) %>%
+  summarize(GDF15 = mean(Conc., na.rm=T),
+            Error = se(Conc.),
+            N = length(Conc.))
+
+
+kd.data <- exp.data %>% filter(Diet %in% c("CD",'KD')) %>% select(Diet,Sex, Concentration)
+
+library(car)
+#for female mice
+
+shapiro.test(log(subset(kd.data, Sex=="F"&Diet=="CD")$Concentration))
+wilcox.test(Concentration ~ Diet, filter(kd.data, Sex=="F")) 
+shapiro.test(subset(kd.data, Sex=="F"&Diet=="CD")$Concentration)
+shapiro.test(subset(kd.data, Sex=="F"&Diet=="KD")$Concentration)
+#since neither can be presumed to NOT be normally distributed we can go ahead with a t-test, if fails then wilocox
+leveneTest(Concentration ~ Diet, filter(kd.data, Sex=="F")) #to test for equal variance
+t.test(Concentration ~ Diet, filter(kd.data, Sex=="F"), var.equal=T) #Welch vs Student is var.equal=T/F
+
+#for male mice
+shapiro.test(subset(kd.data, Sex=="M"&Diet=="CD")$Concentration)
+shapiro.test(subset(kd.data, Sex=="M"&Diet=="KD")$Concentration)
+#since neither can be presumed to NOT be normally distributed we can go ahead with a t-test
+leveneTest(Concentration ~ Diet, filter(kd.data, Sex=="M")) #to test for equal variance
+t.test(Concentration ~ Diet, filter(kd.data, Sex=="M"), var.equal=T) #Welch vs Student is var.equal=T/F
+
+
+summary.data.no.cht %>% filter(Diet %in% c('CD','KD')) %>% select(-Treatment) %>% kable(caption="Summary statistics for effects of a ketogenic diet")
+
+library(broom)
+lm(Concentration ~ Sex + Diet,
+    exp.data %>% filter(Diet %in% c('CD','KD'))) %>%
+  tidy %>% 
+  kable(caption="ANOVA for effects of sex and ketogenic diet on GDF15 levels")
+```
+
+```{r kd-gdf15-barplots, fig.cap="Effects of Ketogenic Diet on GDF15 Levels in Serum"}
+library(ggplot2)
+ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
+       aes(y=GDF15,
+           ymin=GDF15-Error,
+           ymax=GDF15+Error,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  expand_limits(y=0) +
+  labs(title="GDF15 Levels in Serum",
+       y="Serum GDF15 (pg/mL)") +
+  scale_fill_manual(values=color.scheme)
+
+ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
+       aes(y=GDF15,
+           ymin=GDF15-Error,
+           ymax=GDF15+Error,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  expand_limits(y=0) +
+  labs(title="GDF15 Levels",
+       y="Serum GDF15 (pg/mL)") +
+  scale_fill_manual(values=color.scheme, labels=c("Control Diet","LCHF Diet"), name="") +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.75,0.95))
+
+ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
+       aes(y=GDF15,
+           ymin=GDF15-Error,
+           ymax=GDF15+Error,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  expand_limits(y=0) +
+  labs(title="GDF15 Levels",
+       y="Serum GDF15 (pg/mL)") +
+  scale_fill_grey(labels=c("Control Diet","Ketogenic Diet"), name="") +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position=c(0.75,0.95))
+```
+
+We also separated the samples by cohort
+
+
+```{r kd-gdf15-barplots-cohort, fig.cap="Effects of Ketogenic Diet on GDF15 Levels in Serum, Separated by Cohort"}
+ggplot(data=summary.data %>% filter(Diet %in% c('CD','KD')),
+       aes(y=GDF15,
+           ymin=GDF15-Error,
+           ymax=GDF15+Error,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(~Cohort) +
+  labs(title="GDF15 Levels in Serum by Cohort",
+       y="Serum GDF15 (pg/mL)") 
+```
+
+```{r kd-gdf15-boxplots, fig.cap="Effects of Ketogenic Diet on GDF15 Levels in Serum"}
+ggplot(exp.data %>% filter(Diet %in% c('CD','KD')),
+       aes(y=Concentration, x=Sex, color=Diet)) + 
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  labs(y="Serum GDF15 (pg/mL)",x="Diet")
+
+ggplot(exp.data %>% filter(Diet %in% c('CD','KD')),
+       aes(y=Concentration, x=Sex, color=Diet)) + 
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  facet_grid(~Cohort) +
+  labs(y="Relative Expression",x="Diet")
+```
+
+
+# Interpretation
+
+There was a modest increase in serum GDF15 levels in the ketogenic diets for both sexes, inline with the liver RNAseq data. There is no clear effect of fasting on the GDF15 levels across both sexes, diets, and cohorts.
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
