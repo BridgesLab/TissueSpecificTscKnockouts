@@ -1,0 +1,397 @@
+---
+title: "Maternal Data of Virign Mice during Gestation and Lactation"
+author: "Noura El Habbal"
+date: "2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Raw Data
+
+```{r data-files}
+library(readr) #loads the readr package
+Maternaldata.file <- 'Maternal MRI and Food Intake in First Parity.csv'
+```
+
+```{r data-input}
+library(readr) #loads the readr package
+#load sample mapping file
+Maternal.data <- read_csv(Maternaldata.file, na=c("N/A",NA))  %>% mutate(MaternalGenotype = relevel(as.factor(MaternalGenotype), ref="WT")) #manually defining NA values as N/A from input file
+```
+
+Analysis
+
+```{r body_weights_during_pregnancyandlactation}
+library(ggplot2)
+library(plotrix)
+maternal.weights <-
+  Maternal.data %>% 
+  group_by(ID , MaternalGenotype) %>%
+   filter(DayfromDelivery>=-22)
+ 
+  
+  ggplot(data=maternal.weights, 
+      aes(y=BW,
+           x=DayfromDelivery,
+           col=MaternalGenotype,na.rm= T ,
+           fill=MaternalGenotype, na.rm =T, ymin=15, ymax=40, xmin=-21, xmax= 21))+
+       scale_x_continuous(breaks=seq(-26,16,2)) +
+     scale_y_continuous(breaks= seq(15,40,5))+
+    
+     
+  geom_point() +
+      geom_smooth(span=0.2)  +
+  expand_limits(x=0) +
+  theme_classic() +
+     theme(text = element_text(size=13)) +
+     geom_vline(xintercept = 0, lty=2)+
+  labs(x = "Days From Delivery (0)", y= "Body Weight (g)", title="Body Weights of Dams during Gestation and Lactation") 
+  
+  deltaBWchangefromdelivery <-
+  maternal.weights %>%
+  group_by(ID,MaternalGenotype) %>%
+  mutate(BW.Lact = BW - BW[DayfromDelivery==0])  %>%
+  filter(DayfromDelivery>=0)
+  
+  ggplot(data=deltaBWchangefromdelivery,
+         aes(y=BW.Lact,
+             x=DayfromDelivery,
+             col=MaternalGenotype, na.rm=T,
+             fill=MaternalGenotype, na.rm =T, ymin=-4, ymax=8, xmin=0, xmax= 21))+
+       scale_x_continuous(breaks=seq(0,21,1)) +
+     scale_y_continuous(breaks= seq(-4,8,1))+
+  geom_point() +
+      geom_smooth ()  +
+  expand_limits(x=0) +
+  theme_classic() +
+     theme(text = element_text(size=13)) +
+  labs(x = "Days From Delivery (0)", y= "Body Weight (g)", title="Body Weight Change from Delivery Day and during Lactation") 
+
+     
+```
+```{r Fat_mass_during_pregnancyandlactation}
+library(ggplot2)
+library(plotrix)
+maternal.weights <-
+  Maternal.data %>% 
+  group_by(ID , MaternalGenotype) %>%
+   filter(DayfromDelivery>=-22)
+  
+  ggplot(data=maternal.weights, 
+      aes(y=Fat,
+           x=DayfromDelivery,
+           col=MaternalGenotype,na.rm= T ,
+           fill=MaternalGenotype, na.rm =T, ymin=0, ymax=5, xmin=-21, xmax= 21))+
+       scale_x_continuous(breaks=seq(-26,16,2)) +
+     scale_y_continuous(breaks= seq(0,5,0.5))+
+     
+  geom_point() +
+  geom_smooth(span=0.2)  +
+  expand_limits(x=0) +
+  theme_classic() +
+       theme(text = element_text(size=13)) +
+     geom_vline(xintercept = 0, lty=2)+
+  labs(x = "Days From Delivery (0)", y= "Fat Mass (g)", title="Fat Mass of Dams during Gestation and Lactation") 
+  
+  
+  
+  
+  
+    deltaFatchangefromdelivery <-
+  maternal.weights %>%
+  group_by(ID,MaternalGenotype) %>%
+  mutate(Fat.Lact = Fat - Fat[DayfromDelivery==0])  %>%
+  filter(DayfromDelivery>=0)
+  
+  ggplot(data=deltaFatchangefromdelivery,
+         aes(y=Fat.Lact,
+             x=DayfromDelivery,
+             col=MaternalGenotype, na.rm=T,
+             fill=MaternalGenotype, na.rm =T, ymin=-3, ymax=3, xmin=0, xmax= 21))+
+       scale_x_continuous(breaks=seq(0,21,1)) +
+     scale_y_continuous(breaks= seq(-3,3,1))+
+  geom_point() +
+      geom_smooth ()  +
+  expand_limits(x=0) +
+  theme_classic() +
+       theme(text = element_text(size=13)) +
+  labs(x = "Days From Delivery (0)", y= "Fat Mass (g)", title="Fat Mass Change from Delivery Day and during Lactation")
+     
+```
+```{r lean_mass_during_pregnancyandlactation}
+library(ggplot2)
+library(plotrix)
+maternal.weights <-
+  Maternal.data %>% 
+  group_by(ID , MaternalGenotype) %>%
+   filter(DayfromDelivery>=-22)
+  
+  ggplot(data=maternal.weights, 
+      aes(y=Lean,
+           x=DayfromDelivery,
+           col=MaternalGenotype,na.rm= T ,
+           fill=MaternalGenotype, na.rm =T, ymin=10, ymax=30, xmin=-21, xmax= 21))+
+       scale_x_continuous(breaks=seq(-26,16,2)) +
+     scale_y_continuous(breaks= seq(10,30,2))+
+     
+  geom_point() +
+  geom_smooth(span=0.2)  +
+  expand_limits(x=0) +
+  theme_classic() +
+       theme(text = element_text(size=13)) +
+     geom_vline(xintercept = 0, lty=2)+
+  labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Lean Mass of Dams during Gestation and Lactation") 
+  
+  
+  
+  
+  
+    deltaLeanchangefromdelivery <-
+  maternal.weights %>%
+  group_by(ID,MaternalGenotype) %>%
+  mutate(Lean.Lact = Lean - Lean[DayfromDelivery==0])  %>%
+  filter(DayfromDelivery>=0)
+  
+  ggplot(data=deltaLeanchangefromdelivery,
+         aes(y=Lean.Lact,
+             x=DayfromDelivery,
+             col=MaternalGenotype, na.rm=T,
+             fill=MaternalGenotype, na.rm =T, ymin=-3, ymax=6, xmin=0, xmax= 21))+
+       scale_x_continuous(breaks=seq(0,21,1)) +
+     scale_y_continuous(breaks= seq(-3,6,1))+
+  geom_point() +
+      geom_smooth ()  +
+  expand_limits(x=0) +
+  theme_classic() +
+       theme(text = element_text(size=13)) +
+  labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Lean Mass Change from Delivery Day and during Lactation")
+     
+```
+```{r Freewater_during_pregnancyandlactation}
+library(ggplot2)
+library(plotrix)
+maternal.weights <-
+  Maternal.data %>% 
+  group_by(ID , MaternalGenotype)
+  
+  ggplot(data=maternal.weights, 
+      aes(y=FreeWater,
+           x=DayfromDelivery,
+           col=MaternalGenotype,na.rm= T ,
+           fill=MaternalGenotype, na.rm =T, ymin=0, ymax=6, xmin=-21, xmax= 21))+
+       scale_x_continuous(breaks=seq(-26,16,2)) +
+     scale_y_continuous(breaks= seq(0,6,0.5))+
+     
+  geom_point() +
+  geom_smooth()  +
+  expand_limits(x=0) +
+  theme_classic() +
+     geom_vline(xintercept = 0, lty=2)+
+  labs(x = "Days From Delivery (0)", y= "Free Water Mass (g)", title="Free Water Mass of KO and WT Dams during Gestation and Lactation") 
+     
+```
+```{r Totalwater_during_pregnancyandlactation}
+library(ggplot2)
+library(plotrix)
+maternal.weights <-
+  Maternal.data %>% 
+
+  group_by(ID , MaternalGenotype)
+  
+  ggplot(data=maternal.weights, 
+      aes(y=TotalWater,
+           x=DayfromDelivery,
+           col=MaternalGenotype,na.rm= T ,
+           fill=MaternalGenotype, na.rm =T, ymin=5, ymax=30, xmin=-21, xmax= 21))+
+         theme_classic()  +
+       scale_x_continuous(breaks=seq(-26,16,2)) +
+     scale_y_continuous(breaks= seq(5,30,5))+
+     
+  geom_point() +
+  geom_smooth()  +
+  expand_limits(x=0) +
+       theme_classic()  +
+     geom_vline(xintercept = 0, lty=2)+
+  labs(x = "Days From Delivery (0)", y= "Total Water Mass (g)", title="Total Water Mass of KO and WT Dams during Gestation and Lactation") 
+     
+```
+```{r food_intake}
+library(ggplot2)
+maternal.weights <-
+  Maternal.data %>%
+  group_by(ID , MaternalGenotype)
+  
+  ggplot(data=maternal.weights, 
+       aes(y= FoodIntake,
+           x=Week,
+           col=MaternalGenotype, na.rm =T, xmin=1, xmax=7, ymin=20, ymax=45)) +
+      scale_x_continuous(breaks=seq(0,7,0.5))+
+    scale_y_continuous(breaks=seq(5,100,5))+
+  geom_point() +
+  geom_smooth()  +
+ #facet_grid(~Treatment) +
+  expand_limits(x=0)+
+  theme_classic() +
+     geom_vline(xintercept = 4, lty=2)+
+  labs(x="Week", y="Average Food Intake (g)", title="Average Dam Weekly Food Intake before amd after Delivery at around Week 4")
+
+```
+
+
+```{r loop_to_make_lean_fat_change}
+loop_table<- function(maternal_data)
+{  #maternal_data is the variable representing your table of data, this is no longer a table, but rather a set of rows and columns that you can manipulate
+  
+  library(dplyr);
+  #the following extracts the number of rows for that table
+  #you will need this to determine the size of the column you will create
+  
+  numrow = nrow(maternal_data);
+  
+  
+
+  lean_vector <- numeric(numrow); #this is for the new columnm to store the new values yet to come
+  fat_vector <- numeric(numrow);
+  i=0;
+  while(i<numrow)
+  {
+    i=i+1;
+    
+    #numrow is the last row number, so this loop will stop when it reaches the final row
+    #i is the row index I am currently on
+    
+    
+    #my current values
+    current_ID = maternal_data[i,"ID"];
+    current_lean = maternal_data[i,"Lean"];
+    current_fat =  maternal_data[i,"Fat"];
+    
+    
+    #I need some values from the next week to store them in THIS WEEK's value, so I need another loop to go to next week
+    
+    #i want to look forward, so I will create another loop j simulataneously
+    
+    future_found_value = 0;
+    j=i+1;
+    while(j<=numrow)
+    {
+      future_ID = maternal_data[j,"ID"];
+      if(is.na(future_ID)==FALSE && is.na(current_ID)==FALSE)
+      {
+        if(future_ID == current_ID)   #we reached a future row that has the same ID as our current ID
+        {
+          future_lean = maternal_data[j,"Lean"];
+          future_fat = maternal_data[j,"Fat"];
+          lean_change = future_lean - current_lean;
+          fat_change = future_fat - current_fat;
+          
+          lean_vector[i] = lean_change*4;
+          fat_vector[i] = fat_change*9;
+          
+          future_found_value = 1;
+          break;
+        }
+      }
+
+      j=j+1;
+    }
+    if(future_found_value==0)
+    {
+      lean_vector[i] = NA;
+      fat_vector[i] = NA;
+      
+    }
+    
+  }
+
+  maternal_data$leanchange <- as.double(lean_vector);
+  maternal_data$fatchange <- as.double(fat_vector);
+  
+  #write.csv(maternal_data, file = "MyData.csv");
+  
+  
+  #A table with two new columns, for lean and fat change
+  
+
+  #write.csv(maternal_data, file = "MyData.csv");
+  return(maternal_data);
+}
+```
+
+```{r maternal_feedingefficiency}
+library(ggplot2)
+output <- loop_table(Maternal.data); #or use no.deliveries data to remove the dams who delivered
+maternal.feedingefficiency <-
+  output %>%
+  group_by(ID , MaternalGenotype, Week) %>%
+  mutate(caloriesconsumed=ifelse(is.na(FoodIntake)==FALSE,FoodIntake*2.91,NA))%>%
+  mutate(calorieschange=ifelse(is.na(leanchange)==FALSE && is.na(leanchange)==FALSE,leanchange + fatchange,NA)) %>%
+  mutate(feedingeff=ifelse(is.na(caloriesconsumed)==FALSE && is.na(calorieschange)==FALSE,(calorieschange/ caloriesconsumed)*100,NA))
+write.csv(maternal.feedingefficiency, file = "MyData.csv");
+  #mutate(feedingeff= 'calorieschange'/ 'caloriesconsumed', na.rm=T)
+
+ p <- ggplot(maternal.feedingefficiency, is.na= NA,
+       aes(y= feedingeff,
+           x=Week,
+           col=MaternalGenotype, na.rm =T, xmin=0, xmax=7, ymin=-200, ymax=100)) +
+      scale_x_continuous(breaks=seq(0,7,0.5))+
+    scale_y_continuous(breaks=seq(-200,100,50))+
+  geom_point() +
+  geom_smooth()  +
+  #geom_col(aes(fill=Treatment))+
+ #facet_grid(~Treatment) +
+  expand_limits(x=0)+
+  theme_classic() +
+   theme(text = element_text(size=18))+
+    geom_vline(xintercept = 3.97, lty=2)+
+  #facet_grid(~Cohort)+
+  labs(x="Week", y="Feeding Efficiency",title="Feeding Efficiency of Dams per Treatment")   
+p
+
+maternal.feedingefficiency %>%
+  group_by(Week,MaternalGenotype) %>%
+  summarize(Mean = mean(feedingeff,na.rm=T),
+            Error = se(feedingeff)) %>%
+  ggplot(aes(y=Mean,
+         x=Week,
+         ymin=Mean-Error,
+         ymax=Mean+Error,
+         col=MaternalGenotype)) +
+  geom_point() +
+  geom_errorbar() +
+  geom_vline(xintercept = 3.97, lty=2)
+  # geom_vline(yintercept = 0)
+
+```

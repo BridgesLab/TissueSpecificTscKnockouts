@@ -1,0 +1,501 @@
+---
+title: "Survival and Weights of Pups of First Parity Mice"
+author: "Noura El Habbal"
+date: "2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Raw Data
+
+```{r data-files}
+library(readr) #loads the readr package
+PupdataPND1.file <- 'Pup PND0.5 Weights from First Parity Mice.csv'
+Pupdata.file <- 'Pup PND7 14 16 Weights from First Parity Mice.csv'
+Pupbirth.file <- 'Pup Birth Data from First Parity Mice.csv'
+PupPND16MRI.file <- 'Pup PND16 MRI from First Parity Mice.csv'
+```
+
+```{r data-input}
+library(readr) #loads the readr package
+#load sample mapping file
+PND1.data <- read_csv(PupdataPND1.file) %>% mutate(MaternalGenotype = relevel(as.factor(MaternalGenotype), ref="WT"))
+Pup.data <- read_csv(Pupdata.file, na=c("N/A",NA))  %>% mutate(MaternalGenotype = relevel(as.factor(MaternalGenotype), ref="WT"))
+Pupbirth.data <- read_csv(Pupbirth.file, na=c("N/A", NA))  %>% mutate(MaternalGenotype = relevel(as.factor(MaternalGenotype), ref="WT"))
+PupMRI <- read_csv(PupPND16MRI.file, na=c("N/A",NA))  %>% mutate(MaternalGenotype = relevel(as.factor(MaternalGenotype), ref="WT"))
+```
+
+```{r cage-birthsandsurvival} 
+  numberofpups.per.cage <- Pupbirth.data%>%
+  group_by(MaternalID, MaternalGenotype, BirthDate) %>% # grouping by mother and by litter --> overall, how many pups survived/died per mother
+  summarize(Dead = length(Dead[Dead==TRUE]), na.rm=T,
+            Total = length(PND1), is.na=NA,
+            Litter = max(Parity)) %>%
+  mutate(Alive = Total-Dead) %>%
+  mutate(alive.percent = Alive/Total*100) %>%
+  mutate(survival.rate = Alive/Total) %>%
+  mutate(Average.Births.Per.Litter = Total/Litter) # INCORRECT!!D!!!!!!!
+
+
+numberofpups.summary <- #this data set is looking at Average Survival and SE across the two genotypes
+  numberofpups.per.cage %>%
+  group_by(MaternalGenotype) %>%
+  summarize(Average.Survival = mean(alive.percent, na.rm=T),
+        SE.Average.Survival = se(alive.percent),
+        Number = length(alive.percent))
+
+kable(numberofpups.per.cage,caption = "Average Births and Survival Rates per Cage") #to generate the table here
+
+kable(numberofpups.summary,caption = "Average Survival per Genotype") #to generate the table here
+```
+
+```{r atsc-survivalpergenotype-bargraph}
+# barplot for 
+library(ggplot2)
+ p <- ggplot(numberofpups.summary,is.na= NA, 
+       aes(x=MaternalGenotype, y= Average.Survival,fill= MaternalGenotype, ymax=Average.Survival+SE.Average.Survival, ymin=Average.Survival-SE.Average.Survival))   
+ 
+p + geom_bar(stat='identity', position=position_dodge(), width =0.5) + #match width of Geom_bar with the position dodge of the errorbar 
+  geom_errorbar(position=position_dodge(0.5), width=.2) +
+  xlab("Genotype of Mother") +
+  ylab("Survival Rate (%)") +
+  labs(title="Survival Rate Per Maternal Genotype") +
+  expand_limits(y=0) +
+       theme_classic()  
+
+#t.test(Alive ~ MaternalGenotype, data=numberofpups.per.cage %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males"))
+
+# +
+ #scale_fill_manual(values=color.scheme) +  #add this to make the colors maize an
+    #theme(text = element_text(size=18))
+```
+
+```{r numberofpupspergenotype}
+bornpups <- numberofpups.per.cage %>% 
+  group_by(MaternalGenotype) %>%
+#mutate(Average.Born.Pups = Total/count(Cage))
+summarize(Average.Born.Pups = mean(Total, na.rm=T),
+        SE.Average.Born.Pups = se(Total),
+        Number = length(Total))
+
+library(ggplot2)
+p <- ggplot(bornpups,
+aes(x=MaternalGenotype, y= Average.Born.Pups, fill=MaternalGenotype, na.rm =T, ymax= Average.Born.Pups + SE.Average.Born.Pups, ymin=Average.Born.Pups - SE.Average.Born.Pups))
+
+p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
+  geom_errorbar(position=position_dodge(0.5), width=0.2) +
+  xlab("Genotype of Mother") +
+  ylab("Average Number of Pups Born") +
+  labs(title="Average Pups Born Per Maternal Genotype") +
+  expand_limits(y=0) +
+  theme_classic() 
+
+
+library(ggplot2)
+ p <- ggplot(numberofpups.per.cage,
+       aes(x=as.factor(MaternalID), y= Total,col= MaternalGenotype, ymin=0, ymax=10)) +
+    scale_y_continuous(breaks= seq(0,10,1)) +
+   theme_minimal()
+
+ p + geom_boxplot() +
+  labs(title="Total Born Pups Per Cage",
+       y="Number of Born Pups",
+       x="Maternal ID") +
+  theme_classic()
+#t.test (Total ~ MaternalGenotype, data=Pupbirth.data %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males"))
+
+# + scale_fill_manual(values=color.scheme) +  #add this to make the colors maize an
+    # theme(text = element_text(size=18))
+```
+
+```{r atsc-fertilitypercage-bargraph}
+library(ggplot2)
+ p <- ggplot(numberofpups.per.cage,
+       aes(x=as.factor(MaternalID), y= survival.rate,col= MaternalGenotype, ymin=0.8, ymax=1)) +
+    scale_y_continuous(breaks= seq(0.8,1,0.02)) +
+   theme_minimal()
+
+ p + geom_boxplot() +
+  labs(title="Survival Rate Per Cage",
+       y="Survival Rate Per Cage (%)",
+       x="Maternal ID") +
+  theme_classic()
+ 
+  p <- ggplot(numberofpups.per.cage,
+       aes(x=MaternalGenotype, y= alive.percent,col= MaternalGenotype))  #alive percent and survival rate are the same thing, one is in % and other is rate
+
+ p + geom_boxplot() +
+  labs(title="Survival Rate Per Cage",
+       y="Survival Rate Per Cage (%)",
+       x="Maternal ID") +
+  theme_classic()
+
+ggplot(numberofpups.per.cage %>% group_by(MaternalID, MaternalGenotype) %>% summarize(Avg=mean(alive.percent)),
+       aes(y=Avg,x=MaternalGenotype)) +
+         geom_jitter()
+```
+
+```{r PUPweightpermaternalgenotype_andpercagePND1}
+ Pup.weightspercagePND1 <- PND1.data %>% 
+  group_by(MaternalID, MaternalGenotype) %>%
+  summarize(Average.Weight = mean(PND1, na.rm=T),
+         SE.Average.Weight = se(PND1),
+         Average.size = length(PND1),
+          Total = length(PND1), is.na=NA) 
+kable(Pup.weightspercagePND1)
+
+Pup.weightspermaternalgenotypePND1 <- Pup.weightspercagePND1 %>% #average of the averaged weights per cage. to get the average per genotype with the mother being the n (6KO and 6WT moms)
+  group_by(MaternalGenotype) %>%
+  summarize(Average.Weight = mean(Average.Weight, na.rm=T),
+         SE.Average.Weight = se(SE.Average.Weight),
+         Average.size = length(Average.Weight),
+          Total = length(Average.Weight), is.na=NA) 
+kable(Pup.weightspermaternalgenotypePND1)
+
+```
+
+```{r PUPweightpermaternalgenotype_andpercagePND7}
+Pup.weightspercagePND7 <- Pup.data %>% 
+  group_by(MaternalID, MaternalGenotype, Sex) %>%
+  summarize(Average.Weight = mean(PND7, na.rm=T),
+         SE.Average.Weight = se(PND7),
+         Average.size = length(PND7),
+          Total = length(PND7), is.na=NA) 
+kable(Pup.weightspercagePND7)
+
+Pup.weightspermaternalgenotypePND7 <- Pup.weightspercagePND7 %>% 
+  group_by(MaternalGenotype, Sex) %>%
+ summarize(Average.Weight = mean(Average.Weight, na.rm=T),
+         SE.Average.Weight = se(SE.Average.Weight),
+         Average.size = length(Average.Weight),
+          Total = length(Average.Weight), is.na=NA) 
+kable(Pup.weightspermaternalgenotypePND7)
+
+```
+
+```{r PUPweightpermaternalgenotype_andpercagePND14}
+Pup.weightspercagePND14 <- Pup.data %>% 
+  group_by(MaternalID, MaternalGenotype, Sex) %>%
+  summarize(Average.Weight = mean(PND14, na.rm=T),
+         SE.Average.Weight = se(PND14),
+         Average.size = length(PND14),
+          Total = length(PND14), is.na=NA) 
+kable(Pup.weightspercagePND14)
+
+Pup.weightspermaternalgenotypePND14 <- Pup.weightspercagePND14 %>% 
+  group_by(MaternalGenotype, Sex) %>%
+ summarize(Average.Weight = mean(Average.Weight, na.rm=T),
+         SE.Average.Weight = se(SE.Average.Weight),
+         Average.size = length(Average.Weight),
+          Total = length(Average.Weight), is.na=NA) 
+kable(Pup.weightspermaternalgenotypePND14)
+
+```
+
+```{r PUPweightpermaternalgenotype_andpercagePND16}
+Pup.weightspercagePND16 <- Pup.data %>% 
+  group_by(MaternalID, MaternalGenotype, Sex) %>%
+  summarize(Average.Weight = mean(PND16, na.rm=T),
+         SE.Average.Weight = se(PND16),
+         Average.size = length(PND16),
+          Total = length(PND16), is.na=NA) 
+kable(Pup.weightspercagePND16)
+
+Pup.weightspermaternalgenotypePND16 <- Pup.weightspercagePND16 %>% 
+  group_by(MaternalGenotype, Sex) %>%
+ summarize(Average.Weight = mean(Average.Weight, na.rm=T),
+         SE.Average.Weight = se(SE.Average.Weight),
+         Average.size = length(Average.Weight),
+          Total = length(Average.Weight), is.na=NA) 
+kable(Pup.weightspermaternalgenotypePND16)
+
+```
+
+```{r PUPweight_graphsPND1}
+library(ggplot2)
+  pd <- position_dodge(1) # move them .05 to the left and right
+
+  ggplot(Pup.weightspercagePND1,
+       aes(x=as.factor(MaternalID),
+           y= Average.Weight,
+           ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Dam ID",
+       y="Weight of Pups at PND1 (g)",
+       title="Weight of Pups on PND1 per Maternal Genotype") +
+  expand_limits(y=0, x=0) +
+  theme_classic()
+  
+  Pup.weightspercagePND1 %>%
+    group_by(MaternalGenotype) %>%
+    summarize(mean = mean(Average.Weight),
+              se = se(Average.Weight)) %>%
+  ggplot(aes(x=MaternalGenotype,
+           y= mean,
+           ymin = mean - se,
+           ymax = mean + se,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Maternal Genotype",
+       y="Weight (g)",
+       title="Weight of Pups on PND1") +
+  expand_limits(y=0, x=0) +
+  theme_classic() +
+  # +
+  #scale_fill_manual(values=color.scheme) +
+   theme(text = element_text(size=13)) 
+
+  library(broom)
+  t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND1) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND1 weights")
+```
+
+```{r PUPweight_graphsPND7}
+library(ggplot2)
+  pd <- position_dodge(1) # move them .05 to the left and right
+
+  ggplot(Pup.weightspercagePND7,
+       aes(x=as.factor(MaternalID),
+           y= Average.Weight,
+           ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Dam ID",
+       y="Weight of Pups at PND7 (g)",
+       title="Weight of Pups on PND7 per Maternal Genotype") +
+    facet_grid(~Sex) +
+  expand_limits(y=0, x=0) +
+  theme_classic()
+  
+  ggplot(Pup.weightspermaternalgenotypePND7,
+       aes(x=MaternalGenotype,
+           y= Average.Weight,
+           ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Maternal Genotype",
+       y="Weight (g)",
+       title="Weight of Pups on PND7") +
+      facet_grid(~Sex) +
+  expand_limits(y=0, x=0) +
+    theme_classic() +
+  #+
+  #scale_fill_manual(values=color.scheme) +
+     theme(text = element_text(size=13)) 
+  
+t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males")  
+t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in females")
+```
+
+```{r PUPweight_graphsPND14}
+library(ggplot2)
+  pd <- position_dodge(1) # move them .05 to the left and right
+
+  ggplot(Pup.weightspercagePND14,
+       aes(x=as.factor(MaternalID),
+           y= Average.Weight,
+           ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Dam ID",
+       y="Weight of Pups at PND14 (g)",
+       title="Weight of Pups on PND14 per Cage and Maternal Genotype") +
+    facet_grid(~Sex) +
+  expand_limits(y=0, x=0) +
+  theme_classic()
+  
+  ggplot(Pup.weightspermaternalgenotypePND14,
+       aes(x=MaternalGenotype,
+           y= Average.Weight,
+           ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Maternal Genotype",
+       y="Weight (g)",
+       title="Weight of Pups on PND14") +
+      facet_grid(~Sex) +
+  expand_limits(y=0, x=0) +
+    theme_classic() 
+  #+
+ # scale_fill_manual(values=color.scheme) +
+    #theme(text = element_text(size=18))
+
+t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND14 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND14 weights in males")  
+t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND14 %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND14 weights in females")  
+  
+```
+```{r PUPweight_graphsPND16}
+library(ggplot2)
+  pd <- position_dodge(1) # move them .05 to the left and right
+
+  ggplot(Pup.weightspercagePND16,
+       aes(x=as.factor(MaternalID),
+           y= Average.Weight,
+           ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Dam ID",
+       y="Weight of Pups at PND16 (g)",
+       title="Weight of Pups on PND16 per Cage and Maternal Genotype") +
+    facet_grid(~Sex) +
+  expand_limits(y=0, x=0) +
+  theme_classic()
+  
+  ggplot(Pup.weightspermaternalgenotypePND16,
+       aes(x=MaternalGenotype,
+           y= Average.Weight,
+           ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(x="Maternal Genotype",
+       y="Weight of Pups at PND16 (g)",
+       title="Weight of Pups on PND16 per Maternal Genotype") +
+      facet_grid(~Sex) +
+  expand_limits(y=0, x=0) +
+    theme_classic() 
+  #+
+ # scale_fill_manual(values=color.scheme) +
+ #   theme(text = element_text(size=18))
+
+t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND16 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND16 weights in males")  
+t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND16 %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND16 weights in females")  
+  
+```
+
+```{r combined-weights_PND7_14_16}
+rbind(Pup.weightspercagePND14 %>% mutate(Age=14),
+      Pup.weightspercagePND16 %>% mutate(Age=16),
+      Pup.weightspercagePND7 %>% mutate(Age=7)) %>%
+  group_by(Age,MaternalGenotype,Sex) %>%
+  summarize(mean = mean(Average.Weight),
+            error = se(Average.Weight)) %>%
+  ggplot(aes(x=Age,,
+             col=MaternalGenotype,
+           y= mean,
+           ymin = mean - error,
+           ymax = mean + error,
+           fill=MaternalGenotype))   + 
+  geom_point() +
+  geom_line() +
+  geom_errorbar(width=0.5) +
+  labs(x="Age (days)",
+       y="Weight (g)",
+       title="Weight of Pups") +
+      facet_grid(~Sex) +
+    theme_classic() +
+  #scale_color_manual(values=color.scheme) +
+    theme(text = element_text(size=13))
+```
+
+```{r pupbodymass_PND16MRI}
+library(ggplot2)
+library(plotrix)
+pupbodyweight <-
+  PupMRI %>% 
+  group_by(MaternalID , Sex, DateofBirth, DateofMRI) %>%
+  mutate(AverageBW= mean(BW)) %>%
+  mutate(AverageFat=mean(Fat)) %>%
+  mutate(AverageLean=mean(Lean))
+  
+  pupaveragewtpermaternalgenotype <- pupbodyweight%>%
+    group_by(MaternalGenotype, MaternalID, Sex) %>%
+    summarize(AverageBWpermaternalgenotype= mean(AverageBW),
+              AverageLeanpermaternalgenotype= mean(AverageLean),
+              AverageFatpermaternalgenotype= mean(AverageFat))
+  
+
+library(gridExtra) #for grid.arrange command
+bw <- ggplot(data=pupaveragewtpermaternalgenotype, 
+      aes(y=AverageBWpermaternalgenotype,
+           x=Sex,
+           fill=MaternalGenotype))+
+        geom_boxplot() +
+  expand_limits(y=0) +
+  theme_classic() +
+  labs(x = "Sex", y= "Body Weight (g)") +
+  theme(legend.position="bottomleft")
+
+lm <- ggplot(data=pupaveragewtpermaternalgenotype, 
+      aes(y=AverageLeanpermaternalgenotype,
+           x=Sex,
+           fill=MaternalGenotype))+
+        geom_boxplot() +
+  expand_limits(y=0) +
+  theme_classic() +
+  labs(x = "Sex", y= "Lean Mass (g)") +
+  theme(legend.position="none")
+
+fm <- ggplot(data=pupaveragewtpermaternalgenotype, 
+      aes(y=AverageFatpermaternalgenotype,
+           x=Sex,
+           fill=MaternalGenotype))+
+        geom_boxplot() +
+  expand_limits(y=0) +
+  theme_classic() +
+  labs(x = "Sex", y= "Fat Mass (g)") +
+  theme(legend.position="bottom")
+
+grid.arrange(bw,lm,fm, nrow=1) #this puts all three plot in one grid, in a single row
+
+t.test(BW ~ MaternalGenotype, data=PupMRI %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition") 
+t.test(BW ~ MaternalGenotype, data=PupMRI %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition") 
+t.test(Fat ~ MaternalGenotype, data=PupMRI %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition")
+t.test(Fat ~ MaternalGenotype, data=PupMRI %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition") 
+t.test(Lean ~ MaternalGenotype, data=PupMRI %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition") 
+t.test(Lean ~ MaternalGenotype, data=PupMRI %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition") 
+```
