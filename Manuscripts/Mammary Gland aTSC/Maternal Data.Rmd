@@ -150,6 +150,18 @@ maternal.weights <-
   labs(x = "Days From Delivery (0)", y= "Fat Mass (g)", title="Fat Mass Change from Delivery Day and during Lactation")
      
 ```
+
+### Postnatal fat mass change statistics
+
+```{r postnatal-fat-stats}
+library(lme4)
+library(lmerTest)
+pnfat.lme <- lmer(Fat.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=deltaFatchangefromdelivery)
+fixef(pnfat.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnfat.lme)['DayfromDelivery'] 
+
+summary(pnfat.lme)
+```
+
 ```{r lean_mass_during_pregnancyandlactation}
 library(ggplot2)
 library(plotrix)
