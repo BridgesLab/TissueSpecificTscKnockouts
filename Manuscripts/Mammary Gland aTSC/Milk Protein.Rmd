@@ -180,6 +180,6 @@ p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
   theme_classic() +
      theme(text = element_text(size=13)) 
 #EFFECT SIZE for average total protein is: (33.4-30.6)/30.6 *100 = 9.15%
-# t.test(Total ~ Genotype, data=totalproteinbatch2 %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on total milk protein"))
+#t.test(Total ~ Genotype, data=totalproteinbatch2 %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on total milk protein"))
 ```
 

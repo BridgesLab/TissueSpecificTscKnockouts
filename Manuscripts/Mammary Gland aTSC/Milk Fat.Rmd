@@ -120,7 +120,7 @@ kable(milk.fat.average_pergenotype_batch2,caption = "Average Milk Fat Content pe
 
 #averaging by sample from both batches
 milk.fat.averagepersample <- milk.fat.dataconvertedtomm %>%
-   group_by(Genotype, ID) %>% # grouping by ID and genotype
+   group_by(Genotype, ID, Batch) %>% # grouping by ID and genotype
   mutate(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
         SE.Average.Fat.Percent = se(FatPercentage)) %>%
   summarize(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
@@ -253,9 +253,8 @@ library(ggplot2)
   
   t.test(Average.Fat.Percent ~ Genotype, data=milk.fat.averagebatch2) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on milk production from batch 2 only")
   
- # lm(FatPercentage ~ Genotype + as.factor(Batch), data=milk.fat.averagepersample) %>% summary
-  
-  
+lm(Average.Fat.Percent ~ Genotype + as.factor(Batch), data=milk.fat.averagepersample) %>% summary
+
 ```
 
 # Interpretation
