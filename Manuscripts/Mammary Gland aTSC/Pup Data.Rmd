@@ -95,7 +95,7 @@ p + geom_bar(stat='identity', position=position_dodge(), width =0.5) + #match wi
   expand_limits(y=0) +
        theme_classic()  
 
-#t.test(Alive ~ MaternalGenotype, data=numberofpups.per.cage %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on survival rate"))
+t.test(Alive ~ MaternalGenotype, data=numberofpups.per.cage) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on survival rate")
 
 # +
  #scale_fill_manual(values=color.scheme) +  #add this to make the colors maize an
@@ -134,7 +134,7 @@ library(ggplot2)
        y="Number of Born Pups",
        x="Maternal ID") +
   theme_classic()
-#t.test (Total ~ MaternalGenotype, data=Pupbirth.data %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on births"))
+t.test (Total ~ MaternalGenotype, data=Pupbirth.data) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on births")
 
 # + scale_fill_manual(values=color.scheme) +  #add this to make the colors maize an
     # theme(text = element_text(size=18))
