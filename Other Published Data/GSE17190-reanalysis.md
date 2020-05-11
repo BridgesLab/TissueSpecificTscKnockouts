@@ -163,20 +163,42 @@ combined.genes %>%
 ![](figures/gene-overlap-1.png)<!-- -->
 
 ```r
-interesting.genes <- c('Slc16a1','Oxct1','Bdh1','Gdf15','Fabp3','Cd36')
+interesting.genes <- c('Fabp3','Cd36','Tlr4','Insr','Prkaa2','Agpat2','Prkag3','Prkab2','Slc1a5','Slc1a1','Slc7a6')
 combined.genes %>%
-  filter(external_gene_name %in% interesting.genes)
+  filter(external_gene_name %in% interesting.genes) %>%
+  kable(caption="Selected genes")
 ```
 
+
+
+Table: Selected genes
+
+external_gene_name    log2FC_TSC   pval_TSC   padj_TSC   log2FC_HCR   pval_HCR   padj_HCR
+-------------------  -----------  ---------  ---------  -----------  ---------  ---------
+Slc1a5                    -0.687      0.032      0.096       -0.057      0.049      0.442
+Cd36                       0.416      0.025      0.080        0.251      0.116      0.602
+Insr                      -0.526      0.000      0.001       -0.108      0.012      0.228
+Prkag3                    -0.852      0.002      0.008       -0.387      0.027      0.342
+Slc1a1                     2.753      0.000      0.000        0.133      0.034      0.379
+Agpat2                     0.693      0.002      0.011        0.358      0.006      0.161
+Prkaa2                    -0.460      0.002      0.010       -0.101      0.008      0.189
+Fabp3                      1.081      0.000      0.000        0.310      0.214      0.725
+Slc7a6                     0.627      0.000      0.000        0.089      0.017      0.274
+Prkab2                    -1.188      0.000      0.000       -0.445      0.000      0.031
+Tlr4                       1.647      0.000      0.000        0.070      0.037      0.390
+
+```r
+combined.genes %>%
+  filter(external_gene_name %in% interesting.genes) %>%
+  select(external_gene_name, log2FC_HCR, log2FC_TSC) %>%
+  group_by(external_gene_name) %>%
+  pivot_longer(names_to = 'Experiment', values_to = 'Log2FC', cols=log2FC_HCR:log2FC_TSC) %>%
+  ggplot(aes(y=Log2FC,x=external_gene_name,
+             fill=Experiment)) +
+    geom_bar(stat='identity', position='dodge')
 ```
-##   external_gene_name log2FC_TSC pval_TSC padj_TSC log2FC_HCR pval_HCR padj_HCR
-## 1               Cd36      0.416 2.52e-02 8.02e-02     0.2512    0.116    0.602
-## 2              Oxct1      0.604 1.14e-06 1.54e-05         NA       NA       NA
-## 3              Fabp3      1.081 7.42e-06 8.25e-05     0.3102    0.214    0.725
-## 4            Slc16a1      1.764 3.68e-12 1.56e-10    -0.0707    0.624    0.924
-## 5              Gdf15      5.534 1.56e-13 8.24e-12     0.0395    0.192    0.708
-## 6               Bdh1      1.103 2.31e-03 1.17e-02     0.1393    0.243    0.748
-```
+
+![](figures/gene-overlap-2.png)<!-- -->
 
 
 ```r
@@ -195,6 +217,15 @@ plot(v.diseases, main="TSC-Dependent Transcriptional Changes")
 # v.list <- list(`Tsc2 Knockout MEFs` = sig.duvel.genes, `Tsc1 Knockout Muscles` = sig.mtsc.genes)
 # v.data <- Venn(v.list)
 # plot(v.data)
+```
+
+
+```r
+combined.genes %>%
+  filter(pval_TSC<0.05&pval_HCR<0.05) %>%
+  mutate(Ratio=log2FC_TSC/log2FC_HCR) %>%
+  filter(Ratio>0) %>%
+  write.csv('Genes Significant in both HCR and TSC.csv')
 ```
 
 

@@ -169,9 +169,19 @@ combined.genes %>%
   labs(y="TSC Fold Change",x="HCR Fold Change") +
   geom_smooth(se=T)
 
-interesting.genes <- c('Slc16a1','Oxct1','Bdh1','Gdf15','Fabp3','Cd36')
+interesting.genes <- c('Fabp3','Cd36','Tlr4','Insr','Prkaa2','Agpat2','Prkag3','Prkab2','Slc1a5','Slc1a1','Slc7a6')
 combined.genes %>%
-  filter(external_gene_name %in% interesting.genes)
+  filter(external_gene_name %in% interesting.genes) %>%
+  kable(caption="Selected genes")
+
+combined.genes %>%
+  filter(external_gene_name %in% interesting.genes) %>%
+  select(external_gene_name, log2FC_HCR, log2FC_TSC) %>%
+  group_by(external_gene_name) %>%
+  pivot_longer(names_to = 'Experiment', values_to = 'Log2FC', cols=log2FC_HCR:log2FC_TSC) %>%
+  ggplot(aes(y=Log2FC,x=external_gene_name,
+             fill=Experiment)) +
+    geom_bar(stat='identity', position='dodge')
 ```
 
 ```{r hcr-mtsc-venn}
@@ -186,6 +196,14 @@ plot(v.diseases, main="TSC-Dependent Transcriptional Changes")
 # v.list <- list(`Tsc2 Knockout MEFs` = sig.duvel.genes, `Tsc1 Knockout Muscles` = sig.mtsc.genes)
 # v.data <- Venn(v.list)
 # plot(v.data)
+```
+
+```{r significant-genes}
+combined.genes %>%
+  filter(pval_TSC<0.05&pval_HCR<0.05) %>%
+  mutate(Ratio=log2FC_TSC/log2FC_HCR) %>%
+  filter(Ratio>0) %>%
+  write.csv('Genes Significant in both HCR and TSC.csv')
 ```
 
 ```{r session-info}
