@@ -142,6 +142,7 @@ fisher.table <-
        nrow = 2,
        dimnames = list(Genes = c("Tested", "Sig"),
                        Significance = c("Overlap", "HCR")))
+
 ```
 
 Duvel et al identified `r length(unique(sig.hcr.genes))` significantly differentially expressed genes in their analysis out of a total of `r length(unique(fit2$genes$Gene.symbol))` genes assessed.  Of these differentially expressed genes. `r length(sig.overlap)` genes overlapped with our `r dim(sig.mtsc.data)[1]` significantly different genes from *Tsc1* knockout mice quadriceps.  This is not a significant level of overlap (p=`r fisher.test(fisher.table)$p.value`).
@@ -150,15 +151,23 @@ Duvel et al identified `r length(unique(sig.hcr.genes))` significantly different
 combined.genes <-
   mtsc.data %>%
   select(external_gene_name,log2FoldChange,pvalue,padj) %>%
-  left_join(hcr.results, by=c('external_gene_name'='Gene.symbol'))
+  left_join(hcr.results, by=c('external_gene_name'='Gene.symbol')) %>%
+  rename("log2FC_TSC"="log2FoldChange",
+         "pval_TSC"='pvalue',
+         "padj_TSC"='padj',
+         "log2FC_HCR"="logFC",
+         'pval_HCR'="P.Value",
+         'padj_HCR'='adj.P.Val')
+
+with(combined.genes, lm(log2FC_TSC~log2FC_HCR))  %>% tidy %>% kable(caption="Linear model for association between HCR fold change and TSC fold change")
+
 
 library(ggplot2)
 combined.genes %>%
-  ggplot(aes(y=log2FoldChange,x=logFC)) +
+  ggplot(aes(y=log2FC_TSC,x=log2FC_HCR)) +
   geom_point(size=0.1, alpha=0.1) +
   labs(y="TSC Fold Change",x="HCR Fold Change") +
-  geom_abline()
-
+  geom_smooth(se=T)
 
 interesting.genes <- c('Slc16a1','Oxct1','Bdh1','Gdf15','Fabp3','Cd36')
 combined.genes %>%

@@ -17,16 +17,24 @@ This is generated via GEO2R based on the Kivela *et al.* paper which did microar
 
 Duvel et al identified 1762 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed.  Of these differentially expressed genes. 600 genes overlapped with our 5840 significantly different genes from *Tsc1* knockout mice quadriceps.  This is not a significant level of overlap (p=3.145&times; 10^-6^).
 
+
+Table: Linear model for association between HCR fold change and TSC fold change
+
+term           estimate   std.error   statistic   p.value
+------------  ---------  ----------  ----------  --------
+(Intercept)       0.113       0.008       14.58     0.000
+log2FC_HCR        0.145       0.071        2.04     0.041
+
 ![](figures/gene-overlap-1.png)<!-- -->
 
 ```
-##   external_gene_name log2FoldChange   pvalue     padj   logFC P.Value adj.P.Val
-## 1               Cd36          0.416 2.52e-02 8.02e-02  0.2512   0.116     0.602
-## 2              Oxct1          0.604 1.14e-06 1.54e-05      NA      NA        NA
-## 3              Fabp3          1.081 7.42e-06 8.25e-05  0.3102   0.214     0.725
-## 4            Slc16a1          1.764 3.68e-12 1.56e-10 -0.0707   0.624     0.924
-## 5              Gdf15          5.534 1.56e-13 8.24e-12  0.0395   0.192     0.708
-## 6               Bdh1          1.103 2.31e-03 1.17e-02  0.1393   0.243     0.748
+##   external_gene_name log2FC_TSC pval_TSC padj_TSC log2FC_HCR pval_HCR padj_HCR
+## 1               Cd36      0.416 2.52e-02 8.02e-02     0.2512    0.116    0.602
+## 2              Oxct1      0.604 1.14e-06 1.54e-05         NA       NA       NA
+## 3              Fabp3      1.081 7.42e-06 8.25e-05     0.3102    0.214    0.725
+## 4            Slc16a1      1.764 3.68e-12 1.56e-10    -0.0707    0.624    0.924
+## 5              Gdf15      5.534 1.56e-13 8.24e-12     0.0395    0.192    0.708
+## 6               Bdh1      1.103 2.31e-03 1.17e-02     0.1393    0.243    0.748
 ```
 
 ![](figures/hcr-mtsc-venn-1.png)<!-- -->
@@ -55,15 +63,16 @@ Duvel et al identified 1762 significantly differentially expressed genes in thei
 ## [10] tidyr_1.0.3         knitr_1.28         
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.4.6     pillar_1.4.4     compiler_4.0.0   tools_4.0.0     
-##  [5] digest_0.6.25    gtable_0.3.0     evaluate_0.14    lifecycle_0.2.0 
-##  [9] tibble_3.0.1     nlme_3.1-147     lattice_0.20-41  pkgconfig_2.0.3 
-## [13] rlang_0.4.6      curl_4.3         yaml_2.2.1       xfun_0.13       
-## [17] withr_2.2.0      stringr_1.4.0    xml2_1.3.2       generics_0.0.2  
-## [21] vctrs_0.2.4      hms_0.5.3        grid_4.0.0       tidyselect_1.0.0
-## [25] glue_1.4.0       R6_2.4.1         rmarkdown_2.1    farver_2.0.3    
-## [29] purrr_0.3.4      readr_1.3.1      magrittr_1.5     scales_1.1.0    
-## [33] backports_1.1.6  ellipsis_0.3.0   htmltools_0.4.0  assertthat_0.2.1
-## [37] colorspace_1.4-1 labeling_0.3     stringi_1.4.6    munsell_0.5.0   
-## [41] crayon_1.3.4
+##  [1] Rcpp_1.0.4.6     highr_0.8        pillar_1.4.4     compiler_4.0.0  
+##  [5] tools_4.0.0      digest_0.6.25    gtable_0.3.0     evaluate_0.14   
+##  [9] lifecycle_0.2.0  tibble_3.0.1     nlme_3.1-147     lattice_0.20-41 
+## [13] mgcv_1.8-31      pkgconfig_2.0.3  rlang_0.4.6      Matrix_1.2-18   
+## [17] curl_4.3         yaml_2.2.1       xfun_0.13        withr_2.2.0     
+## [21] stringr_1.4.0    xml2_1.3.2       generics_0.0.2   vctrs_0.2.4     
+## [25] hms_0.5.3        grid_4.0.0       tidyselect_1.0.0 glue_1.4.0      
+## [29] R6_2.4.1         rmarkdown_2.1    farver_2.0.3     purrr_0.3.4     
+## [33] readr_1.3.1      magrittr_1.5     splines_4.0.0    scales_1.1.0    
+## [37] backports_1.1.6  ellipsis_0.3.0   htmltools_0.4.0  assertthat_0.2.1
+## [41] colorspace_1.4-1 labeling_0.3     stringi_1.4.6    munsell_0.5.0   
+## [45] crayon_1.3.4
 ```
