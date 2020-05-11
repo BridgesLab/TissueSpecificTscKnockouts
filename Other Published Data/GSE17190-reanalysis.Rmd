@@ -1,0 +1,175 @@
+---
+title: "Re-Analysis of 17190"
+author: "Dave Bridges"
+date: "May 11, 2020"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This is generated via GEO2R based on the Kivela *et al.* paper which did microarrays on gastroc muscles from LCR vs HCR rats.
+
+```{r geo2r, results='asis'}
+# Version info: R 3.2.3, Biobase 2.30.0, GEOquery 2.40.0, limma 3.26.8
+# R scripts generated  Mon May 11 11:42:23 EDT 2020
+
+################################################################
+#   Differential expression analysis with limma
+library(Biobase)
+library(GEOquery)
+library(limma)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE17190", GSEMatrix =TRUE, AnnotGPL=TRUE)
+if (length(gset) > 1) idx <- grep("GPL6101", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+# make proper column names to match toptable 
+fvarLabels(gset) <- make.names(fvarLabels(gset))
+
+# group names for all samples
+gsms <- "110000110011001100110011"
+sml <- c()
+for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
+
+# log2 transform
+ex <- exprs(gset)
+qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+LogC <- (qx[5] > 100) ||
+          (qx[6]-qx[1] > 50 && qx[2] > 0) ||
+          (qx[2] > 0 && qx[2] < 1 && qx[4] > 1 && qx[4] < 2)
+if (LogC) { ex[which(ex <= 0)] <- NaN
+  exprs(gset) <- log2(ex) }
+
+# set up the data and proceed with analysis
+sml <- paste("G", sml, sep="")    # set group names
+fl <- as.factor(sml)
+gset$description <- fl
+design <- model.matrix(~ description + 0, gset)
+colnames(design) <- levels(fl)
+fit <- lmFit(gset, design)
+cont.matrix <- makeContrasts(G1-G0, levels=design)
+fit2 <- contrasts.fit(fit, cont.matrix)
+fit2 <- eBayes(fit2, 0.01)
+tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
+
+tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title"))
+#write.table(tT, file=stdout(), row.names=F, sep="\t")
+
+
+################################################################
+#   Boxplot for selected GEO samples
+library(Biobase)
+library(GEOquery)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE17190", GSEMatrix =TRUE, getGPL=FALSE)
+if (length(gset) > 1) idx <- grep("GPL6101", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+# group names for all samples in a series
+gsms <- "110000110011001100110011"
+sml <- c()
+for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
+sml <- paste("G", sml, sep="")  # set group names
+
+# order samples by group
+ex <- exprs(gset)[ , order(sml)]
+sml <- sml[order(sml)]
+fl <- as.factor(sml)
+labels <- c("LCR","HCR")
+
+# set parameters and draw the plot
+palette(c("#dfeaf4","#f4dfdf", "#AABBCC"))
+dev.new(width=4+dim(gset)[[2]]/5, height=6)
+par(mar=c(2+round(max(nchar(sampleNames(gset)))/2),4,2,1))
+title <- paste ("GSE17190", '/', annotation(gset), " selected samples", sep ='')
+boxplot(ex, boxwex=0.6, notch=T, main=title, outline=FALSE, las=2, col=fl)
+legend("topleft", labels, fill=palette(), bty="n")
+
+
+
+#write to output file
+output_file <- 'GSE1790 Analysis.csv'
+write.fit(fit2, file=output_file, adjust='BH')
+
+hcr.results <- droplevels(topTable(fit2, n=Inf, adjust.method="BH")) %>%
+  select(Gene.symbol,logFC,P.Value,adj.P.Val) %>%
+  distinct(Gene.symbol, .keep_all=T)
+#annotate the probes
+sig.hcr.results <- hcr.results %>% filter(adj.P.Val<0.05)
+sig.hcr.genes <- sig.hcr.results$Gene.symbol
+
+mTsc.datafile <- '../RNAseq/data/processed/Binary DESeq Results.csv'
+mtsc.data <- read.csv(mTsc.datafile)
+sig.mtsc.data <- droplevels(subset(mtsc.data, padj<0.05))
+
+sig.mtsc.genes <- sig.mtsc.data$external_gene_name
+sig.overlap <- intersect(sig.hcr.genes, sig.mtsc.genes)
+```
+
+Duvel et al identified `r length(unique(sig.hcr.genes))` significantly differentially expressed genes in their analysis out of a total of `r length(unique(fit2$genes$Gene.symbol))` genes assessed.  Of these differentially expressed genes. `r length(sig.overlap)` genes overlapped with our `r dim(sig.mtsc.data)[1]` significantly different genes from *Tsc1* knockout mice quadriceps.  
+
+```{r gene-overlap}
+combined.genes <-
+  mtsc.data %>%
+  select(external_gene_name,log2FoldChange,pvalue,padj) %>%
+  left_join(hcr.results, by=c('external_gene_name'='Gene.symbol'))
+
+library(ggplot2)
+combined.genes %>%
+  ggplot(aes(y=log2FoldChange,x=logFC)) +
+  geom_point(size=0.1, alpha=0.1) +
+  labs(y="TSC Fold Change",x="HCR Fold Change") +
+  geom_abline()
+
+
+interesting.genes <- c('Slc16a1','Oxct1','Bdh1','Gdf15','Fabp3','Cd36')
+combined.genes %>%
+  filter(external_gene_name %in% interesting.genes)
+```
+
+```{r hcr-mtsc-venn}
+require(venneuler)
+v.diseases <- venneuler(c("HCR vs LCR"=length(sig.hcr.genes), 
+                 "Tsc1 Knockout Muscles"=length(sig.mtsc.genes),
+                 "HCR vs LCR&Tsc1 Knockout Muscles"=length(intersect(sig.hcr.genes, sig.mtsc.genes))))
+
+plot(v.diseases, main="TSC-Dependent Transcriptional Changes")
+
+# library(Vennerable)
+# v.list <- list(`Tsc2 Knockout MEFs` = sig.duvel.genes, `Tsc1 Knockout Muscles` = sig.mtsc.genes)
+# v.data <- Venn(v.list)
+# plot(v.data)
+```
+
+```{r session-info}
+sessionInfo()
+```
