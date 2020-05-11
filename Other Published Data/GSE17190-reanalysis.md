@@ -124,7 +124,7 @@ fisher.table <-
                        Significance = c("Overlap", "HCR")))
 ```
 
-Duvel et al identified 1762 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed.  Of these differentially expressed genes. 600 genes overlapped with our 5840 significantly different genes from *Tsc1* knockout mice quadriceps.  This is not a significant level of overlap (p=3.145&times; 10^-6^).
+Duvel et al identified 1762 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed.  Of these differentially expressed genes. 600 genes overlapped with our 5840 significantly different genes from *Tsc1* knockout mice quadriceps.  This is a significant level of overlap (p=3.145&times; 10^-6^).
 
 
 ```r

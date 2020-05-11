@@ -478,7 +478,7 @@ fisher.table &lt;-
        nrow = 2,
        dimnames = list(Genes = c(&quot;Tested&quot;, &quot;Sig&quot;),
                        Significance = c(&quot;Overlap&quot;, &quot;HCR&quot;)))</code></pre>
-<p>Duvel et al identified 1762 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed. Of these differentially expressed genes. 600 genes overlapped with our 5840 significantly different genes from <em>Tsc1</em> knockout mice quadriceps. This is not a significant level of overlap (p=3.145× 10<sup>-6</sup>).</p>
+<p>Duvel et al identified 1762 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed. Of these differentially expressed genes. 600 genes overlapped with our 5840 significantly different genes from <em>Tsc1</em> knockout mice quadriceps. This is a significant level of overlap (p=3.145× 10<sup>-6</sup>).</p>
 <pre class="r"><code>combined.genes &lt;-
   mtsc.data %&gt;%
   select(external_gene_name,log2FoldChange,pvalue,padj) %&gt;%

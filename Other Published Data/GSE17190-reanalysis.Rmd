@@ -145,7 +145,7 @@ fisher.table <-
 
 ```
 
-Duvel et al identified `r length(unique(sig.hcr.genes))` significantly differentially expressed genes in their analysis out of a total of `r length(unique(fit2$genes$Gene.symbol))` genes assessed.  Of these differentially expressed genes. `r length(sig.overlap)` genes overlapped with our `r dim(sig.mtsc.data)[1]` significantly different genes from *Tsc1* knockout mice quadriceps.  This is not a significant level of overlap (p=`r fisher.test(fisher.table)$p.value`).
+Duvel et al identified `r length(unique(sig.hcr.genes))` significantly differentially expressed genes in their analysis out of a total of `r length(unique(fit2$genes$Gene.symbol))` genes assessed.  Of these differentially expressed genes. `r length(sig.overlap)` genes overlapped with our `r dim(sig.mtsc.data)[1]` significantly different genes from *Tsc1* knockout mice quadriceps.  This is a significant level of overlap (p=`r fisher.test(fisher.table)$p.value`).
 
 ```{r gene-overlap}
 combined.genes <-
