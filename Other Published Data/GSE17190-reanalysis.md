@@ -1,5 +1,5 @@
 ---
-title: "Re-Analysis of 17190"
+title: "Re-Analysis of GSE17190"
 author: "Dave Bridges"
 date: "May 11, 2020"
 output:
@@ -15,7 +15,7 @@ This is generated via GEO2R based on the Kivela *et al.* paper which did microar
 
 
 
-Duvel et al identified 178 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed.  Of these differentially expressed genes. 62 genes overlapped with our 4403 significantly different genes from *Tsc1* knockout mice quadriceps.  
+Duvel et al identified 178 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed.  Of these differentially expressed genes. 62 genes overlapped with our 4403 significantly different genes from *Tsc1* knockout mice quadriceps.  This is not a significant level of overlap (p=0.597).
 
 ![](figures/gene-overlap-1.png)<!-- -->
 
