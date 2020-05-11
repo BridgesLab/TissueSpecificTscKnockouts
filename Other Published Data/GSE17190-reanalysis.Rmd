@@ -124,12 +124,12 @@ hcr.results <- droplevels(topTable(fit2, n=Inf, adjust.method="BH")) %>%
   select(Gene.symbol,logFC,P.Value,adj.P.Val) %>%
   distinct(Gene.symbol, .keep_all=T)
 #annotate the probes
-sig.hcr.results <- hcr.results %>% filter(adj.P.Val<0.05)
+sig.hcr.results <- hcr.results %>% filter(P.Value<0.05)
 sig.hcr.genes <- sig.hcr.results$Gene.symbol
 
 mTsc.datafile <- '../RNAseq/data/processed/Binary DESeq Results.csv'
 mtsc.data <- read.csv(mTsc.datafile)
-sig.mtsc.data <- droplevels(subset(mtsc.data, padj<0.05))
+sig.mtsc.data <- droplevels(subset(mtsc.data, pvalue<0.05))
 
 sig.mtsc.genes <- sig.mtsc.data$external_gene_name
 sig.overlap <- intersect(sig.hcr.genes, sig.mtsc.genes)

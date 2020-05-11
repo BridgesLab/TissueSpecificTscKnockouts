@@ -15,7 +15,7 @@ This is generated via GEO2R based on the Kivela *et al.* paper which did microar
 
 
 
-Duvel et al identified 178 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed.  Of these differentially expressed genes. 62 genes overlapped with our 4403 significantly different genes from *Tsc1* knockout mice quadriceps.  This is not a significant level of overlap (p=0.597).
+Duvel et al identified 1762 significantly differentially expressed genes in their analysis out of a total of 13635 genes assessed.  Of these differentially expressed genes. 600 genes overlapped with our 5840 significantly different genes from *Tsc1* knockout mice quadriceps.  This is not a significant level of overlap (p=3.145&times; 10^-6^).
 
 ![](figures/gene-overlap-1.png)<!-- -->
 
