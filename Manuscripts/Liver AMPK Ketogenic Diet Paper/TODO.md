@@ -3,3 +3,4 @@ Ask Dave if its ok to look at another paper's methods section and copy it bc we 
 where did we get the ampk a1/a2 floxed mice? do i need to include that?
 ask dave about light cycle in facility.
 Ask Dave what the README file is
+Ask Dave how I should save my Figure 1 (made in illustrator) and how bc it is through VMware horrizon Client.
