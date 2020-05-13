@@ -98,8 +98,17 @@ maternal.weights <-
   theme_classic() +
      theme(text = element_text(size=13)) +
   labs(x = "Days From Delivery (0)", y= "Body Weight (g)", title="Body Weight Change from Delivery Day and during Lactation") 
+```
+```{r postnatal-bodyweight-stats}
+library(lme4)
+library(lmerTest)
+pnbw.lme <- lmer(BW.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=deltaBWchangefromdelivery) #If we use lm function here we would get an interaction effect of maternalgenotype:daysfromdelivery = 0.0643; to then get the effect size over the 16 days postnatal, we would do 0.0643*16 to get 1.0288grams gained more per day for KO dams. lm would not group by dam but rather would consider each data point as a unique data point, and we need to group by dam so that the function counts the true n of the dams, so we will use lmer.
+#But since we care about comparing the slopes of WT vs KO dam trends in weight over time (until PND16), we will use lmer function to see interaction of geonotype:time, and this function allows us to group by mouse 
+fixef(pnbw.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnbw.lme)['DayfromDelivery'] #this is the effect size which is the estimate of genotype:daysfromdelivery - estimate for daysfromdelivery
 
-     
+
+## The effect size is -0.102*16= -1.632 grams weight loss over 16 days postnatal for KO dams compared to WT. This is not a significant effect with p-value= 0.061
+summary(pnbw.lme)
 ```
 ```{r Fat_mass_during_pregnancyandlactation}
 library(ggplot2)
@@ -156,10 +165,11 @@ maternal.weights <-
 ```{r postnatal-fat-stats}
 library(lme4)
 library(lmerTest)
-pnfat.lme <- lmer(Fat.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=deltaFatchangefromdelivery)
-fixef(pnfat.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnfat.lme)['DayfromDelivery'] 
-
+pnfat.lme <- lmer(Fat.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=deltaFatchangefromdelivery) 
+fixef(pnfat.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnfat.lme)['DayfromDelivery']
 summary(pnfat.lme)
+
+## The effect size is 0.125*16= 2 grams additional weight gain over 16 days postnatal for KO dams compared to WT. This is a significant effect with p-value <0.001
 ```
 
 ```{r lean_mass_during_pregnancyandlactation}
@@ -211,6 +221,17 @@ maternal.weights <-
   labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Lean Mass Change from Delivery Day and during Lactation")
      
 ```
+
+```{r postnatal-lean-stats}
+library(lme4)
+library(lmerTest)
+pnlean.lme <- lmer(Lean.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=deltaLeanchangefromdelivery) 
+fixef(pnlean.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnlean.lme)['DayfromDelivery']
+summary(pnlean.lme)
+
+## The effect size is -0.167*16= -2.672 grams additional lean mass loss over 16 days postnatal for KO dams compared to WT. This is not a significant effect with p-value= 0.404
+```
+
 ```{r Freewater_during_pregnancyandlactation}
 library(ggplot2)
 library(plotrix)
@@ -278,7 +299,35 @@ maternal.weights <-
   theme_classic() +
      geom_vline(xintercept = 4, lty=2)+
   labs(x="Week", y="Average Food Intake (g)", title="Average Dam Weekly Food Intake before amd after Delivery at around Week 4")
+  
+   foodintakefromdelivery <- #data frame for food intake postpartum only
+  maternal.weights %>%
+  group_by(ID,MaternalGenotype) %>%
+  filter(DayfromDelivery>=0)
+  
+  ggplot(data=foodintakefromdelivery,
+         aes(y=FoodIntake,
+             x=DayfromDelivery,
+             col=MaternalGenotype, na.rm=T,
+             fill=MaternalGenotype, na.rm =T, ymin=0, ymax=80, xmin=0, xmax= 21))+
+       scale_x_continuous(breaks=seq(0,21,1)) +
+     scale_y_continuous(breaks= seq(0,80,10))+
+  geom_point() +
+      geom_smooth ()  +
+  expand_limits(x=0) +
+  theme_classic() +
+       theme(text = element_text(size=13)) +
+  labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Food Intake from Delivery Day and during Lactation")
 
+```
+```{r postnatal-foodintake-stats}
+library(lme4)
+library(lmerTest)
+pnfoodintake.lme <- lmer(FoodIntake~DayfromDelivery*MaternalGenotype + (1|ID), data=foodintakefromdelivery) 
+fixef(pnfoodintake.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnfoodintake.lme)['DayfromDelivery']
+summary(pnfoodintake.lme)
+
+## The effect size is -6.34*16= -101.44 grams less food consumption over 16 days postnatal for KO dams compared to WT. This is a significant effect with p-value = 0.0113
 ```
 
 
