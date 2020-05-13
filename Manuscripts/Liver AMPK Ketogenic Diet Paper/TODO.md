@@ -6,3 +6,4 @@ Ask Dave how I should save my Figure 1 (made in illustrator) bc it is through VM
 Put Figure 1 in README file.
 Where do I put "figure 1" on the figure?
 Ask Dave if Figure 1 looks ok.
+How do I insert Figure 1 from illustrator into the manuscript? Do I need to do that?
