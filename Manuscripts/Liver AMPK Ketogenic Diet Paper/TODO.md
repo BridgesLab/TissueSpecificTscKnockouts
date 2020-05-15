@@ -8,3 +8,4 @@ Currently, the Ketone-body-analysis.rmd file includes Raptor data. How do I gene
 Once I generate the ketone figure using R I drag the PDF I want to use into illustrator. 
 Then I take the script and data for the script and put that in the repository in github (do i need to change the file path in the R script when I move the data?)
 Next, I record the file path in the README file. 
+In the R code, I see "theme(text = element_text(size=18))" to increase the font size. However, I don't know how to make the labels 11, the axis 8 and the panel 18. I did everything 11. 
