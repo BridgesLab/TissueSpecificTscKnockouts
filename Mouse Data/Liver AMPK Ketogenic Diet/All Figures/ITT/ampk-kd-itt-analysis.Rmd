@@ -1,0 +1,349 @@
+---
+title: "Analysis of ITT's from AMPK KD Study"
+author: "Katherine Kistler, Cody Cousineau, and Dave Bridges"
+date: "July 5, 2019"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Injected 0.75 mU/g of lean body mass to animals fasted for 6h after 2 weeks of KD/CD (or four weeks after the injection)
+
+# Raw Data
+
+```{r data-input}
+library(readxl) #loads the readr package
+data.filename <- 'ITT 19-06-19.xlsx' #make this a separate line, you can use any variable you want
+
+#from western blot data
+not.ko <- c(8715,8716,8717,8718,8719,8786)
+unclear.ko <- c(8786,8717,8285,8345)
+
+
+mapping.filename <- 'mapping.csv'
+#this loads whatever the file is into a dataframe called exp.data if it exists
+exp.data <- read_excel(data.filename, sheet='Sheet2') %>%
+  select(Group:`120`) %>%
+  filter(!(Group %in% c("Average","SE",NA))) %>% # removed calculated averages and errors
+  separate(Group,
+           into=c("Sex","Diet","Injection"), # broke group down into sex, diet and injection 
+           sep=" ") %>%
+  tibble::rowid_to_column("ID") %>% #index an ID column
+  mutate(ID = as.factor(ID)) %>%
+  mutate(Injection = relevel(as.factor(Injection), ref="GFP")) %>%
+  mutate(Injection = ifelse(ID %in% not.ko, "GFP", as.character(Injection)))  #modified genotypes based on western blotting
+
+data.long <-
+  exp.data %>%
+  group_by(Sex,Diet,Injection) %>%
+  gather(key=Time,value=Glucose, -Sex, -Diet, -Injection, -ID,-Mouse) %>%
+  mutate(Time = as.integer(Time),
+         Glucose = as.integer(Glucose))
+
+summary.data <-
+  exp.data %>%
+  group_by(Sex,Diet,Injection) %>%
+  summarize_if(is.numeric, .funs=list(mean = function(x) mean(x,na.rm=T),
+                                      se=se))
+```
+
+These data can be found in **`r getwd()`** in a file named **`r data.filename`** and **`r mapping.filename`**.  This script was most recently updated on **`r date()`**.
+
+# Number of Mice
+
+```{r number-of-mice}
+exp.data %>%
+  group_by(Sex,Diet,Injection) %>%
+  distinct(ID, .keep_all = T) %>%
+  count %>%
+  kable(caption="Animals in each group of this cohort")
+```
+
+# Analysis
+
+```{r itt-points-all, fig.cap="Dotplot of ITT, all groups"}
+library(ggplot2)
+
+ggplot(data.long, aes(y=Glucose,
+                      x=Time,
+                      col=Injection)) +
+  geom_point() +
+  geom_smooth() +
+  facet_grid(Sex~Diet) +
+  labs(y="Blood Glucose (mg/dL)",
+       x="Insulin (min)")
+```
+
+
+```{r itt-line-all, fig.cap="Lineplot of ITT, all mice"}
+data.long %>%
+  group_by(Sex,Diet,Injection,Time) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) %>%
+  ggplot(aes(y=Mean,
+             x=Time,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             col=Injection)) +
+  geom_line() +
+  geom_errorbar() +
+  expand_limits(y=0) +
+  facet_grid(Sex~Diet) +
+  labs(y="Blood Glucose (mg/dL)",
+       x="Insulin (min)")
+```
+
+```{r itt-line-males, fig.cap="Lineplot of ITT, male mice only"}
+data.long %>%
+  filter(Sex=="M") %>%
+  group_by(Sex,Diet,Injection,Time) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) %>%
+  ggplot(aes(y=Mean,
+             x=Time,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             col=Injection)) +
+  geom_line() +
+  geom_errorbar() +
+  expand_limits(y=0) +
+  scale_color_brewer(palette = "Set2",
+                     name="", 
+                     labels=c("AAV-Tbg-GFP",
+                              "AAV-Tbg-Cre")) +
+  facet_grid(~Diet) +
+  labs(y="Blood Glucose (mg/dL)",
+       x="Insulin (min)",
+       title="Hepatic AMPK Knockout Mice") +
+  theme_classic() +
+  theme(
+    text = element_text(size=24),
+    legend.position = c(0.25,0.85),
+    legend.key = element_blank(),
+    legend.background = element_blank())
+```
+
+```{r itt-line-gfp, fig.cap="Lineplot of ITT, all GFP mice"}
+data.long %>%
+  filter(Injection=="GFP") %>%
+  group_by(Sex,Diet,Time) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) %>%
+  ggplot(aes(y=Mean,
+             x=Time,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             col=Diet)) +
+  geom_line() +
+  geom_errorbar() +
+  expand_limits(y=0) +
+  facet_grid(~Sex) +
+  labs(y="Blood Glucose (mg/dL)",
+       x="Insulin (min)",
+       title="Control mice only, effect of KD")
+```
+
+### ITT Statistics
+
+```{r itt-stats}
+library(lme4)
+library(broom)
+library(lmerTest)
+itt.lme <- lmer(Glucose~as.factor(Time)+Diet+Sex+Injection+(1|ID), data=data.long)
+itt.lme.null <- lmer(Glucose~as.factor(Time)+Diet+Sex+(1|ID), data=data.long)
+
+summary(itt.lme)
+
+anova(itt.lme) %>% 
+  tidy %>% 
+  kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for ITT mixed linear model.")
+
+anova(itt.lme,itt.lme.null) %>% 
+  tidy %>%
+  kable(caption="Chi-squared test for effects of AAV injection on ITT.")
+```
+
+## Normalized ITT
+
+```{r itt-norm-line-all, fig.cap="Dotplot of ITT, normalized to fasting glucose"}
+data.long.norm <-
+  data.long %>%
+  group_by(ID) %>%
+  mutate(Glucose.norm = Glucose/Glucose[Time==0]*100)
+
+data.long.norm %>%
+  group_by(Sex,Diet,Injection,Time) %>%
+  summarize(Mean = mean(Glucose.norm,na.rm=T),
+            Error = se(Glucose.norm)) %>%
+  ggplot(aes(y=Mean,
+             x=Time,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             col=Injection)) +
+  geom_line() +
+  geom_errorbar() +
+  expand_limits(y=0) +
+  facet_grid(Sex~Diet) +
+  labs(y="Blood Glucose (% of Basal)",
+       x="Insulin (min)")
+```
+
+```{r itt-norm-line-gfp, fig.cap="Lineplot of ITT from GFP injected mice only, normalized to fasting glucose"}
+data.long.norm %>%
+  filter(Injection=="GFP") %>%
+  group_by(Sex,Diet,Injection,Time) %>%
+  summarize(Mean = mean(Glucose.norm,na.rm=T),
+            Error = se(Glucose.norm)) %>%
+  ggplot(aes(y=Mean,
+             x=Time,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             col=Diet)) +
+  geom_line() +
+  geom_errorbar() +
+  expand_limits(y=0) +
+  facet_grid(~Sex) +
+  labs(y="Blood Glucose (% of Basal)",
+       x="Insulin (min)")
+```
+
+## Fasting Glucose
+
+```{r fasting-glucose-boxplot, fig.cap="Boxplot of glucose levels after 6h fast"}
+ggplot(data.long.norm %>% filter(Time==0),
+       aes(y=Glucose,x=Diet,
+           col=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Fasting Glucose (mg/dL)",
+       title="Fasting Glucose")
+```
+
+```{r fasting-glucose-barplot, fig.cap="Barplot of glucose levels after 6h fast"}
+data.long %>% 
+  filter(Time==0) %>%
+  group_by(Injection,Sex,Diet) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) %>%
+  ggplot(aes(y=Mean,
+             x=Diet,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Fasting Glucose (mg/dL)",
+       title="Fasting Glucose")
+```
+
+### Fasting Glucose Statistics
+
+```{r fasting-glucose-stats}
+lm(Glucose ~ Diet + Sex + Injection, data = data.long %>% filter(Time==0)) %>%
+  summary %>%
+  tidy %>%
+  kable(caption="Linear model for effects on fasting glucose levels.")
+```
+
+## Area Under the Curve
+
+```{r auc-boxplot, fig.cap="Boxplot of the area under the curves for insulin tolerance tests."}
+data.long %>%
+  group_by(ID, Diet, Sex, Injection) %>%
+  summarize(AUC = sum(Glucose,na.rm=T)) %>%
+ggplot(aes(y=AUC,x=Diet,
+           col=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Glucose (mg/dL x minutes)",
+       title="Area Under Curve")
+```
+
+```{r auc-barplot, fig.cap="Barplot of the area under the curves for insulin tolerance tests."}
+data.long %>%
+  group_by(ID, Diet, Sex, Injection) %>%
+  summarize(AUC = sum(Glucose)) %>%
+    group_by(Diet, Sex, Injection) %>%
+  summarize(Mean = mean(AUC,na.rm=T),
+            Error = se(AUC)) %>%
+  ggplot(aes(y=Mean,
+             x=Diet,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Glucose (mg/dL x minutes)",
+       title="Area Under Curve")
+```
+
+### AUC Statistics
+
+```{r auc-stats}
+lm(AUC ~ Diet + Sex + Injection, 
+   data = data.long %>% 
+     group_by(ID, Diet, Sex, Injection) %>%
+     summarize(AUC = sum(Glucose))) %>% 
+  summary %>%
+  tidy %>%
+  kable(caption="Linear model for effects on ITT area under curve.")
+```
+
+# Interpretation
+
+A brief summary of what the interpretation of these results were
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
+
