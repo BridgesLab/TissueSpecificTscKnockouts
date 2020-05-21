@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Manuscripts/Liver AMPK Ketogenic Diet Paper/Figures** in a file named **2019-07-18 BHB Assay.xlsx**.  This script was most recently updated on **Fri May 15 13:35:45 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Ketone Assay** in a file named **2019-07-18 BHB Assay.xlsx**.  This script was most recently updated on **Wed May 20 10:12:44 2020**.
 
 # Analysis
 

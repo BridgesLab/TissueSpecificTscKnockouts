@@ -179,7 +179,7 @@ exp.data %>%
              x=diet.time,col=Diet,lty=Injection)) +
   theme_classic() +
   theme(legend.position='none') +
-  theme(text=element_text(size=11)) +
+  theme(text=element_text(size=18)) +
   geom_errorbar(width=0.5) +
   geom_line() +
     facet_grid(.~Sex) +
@@ -234,7 +234,7 @@ exp.data %>%
              x=diet.time,col=Diet,lty=Injection)) +
   theme_classic() +
   theme(legend.position='none') +
-  theme(text=element_text(size=11)) +
+  theme(text=element_text(size=18)) +
   geom_errorbar(width=0.5) +
   geom_line() +
     facet_grid(.~Sex) +
@@ -297,7 +297,7 @@ exp.data %>%
              x=diet.time,col=Diet,lty=Injection)) +
   theme_classic() +
   theme(legend.position='none') +
-  theme(text=element_text(size=11)) +
+  theme(text=element_text(size=18)) +
   geom_errorbar(width=0.5) +
   geom_line() +
     facet_grid(.~Sex) +

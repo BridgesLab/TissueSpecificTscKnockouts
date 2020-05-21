@@ -8,7 +8,12 @@ Need to make new Western Blot figures. Should I include female data for western 
 Should I include change in body weight or raw body weight data?
 For the manuscript, should I include sac data?
 How do I get the western blot data from off the computer?
-interpretation of FAS, ps6, ps6k?
-level of detail of methods for lysates, western blot
 Interpretation of ITT?
-What do I do with figures?
+Mark what we have and don't have for females. Ketone bodies? Cut livers? 
+Rate of drop ITT. 
+add in sac data for manuscript - lean MRI, muscle mass, fat MRI, fat mass
+add in the why you did little experiments and results. 
+In figure legends indicate n, MRI, experiement method
+Need to look at beta-oxidation genes for western blotting (CPT1, MCAD and ACAD)
+Need to look at sip7a1 on western blot. Others have suggested there is a decrease in sip7a1 on ketogenic diets (this regulates bile acid reuptake and may explain increase in cholesterol on ketogenic diets)
+ps6 and ps6k are the same on the blots. Need to cut out. 
