@@ -21,7 +21,7 @@ output:
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout** in a file named **mTSC Macronutrient Preference.csv**.  This script was most recently updated on **Mon Mar 30 13:15:49 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout** in a file named **mTSC Macronutrient Preference.csv**.  This script was most recently updated on **Tue May 26 22:07:03 2020**.
 
 # Analysis
 
@@ -147,13 +147,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.6.3 (2020-02-29)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS Catalina 10.15.3
+## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Catalina 10.15.4
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -162,18 +162,18 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] forcats_0.5.0      ggplot2_3.3.0.9000 broom_0.5.5        readr_1.3.1       
-## [5] dplyr_0.8.5        tidyr_1.0.2        knitr_1.28        
+## [1] forcats_0.5.0 ggplot2_3.3.0 broom_0.5.6   readr_1.3.1   dplyr_0.8.5  
+## [6] tidyr_1.0.3   knitr_1.28   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.4       pillar_1.4.3     compiler_3.6.3   highr_0.8       
-##  [5] tools_3.6.3      digest_0.6.25    evaluate_0.14    lifecycle_0.2.0 
-##  [9] tibble_2.1.3     nlme_3.1-144     gtable_0.3.0     lattice_0.20-38 
-## [13] pkgconfig_2.0.3  rlang_0.4.5      yaml_2.2.1       xfun_0.12       
-## [17] withr_2.1.2      stringr_1.4.0    generics_0.0.2   vctrs_0.2.4     
-## [21] hms_0.5.3        grid_3.6.3       tidyselect_1.0.0 glue_1.3.2      
-## [25] R6_2.4.1         rmarkdown_2.1    farver_2.0.3     purrr_0.3.3     
-## [29] magrittr_1.5     backports_1.1.5  scales_1.1.0     htmltools_0.4.0 
-## [33] assertthat_0.2.1 colorspace_1.4-1 labeling_0.3     stringi_1.4.6   
-## [37] munsell_0.5.0    crayon_1.3.4
+##  [1] Rcpp_1.0.4.6     pillar_1.4.4     compiler_4.0.0   highr_0.8       
+##  [5] tools_4.0.0      digest_0.6.25    evaluate_0.14    lifecycle_0.2.0 
+##  [9] tibble_3.0.1     nlme_3.1-147     gtable_0.3.0     lattice_0.20-41 
+## [13] pkgconfig_2.0.3  rlang_0.4.6      yaml_2.2.1       xfun_0.13       
+## [17] withr_2.2.0      stringr_1.4.0    generics_0.0.2   vctrs_0.2.4     
+## [21] hms_0.5.3        grid_4.0.0       tidyselect_1.0.0 glue_1.4.0      
+## [25] R6_2.4.1         rmarkdown_2.1    farver_2.0.3     purrr_0.3.4     
+## [29] magrittr_1.5     backports_1.1.6  scales_1.1.0     ellipsis_0.3.0  
+## [33] htmltools_0.4.0  assertthat_0.2.1 colorspace_1.4-1 labeling_0.3    
+## [37] stringi_1.4.6    munsell_0.5.0    crayon_1.3.4
 ```

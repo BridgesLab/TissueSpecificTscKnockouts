@@ -145,12 +145,12 @@ ggplot(data=intake.data %>% filter(Genotype == 'fl/fl;+/+'),
 ```{r knockout-effects-barplot-relative-preference, fig.cap="Effects of genotype on macronutrient preference"}
 ggplot(data=summary.data.all,
        aes(y=Preference,
-           ymin=Preference-Preference.Error,
-           ymax=Preference+Preference.Error,
            x=Sex,
            fill=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype,
+                                                        ymin=Preference-Preference.Error,
+                                                        ymax=Preference+Preference.Error), width=0.5) +
   expand_limits(y=0) +
   geom_hline(yintercept=1, lty=2) +
   labs(title="Diet Preference",
@@ -162,12 +162,12 @@ ggplot(data=summary.data.all,
 library(forcats)
 ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_recode(Genotype, 'Wild-Type'='fl/fl;+/+', 'Knockout'='fl/fl;tg/+')),
        aes(y=Preference,
-           ymin=Preference-Preference.Error,
-           ymax=Preference+Preference.Error,
            x=Sex,
            fill=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype,
+                                                        ymin=Preference-Preference.Error,
+                                                        ymax=Preference+Preference.Error), width=0.5) +
   expand_limits(y=0) +
   geom_hline(yintercept=1, lty=2) +
   labs(title="Diet Preference",
@@ -176,12 +176,12 @@ ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_re
 
 ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_recode(Genotype, 'Wild-Type'='fl/fl;+/+', 'Knockout'='fl/fl;tg/+')),
        aes(y=Preference,
-           ymin=Preference-Preference.Error,
-           ymax=Preference+Preference.Error,
            x=Genotype,
            fill=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype,
+                                                        ymin=Preference-Preference.Error,
+                                                        ymax=Preference+Preference.Error,), width=0.5) +
   expand_limits(y=0) +
   geom_hline(yintercept=1, lty=2) +
   labs(title="LCHF Diet Preference",
@@ -195,12 +195,12 @@ ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_re
 
 ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_recode(Genotype, 'Wild-Type'='fl/fl;+/+', 'Knockout'='fl/fl;tg/+')),
        aes(y=Preference,
-           ymin=Preference-Preference.Error,
-           ymax=Preference+Preference.Error,
            x=Genotype,
            fill=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype,
+                                                        ymin=Preference-Preference.Error,
+                                                        ymax=Preference+Preference.Error,), width=0.5) +
   expand_limits(y=0) +
   geom_hline(yintercept=1, lty=2) +
   labs(title="Diet Preference",
@@ -214,11 +214,11 @@ ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_re
 
 ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_recode(Genotype, 'Wild-Type'='fl/fl;+/+', 'Knockout'='fl/fl;tg/+')),
        aes(y=Preference,
-           ymin=Preference-Preference.Error,
-           ymax=Preference+Preference.Error,
            x=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype,
+                                                        ymin=Preference-Preference.Error,
+                                                        ymax=Preference+Preference.Error,), width=0.5) +
   expand_limits(y=0) +
   geom_hline(yintercept=1, lty=2) +
   labs(title="Diet Preference",
@@ -232,12 +232,12 @@ ggplot(data=summary.data.all %>% filter(Sex == "M") %>% mutate(Genotype = fct_re
 ```{r knockout-effects-barplot-percent, fig.cap="Effects of genotype on macronutrient percent of calories from KD"}
 ggplot(data=summary.data.all,
        aes(y=Percent,
-           ymin=Percent-Percent.Error,
-           ymax=Percent+Percent.Error,
            x=Sex,
            fill=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Genotype,
+                                                        ymin=Percent-Percent.Error,
+                                                        ymax=Percent+Percent.Error), width=0.5) +
   expand_limits(y=0) +
   labs(title="Diet Preference",
        y="Percent of Calories from KD")
@@ -246,11 +246,9 @@ ggplot(data=summary.data.all,
 ```{r sex-effects-barplot, fig.cap="Effects of sex on macronutrient preference"}
 ggplot(data=summary.data.all %>% filter(Genotype == 'fl/fl;+/+'),
        aes(y=Preference,
-           ymin=Preference-Preference.Error,
-           ymax=Preference+Preference.Error,
            x=Sex)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5, aes(ymin=Preference-Preference.Error,ymax=Preference+Preference.Error)) +
   expand_limits(y=0) +
   geom_hline(yintercept=1, lty=2) +
   labs(title="Diet Preference",
