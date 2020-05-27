@@ -106,12 +106,10 @@ fg.summary <-
 
 fg.summary %>%
   ggplot(aes(y=Avg,
-             ymin=Avg-SE,
-             ymax=Avg+SE,
              x=Genotype,
              fill=Genotype)) +
   geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin=Avg-SE,ymax=Avg+SE,)) +
   facet_grid(.~Sex) +
   labs(title="Fasting Glucose (6h Fast)",
        y="Blood Glucose (mg/dL)",
@@ -119,12 +117,11 @@ fg.summary %>%
 
 fg.summary %>%
   ggplot(aes(y=Avg,
-             ymin=Avg-SE,
-             ymax=Avg+SE,
              x=Genotype,
              fill=Genotype)) +
   geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin=Avg-SE,
+             ymax=Avg+SE,)) +
   facet_grid(.~Sex) +
   labs(title="",
        y="Fasting Blood Glucose (mg/dL)",
@@ -269,12 +266,10 @@ glucose.data %>%
             AUC.se = se(AUC)) %>%
   ggplot( aes(y=AUC.mean, 
                 x=Genotype, 
-                ymin=AUC.mean-AUC.se, 
-                ymax=AUC.mean+AUC.se, 
                 fill=Genotype)) + 
   geom_bar(stat='identity') +
   facet_grid(~Sex) +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin=AUC.mean-AUC.se,ymax=AUC.mean+AUC.se, )) +
   labs(title="",
        y="Blood Glucose (Area Under Curve)",
        x="Genotype")
