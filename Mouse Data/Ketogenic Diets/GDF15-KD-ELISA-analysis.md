@@ -47,7 +47,7 @@ exp.data <- read_csv(filename, skip=30,
                                       Conc= col_double()))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets** in a file named **GDF15 ELISA Results.csv**.  This script was most recently updated on **Mon Apr  6 14:34:54 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets** in a file named **GDF15 ELISA Results.csv**.  This script was most recently updated on **Tue May 26 21:52:32 2020**.
 
 # Analysis
 
@@ -264,12 +264,11 @@ There was a 59.44% sex adjusted increase in GDF15 levels.
 library(ggplot2)
 ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet,ymin=GDF15-Error,
+           ymax=GDF15+Error, ), width=0.5) +
   expand_limits(y=0) +
   labs(title="GDF15 Levels in Serum",
        y="Serum GDF15 (pg/mL)") +
@@ -281,12 +280,11 @@ ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
 ```r
 ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet,ymin=GDF15-Error,
+           ymax=GDF15+Error,), width=0.5) +
   expand_limits(y=0) +
   labs(title="GDF15 Levels",
        y="Serum GDF15 (pg/mL)") +
@@ -301,12 +299,11 @@ ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
 ```r
 ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet,ymin=GDF15-Error,
+           ymax=GDF15+Error), width=0.5) +
   expand_limits(y=0) +
   labs(title="",
        y="Serum GDF15 (pg/mL)") +
@@ -325,12 +322,11 @@ We also separated the samples by cohort
 ```r
 ggplot(data=summary.data %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet, ymin=GDF15-Error,
+           ymax=GDF15+Error,), width=0.5) +
   expand_limits(y=0) +
   facet_grid(~Cohort) +
   labs(title="GDF15 Levels in Serum by Cohort",
@@ -375,13 +371,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.6.3 (2020-02-29)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS Catalina 10.15.3
+## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Catalina 10.15.4
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -390,21 +386,21 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.3.0.9000 broom_0.5.5        car_3.0-7          carData_3.0-3     
-## [5] forcats_0.5.0      readr_1.3.1        dplyr_0.8.5        tidyr_1.0.2       
-## [9] knitr_1.28        
+## [1] ggplot2_3.3.0 broom_0.5.6   car_3.0-7     carData_3.0-3 forcats_0.5.0
+## [6] readr_1.3.1   dplyr_0.8.5   tidyr_1.0.3   knitr_1.28   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zip_2.0.4         Rcpp_1.0.4        highr_0.8         pillar_1.4.3     
-##  [5] compiler_3.6.3    cellranger_1.1.0  tools_3.6.3       digest_0.6.25    
-##  [9] gtable_0.3.0      lattice_0.20-38   nlme_3.1-144      evaluate_0.14    
-## [13] lifecycle_0.2.0   tibble_2.1.3      pkgconfig_2.0.3   rlang_0.4.5      
-## [17] openxlsx_4.1.4    curl_4.3          yaml_2.2.1        haven_2.2.0      
-## [21] xfun_0.12         rio_0.5.16        withr_2.1.2       stringr_1.4.0    
-## [25] generics_0.0.2    vctrs_0.2.4       hms_0.5.3         grid_3.6.3       
-## [29] tidyselect_1.0.0  glue_1.3.2        data.table_1.12.8 R6_2.4.1         
-## [33] readxl_1.3.1      foreign_0.8-75    rmarkdown_2.1     farver_2.0.3     
-## [37] purrr_0.3.3       magrittr_1.5      scales_1.1.0      backports_1.1.5  
-## [41] htmltools_0.4.0   assertthat_0.2.1  abind_1.4-5       colorspace_1.4-1 
-## [45] labeling_0.3      stringi_1.4.6     munsell_0.5.0     crayon_1.3.4
+##  [1] zip_2.0.4         Rcpp_1.0.4.6      highr_0.8         pillar_1.4.4     
+##  [5] compiler_4.0.0    cellranger_1.1.0  tools_4.0.0       digest_0.6.25    
+##  [9] gtable_0.3.0      lattice_0.20-41   nlme_3.1-147      evaluate_0.14    
+## [13] lifecycle_0.2.0   tibble_3.0.1      pkgconfig_2.0.3   rlang_0.4.6      
+## [17] openxlsx_4.1.5    curl_4.3          yaml_2.2.1        haven_2.2.0      
+## [21] xfun_0.13         rio_0.5.16        withr_2.2.0       stringr_1.4.0    
+## [25] generics_0.0.2    vctrs_0.2.4       hms_0.5.3         grid_4.0.0       
+## [29] tidyselect_1.0.0  glue_1.4.0        data.table_1.12.8 R6_2.4.1         
+## [33] readxl_1.3.1      foreign_0.8-79    rmarkdown_2.1     farver_2.0.3     
+## [37] purrr_0.3.4       magrittr_1.5      scales_1.1.0      backports_1.1.6  
+## [41] ellipsis_0.3.0    htmltools_0.4.0   assertthat_0.2.1  abind_1.4-5      
+## [45] colorspace_1.4-1  labeling_0.3      stringi_1.4.6     munsell_0.5.0    
+## [49] crayon_1.3.4
 ```

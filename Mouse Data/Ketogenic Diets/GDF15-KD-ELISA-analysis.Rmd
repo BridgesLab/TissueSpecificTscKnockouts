@@ -145,12 +145,11 @@ There was a `r coef(gdf15.lm)['DietKD']/coef(gdf15.lm)['(Intercept)']*100`% sex 
 library(ggplot2)
 ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet,ymin=GDF15-Error,
+           ymax=GDF15+Error, ), width=0.5) +
   expand_limits(y=0) +
   labs(title="GDF15 Levels in Serum",
        y="Serum GDF15 (pg/mL)") +
@@ -158,12 +157,11 @@ ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
 
 ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet,ymin=GDF15-Error,
+           ymax=GDF15+Error,), width=0.5) +
   expand_limits(y=0) +
   labs(title="GDF15 Levels",
        y="Serum GDF15 (pg/mL)") +
@@ -174,12 +172,11 @@ ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
 
 ggplot(data=summary.data.no.cht %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet,ymin=GDF15-Error,
+           ymax=GDF15+Error), width=0.5) +
   expand_limits(y=0) +
   labs(title="",
        y="Serum GDF15 (pg/mL)") +
@@ -195,12 +192,11 @@ We also separated the samples by cohort
 ```{r kd-gdf15-barplots-cohort, fig.cap="Effects of Ketogenic Diet on GDF15 Levels in Serum, Separated by Cohort"}
 ggplot(data=summary.data %>% filter(Diet %in% c('CD','KD')),
        aes(y=GDF15,
-           ymin=GDF15-Error,
-           ymax=GDF15+Error,
            x=Sex,
            fill=Diet)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Diet, ymin=GDF15-Error,
+           ymax=GDF15+Error,), width=0.5) +
   expand_limits(y=0) +
   facet_grid(~Cohort) +
   labs(title="GDF15 Levels in Serum by Cohort",
