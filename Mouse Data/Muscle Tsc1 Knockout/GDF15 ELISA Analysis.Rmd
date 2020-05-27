@@ -172,14 +172,15 @@ data.graph <- filter(summary.data,
 
 p <- ggplot(data.graph,
             aes(y=GDF15, x=Sex, 
-                ymin=GDF15-GDF15.se,
-                ymax=GDF15+GDF15.se,
                 fill=Knockout))
 
 p + geom_bar(stat='identity', 
              position='dodge',
              width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75), 
+                width=0.5,
+                aes(ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se,)) +
   facet_grid(`Feeding State`~Diet) +
   labs(y="GDF15 (pg/mL)")
 ```
@@ -194,8 +195,6 @@ filter(summary.data,
                    !(is.na(Sex)),
                    !(is.na(Knockout))) %>% #fills in missing NA
 ggplot(aes(y=GDF15, x=Knockout, 
-                ymin=GDF15-GDF15.se,
-                ymax=GDF15+GDF15.se,
                 fill=Knockout)) +
   theme_classic()  +
   theme(text = element_text(size=18),
@@ -206,7 +205,10 @@ ggplot(aes(y=GDF15, x=Knockout,
   geom_bar(stat='identity', 
              position='dodge',
              width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75), 
+                width=0.5,
+                aes(ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se)) +
   labs(y="Serum GDF15 (pg/mL)",
        x="",
        title="GDF15 Levels")
@@ -217,16 +219,17 @@ filter(summary.data,
                    !(is.na(`Feeding State`)),
                    !(is.na(Sex)),
                    !(is.na(Knockout))) %>% #fills in missing NA
-ggplot(aes(y=GDF15, x=Knockout, 
-                ymin=GDF15-GDF15.se,
-                ymax=GDF15+GDF15.se)) +
+ggplot(aes(y=GDF15, x=Knockout)) +
   theme_classic()  +
   theme(text = element_text(size=18),
         legend.position = 'none') +
   geom_bar(stat='identity', 
              position='dodge',
              width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75), 
+                width=0.5,
+                aes(ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se)) +
   labs(y="Serum GDF15 (pg/mL)",
        x="",
        title=" ")
@@ -237,13 +240,14 @@ ggplot(aes(y=GDF15, x=Knockout,
 ```{r gdf15-barplot-sex, fig.cap="Effects of Sex on GDF15 Levels"}
 p <- ggplot(data.graph,
             aes(y=GDF15, x=Diet, 
-                ymin=GDF15-GDF15.se,
-                ymax=GDF15+GDF15.se,
                 fill=Sex))
 p + geom_bar(stat='identity', 
              position='dodge',
              width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75), 
+                width=0.5,
+                aes(ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se)) +
   facet_grid(`Feeding State`~Knockout) +
   labs(y="GDF15 (pg/mL)")
 ```
@@ -251,27 +255,29 @@ p + geom_bar(stat='identity',
 ```{r gdf15-barplot-diet, fig.cap="Effects of Diet on GDF15 Levels"}
 p <- ggplot(data.graph,
             aes(y=GDF15, x=Sex, 
-                ymin=GDF15-GDF15.se,
-                ymax=GDF15+GDF15.se,
                 fill=Diet))
 p + geom_bar(stat='identity', 
              position='dodge',
              width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),
+                width=0.5,
+                aes(ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se,)) +
   facet_grid(`Feeding State`~Knockout) +
   labs(y="GDF15 (pg/mL)")
 ```
 
 ```{r gdf15-barplot-fast, fig.cap="Effects of Feeding State on GDF15 Levels"}
 p <- ggplot(data.graph,
-            aes(y=GDF15, x=Sex, 
-                ymin=GDF15-GDF15.se,
-                ymax=GDF15+GDF15.se,
+            aes(y=GDF15, x=Sex,
                 fill=`Feeding State`))
 p + geom_bar(stat='identity', 
              position='dodge',
              width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),
+                width=0.5,
+                aes(ymin=GDF15-GDF15.se,
+                ymax=GDF15+GDF15.se)) +
   facet_grid(Diet~Knockout) +
   labs(y="GDF15 (pg/mL)")
 ```
