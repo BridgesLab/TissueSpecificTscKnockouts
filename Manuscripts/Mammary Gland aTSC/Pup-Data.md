@@ -52,7 +52,19 @@ KO                              98.3                  1.67        6
 
 ![](figures/atsc-survivalpergenotype-bargraph-1.png)<!-- -->
 
+Table: Welch's t-test for effects of maternal genotype on survival rate
+
+ estimate   estimate1   estimate2   statistic   p.value   parameter   conf.low   conf.high  method                    alternative 
+---------  ----------  ----------  ----------  --------  ----------  ---------  ----------  ------------------------  ------------
+     1.33        7.67        6.33        1.41     0.204         6.4     -0.939        3.61  Welch Two Sample t-test   two.sided   
+
 ![](figures/numberofpupspergenotype-1.png)<!-- -->![](figures/numberofpupspergenotype-2.png)<!-- -->
+
+Table: Welch's t-test for effects of maternal genotype on births
+
+ estimate   estimate1   estimate2   statistic   p.value   parameter   conf.low   conf.high  method                    alternative 
+---------  ----------  ----------  ----------  --------  ----------  ---------  ----------  ------------------------  ------------
+     1.33        7.83         6.5        1.25     0.255         6.6      -1.23         3.9  Welch Two Sample t-test   two.sided   
 
 ![](figures/atsc-fertilitypercage-bargraph-1.png)<!-- -->![](figures/atsc-fertilitypercage-bargraph-2.png)<!-- -->![](figures/atsc-fertilitypercage-bargraph-3.png)<!-- -->
 

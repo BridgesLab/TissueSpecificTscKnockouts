@@ -85,10 +85,10 @@ kable(numberofpups.summary,caption = "Average Survival per Genotype") #to genera
 # barplot for 
 library(ggplot2)
  p <- ggplot(numberofpups.summary,is.na= NA, 
-       aes(x=MaternalGenotype, y= Average.Survival,fill= MaternalGenotype, ymax=Average.Survival+SE.Average.Survival, ymin=Average.Survival-SE.Average.Survival))   
+       aes(x=MaternalGenotype, y= Average.Survival,fill= MaternalGenotype))   
  
 p + geom_bar(stat='identity', position=position_dodge(), width =0.5) + #match width of Geom_bar with the position dodge of the errorbar 
-  geom_errorbar(position=position_dodge(0.5), width=.2) +
+  geom_errorbar(position=position_dodge(0.5), width=.2, aes(group=MaternalGenotype, ymax=Average.Survival+SE.Average.Survival, ymin=Average.Survival-SE.Average.Survival)) +
   xlab("Genotype of Mother") +
   ylab("Survival Rate (%)") +
   labs(title="Survival Rate Per Maternal Genotype") +
@@ -112,10 +112,10 @@ summarize(Average.Born.Pups = mean(Total, na.rm=T),
 
 library(ggplot2)
 p <- ggplot(bornpups,
-aes(x=MaternalGenotype, y= Average.Born.Pups, fill=MaternalGenotype, na.rm =T, ymax= Average.Born.Pups + SE.Average.Born.Pups, ymin=Average.Born.Pups - SE.Average.Born.Pups))
+aes(x=MaternalGenotype, y= Average.Born.Pups, fill=MaternalGenotype, na.rm =T))
 
 p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
-  geom_errorbar(position=position_dodge(0.5), width=0.2) +
+  geom_errorbar(position=position_dodge(0.5), width=0.2, aes(ymax= Average.Born.Pups + SE.Average.Born.Pups, ymin=Average.Born.Pups - SE.Average.Born.Pups)) +
   xlab("Genotype of Mother") +
   ylab("Average Number of Pups Born") +
   labs(title="Average Pups Born Per Maternal Genotype") +
@@ -128,13 +128,13 @@ library(ggplot2)
        aes(x=as.factor(MaternalID), y= Total,col= MaternalGenotype, ymin=0, ymax=10)) +
     scale_y_continuous(breaks= seq(0,10,1)) +
    theme_minimal()
-
- p + geom_boxplot() +
+ 
+   p+ geom_boxplot() +
   labs(title="Total Born Pups Per Cage",
        y="Number of Born Pups",
        x="Maternal ID") +
   theme_classic()
-t.test (Total ~ MaternalGenotype, data=Pupbirth.data) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on births")
+t.test (Total ~ MaternalGenotype, data=numberofpups.per.cage) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on births")
 
 # + scale_fill_manual(values=color.scheme) +  #add this to make the colors maize an
     # theme(text = element_text(size=18))
@@ -154,9 +154,9 @@ library(ggplot2)
   theme_classic()
  
   p <- ggplot(numberofpups.per.cage,
-       aes(x=MaternalGenotype, y= alive.percent,col= MaternalGenotype))  #alive percent and survival rate are the same thing, one is in % and other is rate
+       aes(x=MaternalGenotype, y= alive.percent,fill= MaternalGenotype))  #alive percent and survival rate are the same thing, one is in % and other is rate
 
- p + geom_boxplot() +
+ p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
   labs(title="Survival Rate Per Cage",
        y="Survival Rate Per Cage (%)",
        x="Maternal ID") +
@@ -269,12 +269,11 @@ library(ggplot2)
   ggplot(Pup.weightspercagePND1,
        aes(x=as.factor(MaternalID),
            y= Average.Weight,
-           ymin = Average.Weight - SE.Average.Weight,
-           ymax = Average.Weight + SE.Average.Weight,
            fill=MaternalGenotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight)) +
   labs(x="Dam ID",
        y="Weight of Pups at PND1 (g)",
        title="Weight of Pups on PND1 per Maternal Genotype") +
@@ -287,12 +286,11 @@ library(ggplot2)
               se = se(Average.Weight)) %>%
   ggplot(aes(x=MaternalGenotype,
            y= mean,
-           ymin = mean - se,
-           ymax = mean + se,
            fill=MaternalGenotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = mean - se,
+           ymax = mean + se)) +
   labs(x="Maternal Genotype",
        y="Weight (g)",
        title="Weight of Pups on PND1") +
@@ -329,12 +327,11 @@ library(ggplot2)
   ggplot(Pup.weightspermaternalgenotypePND7,
        aes(x=MaternalGenotype,
            y= Average.Weight,
-           ymin = Average.Weight - SE.Average.Weight,
-           ymax = Average.Weight + SE.Average.Weight,
            fill=MaternalGenotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(  ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight)) +
   labs(x="Maternal Genotype",
        y="Weight (g)",
        title="Weight of Pups on PND7") +
@@ -356,12 +353,11 @@ library(ggplot2)
   ggplot(Pup.weightspercagePND14,
        aes(x=as.factor(MaternalID),
            y= Average.Weight,
-           ymin = Average.Weight - SE.Average.Weight,
-           ymax = Average.Weight + SE.Average.Weight,
            fill=MaternalGenotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight)) +
   labs(x="Dam ID",
        y="Weight of Pups at PND14 (g)",
        title="Weight of Pups on PND14 per Cage and Maternal Genotype") +
@@ -372,12 +368,11 @@ library(ggplot2)
   ggplot(Pup.weightspermaternalgenotypePND14,
        aes(x=MaternalGenotype,
            y= Average.Weight,
-           ymin = Average.Weight - SE.Average.Weight,
-           ymax = Average.Weight + SE.Average.Weight,
            fill=MaternalGenotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight)) +
   labs(x="Maternal Genotype",
        y="Weight (g)",
        title="Weight of Pups on PND14") +
@@ -399,12 +394,11 @@ library(ggplot2)
   ggplot(Pup.weightspercagePND16,
        aes(x=as.factor(MaternalID),
            y= Average.Weight,
-           ymin = Average.Weight - SE.Average.Weight,
-           ymax = Average.Weight + SE.Average.Weight,
            fill=MaternalGenotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight)) +
   labs(x="Dam ID",
        y="Weight of Pups at PND16 (g)",
        title="Weight of Pups on PND16 per Cage and Maternal Genotype") +
@@ -415,12 +409,11 @@ library(ggplot2)
   ggplot(Pup.weightspermaternalgenotypePND16,
        aes(x=MaternalGenotype,
            y= Average.Weight,
-           ymin = Average.Weight - SE.Average.Weight,
-           ymax = Average.Weight + SE.Average.Weight,
            fill=MaternalGenotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Weight - SE.Average.Weight,
+           ymax = Average.Weight + SE.Average.Weight)) +
   labs(x="Maternal Genotype",
        y="Weight of Pups at PND16 (g)",
        title="Weight of Pups on PND16 per Maternal Genotype") +
@@ -443,7 +436,7 @@ rbind(Pup.weightspercagePND14 %>% mutate(Age=14),
   group_by(Age,MaternalGenotype,Sex) %>%
   summarize(mean = mean(Average.Weight),
             error = se(Average.Weight)) %>%
-  ggplot(aes(x=Age,,
+  ggplot(aes(x=Age,
              col=MaternalGenotype,
            y= mean,
            ymin = mean - error,

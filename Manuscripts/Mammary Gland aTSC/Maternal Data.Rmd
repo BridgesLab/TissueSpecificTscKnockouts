@@ -298,7 +298,7 @@ maternal.weights <-
   expand_limits(x=0)+
   theme_classic() +
      geom_vline(xintercept = 4, lty=2)+
-  labs(x="Week", y="Average Food Intake (g)", title="Average Dam Weekly Food Intake before amd after Delivery at around Week 4")
+  labs(x="Week", y="Average Food Intake (g)", title="Average Dam Weekly Food Intake before and after Delivery at around Week 4")
   
    foodintakefromdelivery <- #data frame for food intake postpartum only
   maternal.weights %>%
