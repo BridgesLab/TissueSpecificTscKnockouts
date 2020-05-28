@@ -1,0 +1,336 @@
+---
+title: "Analysis of AMPK Knockout Data at Sacrifice"
+author: "Katherine Kistler, Cody Cousineau, JeAnna Redd and Dave Bridges"
+date: "July 5, 2019"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Animals were sacrificed at approximately 2PM in the fed state
+
+# Raw Data
+
+Data are downloaded from a google doc and saved in this folder.
+
+```{r data-input}
+google_drive_file <- 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=158703896&single=true&output=csv'
+
+library(readr) #loads the readr package
+filename <- 'Sacrifice Data.csv' #make this a separate line, you can use any variable you want
+download.file(destfile = filename,
+              url=google_drive_file)
+#from blots
+not.ko <- c(8715,8716,8717,8718,8719,8786)
+unclear.ko <- c(8786,8717,8285,8345)
+#this loads whatever the file is into a dataframe called exp.data if it exists
+exp.data <- read_csv(filename, na=c("not measured"))
+
+library(lubridate)
+library(forcats)
+data <- mutate(exp.data, 
+                   Injection = relevel(as.factor(Injection),ref='GFP'),
+                   Diet = relevel(as.factor(Diet),ref='Control'),
+                   Sex = relevel(as.factor(Sex),ref='F'),
+               Mouse = factor(Mouse),
+               na="missed") %>%
+  mutate(Injection = fct_recode(Injection, "Cre"="CRE")) %>%
+  rename(Glucose = `BG (fed)`,
+         eWAT = `eWAT weight`,
+         iWAT = `iWAT weight`,
+         Quad = `quad weight`,
+         Gastroc = `gastroc weight`) %>%
+  mutate(Date = mdy(Date),
+         eWAT.norm = eWAT/BW,
+         iWAT.norm = iWAT/BW,
+         Quad.norm = Quad/BW,
+         Gastroc.norm = Quad/BW)%>% 
+    mutate(Glucose = as.numeric(Glucose))   %>%
+    mutate(Injection = ifelse(Mouse %in% not.ko, "GFP", as.character(Injection))) #modified genotypes based on western blotting
+  
+summary.data <- 
+  data %>%
+  group_by(Sex,Diet,Injection) %>%
+  summarize_if(is.numeric, 
+               .funs=funs(mean = mean(., na.rm=T),
+                          se = se))
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(filename %in% dir(), filename, "no file found")`**, which was downloaded from a google sheet found at `r google_drive_file`.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+# Sacrificed Animals
+
+This is for animals where we have any sacrifice data.
+
+```{r enrollees}
+data %>%
+  group_by(Sex,Diet, Injection) %>%
+  count %>%
+  kable(caption="Animals in each group of this cohort")
+```
+
+## Serum Levels
+
+Serum was collected via retro-orbital bleed in the fed state.  Both glucose and ketone body levels were assessed by stick assays.
+
+### Fed Blood Glucose
+
+```{r glucose-boxplot, fig.cap="Fed glucose levels"}
+library(ggplot2)
+
+ggplot(data,
+       aes(x=Diet,
+           y=Glucose,
+           fill=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Blood Glucose (mg/dL)",x="Diet",
+       title="Fed Glucose") 
+```
+
+```{r glucose-barplot, fig.cap="Fed glucose levels"}
+ggplot(data=summary.data,
+       aes(y=Glucose_mean,
+           ymin=Glucose_mean-Glucose_se,
+           ymax=Glucose_mean+Glucose_se,
+           x=Diet,
+           fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(title="Fasting Blood Glucose",
+       y="Blood Glucose (mg/dL)")
+```
+
+```{r glucose-stats}
+library(broom)
+lm(Glucose ~ Sex + Diet + Injection, data) %>% tidy %>% kable(caption="Fed glucose levels")
+```
+
+### Fed Ketone Bodies
+
+```{r ketone-boxplot, fig.cap="Ketone body levels."}
+ggplot(data,
+       aes(x=Diet,
+           y=Ketone,
+           fill=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Ketone Bodies (mM)",x="Diet",
+       title="Ketone Levels") 
+```
+
+```{r ketone-barplot, fig.cap="Ketone body levels"}
+ggplot(data=summary.data,
+       aes(y=Ketone_mean,
+           ymin=Ketone_mean-Ketone_se,
+           ymax=Ketone_mean+Ketone_se,
+           x=Diet,
+           fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(title="Ketone Levels",
+       y="Ketone Bodies (mM)")
+```
+
+```{r ketone-stats}
+lm(Ketone ~ Sex + Diet + Injection, data) %>% tidy %>% kable(caption="Inguinal adipose tissue weights")
+```
+
+## Fat Pad Weights
+
+### Inguinal Adipose Tissue
+
+```{r iwat-boxplot, fig.cap="Inguinal adipose tissue mass"}
+ggplot(data,
+       aes(x=Diet,
+           y=iWAT,
+           fill=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Inguinal Adipose Tissue") 
+```
+
+```{r iwat-barplot, fig.cap="Inguinal adipose tissue mass"}
+ggplot(data=summary.data,
+       aes(y=iWAT_mean,
+           ymin=iWAT_mean-iWAT_se,
+           ymax=iWAT_mean+iWAT_se,
+           x=Diet,
+           fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Inguinal Adipose Tissue") 
+```
+
+```{r inguinal-adipose-stats}
+lm(iWAT ~ Sex + Diet + Injection, data) %>% tidy %>% kable(caption="Inguinal adipose tissue weights")
+```
+
+### Gonadal Adipose Tissue
+
+```{r gwat-boxplot, fig.cap="Gonadal adipose tissue mass"}
+ggplot(data,
+       aes(x=Diet,
+           y=eWAT,
+           fill=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Gonadal Adipose Tissue") 
+```
+
+```{r gwat-barplot, fig.cap="Gonadal adipose tissue mass"}
+ggplot(data=summary.data,
+       aes(y=eWAT_mean,
+           ymin=eWAT_mean-eWAT_se,
+           ymax=eWAT_mean+eWAT_se,
+           x=Diet,
+           fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Gonadal Adipose Tissue") 
+```
+
+```{r gonadal-adipose-stats}
+lm(eWAT ~ Sex + Diet + Injection, data) %>% tidy %>% kable(caption="Gonadal adipose tissue weights")
+```
+
+
+## Muscle Weights
+
+### Gastrocnemius
+
+```{r gastroc-boxplot, fig.cap="Inguinal adipose tissue mass"}
+ggplot(data,
+       aes(x=Diet,
+           y=Gastroc,
+           fill=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Gastrocnemius") 
+```
+
+```{r gastroc-barplot, fig.cap="Gastroc tissue mass"}
+ggplot(data=summary.data,
+       aes(y=Gastroc_mean,
+           ymin=Gastroc_mean-Gastroc_se,
+           ymax=Gastroc_mean+Gastroc_se,
+           x=Diet,
+           fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Gastrocnemius") 
+```
+
+```{r gastroc-adipose-stats}
+lm(Gastroc ~ Sex + Diet + Injection, data) %>% tidy %>% kable(caption="Inguinal adipose tissue weights")
+```
+
+### Quadriceps
+
+```{r quad-boxplot, fig.cap="Quadriceps mass"}
+ggplot(data,
+       aes(x=Diet,
+           y=Quad,
+           fill=Injection)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge()) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Quadriceps") 
+```
+
+```{r quad-barplot, fig.cap="Quadriceps mass"}
+ggplot(data=summary.data,
+       aes(y=Quad_mean,
+           ymin=Quad_mean-Quad_se,
+           ymax=Quad_mean+Quad_se,
+           x=Diet,
+           fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  facet_grid(~Sex) +
+  expand_limits(y=0) +
+  labs(y="Weight (mg)",x="Diet",
+       title="Quadriceps") 
+```
+
+```{r quad-adipose-stats}
+lm(Quad ~ Sex + Diet + Injection, data) %>% tidy %>% kable(caption="Quadricep weights")
+```
+
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
