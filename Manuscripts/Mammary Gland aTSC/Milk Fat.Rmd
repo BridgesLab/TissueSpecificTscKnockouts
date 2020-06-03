@@ -147,12 +147,11 @@ library(ggplot2)
   ggplot(milk.fat.averagebatch1,
        aes(x=as.factor(ID),
            y= Average.Fat.Percent,
-           ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
-           ymax = Average.Fat.Percent + SE.Average.Fat.Percent,
            fill=Genotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
   labs(x="Maternal ID",
        y="Average Fat Percentage %",
        title="Average Milk Fat Percentage per Maternal Sample from Batch 1 Only") +
@@ -164,12 +163,11 @@ library(ggplot2)
   ggplot(milk.fat.average_pergenotype_batch1,
        aes(x=Genotype,
            y= Average.Fat.Percent,
-           ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
-           ymax = Average.Fat.Percent + SE.Average.Fat.Percent,
            fill=Genotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
   labs(x="Genotype",
        y="Average Fat Percentage %",
        title="Average Milk Fat Percentage per Genotype from Batch 1 Only") +
@@ -181,12 +179,11 @@ library(ggplot2)
   ggplot(milk.fat.averagebatch2,
        aes(x=as.factor(ID),
            y= Average.Fat.Percent,
-           ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
-           ymax = Average.Fat.Percent + SE.Average.Fat.Percent,
            fill=Genotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
   labs(x="Maternal ID",
        y="Average Fat Percentage %",
        title="Average Milk Fat Percentage per Maternal Sample from Batch 2 Only") +
@@ -198,12 +195,11 @@ library(ggplot2)
   ggplot(milk.fat.average_pergenotype_batch2,
        aes(x=Genotype,
            y= Average.Fat.Percent,
-           ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
-           ymax = Average.Fat.Percent + SE.Average.Fat.Percent,
            fill=Genotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
   labs(x="Genotype",
        y="Average Fat Percentage %",
        title="Average Milk Fat Percentage per Genotype from Batch 2 Only") +
@@ -216,12 +212,11 @@ library(ggplot2)
   ggplot(milk.fat.averagepersample,
        aes(x=as.factor(ID),
            y= Average.Fat.Percent,
-           ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
-           ymax = Average.Fat.Percent + SE.Average.Fat.Percent,
            fill=Genotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
   labs(x="Maternal ID",
        y="Average Fat Percentage %",
        title="Average Milk Fat Percentage per Maternal Sample") +
@@ -233,12 +228,11 @@ library(ggplot2)
   ggplot(milk.fat.average_pergenotype,
        aes(x=Genotype,
            y= Average.Fat,
-           ymin = Average.Fat - SE.Average.Fat,
-           ymax = Average.Fat + SE.Average.Fat,
            fill=Genotype))   + 
   geom_point() +
       geom_bar(stat='identity') +
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes(    ymin = Average.Fat - SE.Average.Fat,
+           ymax = Average.Fat + SE.Average.Fat)) +
   labs(x="Genotype",
        y="Average Fat Percentage %",
        title="Average Milk Fat Percentage per Genotype") +
