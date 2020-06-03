@@ -79,7 +79,7 @@ ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland', 'LMGland')),
             aes(x=Gland, y=GlandWeight, col=Genotype, group=Genotype)) +
   theme_classic()+
   geom_point() +
-  geom_line()
+  geom_line()+
     labs(x="Right and Left Mammary Glands",
        y="Weight",
        title="Mammary Gland Weights")
@@ -126,12 +126,11 @@ gland.mouse.weight %>%
   summarize(mean = mean(GlandWeight),
             se = se(GlandWeight)) %>%
   ggplot(aes(x=Genotype, y=mean,
-             ymin=mean-se,
-             ymax=mean+se,
              fill=Genotype)) +
   theme_classic()+
   geom_bar(stat='identity') + 
-  geom_errorbar(width=0.5) +
+  geom_errorbar(width=0.5, aes( ymin=mean-se,
+             ymax=mean+se)) +
   facet_grid(~Gland) +
     labs(x="",
        y="Weight",
@@ -206,12 +205,11 @@ milk.weights %>%
   summarize(Mean = mean(Cage.Mean),
             Error = se(Cage.Mean)) %>%
   ggplot(aes(y=Mean,
-         ymin=Mean-Error,
-         ymax=Mean+Error,
          x=MaternalGenotype,
          fill=MaternalGenotype)) +
   geom_bar(stat='identity') +
-  geom_errorbar(width=0.5)+
+  geom_errorbar(width=0.5, aes(ymin=Mean-Error,
+         ymax=Mean+Error))+
  theme_classic()+
     labs(x="Maternal Genotype",
        y="Weight Gained by Pup (g)",
@@ -232,12 +230,11 @@ milk.weights %>%
   summarize(Mean = mean(Cage.Mean),
             Error = se(Cage.Mean)) %>%
   ggplot(aes(y=Mean,
-         ymin=Mean-Error,
-         ymax=Mean+Error,
          x=MaternalGenotype,
          fill=MaternalGenotype)) +
   geom_bar(stat='identity') +
-  geom_errorbar(width=0.5)+
+  geom_errorbar(width=0.5, aes( ymin=Mean-Error,
+         ymax=Mean+Error))+
  theme_classic()+
     labs(x="Maternal Genotype",
        y="Dam Lost Weight (g)",
