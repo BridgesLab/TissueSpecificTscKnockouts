@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Tue Jun  9 11:08:12 2020.
+This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Tue Jun  9 11:15:56 2020.
 
 # Experimental Details
 
@@ -29,9 +29,9 @@ The notes about the design of this cohort can be found at
 
 
 
-This script pulled in a total of 1443 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
+This script pulled in a total of 1278 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
 
-Modified the genotypes based on the western blot data, this data includes these changes.
+Modified the genotypes based on the western blot data, this data filters out mice that we are not confident of their knockout status.
 
 
 # Enrolled Animals
@@ -48,9 +48,9 @@ F     Control Diet     AAV-GFP      12
 F     Ketogenic Diet   AAV-Cre       8
 F     Ketogenic Diet   AAV-GFP       7
 M     Control Diet     AAV-Cre      11
-M     Control Diet     AAV-GFP      11
+M     Control Diet     AAV-GFP      10
 M     Ketogenic Diet   AAV-Cre       7
-M     Ketogenic Diet   AAV-GFP      16
+M     Ketogenic Diet   AAV-GFP       9
 
 
 
@@ -116,7 +116,6 @@ Table: Animals in each group of this cohort
     8709  M     Control Diet     AAV-GFP   
     8711  M     Control Diet     AAV-GFP   
     8712  M     Control Diet     AAV-GFP   
-    8786  M     Control Diet     AAV-GFP   
     8285  M     Ketogenic Diet   AAV-Cre   
     8344  M     Ketogenic Diet   AAV-Cre   
     8345  M     Ketogenic Diet   AAV-Cre   
@@ -127,19 +126,12 @@ Table: Animals in each group of this cohort
     8187  M     Ketogenic Diet   AAV-GFP   
     8188  M     Ketogenic Diet   AAV-GFP   
     8190  M     Ketogenic Diet   AAV-GFP   
-    8284  M     Ketogenic Diet   AAV-GFP   
     8473  M     Ketogenic Diet   AAV-GFP   
     8474  M     Ketogenic Diet   AAV-GFP   
-    8715  M     Ketogenic Diet   AAV-GFP   
-    8716  M     Ketogenic Diet   AAV-GFP   
-    8717  M     Ketogenic Diet   AAV-GFP   
-    8718  M     Ketogenic Diet   AAV-GFP   
-    8719  M     Ketogenic Diet   AAV-GFP   
     8821  M     Ketogenic Diet   AAV-GFP   
     8822  M     Ketogenic Diet   AAV-GFP   
     8823  M     Ketogenic Diet   AAV-GFP   
     8824  M     Ketogenic Diet   AAV-GFP   
-    8830  M     Ketogenic Diet   AAV-GFP   
 
 
 # Body Weight

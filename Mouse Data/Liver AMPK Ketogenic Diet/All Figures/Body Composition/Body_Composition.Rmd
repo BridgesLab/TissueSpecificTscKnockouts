@@ -101,7 +101,7 @@ exp.data <- read_csv(raw_data_file, col_types =
                                     animal.id %in% kcd.mouseids ~ 'Control Diet'))) %>%
   mutate(Injection = as.factor(case_when(animal.id %in% gfp.mouseids ~ 'AAV-GFP', 
                                     animal.id %in% cre.mouseids ~ 'AAV-Cre'))) %>%
-  mutate(Injection = ifelse(MouseID %in% not.ko, "AAV-GFP", as.character(Injection))) %>% #modified genotypes based on western blotting
+  filter(!(MouseID %in% not.ko)) %>% #removed mice that we are not confident of their ko status
   arrange(experiment.date) %>%
   group_by(MouseID) %>%
   mutate(start.date = first(experiment.date),
@@ -118,7 +118,7 @@ exp.data <- read_csv(mri.data.file)
 
 This script pulled in a total of `r dim(exp.data)[1]` observations pulled from `r mri.data.file`.  This includes the following number of animals in each treatment group.
 
-Modified the genotypes based on the western blot data, this data includes these changes.
+Modified the genotypes based on the western blot data, this data filters out mice that we are not confident of their knockout status.
 
 
 # Enrolled Animals
