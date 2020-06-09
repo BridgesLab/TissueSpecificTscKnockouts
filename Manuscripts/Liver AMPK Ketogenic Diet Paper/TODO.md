@@ -13,6 +13,7 @@ get new AMPK antibody for the females - western blot
 Ask jeanna to look at Licorr and blots
 rerun females liver lysates we already have using new AMPK antibody - compare to ACC 
 rerun males as well using new AMPK antibody
+check the males listed as "not KO" and compare to the new blots
 Make sure you have blots for pACC, ACC, FAS, ACLY (lipogenic genes) for all mice
 Need to do qPCR for cholesterol genes, beta-oxidation genes, mitochondria from trizol in RNA preps
 TGs assay
