@@ -57,7 +57,7 @@ The notes about the design of this cohort can be found at
 devtools::source_gist('24ff2b5b57ac09f05d87ac932b59c081', filename='mousedb_access.R')
 
 raw_data_file <- "KD AMPK Raw MRI Data.csv"
-cohort_id <- 45
+#cohort_id <- 45
 api_key <- 'username=davebridges&api_key=fce3fde2a9a2e5dc9e04c20aad90120a621c50b3'
 
 library(RCurl)
@@ -109,12 +109,16 @@ exp.data <- read_csv(raw_data_file, col_types =
          diet.time = round((injection.days-15)/7)) %>%
   group_by(assay, MouseID) %>%
   mutate(Mass.Change = Mass - mean(Mass[diet.time==0]))
+
+mri.data.file <- 'AMPK KD MRI Data.csv'
+write_csv(exp.data, mri.data.file)
+exp.data <- read_csv(mri.data.file)
 ```
 
 
-This script pulled in a total of `r dim(exp.data)[1]` observations from cohort `r cohort_id`.  This includes the following number of animals in each treatment group.
+This script pulled in a total of `r dim(exp.data)[1]` observations pulled from `r mri.data.file`.  This includes the following number of animals in each treatment group.
 
-Modified the genotypes based on the western blot data
+Modified the genotypes based on the western blot data, this data includes these changes.
 
 
 # Enrolled Animals
