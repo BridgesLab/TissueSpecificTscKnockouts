@@ -54,63 +54,7 @@ The notes about the design of this cohort can be found at
 # Data Entry
 
 ```{r data-entry}
-devtools::source_gist('24ff2b5b57ac09f05d87ac932b59c081', filename='mousedb_access.R')
-
-raw_data_file <- "KD AMPK Raw MRI Data.csv"
-#cohort_id <- 45
-api_key <- 'username=davebridges&api_key=fce3fde2a9a2e5dc9e04c20aad90120a621c50b3'
-
-library(RCurl)
-#update.data(cohort_id=cohort_id, datafile=raw_data_file,api_key=api_key)
-
-#define diet groups
-treatment <- 'Ketogenic Control Diet'
-kcd.url <- paste('http://bridgeslab.sph.umich.edu/mousedb/api/v1/treatment/?format=json&',api_key,'&limit=0&treatment=', URLencode(treatment), sep="")
-kcd.json <- rjson::fromJSON(getURL(kcd.url))
-kcd.mouseids <- as.integer(unlist(kcd.json[[2]][[1]]['animals'])[names(unlist(kcd.json[[2]][[1]]['animals'])) == 'animals.id'])
-
-treatment <- 'Ketogenic Diet'
-kd.url <- paste('http://bridgeslab.sph.umich.edu/mousedb/api/v1/treatment/?format=json&',api_key,'&limit=0&treatment=', URLencode(treatment), sep="")
-kd.json <- rjson::fromJSON(getURL(kd.url))
-kd.mouseids <- as.integer(unlist(kd.json[[2]][[1]]['animals'])[names(unlist(kd.json[[2]][[1]]['animals'])) == 'animals.id'])
-
-treatment <- 'AAV GFP'
-gfp.url <- paste('http://bridgeslab.sph.umich.edu/mousedb/api/v1/treatment/?format=json&',api_key,'&limit=0&treatment=', URLencode(treatment), sep="")
-gfp.json <- rjson::fromJSON(getURL(gfp.url))
-gfp.mouseids <- as.integer(unlist(gfp.json[[2]][[1]]['animals'])[names(unlist(gfp.json[[2]][[1]]['animals'])) == 'animals.id'])
-
-treatment <- 'AAV CRE'
-cre.url <- paste('http://bridgeslab.sph.umich.edu/mousedb/api/v1/treatment/?format=json&',api_key,'&limit=0&treatment=', URLencode(treatment), sep="")
-cre.json <- rjson::fromJSON(getURL(cre.url))
-cre.mouseids <- as.integer(unlist(cre.json[[2]][[1]]['animals'])[names(unlist(cre.json[[2]][[1]]['animals'])) == 'animals.id'])
-
-not.ko <- c(8830,8284,8715,8716,8717,8718,8719,8786)
-
-exp.data <- read_csv(raw_data_file, col_types = 
-                       cols(
-  age = col_double(),
-  MouseID = col_factor(levels=NULL),
-  Sex = col_factor(levels=NULL),
-  values = col_double(),
-  assay = col_factor(levels=NULL),
-  experiment.date = col_date(format = "")
-)) %>%
-  mutate(Mass = values/1000) %>%
-  select(-values) %>%
-  mutate(Diet = as.factor(case_when(animal.id %in% kd.mouseids ~ 'Ketogenic Diet', 
-                                    animal.id %in% kcd.mouseids ~ 'Control Diet'))) %>%
-  mutate(Injection = as.factor(case_when(animal.id %in% gfp.mouseids ~ 'AAV-GFP', 
-                                    animal.id %in% cre.mouseids ~ 'AAV-Cre'))) %>%
-  arrange(experiment.date) %>%
-  group_by(MouseID) %>%
-  mutate(start.date = first(experiment.date),
-         injection.days = experiment.date - start.date,
-         diet.time = round((injection.days-15)/7)) %>%
-  group_by(assay, MouseID) %>%
-  mutate(Mass.Change = Mass - mean(Mass[diet.time==0]))
-
 mri.data.file <- 'AMPK KD MRI Data.csv'
-write_csv(exp.data, mri.data.file)
 not.ko <- c(8830,8284,8715,8716,8717,8718,8719,8786)
 exp.data <- read_csv(mri.data.file) %>% 
     filter(!(MouseID %in% not.ko)) #removed mice that we are not confident of their ko status
