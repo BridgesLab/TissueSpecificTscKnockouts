@@ -101,7 +101,6 @@ exp.data <- read_csv(raw_data_file, col_types =
                                     animal.id %in% kcd.mouseids ~ 'Control Diet'))) %>%
   mutate(Injection = as.factor(case_when(animal.id %in% gfp.mouseids ~ 'AAV-GFP', 
                                     animal.id %in% cre.mouseids ~ 'AAV-Cre'))) %>%
-  filter(!(MouseID %in% not.ko)) %>% #removed mice that we are not confident of their ko status
   arrange(experiment.date) %>%
   group_by(MouseID) %>%
   mutate(start.date = first(experiment.date),
@@ -112,7 +111,9 @@ exp.data <- read_csv(raw_data_file, col_types =
 
 mri.data.file <- 'AMPK KD MRI Data.csv'
 write_csv(exp.data, mri.data.file)
-exp.data <- read_csv(mri.data.file)
+not.ko <- c(8830,8284,8715,8716,8717,8718,8719,8786)
+exp.data <- read_csv(mri.data.file) %>% 
+    filter(!(MouseID %in% not.ko)) #removed mice that we are not confident of their ko status
 ```
 
 
