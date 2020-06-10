@@ -49,13 +49,8 @@ color.scheme <- c('#00274c', '#ffcb05')
 
 ```{r data-input}
 library(readr) #loads the readr package
-web_file <- 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=97441873&single=true&output=csv' 
 downloaded_file <- "AMPK KO Experiment - Food Intake.csv"
-download.file(web_file, destfile=downloaded_file)
-
-mapping_web_file <- 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=801187280&single=true&output=csv'
 downloaded_mapping_file <- "AMPK KO Experiment - Cage Mapping.csv"
-download.file(mapping_web_file, destfile=downloaded_mapping_file)
 
 #this loads the file into a dataframe called exp.data 
 exp.data <- read_csv(downloaded_file, col_types = 
@@ -115,7 +110,7 @@ food.intake.summary <-
                           se = se))
 ```
 
-These data can be found in **`r getwd()`** in a file named **`r ifelse(downloaded_file %in% dir(), downloaded_file, "no file found")`**, which was downloaded from `r web_file`.  These were mapped to cages using the file `r downloaded_mapping_file` downloaded from `r mapping_web_file`.  This script was most recently updated on **`r date()`**.
+These data can be found in **`r getwd()`** in a file named **`r ifelse(downloaded_file %in% dir(), downloaded_file, "no file found")`**.  These were mapped to cages using the file `r downloaded_mapping_file`.  This script was most recently updated on **`r date()`**.
 
 
 # Sample Size
