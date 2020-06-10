@@ -18,11 +18,7 @@ output:
 
 
 
-<<<<<<< HEAD
-This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Tue Jun  9 11:24:17 2020.
-=======
-This script can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Tue Jun  9 11:19:19 2020.
->>>>>>> c87caa96272248e20f517c78e8ecb533a80a8d3a
+This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Tue Jun  9 15:07:09 2020.
 
 # Experimental Details
 
@@ -33,7 +29,7 @@ The notes about the design of this cohort can be found at
 
 
 
-This script pulled in a total of 1278 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
+This script pulled in a total of 1277 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
 
 Modified the genotypes based on the western blot data, this data filters out mice that we are not confident of their knockout status.
 
