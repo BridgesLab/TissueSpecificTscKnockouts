@@ -22,7 +22,7 @@ output:
 
 
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Food Intake** in a file named **AMPK KO Experiment - Food Intake.csv**, which was downloaded from https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=97441873&single=true&output=csv.  These were mapped to cages using the file AMPK KO Experiment - Cage Mapping.csv downloaded from https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=801187280&single=true&output=csv.  This script was most recently updated on **Thu May 28 10:45:20 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Food Intake** in a file named **AMPK KO Experiment - Food Intake.csv**, which was downloaded from https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=97441873&single=true&output=csv.  These were mapped to cages using the file AMPK KO Experiment - Cage Mapping.csv downloaded from https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=801187280&single=true&output=csv.  This script was most recently updated on **Wed Jun 10 09:38:12 2020**.
 
 
 # Sample Size
