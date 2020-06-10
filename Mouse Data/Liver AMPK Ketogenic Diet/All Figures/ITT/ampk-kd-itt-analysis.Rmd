@@ -56,8 +56,8 @@ library(readxl) #loads the readr package
 
 data.filename <- 'ITT 19-06-19.xlsx' #make this a separate line, you can use any variable you want
 not.ko <- c(8830,8284,8715,8716,8717,8718,8719,8786)
-exp.data <- read_csv(data.filename) %>% 
-    filter(!(MouseID %in% not.ko)) #removed mice that we are not confident of their ko status
+exp.data <- read_excel(data.filename) %>% 
+    filter(!(Mouse %in% not.ko)) #removed mice that we are not confident of their ko status
 
 #from western blot data
 not.ko <- c(8715,8716,8717,8718,8719,8786)
@@ -73,8 +73,7 @@ exp.data <- read_excel(data.filename, sheet='Sheet2') %>%
            sep=" ") %>%
   tibble::rowid_to_column("ID") %>% #index an ID column
   mutate(ID = as.factor(ID)) %>%
-  mutate(Injection = relevel(as.factor(Injection), ref="GFP")) %>%
-  mutate(Injection = ifelse(ID %in% not.ko, "GFP", as.character(Injection)))  #modified genotypes based on western blotting
+  mutate(Injection = relevel(as.factor(Injection), ref="GFP")) 
 
 data.long <-
   exp.data %>%
@@ -84,9 +83,10 @@ data.long <-
          Glucose = as.integer(Glucose))
 
 summary.data <-
-  exp.data %>%
-  group_by(Sex,Diet,Injection) %>%
-  summarize_if(is.numeric, .funs=list(mean = function(x) mean(x,na.rm=T),
+  data.long %>%
+  group_by(Sex,Diet,Injection, Time) %>%
+  mutate(Mouse = as.factor(Mouse)) %>%
+  summarize_if(is.numeric, .funs=funs(mean=mean(., na.rm = TRUE),
                                       se=se))
 ```
 
