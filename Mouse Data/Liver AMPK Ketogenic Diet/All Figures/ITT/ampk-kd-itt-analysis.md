@@ -65,7 +65,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Wed Jun 10 10:17:51 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Wed Jun 10 10:21:02 2020**.
 
 # Number of Mice
 
@@ -120,11 +120,10 @@ data.long %>%
             Error = se(Glucose)) %>%
   ggplot(aes(y=Mean,
              x=Time,
-             ymin=Mean-Error,
-             ymax=Mean+Error,
              col=Injection)) +
   geom_line() +
-  geom_errorbar() +
+  geom_errorbar(aes(ymin=Mean-Error,
+             ymax=Mean+Error)) +
   expand_limits(y=0) +
   facet_grid(Sex~Diet) +
   labs(y="Blood Glucose (mg/dL)",
@@ -372,11 +371,11 @@ data.long %>%
             Error = se(Glucose)) %>%
   ggplot(aes(y=Mean,
              x=Diet,
-             ymin=Mean-Error,
-             ymax=Mean+Error,
              fill=Injection)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection,
+                                                        ymin=Mean-Error,
+                                                        ymax=Mean+Error), width=0.5) +
   expand_limits(y=0) +
   facet_grid(.~Sex) +
   labs(y="Fasting Glucose (mg/dL)",
@@ -435,11 +434,11 @@ data.long %>%
             Error = se(AUC)) %>%
   ggplot(aes(y=Mean,
              x=Diet,
-             ymin=Mean-Error,
-             ymax=Mean+Error,
              fill=Injection)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection), width=0.5) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection,
+                                                        ymin=Mean-Error,
+                                                        ymax=Mean+Error), width=0.5) +
   expand_limits(y=0) +
   facet_grid(.~Sex) +
   labs(y="Glucose (mg/dL x minutes)",
