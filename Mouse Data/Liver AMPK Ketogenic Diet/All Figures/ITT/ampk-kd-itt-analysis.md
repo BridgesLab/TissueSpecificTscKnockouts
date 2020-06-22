@@ -34,10 +34,6 @@ not.ko <- c(8830,8831,8715,8716,8717,8718,8719,8786)
 exp.data <- read_excel(data.filename) %>% 
     filter(!(Mouse %in% not.ko)) #removed mice that we are not confident of their ko status
 
-#from western blot data
-not.ko <- c(8715,8716,8717,8718,8719,8786)
-unclear.ko <- c(8786,8717,8285,8345)
-
 mapping.filename <- 'mapping.csv'
 #this loads whatever the file is into a dataframe called exp.data if it exists
 exp.data <- read_excel(data.filename, sheet='Sheet2') %>%
@@ -65,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Mon Jun 22 10:29:30 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Mon Jun 22 10:32:23 2020**.
 
 # Number of Mice
 
