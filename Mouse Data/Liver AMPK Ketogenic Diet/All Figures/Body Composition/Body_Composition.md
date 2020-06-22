@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Mon Jun 22 10:22:16 2020.
+This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Mon Jun 22 10:39:28 2020.
 
 # Experimental Details
 
@@ -29,7 +29,7 @@ The notes about the design of this cohort can be found at
 
 
 
-This script pulled in a total of 1274 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
+This script pulled in a total of 1238 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
 
 Modified the genotypes based on the western blot data, this data filters out mice that we are not confident of their knockout status.
 
@@ -49,7 +49,7 @@ F     Ketogenic Diet   AAV-Cre       8
 F     Ketogenic Diet   AAV-GFP       7
 M     Control Diet     AAV-Cre      11
 M     Control Diet     AAV-GFP      10
-M     Ketogenic Diet   AAV-Cre       7
+M     Ketogenic Diet   AAV-Cre       4
 M     Ketogenic Diet   AAV-GFP       9
 
 
@@ -120,9 +120,6 @@ Table: Animals in each group of this cohort
     8285  M     Ketogenic Diet   AAV-Cre   
     8344  M     Ketogenic Diet   AAV-Cre   
     8345  M     Ketogenic Diet   AAV-Cre   
-    8346  M     Ketogenic Diet   AAV-Cre   
-    8825  M     Ketogenic Diet   AAV-Cre   
-    8826  M     Ketogenic Diet   AAV-Cre   
     8187  M     Ketogenic Diet   AAV-GFP   
     8188  M     Ketogenic Diet   AAV-GFP   
     8190  M     Ketogenic Diet   AAV-GFP   
