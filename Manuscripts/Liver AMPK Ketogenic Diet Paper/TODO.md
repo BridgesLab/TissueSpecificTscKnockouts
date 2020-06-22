@@ -3,7 +3,7 @@ Look at *Need to do* for experiments that still need to be run
 Food intake data looks a little weird, how do I fix that?
 Get cartoon mouse, liver muscle, blood from dave for figure 1
 Rate of drop ITT. 
-I tried to update the number of mice in each group for ITT, it is still showing 11 mice for Male, keto cre and I don't know why.
+I tried to update the number of mice in each group for ITT and ketone assay but it is still showing 10 or 11 mice for Male, keto cre and I don't know why.
 how do you write up liver histology section?
 In figure legends indicate n, MRI, experiement method
 Need to look at beta-oxidation genes for western blotting (CPT1, MCAD and ACAD)

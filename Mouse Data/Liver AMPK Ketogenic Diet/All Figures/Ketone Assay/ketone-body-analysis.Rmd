@@ -61,9 +61,9 @@ filename <- '2019-07-18 BHB Assay.xlsx' #make this a separate line, you can use 
 exp.data <- read_excel(filename, sheet = "Sheet1")
 
 #from western blot data
-not.ko <- c(8830,8831,8715,8716,8717,8718,8719,8786)
+not.ko <- c(8830,8831,8715,8716,8717,8718,8719,8786,8346,9925,8826,8785,8787,8558)
 
-exclude.mice <- c('8078','8349','8830','8831','8715','8716','8717','8718','8719','8786','8346','8825','8826') #excluded 8349 which had an error in ketone determination (<<<0)
+exclude.mice <- c('8078','8349','8830','8831','8715','8716','8717','8718','8719','8786','8346','8825','8826','8785','8787','8558') #excluded 8349 which had an error in ketone determination (<<<0)
 library(forcats)
 exp.data <- 
   exp.data %>%

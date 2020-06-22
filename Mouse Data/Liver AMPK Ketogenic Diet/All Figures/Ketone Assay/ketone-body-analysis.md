@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Ketone Assay** in a file named **2019-07-18 BHB Assay.xlsx**.  This script was most recently updated on **Mon Jun 22 10:47:30 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Ketone Assay** in a file named **2019-07-18 BHB Assay.xlsx**.  This script was most recently updated on **Mon Jun 22 11:01:32 2020**.
 
 # Analysis
 
@@ -44,15 +44,15 @@ Table: Animals in each group of this cohort
     1  Female   Keto      AAV-Tbg-GFP    14
     1  Male     Control   AAV-Tbg-Cre    12
     1  Male     Control   AAV-Tbg-GFP    18
-    1  Male     Keto      AAV-Tbg-Cre    12
+    1  Male     Keto      AAV-Tbg-Cre    11
     1  Male     Keto      AAV-Tbg-GFP    11
     4  Female   Control   AAV-Tbg-Cre    13
     4  Female   Control   AAV-Tbg-GFP    11
-    4  Female   Keto      AAV-Tbg-Cre    16
+    4  Female   Keto      AAV-Tbg-Cre    17
     4  Female   Keto      AAV-Tbg-GFP    12
     4  Male     Control   AAV-Tbg-Cre    18
     4  Male     Control   AAV-Tbg-GFP    17
-    4  Male     Keto      AAV-Tbg-Cre    11
+    4  Male     Keto      AAV-Tbg-Cre    10
     4  Male     Keto      AAV-Tbg-GFP    11
 
 ## Boxplots
@@ -95,22 +95,22 @@ Table: Effects of diet/sex on  ketone levels in AMPK liver knockouts.  Includes 
 
 term              df    sumsq   meansq   statistic   p.value
 ---------------  ---  -------  -------  ----------  --------
-Sex                1   10.841   10.841      44.209     0.000
-Diet               1   50.996   50.996     207.962     0.000
-Injection          1    0.173    0.173       0.706     0.403
-Diet:Injection     1    0.072    0.072       0.292     0.591
-Residuals         78   19.127    0.245          NA        NA
+Sex                1   13.552   13.552      55.699     0.000
+Diet               1   48.050   48.050     197.490     0.000
+Injection          1    0.230    0.230       0.943     0.334
+Diet:Injection     1    0.083    0.083       0.341     0.561
+Residuals         77   18.734    0.243          NA        NA
 
 
 
 Table: Effects of diet/sex on  ketone levels in AMPK liver knockouts.  No interaction between diet and genotype
 
-term         df    sumsq   meansq   statistic   p.value
-----------  ---  -------  -------  ----------  --------
-Sex           1   10.841   10.841      44.609     0.000
-Diet          1   50.996   50.996     209.843     0.000
-Injection     1    0.173    0.173       0.712     0.401
-Residuals    79   19.199    0.243          NA        NA
+term         df   sumsq   meansq   statistic   p.value
+----------  ---  ------  -------  ----------  --------
+Sex           1   13.55   13.552      56.173     0.000
+Diet          1   48.05   48.050     199.172     0.000
+Injection     1    0.23    0.230       0.951     0.332
+Residuals    78   18.82    0.241          NA        NA
 
 ![Ketone levels after four weeks of diet for AMPK knockouts](figures/barplot-4-week-ampk-1.png)
 
@@ -121,7 +121,7 @@ Sex    Genotype   Injection     Diet        Mean   Error
 Male   AMPK       AAV-Tbg-GFP   Control    0.116   0.017
 Male   AMPK       AAV-Tbg-GFP   Keto       1.225   0.210
 Male   AMPK       AAV-Tbg-Cre   Control    0.140   0.020
-Male   AMPK       AAV-Tbg-Cre   Keto       1.205   0.296
+Male   AMPK       AAV-Tbg-Cre   Keto       0.931   0.144
 
 # Interpretation
 
