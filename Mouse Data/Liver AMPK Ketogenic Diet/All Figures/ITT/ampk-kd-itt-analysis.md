@@ -30,9 +30,9 @@ Injected 0.75 mU/g of lean body mass to animals fasted for 6h after 2 weeks of K
 library(readxl) #loads the readr package
 
 data.filename <- 'ITT 19-06-19.xlsx' #make this a separate line, you can use any variable you want
-not.ko <- c(8830,8831,8715,8716,8717,8718,8719,8786)
+not.ko <- c(8830,8831,8715,8716,8717,8718,8719,8786,8346,8825,8826,8785,8787,8558)
 exp.data <- read_excel(data.filename) %>% 
-    filter(!(Mouse %in% not.ko)) #removed mice that we are not confident of their ko status
+    filter(!(Mouse %in% not.ko)) #removed mice that are not ko
 
 mapping.filename <- 'mapping.csv'
 #this loads whatever the file is into a dataframe called exp.data if it exists
@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Mon Jun 22 10:32:23 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Mon Jun 22 11:04:08 2020**.
 
 # Number of Mice
 
