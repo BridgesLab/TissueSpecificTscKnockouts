@@ -200,6 +200,7 @@ exp.data %>%
   group_by(Diet,Sex,Injection,diet.time) %>%
   summarize(Average = mean(Mass.Change, na.rm=T),
             SE = se(Mass.Change)) %>%
+   filter(Sex=='M') %>%
   ggplot(aes(y=Average,
              ymin=Average-SE,
              ymax=Average+SE,
