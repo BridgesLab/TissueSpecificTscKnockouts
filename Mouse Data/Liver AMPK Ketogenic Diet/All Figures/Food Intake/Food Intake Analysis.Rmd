@@ -58,7 +58,6 @@ exp.data <- read_csv(downloaded_file, col_types =
                             diet = col_factor(levels=NULL),
                            `food final (g)`= col_double(),
                            `food initial (g)` = col_double()))
-                      
 library(lubridate)
 food.data <-
   exp.data %>%
