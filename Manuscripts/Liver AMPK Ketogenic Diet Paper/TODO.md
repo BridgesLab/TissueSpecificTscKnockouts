@@ -19,3 +19,5 @@ Need to do qPCR for cholesterol genes, beta-oxidation genes, mitochondria from t
 TGs assay
 if the females are KO, then run more females for ketones but that is low priority 
 look at insulin levels (maybe GDF15)- insulin levels would help - we have fasting glucose levels but not insulin - insulin eliza 
+Need to get ACLY and pAMPK protein quantification data off computer
+fix blot script to include most up to date blots
