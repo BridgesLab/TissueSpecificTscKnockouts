@@ -27,7 +27,7 @@ Animals were sacrificed at approximately 2PM in the fed state
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Sacrifice Data** in a file named **AMPK KD Sacrifice Data.csv**.  This script was most recently updated on **Thu Jul  9 13:12:41 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Sacrifice Data** in a file named **AMPK KD Sacrifice Data.csv**.  This script was most recently updated on **Thu Jul  9 13:27:57 2020**.
 
 # Analysis
 
@@ -40,14 +40,14 @@ Table: Animals in each group of this cohort
 
 Sex   Diet      Injection     n
 ----  --------  ----------  ---
-F     Control   Cre           7
 F     Control   GFP           8
-F     Keto      Cre           8
+F     Control   Cre           7
 F     Keto      GFP           7
+F     Keto      Cre           8
+M     Control   GFP           9
 M     Control   Cre           7
-M     Control   GFP          10
+M     Keto      GFP           9
 M     Keto      Cre           4
-M     Keto      GFP          16
 
 ## Serum Levels
 
@@ -64,10 +64,10 @@ Table: Fed glucose levels
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       177.74        8.88      20.007     0.000
-SexM               -1.47        8.76      -0.167     0.868
-DietKeto           -2.79        8.62      -0.323     0.748
-InjectionGFP       -5.05        8.98      -0.562     0.576
+(Intercept)       171.28        9.29      18.440     0.000
+SexM               -3.21        9.29      -0.346     0.731
+DietKeto           -1.52        9.25      -0.164     0.870
+InjectionCre        6.62        9.35       0.709     0.482
 
 ### Fed Ketone Bodies
 
@@ -80,10 +80,10 @@ Table: Inguinal adipose tissue weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)        2.748       0.598       4.593     0.000
+(Intercept)        2.569       0.692       3.714     0.002
 SexM              -1.707       0.531      -3.214     0.005
 DietKeto          -0.564       0.547      -1.031     0.317
-InjectionGFP      -0.179       0.467      -0.383     0.707
+InjectionCre       0.179       0.467       0.383     0.707
 
 ## Fat Pad Weights
 
@@ -98,10 +98,10 @@ Table: Inguinal adipose tissue weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       173.76        19.3       9.006     0.000
-SexM               10.03        19.7       0.509     0.613
-DietKeto           39.82        19.1       2.079     0.042
-InjectionGFP       -4.06        20.1      -0.202     0.840
+(Intercept)       169.76        20.9       8.112     0.000
+SexM               16.68        21.0       0.795     0.430
+DietKeto           45.66        20.8       2.193     0.033
+InjectionCre       -1.52        21.1      -0.072     0.943
 
 ### Gonadal Adipose Tissue
 
@@ -114,10 +114,10 @@ Table: Gonadal adipose tissue weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       316.61        33.8       9.361     0.000
-SexM               -9.38        34.1      -0.275     0.784
-DietKeto          115.48        33.4       3.462     0.001
-InjectionGFP      -10.96        34.9      -0.314     0.755
+(Intercept)       302.93        33.0       9.177     0.000
+SexM                6.93        33.0       0.210     0.835
+DietKeto          133.34        32.8       4.059     0.000
+InjectionCre       -1.46        33.2      -0.044     0.965
 
 
 ## Muscle Weights
@@ -133,10 +133,10 @@ Table: Inguinal adipose tissue weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       101.68        5.83      17.431     0.000
-SexM               28.35        5.88       4.822     0.000
-DietKeto           -3.61        5.75      -0.627     0.533
-InjectionGFP       10.89        6.02       1.809     0.075
+(Intercept)       112.07        6.15       18.22     0.000
+SexM               28.14        6.16        4.57     0.000
+DietKeto           -2.82        6.12       -0.46     0.647
+InjectionCre      -10.66        6.19       -1.72     0.091
 
 ### Quadriceps
 
@@ -149,10 +149,10 @@ Table: Quadricep weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)      134.078        6.46      20.765     0.000
-SexM              29.419        6.51       4.521     0.000
-DietKeto           0.521        6.37       0.082     0.935
-InjectionGFP       7.876        6.67       1.182     0.242
+(Intercept)       141.69        6.90      20.540     0.000
+SexM               30.88        6.91       4.471     0.000
+DietKeto            2.17        6.87       0.315     0.754
+InjectionCre       -8.99        6.95      -1.294     0.201
 
 
 
