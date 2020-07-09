@@ -25,11 +25,9 @@ Animals were sacrificed at approximately 2PM in the fed state
 
 # Raw Data
 
-Data are downloaded from a google doc and saved in this folder.
 
 
-
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Sacrifice Data** in a file named **Sacrifice Data.csv**, which was downloaded from a google sheet found at https://docs.google.com/spreadsheets/d/e/2PACX-1vSth-DS9iN3peHkt9-C8vz2pNWKSw2Y_rSCNCLq-7DIbzMZ_8rjLITffQjLT3jw7lEUFfacXQeakkEB/pub?gid=158703896&single=true&output=csv.  This script was most recently updated on **Thu May 28 11:04:15 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Sacrifice Data** in a file named **AMPK KD Sacrifice Data.csv**.  This script was most recently updated on **Thu Jul  9 13:12:41 2020**.
 
 # Analysis
 
@@ -48,8 +46,8 @@ F     Keto      Cre           8
 F     Keto      GFP           7
 M     Control   Cre           7
 M     Control   GFP          10
-M     Keto      Cre           6
-M     Keto      GFP          14
+M     Keto      Cre           4
+M     Keto      GFP          16
 
 ## Serum Levels
 
@@ -66,10 +64,10 @@ Table: Fed glucose levels
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       176.93        8.97      19.731     0.000
-SexM               -1.96        8.70      -0.226     0.822
-DietKeto           -3.12        8.61      -0.362     0.718
-InjectionGFP       -3.15        8.77      -0.359     0.720
+(Intercept)       177.74        8.88      20.007     0.000
+SexM               -1.47        8.76      -0.167     0.868
+DietKeto           -2.79        8.62      -0.323     0.748
+InjectionGFP       -5.05        8.98      -0.562     0.576
 
 ### Fed Ketone Bodies
 
@@ -100,10 +98,10 @@ Table: Inguinal adipose tissue weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       175.49        19.4       9.036     0.000
-SexM               10.38        19.5       0.533     0.596
-DietKeto           39.65        19.1       2.078     0.042
-InjectionGFP       -7.46        19.5      -0.382     0.704
+(Intercept)       173.76        19.3       9.006     0.000
+SexM               10.03        19.7       0.509     0.613
+DietKeto           39.82        19.1       2.079     0.042
+InjectionGFP       -4.06        20.1      -0.202     0.840
 
 ### Gonadal Adipose Tissue
 
@@ -116,10 +114,10 @@ Table: Gonadal adipose tissue weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       327.40        33.8       9.673     0.000
-SexM               -6.75        33.5      -0.201     0.841
-DietKeto          115.56        33.0       3.500     0.001
-InjectionGFP      -32.63        33.8      -0.966     0.338
+(Intercept)       316.61        33.8       9.361     0.000
+SexM               -9.38        34.1      -0.275     0.784
+DietKeto          115.48        33.4       3.462     0.001
+InjectionGFP      -10.96        34.9      -0.314     0.755
 
 
 ## Muscle Weights
@@ -135,10 +133,10 @@ Table: Inguinal adipose tissue weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)       103.25        5.96      17.319     0.000
-SexM               29.48        5.90       4.994     0.000
-DietKeto           -2.89        5.82      -0.496     0.621
-InjectionGFP        7.05        5.95       1.185     0.241
+(Intercept)       101.68        5.83      17.431     0.000
+SexM               28.35        5.88       4.822     0.000
+DietKeto           -3.61        5.75      -0.627     0.533
+InjectionGFP       10.89        6.02       1.809     0.075
 
 ### Quadriceps
 
@@ -151,10 +149,10 @@ Table: Quadricep weights
 
 term            estimate   std.error   statistic   p.value
 -------------  ---------  ----------  ----------  --------
-(Intercept)      132.817        6.45      20.581     0.000
-SexM              29.509        6.39       4.618     0.000
-DietKeto           0.886        6.29       0.141     0.888
-InjectionGFP      10.034        6.44       1.557     0.124
+(Intercept)      134.078        6.46      20.765     0.000
+SexM              29.419        6.51       4.521     0.000
+DietKeto           0.521        6.37       0.082     0.935
+InjectionGFP       7.876        6.67       1.182     0.242
 
 
 
@@ -166,13 +164,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.5.1 (2018-07-02)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS High Sierra 10.13.6
+## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Catalina 10.15.5
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -181,18 +179,18 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.2     ggplot2_3.1.0   forcats_0.4.0   lubridate_1.7.4
-## [5] readr_1.3.1     dplyr_0.8.1     tidyr_0.8.2     knitr_1.20     
+## [1] broom_0.5.6     ggplot2_3.3.0   forcats_0.5.0   lubridate_1.7.8
+## [5] readr_1.3.1     dplyr_0.8.5     tidyr_1.0.3     knitr_1.28     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.1       pillar_1.4.1     compiler_3.5.1   highr_0.7       
-##  [5] plyr_1.8.4       tools_3.5.1      digest_0.6.16    lattice_0.20-35 
-##  [9] nlme_3.1-137     evaluate_0.11    tibble_2.1.3     gtable_0.2.0    
-## [13] pkgconfig_2.0.2  rlang_0.3.4      yaml_2.2.0       withr_2.1.2     
-## [17] stringr_1.3.1    generics_0.0.2   hms_0.4.2        rprojroot_1.3-2 
-## [21] grid_3.5.1       tidyselect_0.2.5 glue_1.3.1       R6_2.4.0        
-## [25] rmarkdown_1.10   purrr_0.2.5      reshape2_1.4.3   magrittr_1.5    
-## [29] backports_1.1.2  scales_1.0.0     htmltools_0.3.6  assertthat_0.2.1
-## [33] colorspace_1.3-2 labeling_0.3     stringi_1.2.4    lazyeval_0.2.1  
-## [37] munsell_0.5.0    crayon_1.3.4
+##  [1] Rcpp_1.0.4.6     pillar_1.4.4     compiler_4.0.0   highr_0.8       
+##  [5] tools_4.0.0      digest_0.6.25    lattice_0.20-41  nlme_3.1-147    
+##  [9] evaluate_0.14    lifecycle_0.2.0  tibble_3.0.1     gtable_0.3.0    
+## [13] pkgconfig_2.0.3  rlang_0.4.6      yaml_2.2.1       xfun_0.13       
+## [17] withr_2.2.0      stringr_1.4.0    generics_0.0.2   vctrs_0.2.4     
+## [21] hms_0.5.3        grid_4.0.0       tidyselect_1.0.0 glue_1.4.0      
+## [25] R6_2.4.1         rmarkdown_2.1    purrr_0.3.4      farver_2.0.3    
+## [29] magrittr_1.5     backports_1.1.6  scales_1.1.0     ellipsis_0.3.0  
+## [33] htmltools_0.4.0  assertthat_0.2.1 colorspace_1.4-1 labeling_0.3    
+## [37] stringi_1.4.6    munsell_0.5.0    crayon_1.3.4
 ```
