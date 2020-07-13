@@ -55,7 +55,7 @@ The notes about the design of this cohort can be found at
 
 ```{r data-entry}
 mri.data.file <- 'AMPK KD MRI Data.csv'
-exp.data <- read_csv(mri.data.file) %>% 
+not.ko <- scan('../Non-Knockout Mice.txt')
 exp.data <- read_csv(mri.data.file) %>% 
     filter(!(MouseID %in% not.ko)) %>%  #removed mice that are not KO
 ```
