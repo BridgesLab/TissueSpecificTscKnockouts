@@ -21,3 +21,6 @@ if the females are KO, then run more females for ketones but that is low priorit
 look at insulin levels (maybe GDF15)- insulin levels would help - we have fasting glucose levels but not insulin - insulin eliza 
 Need to get ACLY and pAMPK protein quantification data off computer
 fix blot script to include most up to date blots
+make protein lysates of female KO livers, then run the ones that SHOULD be KO based on injections with male timing
+run pAMPK and pACC for the AJ mice from previous experiemnt 
+get black and white ACC and ACLY image
