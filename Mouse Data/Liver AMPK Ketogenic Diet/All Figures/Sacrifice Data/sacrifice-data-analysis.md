@@ -27,7 +27,7 @@ Animals were sacrificed at approximately 2PM in the fed state
 
 
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Sacrifice Data** in a file named **AMPK KD Sacrifice Data.csv**.  This script was most recently updated on **Thu Jul  9 13:27:57 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Sacrifice Data** in a file named **AMPK KD Sacrifice Data.csv**.  This script was most recently updated on **Tue Jul 14 10:54:52 2020**.
 
 # Analysis
 
@@ -164,13 +164,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.0.0 (2020-04-24)
-## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.5
+## R version 3.5.1 (2018-07-02)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS High Sierra 10.13.6
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -179,18 +179,18 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.6     ggplot2_3.3.0   forcats_0.5.0   lubridate_1.7.8
-## [5] readr_1.3.1     dplyr_0.8.5     tidyr_1.0.3     knitr_1.28     
+## [1] broom_0.5.2     ggplot2_3.1.0   forcats_0.4.0   lubridate_1.7.4
+## [5] readr_1.3.1     dplyr_0.8.1     tidyr_0.8.2     knitr_1.20     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.4.6     pillar_1.4.4     compiler_4.0.0   highr_0.8       
-##  [5] tools_4.0.0      digest_0.6.25    lattice_0.20-41  nlme_3.1-147    
-##  [9] evaluate_0.14    lifecycle_0.2.0  tibble_3.0.1     gtable_0.3.0    
-## [13] pkgconfig_2.0.3  rlang_0.4.6      yaml_2.2.1       xfun_0.13       
-## [17] withr_2.2.0      stringr_1.4.0    generics_0.0.2   vctrs_0.2.4     
-## [21] hms_0.5.3        grid_4.0.0       tidyselect_1.0.0 glue_1.4.0      
-## [25] R6_2.4.1         rmarkdown_2.1    purrr_0.3.4      farver_2.0.3    
-## [29] magrittr_1.5     backports_1.1.6  scales_1.1.0     ellipsis_0.3.0  
-## [33] htmltools_0.4.0  assertthat_0.2.1 colorspace_1.4-1 labeling_0.3    
-## [37] stringi_1.4.6    munsell_0.5.0    crayon_1.3.4
+##  [1] Rcpp_1.0.1       pillar_1.4.1     compiler_3.5.1   highr_0.7       
+##  [5] plyr_1.8.4       tools_3.5.1      digest_0.6.25    lattice_0.20-35 
+##  [9] nlme_3.1-137     evaluate_0.11    tibble_2.1.3     gtable_0.2.0    
+## [13] pkgconfig_2.0.2  rlang_0.4.7      yaml_2.2.0       withr_2.1.2     
+## [17] stringr_1.3.1    generics_0.0.2   hms_0.4.2        rprojroot_1.3-2 
+## [21] grid_3.5.1       tidyselect_0.2.5 glue_1.4.1       R6_2.4.0        
+## [25] rmarkdown_1.10   purrr_0.3.4      reshape2_1.4.3   magrittr_1.5    
+## [29] backports_1.1.2  scales_1.0.0     htmltools_0.3.6  assertthat_0.2.1
+## [33] colorspace_1.3-2 labeling_0.3     stringi_1.2.4    lazyeval_0.2.1  
+## [37] munsell_0.5.0    crayon_1.3.4
 ```

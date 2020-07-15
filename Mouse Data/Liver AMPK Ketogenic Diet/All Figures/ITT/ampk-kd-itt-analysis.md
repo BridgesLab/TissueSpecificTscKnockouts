@@ -30,9 +30,8 @@ Injected 0.75 mU/g of lean body mass to animals fasted for 6h after 2 weeks of K
 library(readxl) #loads the readr package
 
 data.filename <- 'ITT 19-06-19.xlsx' #make this a separate line, you can use any variable you want
-not.ko <- c(8830,8831,8715,8716,8717,8718,8719,8786,8346,8825,8826,8785,8787,8558)
-exp.data <- read_excel(data.filename) %>% 
-    filter(!(Mouse %in% not.ko)) #removed mice that are not ko
+not.ko <- scan('../Non-Knockout Mice.txt')
+exp.data <- read_excel(data.filename) %>% filter(!(Mouse %in% not.ko)) #removed mice that are not ko
 
 mapping.filename <- 'mapping.csv'
 #this loads whatever the file is into a dataframe called exp.data if it exists
@@ -61,7 +60,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Mon Jun 22 11:04:08 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Tue Jul 14 10:46:24 2020**.
 
 # Number of Mice
 
@@ -502,13 +501,13 @@ sessionInfo()
 ##  [1] Rcpp_1.0.1          nloptr_1.2.1        pillar_1.4.1       
 ##  [4] compiler_3.5.1      cellranger_1.1.0    RColorBrewer_1.1-2 
 ##  [7] highr_0.7           plyr_1.8.4          tools_3.5.1        
-## [10] boot_1.3-20         digest_0.6.16       nlme_3.1-137       
+## [10] boot_1.3-20         digest_0.6.25       nlme_3.1-137       
 ## [13] lattice_0.20-35     evaluate_0.11       tibble_2.1.3       
-## [16] gtable_0.2.0        pkgconfig_2.0.2     rlang_0.3.4        
+## [16] gtable_0.2.0        pkgconfig_2.0.2     rlang_0.4.7        
 ## [19] yaml_2.2.0          withr_2.1.2         stringr_1.3.1      
 ## [22] generics_0.0.2      rprojroot_1.3-2     grid_3.5.1         
-## [25] tidyselect_0.2.5    glue_1.3.1          R6_2.4.0           
-## [28] rmarkdown_1.10      minqa_1.2.4         purrr_0.2.5        
+## [25] tidyselect_0.2.5    glue_1.4.1          R6_2.4.0           
+## [28] rmarkdown_1.10      minqa_1.2.4         purrr_0.3.4        
 ## [31] reshape2_1.4.3      magrittr_1.5        MASS_7.3-50        
 ## [34] splines_3.5.1       backports_1.1.2     scales_1.0.0       
 ## [37] htmltools_0.3.6     assertthat_0.2.1    colorspace_1.3-2   

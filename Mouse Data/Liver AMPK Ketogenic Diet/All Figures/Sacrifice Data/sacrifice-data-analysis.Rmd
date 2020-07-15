@@ -59,7 +59,8 @@ filename <- 'AMPK KD Sacrifice Data.csv' #make this a separate line, you can use
 not.ko <- scan('../Non-Knockout Mice.txt')
 
 #this loads whatever the file is into a dataframe called exp.data if it exists
-exp.data <- read_csv(filename, na=c("not measured"))
+exp.data <- read_csv(filename, na=c("not measured")) %>% 
+  filter(!(Mouse %in% not.ko)) #removed mice that are not ko
 
 library(lubridate)
 library(forcats)
@@ -80,8 +81,7 @@ data <- mutate(exp.data,
          iWAT.norm = iWAT/BW,
          Quad.norm = Quad/BW,
          Gastroc.norm = Quad/BW)%>% 
-    mutate(Glucose = as.numeric(Glucose))   %>%
-  filter(!(Mouse %in% not.ko))
+    mutate(Glucose = as.numeric(Glucose)) 
   
 summary.data <- 
   data %>%

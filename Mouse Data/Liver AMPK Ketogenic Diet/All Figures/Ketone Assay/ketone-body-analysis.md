@@ -29,7 +29,7 @@ Describe your raw data files, including what the columns mean (and what units th
 
 
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Ketone Assay** in a file named **2019-07-18 BHB Assay.xlsx**.  This script was most recently updated on **Mon Jun 22 11:01:32 2020**.
+These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Ketone Assay** in a file named **2019-07-18 BHB Assay.xlsx**.  This script was most recently updated on **Tue Jul 14 10:52:27 2020**.
 
 # Analysis
 
@@ -39,7 +39,7 @@ Table: Animals in each group of this cohort
  Week  Sex      Diet      Injection       n
 -----  -------  --------  ------------  ---
     1  Female   Control   AAV-Tbg-Cre    17
-    1  Female   Control   AAV-Tbg-GFP    11
+    1  Female   Control   AAV-Tbg-GFP    12
     1  Female   Keto      AAV-Tbg-Cre    16
     1  Female   Keto      AAV-Tbg-GFP    14
     1  Male     Control   AAV-Tbg-Cre    12
@@ -95,22 +95,22 @@ Table: Effects of diet/sex on  ketone levels in AMPK liver knockouts.  Includes 
 
 term              df    sumsq   meansq   statistic   p.value
 ---------------  ---  -------  -------  ----------  --------
-Sex                1   13.552   13.552      55.699     0.000
-Diet               1   48.050   48.050     197.490     0.000
-Injection          1    0.230    0.230       0.943     0.334
-Diet:Injection     1    0.083    0.083       0.341     0.561
-Residuals         77   18.734    0.243          NA        NA
+Sex                1    8.943    8.943      15.505     0.000
+Diet               1   59.728   59.728     103.553     0.000
+Injection          1    0.078    0.078       0.136     0.714
+Diet:Injection     1    0.808    0.808       1.401     0.240
+Residuals         78   44.989    0.577          NA        NA
 
 
 
 Table: Effects of diet/sex on  ketone levels in AMPK liver knockouts.  No interaction between diet and genotype
 
-term         df   sumsq   meansq   statistic   p.value
-----------  ---  ------  -------  ----------  --------
-Sex           1   13.55   13.552      56.173     0.000
-Diet          1   48.05   48.050     199.172     0.000
-Injection     1    0.23    0.230       0.951     0.332
-Residuals    78   18.82    0.241          NA        NA
+term         df    sumsq   meansq   statistic   p.value
+----------  ---  -------  -------  ----------  --------
+Sex           1    8.943    8.943      15.426     0.000
+Diet          1   59.728   59.728     103.030     0.000
+Injection     1    0.078    0.078       0.135     0.714
+Residuals    79   45.797    0.580          NA        NA
 
 ![Ketone levels after four weeks of diet for AMPK knockouts](figures/barplot-4-week-ampk-1.png)
 
@@ -155,14 +155,14 @@ sessionInfo()
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_1.0.1       pillar_1.4.1     compiler_3.5.1   cellranger_1.1.0
-##  [5] highr_0.7        plyr_1.8.4       tools_3.5.1      digest_0.6.16   
+##  [5] highr_0.7        plyr_1.8.4       tools_3.5.1      digest_0.6.25   
 ##  [9] lattice_0.20-35  nlme_3.1-137     evaluate_0.11    tibble_2.1.3    
-## [13] gtable_0.2.0     pkgconfig_2.0.2  rlang_0.3.4      cli_1.0.0       
+## [13] gtable_0.2.0     pkgconfig_2.0.2  rlang_0.4.7      cli_2.0.2       
 ## [17] yaml_2.2.0       withr_2.1.2      stringr_1.3.1    generics_0.0.2  
-## [21] rprojroot_1.3-2  grid_3.5.1       tidyselect_0.2.5 glue_1.3.1      
-## [25] R6_2.4.0         rmarkdown_1.10   purrr_0.2.5      reshape2_1.4.3  
-## [29] magrittr_1.5     backports_1.1.2  scales_1.0.0     htmltools_0.3.6 
-## [33] assertthat_0.2.1 colorspace_1.3-2 labeling_0.3     stringi_1.2.4   
-## [37] lazyeval_0.2.1   munsell_0.5.0    crayon_1.3.4
+## [21] rprojroot_1.3-2  grid_3.5.1       tidyselect_0.2.5 glue_1.4.1      
+## [25] R6_2.4.0         fansi_0.4.0      rmarkdown_1.10   purrr_0.3.4     
+## [29] reshape2_1.4.3   magrittr_1.5     backports_1.1.2  scales_1.0.0    
+## [33] htmltools_0.3.6  assertthat_0.2.1 colorspace_1.3-2 labeling_0.3    
+## [37] stringi_1.2.4    lazyeval_0.2.1   munsell_0.5.0    crayon_1.3.4
 ```
 

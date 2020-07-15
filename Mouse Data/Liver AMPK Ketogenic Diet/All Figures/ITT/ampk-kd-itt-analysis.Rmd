@@ -56,8 +56,7 @@ library(readxl) #loads the readr package
 
 data.filename <- 'ITT 19-06-19.xlsx' #make this a separate line, you can use any variable you want
 not.ko <- scan('../Non-Knockout Mice.txt')
-exp.data <- read_excel(data.filename) %>% 
-    filter(!(Mouse %in% not.ko)) #removed mice that are not ko
+exp.data <- read_excel(data.filename) %>% filter(!(Mouse %in% not.ko)) #removed mice that are not ko
 
 mapping.filename <- 'mapping.csv'
 #this loads whatever the file is into a dataframe called exp.data if it exists

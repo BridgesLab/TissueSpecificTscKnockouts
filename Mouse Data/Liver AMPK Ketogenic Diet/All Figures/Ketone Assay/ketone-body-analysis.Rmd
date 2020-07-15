@@ -57,20 +57,20 @@ Describe your raw data files, including what the columns mean (and what units th
 library(readxl) #loads the readr package
 filename <- '2019-07-18 BHB Assay.xlsx' #make this a separate line, you can use any variable you want
 
-#this loads whatever the file is into a dataframe called exp.data if it exists
-exp.data <- read_excel(filename, sheet = "Sheet1")
-
 #from western blot data
 not.ko <- scan('../Non-Knockout Mice.txt')
+#this loads whatever the file is into a dataframe called exp.data if it exists
+exp.data <- read_excel(filename, sheet = "Sheet1") %>% filter(!(Mouse %in% not.ko)) #removed mice that are not ko
+
+
 
 library(forcats)
 exp.data <- 
   exp.data %>%
-   filter(!(Mouse %in% not.ko)) %>%
   filter(!(is.na(Genotype ))) %>%
   mutate(Injection = fct_recode(Injection, "AAV-Tbg-Cre" = "CRE",
                                 "AAV-Tbg-GFP"="GFP")) %>%
-    mutate(Injection = relevel(as.factor(Injection), ref="AAV-Tbg-Cre")) %>%
+    mutate(Injection = relevel(as.factor(Injection), ref="AAV-Tbg-Cre"))
  #modified genotypes based on western blotting
   
 ```
