@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Tue Jul 14 10:58:21 2020.
+This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Wed Jul 15 15:40:24 2020.
 
 # Experimental Details
 
