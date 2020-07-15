@@ -1,0 +1,161 @@
+---
+title: "Quantification of AMPK Knockout Blots"
+author: "Dave Bridges"
+date: "June 18, 2020"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+# Experimental Details
+
+Blotted liver lysates for AMPK and ACC
+
+# Raw Data
+
+
+```{r data-input}
+library(readxl) #loads the readr package
+
+genotype.lanes <- c(rep("GFP",3), rep("Cre",3), rep("GFP",3), rep("Cre",4)) 
+diet.lanes <- c(rep("control",6), rep("keto",7))
+
+#this loads whatever the file is into a dataframe called exp.data if it exists
+AMPK.filename <- 'Male AMPK.xls' #make this a separate line, you can use any variable you want
+AMPK.data <- read_excel(AMPK.filename) %>% mutate(antibody="AMPK", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+acc.filename <- 'Male ACC.xls'
+acc.data <- read_excel(acc.filename)  %>% mutate(antibody="ACC", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+chop.filename <- 'Male CHOP.xls'
+chop.data <- read_excel(chop.filename)  %>% mutate(antibody="CHOP", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+fas.filename <- 'Male FAS.xls'
+fas.data <- read_excel(fas.filename)  %>% mutate(antibody="FAS", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+pacc.filename <- 'Male pACC.xls'
+pacc.data <- read_excel(pacc.filename)  %>% mutate(antibody="pACC", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+pS6.filename <- 'Male pS6.xls'
+pS6.data <- read_excel(pS6.filename)  %>% mutate(antibody="pS6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+S6.filename <- 'Male S6.xls'
+S6.data <- read_excel(S6.filename)  %>% mutate(antibody="S6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+totalprotein.filename <- 'Male total protein.xls'
+totalprotein.data <- read_excel(totalprotein.filename)  %>% mutate(antibody="totalprotein", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+ACLY.filename <- 'Male ACLY quantification.xls'
+ACLY.data <- read_excel(ACLY.filename)  %>% mutate(antibody="ACLY", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+pAMPK.filename <- 'Male pAMPK quantification.xls'
+pAMPK.data <- read_excel(pAMPK.filename)  %>% mutate(antibody="pAMPK", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+blot.data <-bind_rows(totalprotein.data, 
+                      acc.data, 
+                      pacc.data,
+                      fas.data,
+                      pS6.data,
+                      S6.data,
+                      chop.data,
+                      AMPK.data)
+```
+
+These data can be found in **`r getwd()`** in files named **`r acc.filename`** and **`r pacc.filename`**.  This script was most recently updated on **`r date()`**.
+
+# Analysis
+
+```{r pACC-ACC}
+normalized.data <-
+  blot.data %>%
+  select(Genotype,Diet, `Lane Name`, Signal, antibody) %>%
+  pivot_wider(names_from=antibody, values_from=Signal) %>%
+  mutate(Rel.ACC=ACC/totalprotein) %>%
+  mutate(Norm.ACC=Rel.ACC/mean(Rel.ACC[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.AMPK=AMPK/totalprotein) %>%
+  mutate(Norm.AMPK=Rel.AMPK/mean(Rel.AMPK[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.CHOP=CHOP/totalprotein) %>%
+  mutate(Norm.CHOP=Rel.CHOP/mean(Rel.CHOP[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.FAS=FAS/totalprotein) %>%
+  mutate(Norm.FAS=Rel.FAS/mean(Rel.FAS[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.pACC=pACC/ACC) %>%
+  mutate(Norm.pACC=Rel.pACC/mean(Rel.pACC[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.S6=S6/totalprotein) %>%
+  mutate(Norm.S6=Rel.S6/mean(Rel.S6[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.pS6=pS6/S6) %>%
+  mutate(Norm.pS6=Rel.pS6/mean(Rel.pS6[Genotype=='GFP'&Diet=='control']))
+  mutate(Rel.pAMPK=pAMPK/AMPK) %>%
+  mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control']))
+  mutate(Rel.ACLY=ACLY/totalprotein) %>%
+  mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control']))
+        
+summary.data <-
+  normalized.data %>%
+  mutate(Genotype = relevel(Genotype, ref="GFP")) %>%
+  group_by(Genotype,Diet) %>%
+  summarize_at(.vars=vars(starts_with('Norm')), .funs=list(mean=mean,se=se,n=length))
+  
+
+ #once you get to this point Dave will help with adding the summary of means, se, length etc.
+```
+
+
+```{r pACC-barplot}
+library(ggplot2)
+ggplot(summary.data, aes(y=Norm.pACC_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.pACC_mean-Norm.pACC_se,
+                    ymax=Norm.pACC_mean+Norm.pACC_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  labs(y="pACC/ACC",
+       title="Effects of AMPKa1/2 knockout on ACC phosphorylation")
+```
+
+# Interpretation
+
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
