@@ -24,3 +24,9 @@ fix blot script to include most up to date blots
 make protein lysates of female KO livers, then run the ones that SHOULD be KO based on injections with male timing
 run pAMPK and pACC for the AJ mice from previous experiemnt 
 get black and white ACC and ACLY image
+need to make lysates for female AMPK and then do blots for females
+need Mito complexes and pACLY for AMPK mice
+maybe redo pAMPK for AMPK mice?
+For AJ mice need new total AMPK, pAMPK, ACC, pACC
+Look at fat mass for 8345 and 8344 for week 4 MRI (we do not have that data on the graphs, are they on the database? on the computer?) week 3 was done on 2019-07-16 so week 4 should be 1 week after that.
+Need to cut some female GFP control livers for lysates
