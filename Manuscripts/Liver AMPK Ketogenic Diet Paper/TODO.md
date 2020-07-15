@@ -18,5 +18,5 @@ Fix blot script, not running
 run blots for the AJ mice from previous keto experiemnt. For AJ mice need new total AMPK, pAMPK, ACC, pACC
 need Mito complexes and pACLY for AMPK mice
 maybe redo pAMPK for AMPK mice
-Look at fat mass for 8345 and 8344 for week 4 MRI (we do not have that data on the graphs, are they on the database? on the computer?) week 3 was done on 2019-07-16 so week 4 should be 1 week after that.
-8344 and 8345 were sacced on date 7/16/20. 7/16 was actually their week 4 but the script thinks that is their week3 which is why there is no week 4 data point for those two mice in the fat mass data. Something is off about them in the script. 
+according to script we did not have week 4 fat mass for 8344 and 8345. However, the dates were actually off on the script. script says week 3 is 7/16 but Both were sacced on date 7/16/20. 7/16 was actually their week 4 but the script thinks that is their week3 which is why there is no week 4 data point for those two mice in the fat mass data. 8344 and 45 had two -2 weeks. Week of 6/11 needed to be listed as week -1 not -2 and the following weeks needed to be bumped up by 1 week. I manually changed the following weeks for the 8344 and 5. I updated the scripts and the graphs look a little strange. Ask dave if I did this right.
+8344 is missing week 3 lean mass data. check computer for this data.
