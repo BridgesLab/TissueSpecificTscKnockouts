@@ -96,6 +96,7 @@ blot.data <-bind_rows(totalprotein.data,
                       pS6.data,
                       S6.data,
                       chop.data,
+                      pAMPK.data,
                       AMPK.data)
 ```
 
@@ -121,11 +122,11 @@ normalized.data <-
   mutate(Rel.S6=S6/totalprotein) %>%
   mutate(Norm.S6=Rel.S6/mean(Rel.S6[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.pS6=pS6/S6) %>%
-  mutate(Norm.pS6=Rel.pS6/mean(Rel.pS6[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.pS6=Rel.pS6/mean(Rel.pS6[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.pAMPK=pAMPK/AMPK) %>%
-  mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control']))
-  mutate(Rel.ACLY=ACLY/totalprotein) %>%
-  mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control'])) #%>%
+  #mutate(Rel.ACLY=ACLY/totalprotein) %>%
+  #mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control']))
         
 summary.data <-
   normalized.data %>%
@@ -137,22 +138,122 @@ summary.data <-
  #once you get to this point Dave will help with adding the summary of means, se, length etc.
 ```
 
+# Lipogenic Proteins
+
+## Fatty Acid Synthase
+
+```{r fas-barplot}
+library(ggplot2)
+ggplot(summary.data, aes(y=Norm.FAS_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.FAS_mean-Norm.FAS_se,
+                    ymax=Norm.FAS_mean+Norm.FAS_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) + 
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="FAS",
+       title="Effects of AMPKa1/2 knockout on FAS levels")
+
+library(broom)
+aov(Rel.FAS ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for FAS levels, no interaction")
+
+aov(Rel.FAS ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for FAS levels, with interaction")
+```
+
+## Acetyl-CoA Carboxylase
+
+```{r acc-barplot}
+ggplot(summary.data, aes(y=Norm.ACC_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.ACC_mean-Norm.ACC_se,
+                    ymax=Norm.ACC_mean+Norm.ACC_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="ACC",
+       title="Effects of AMPKa1/2 knockout on ACC levels")
+
+aov(Rel.ACC ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for ACC levels, no interaction")
+
+aov(Rel.ACC ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for ACC levels, with interaction")
+```
 
 ```{r pACC-barplot}
-library(ggplot2)
 ggplot(summary.data, aes(y=Norm.pACC_mean,x=Diet, fill=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
   geom_errorbar(aes(ymin=Norm.pACC_mean-Norm.pACC_se,
                     ymax=Norm.pACC_mean+Norm.pACC_se),
                 width=0.5,
                 position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
   labs(y="pACC/ACC",
        title="Effects of AMPKa1/2 knockout on ACC phosphorylation")
+
+aov(Rel.pACC ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for ACC phosphorylation, no interaction")
+
+aov(Rel.pACC ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for ACC phosphorylation, with interaction")
 ```
 
-# Interpretation
+## S6 Phosphorylation
 
+```{r pS6-barplot}
+ggplot(summary.data, aes(y=Norm.pS6_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.pS6_mean-Norm.pS6_se,
+                    ymax=Norm.pS6_mean+Norm.pS6_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="pS6/S6",
+       title="Effects of AMPKa1/2 knockout on S6 phosphorylation")
 
+aov(Rel.pS6 ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for S6 phosphorylation, no interaction")
+
+aov(Rel.pS6 ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for S6 phosphorylation, with interaction")
+```
+
+# Integrated Stress Response
+
+```{r chop-barplot}
+ggplot(summary.data, aes(y=Norm.CHOP_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.CHOP_mean-Norm.CHOP_se,
+                    ymax=Norm.CHOP_mean+Norm.CHOP_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="CHOP",
+       title="Effects of AMPKa1/2 knockout on CHOP levels")
+
+aov(Rel.CHOP ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for CHOP levels, no interaction")
+
+aov(Rel.CHOP ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for CHOP levels, with interaction")
+```
 
 # Session Information
 
