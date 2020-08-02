@@ -324,7 +324,7 @@ aov(Rel.pAMPK ~ Diet * Genotype, data=normalized.data) %>%
   kable(caption="ANOVA for pAMPK levels, with interaction")
 ```
 
-## Mitochondria complex band 1
+## Mitochondria Complexes Band 1
 
 ```{r mitoband1-barplot}
 ggplot(summary.data, aes(y=Norm.mitoband1_mean,x=Diet, fill=Genotype)) +
@@ -347,7 +347,7 @@ aov(Rel.mitoband1 ~ Diet * Genotype, data=normalized.data) %>%
   kable(caption="ANOVA for mitochondira band 1 levels, with interaction")
 ```
 
-## Mitochondira Complex band 2
+## Mitochondira Complexes band 2
 
 ```{r mitoband2-barplot}
 ggplot(summary.data, aes(y=Norm.mitoband2_mean,x=Diet, fill=Genotype)) +
@@ -370,9 +370,9 @@ aov(Rel.mitoband2 ~ Diet * Genotype, data=normalized.data) %>%
   kable(caption="ANOVA for mitochondira band 2 levels, with interaction")
 ```
 
-##Mitochondria Complex Band 3
+## Mitochondria Complexes Band 3
 
-```{r mitoband1-barplot}
+```{r mitoband3-barplot}
 ggplot(summary.data, aes(y=Norm.mitoband3_mean,x=Diet, fill=Genotype)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
   geom_errorbar(aes(ymin=Norm.mitoband3_mean-Norm.mitoband3_se,
@@ -391,6 +391,52 @@ aov(Rel.mitoband3 ~ Diet + Genotype, data=normalized.data) %>%
 aov(Rel.mitoband3 ~ Diet * Genotype, data=normalized.data) %>%
   tidy %>%
   kable(caption="ANOVA for mitochondira band 3 levels, with interaction")
+```
+
+## Mitochondira Complexes Band 4
+
+```{r mitoband4-barplot}
+ggplot(summary.data, aes(y=Norm.mitoband4_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.mitoband4_mean-Norm.mitoband4_se,
+                    ymax=Norm.mitoband4_mean+Norm.mitoband4_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="Mito band 4",
+       title="Effects of AMPKa1/2 knockout on mitochondria complex band 4")
+
+aov(Rel.mitoband4 ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 4 levels, no interaction")
+
+aov(Rel.mitoband4 ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 4 levels, with interaction")
+```
+
+## Mitochondria Complexes Band 5
+
+```{r mitoband5-barplot}
+ggplot(summary.data, aes(y=Norm.mitoband5_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.mitoband5_mean-Norm.mitoband5_se,
+                    ymax=Norm.mitoband5_mean+Norm.mitoband5_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="Mito band 5",
+       title="Effects of AMPKa1/2 knockout on mitochondria complex band 5")
+
+aov(Rel.mitoband5 ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 5 levels, no interaction")
+
+aov(Rel.mitoband5 ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 5 levels, with interaction")
 ```
 
 # Session Information
