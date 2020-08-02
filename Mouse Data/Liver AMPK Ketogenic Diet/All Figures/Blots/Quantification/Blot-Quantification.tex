@@ -30,7 +30,7 @@
 \usepackage{hyperref}
 \hypersetup{
             pdftitle={Quantification of AMPK Knockout Blots},
-            pdfauthor={Dave Bridges},
+            pdfauthor={Katherine Kistler},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
@@ -108,7 +108,7 @@
 
 
 \title{Quantification of AMPK Knockout Blots}
-\author{Dave Bridges}
+\author{Katherine Kistler}
 \date{June 18, 2020}
 
 \begin{document}
@@ -129,10 +129,11 @@ Blotted liver lysates for AMPK and ACC
 \hypertarget{raw-data}{%
 \section{Raw Data}\label{raw-data}}
 
-These data can be found in \textbf{/Volumes/BridgesLab/Kistler/AMPK
-KO/Blots/Katherine Blots July 2020/Quantification} in files named
-\textbf{Male ACC.xls} and \textbf{Male pACC.xls}. This script was most
-recently updated on \textbf{Thu Jul 16 14:09:00 2020}.
+These data can be found in
+\textbf{/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse
+Data/Liver AMPK Ketogenic Diet/All Figures/Blots/Quantification} in
+files named \textbf{Male ACC.xls} and \textbf{Male pACC.xls}. This
+script was most recently updated on \textbf{Sun Aug 2 18:18:59 2020}.
 
 \hypertarget{analysis}{%
 \section{Analysis}\label{analysis}}
@@ -155,8 +156,8 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Diet & 1 & 0 & 0 & 2.29 & 0.161\tabularnewline
-Genotype & 1 & 0 & 0 & 0.02 & 0.889\tabularnewline
+Diet & 1 & 0 & 0 & 3.109 & 0.108\tabularnewline
+Genotype & 1 & 0 & 0 & 0.123 & 0.733\tabularnewline
 Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
@@ -171,9 +172,9 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Diet & 1 & 0 & 0 & 2.209 & 0.171\tabularnewline
-Genotype & 1 & 0 & 0 & 0.020 & 0.892\tabularnewline
-Diet:Genotype & 1 & 0 & 0 & 0.642 & 0.443\tabularnewline
+Diet & 1 & 0 & 0 & 3.093 & 0.113\tabularnewline
+Genotype & 1 & 0 & 0 & 0.122 & 0.734\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 0.949 & 0.356\tabularnewline
 Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
@@ -327,6 +328,323 @@ Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
+\hypertarget{amp-activated-protein-kinase}{%
+\subsection{AMP Activated Protein
+Kinase}\label{amp-activated-protein-kinase}}
+
+\includegraphics{figures/AMPK-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for AMPK levels, no interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 2.48 & 0.147\tabularnewline
+Genotype & 1 & 0 & 0 & 32.99 & 0.000\tabularnewline
+Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for AMPK levels, with interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 3.83 & 0.082\tabularnewline
+Genotype & 1 & 0 & 0 & 51.11 & 0.000\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 6.49 & 0.031\tabularnewline
+Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\includegraphics{figures/pAMPK-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for pAMPK levels, no interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0.179 & 0.179 & 0.343 & 0.571\tabularnewline
+Genotype & 1 & 1.852 & 1.852 & 3.538 & 0.089\tabularnewline
+Residuals & 10 & 5.235 & 0.524 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for pAMPK levels, with interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0.179 & 0.179 & 0.326 & 0.582\tabularnewline
+Genotype & 1 & 1.852 & 1.852 & 3.363 & 0.100\tabularnewline
+Diet:Genotype & 1 & 0.278 & 0.278 & 0.505 & 0.496\tabularnewline
+Residuals & 9 & 4.957 & 0.551 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{atp-citrate-lyase}{%
+\subsection{ATP citrate lyase}\label{atp-citrate-lyase}}
+
+\includegraphics{figures/ACLY-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for ACLY levels, no interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 27.777 & 0.000\tabularnewline
+Genotype & 1 & 0 & 0 & 0.073 & 0.792\tabularnewline
+Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for ACLY levels, with interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 51.166 & 0.000\tabularnewline
+Genotype & 1 & 0 & 0 & 0.135 & 0.722\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 9.420 & 0.013\tabularnewline
+Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{mitochondria-complexes-band-1}{%
+\subsection{Mitochondria Complexes Band
+1}\label{mitochondria-complexes-band-1}}
+
+\includegraphics{figures/mitoband1-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 1 levels, no
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 3.563 & 0.088\tabularnewline
+Genotype & 1 & 0 & 0 & 0.132 & 0.724\tabularnewline
+Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 1 levels, with
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 3.214 & 0.107\tabularnewline
+Genotype & 1 & 0 & 0 & 0.119 & 0.738\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 0.021 & 0.887\tabularnewline
+Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{mitochondira-complexes-band-2}{%
+\subsection{Mitochondira Complexes band
+2}\label{mitochondira-complexes-band-2}}
+
+\includegraphics{figures/mitoband2-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 2 levels, no
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 3.07 & 0.110\tabularnewline
+Genotype & 1 & 0 & 0 & 1.92 & 0.196\tabularnewline
+Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 2 levels, with
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 2.777 & 0.13\tabularnewline
+Genotype & 1 & 0 & 0 & 1.741 & 0.22\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 0.049 & 0.83\tabularnewline
+Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{mitochondria-complexes-band-3}{%
+\subsection{Mitochondria Complexes Band
+3}\label{mitochondria-complexes-band-3}}
+
+\includegraphics{figures/mitoband3-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 3 levels, no
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 0.509 & 0.492\tabularnewline
+Genotype & 1 & 0 & 0 & 11.392 & 0.007\tabularnewline
+Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 3 levels, with
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 0.589 & 0.462\tabularnewline
+Genotype & 1 & 0 & 0 & 13.175 & 0.005\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 2.565 & 0.144\tabularnewline
+Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{mitochondira-complexes-band-4}{%
+\subsection{Mitochondira Complexes Band
+4}\label{mitochondira-complexes-band-4}}
+
+\includegraphics{figures/mitoband4-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 4 levels, no
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 1.608 & 0.233\tabularnewline
+Genotype & 1 & 0 & 0 & 0.005 & 0.944\tabularnewline
+Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 4 levels, with
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 1.475 & 0.255\tabularnewline
+Genotype & 1 & 0 & 0 & 0.005 & 0.946\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 0.170 & 0.690\tabularnewline
+Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{mitochondria-complexes-band-5}{%
+\subsection{Mitochondria Complexes Band
+5}\label{mitochondria-complexes-band-5}}
+
+\includegraphics{figures/mitoband5-barplot-1.png}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 5 levels, no
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 1.751 & 0.215\tabularnewline
+Genotype & 1 & 0 & 0 & 0.099 & 0.760\tabularnewline
+Residuals & 10 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{ANOVA for mitochondira band 5 levels, with
+interaction}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Diet & 1 & 0 & 0 & 1.708 & 0.224\tabularnewline
+Genotype & 1 & 0 & 0 & 0.096 & 0.763\tabularnewline
+Diet:Genotype & 1 & 0 & 0 & 0.759 & 0.406\tabularnewline
+Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
 \hypertarget{session-information}{%
 \section{Session Information}\label{session-information}}
 
@@ -337,9 +655,9 @@ Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
 \end{Shaded}
 
 \begin{verbatim}
-## R version 4.0.0 (2020-04-24)
+## R version 4.0.2 (2020-06-22)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.5
+## Running under: macOS Catalina 10.15.6
 ## 
 ## Matrix products: default
 ## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
@@ -352,21 +670,20 @@ Residuals & 9 & 0 & 0 & NA & NA\tabularnewline
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] broom_0.5.6   ggplot2_3.3.0 readxl_1.3.1  dplyr_0.8.5   tidyr_1.0.3  
-## [6] knitr_1.28   
+## [1] broom_0.7.0   ggplot2_3.3.2 readxl_1.3.1  dplyr_1.0.1   tidyr_1.1.1  
+## [6] knitr_1.29   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.4.6     highr_0.8        plyr_1.8.6       pillar_1.4.4    
-##  [5] compiler_4.0.0   cellranger_1.1.0 tools_4.0.0      digest_0.6.25   
-##  [9] evaluate_0.14    lifecycle_0.2.0  tibble_3.0.1     gtable_0.3.0    
-## [13] nlme_3.1-147     lattice_0.20-41  pkgconfig_2.0.3  rlang_0.4.6     
-## [17] magick_2.3       yaml_2.2.1       xfun_0.13        withr_2.2.0     
-## [21] stringr_1.4.0    generics_0.0.2   vctrs_0.2.4      grid_4.0.0      
-## [25] tidyselect_1.0.0 glue_1.4.0       R6_2.4.1         rmarkdown_2.1   
-## [29] purrr_0.3.4      farver_2.0.3     magrittr_1.5     backports_1.1.6 
-## [33] scales_1.1.0     ellipsis_0.3.0   htmltools_0.4.0  assertthat_0.2.1
-## [37] colorspace_1.4-1 labeling_0.3     stringi_1.4.6    munsell_0.5.0   
-## [41] crayon_1.3.4
+##  [1] Rcpp_1.0.5       magrittr_1.5     munsell_0.5.0    tidyselect_1.1.0
+##  [5] colorspace_1.4-1 R6_2.4.1         rlang_0.4.7      highr_0.8       
+##  [9] stringr_1.4.0    tools_4.0.2      grid_4.0.2       gtable_0.3.0    
+## [13] xfun_0.16        withr_2.2.0      htmltools_0.5.0  ellipsis_0.3.1  
+## [17] yaml_2.2.1       digest_0.6.25    tibble_3.0.3     lifecycle_0.2.0 
+## [21] crayon_1.3.4     farver_2.0.3     purrr_0.3.4      vctrs_0.3.2     
+## [25] glue_1.4.1       evaluate_0.14    rmarkdown_2.3    labeling_0.3    
+## [29] stringi_1.4.6    compiler_4.0.2   pillar_1.4.6     cellranger_1.1.0
+## [33] magick_2.4.0     backports_1.1.8  scales_1.1.1     generics_0.0.2  
+## [37] pkgconfig_2.0.3
 \end{verbatim}
 
 \end{document}

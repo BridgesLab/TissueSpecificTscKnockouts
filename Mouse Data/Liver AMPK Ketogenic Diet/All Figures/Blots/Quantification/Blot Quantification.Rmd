@@ -1,6 +1,6 @@
 ---
 title: "Quantification of AMPK Knockout Blots"
-author: "Dave Bridges"
+author: "Katherine Kistler and Dave Bridges"
 date: "June 18, 2020"
 output:
   pdf_document:
@@ -60,49 +60,77 @@ diet.lanes <- c(rep("control",6), rep("keto",7))
 
 #this loads whatever the file is into a dataframe called exp.data if it exists
 AMPK.filename <- 'Male AMPK.xls' #make this a separate line, you can use any variable you want
-AMPK.data <- read_excel(AMPK.filename) %>% mutate(antibody="AMPK", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+AMPK.data <- read_excel(AMPK.filename) %>% 
+    arrange(`Lane Name`) %>%
+  mutate(antibody="AMPK", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 acc.filename <- 'Male ACC.xls'
-acc.data <- read_excel(acc.filename)  %>% mutate(antibody="ACC", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+acc.data <- read_excel(acc.filename)  %>% 
+    arrange(`Lane Name`) %>%
+  mutate(antibody="ACC", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 chop.filename <- 'Male CHOP.xls'
-chop.data <- read_excel(chop.filename)  %>% mutate(antibody="CHOP", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+chop.data <- read_excel(chop.filename)  %>% 
+    arrange(`Lane Name`) %>%
+  mutate(antibody="CHOP", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 fas.filename <- 'Male FAS.xls'
-fas.data <- read_excel(fas.filename)  %>% mutate(antibody="FAS", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+fas.data <- read_excel(fas.filename)  %>% 
+  arrange(`Lane Name`) %>%
+  mutate(antibody="FAS",
+         Genotype=as.factor(genotype.lanes),
+         Diet=as.factor(diet.lanes))
 
 pacc.filename <- 'Male pACC.xls'
-pacc.data <- read_excel(pacc.filename)  %>% mutate(antibody="pACC", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+pacc.data <- read_excel(pacc.filename)  %>% 
+    arrange(`Lane Name`) %>%
+  mutate(antibody="pACC", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 pS6.filename <- 'Male pS6.xls'
-pS6.data <- read_excel(pS6.filename)  %>% mutate(antibody="pS6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+pS6.data <- read_excel(pS6.filename)  %>% 
+    arrange(`Lane Name`) %>%
+  mutate(antibody="pS6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 S6.filename <- 'Male S6.xls'
-S6.data <- read_excel(S6.filename)  %>% mutate(antibody="S6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+S6.data <- read_excel(S6.filename)  %>% 
+    arrange(`Lane Name`) %>%
+  mutate(antibody="S6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 totalprotein.filename <- 'Male total protein.xls'
-totalprotein.data <- read_excel(totalprotein.filename)  %>% mutate(antibody="totalprotein", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+totalprotein.data <- read_excel(totalprotein.filename)  %>%  
+  arrange(`Lane Name`) %>%
+  mutate(antibody="totalprotein", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 ACLY.filename <- 'Male ACLY quantification.xls'
-ACLY.data <- read_excel(ACLY.filename)  %>% mutate(antibody="ACLY", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+ACLY.data <- read_excel(ACLY.filename)  %>%  
+  arrange(`Lane Name`) %>%
+  mutate(antibody="ACLY", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 pAMPK.filename <- 'Male pAMPK quantification.xls'
-pAMPK.data <- read_excel(pAMPK.filename)  %>% mutate(antibody="pAMPK", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+pAMPK.data <- read_excel(pAMPK.filename)  %>% 
+  arrange(`Lane Name`) %>%
+  mutate(antibody="pAMPK", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 mitoband1.filename <- 'Male mito top band quantification.xls'
-mitoband1.data <- read_excel(mitoband1.filename)  %>% mutate(antibody="mitoband1", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the top band at 55 KD
+mitoband1.data <- read_excel(mitoband1.filename)  %>% 
+  arrange(`Lane Name`) %>%
+  mutate(antibody="mitoband1", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the top band at 55 KD
 
 mitoband2.filename <- 'Male mito second band quantification.xls'
-mitoband2.data <- read_excel(mitoband2.filename)  %>% mutate(antibody="mitoband2", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 48 KD
+mitoband2.data <- read_excel(mitoband2.filename)  %>%   arrange(`Lane Name`) %>%
+  mutate(antibody="mitoband2", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 48 KD
 
 mitoband3.filename <- 'Male mito third band quantification.xls'
-mitoband3.data <- read_excel(mitoband3.filename)  %>% mutate(antibody="mitoband3", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 40 KD
+mitoband3.data <- read_excel(mitoband3.filename)  %>%   arrange(`Lane Name`) %>%
+  mutate(antibody="mitoband3", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 40 KD
 
 mitoband4.filename <- 'Male mito fourth band quantification.xls'
-mitoband4.data <- read_excel(mitoband4.filename)  %>% mutate(antibody="mitoband4", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 30 KD
+mitoband4.data <- read_excel(mitoband4.filename)  %>%   arrange(`Lane Name`) %>%
+  mutate(antibody="mitoband4", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 30 KD
 
 mitoband5.filename <- 'Male mito fifth band quantification.xls'
-mitoband5.data <- read_excel(mitoband5.filename)  %>% mutate(antibody="mitoband5", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 20 KD
+mitoband5.data <- read_excel(mitoband5.filename)  %>%   arrange(`Lane Name`) %>%
+  mutate(antibody="mitoband5", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 20 KD
 
 blot.data <-bind_rows(totalprotein.data, 
                       acc.data, 
@@ -113,6 +141,7 @@ blot.data <-bind_rows(totalprotein.data,
                       chop.data,
                       pAMPK.data,
                       AMPK.data,
+                      ACLY.data,
                       mitoband1.data,
                       mitoband2.data,
                       mitoband3.data,
@@ -133,8 +162,8 @@ normalized.data <-
   mutate(Norm.ACC=Rel.ACC/mean(Rel.ACC[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.ACLY=ACLY/totalprotein) %>%
   mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control'])) %>%
-  mutate(Rel.pACLY=pACLY/ACLY) %>%
-  mutate(Norm.pACLY=Rel.pACLY/mean(Rel.pACLY[Genotype=='GFP'&Diet=='control'])) %>%
+  #mutate(Rel.pACLY=pACLY/ACLY) %>%
+  #mutate(Norm.pACLY=Rel.pACLY/mean(Rel.pACLY[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.AMPK=AMPK/totalprotein) %>%
   mutate(Norm.AMPK=Rel.AMPK/mean(Rel.AMPK[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.CHOP=CHOP/totalprotein) %>%
@@ -148,19 +177,17 @@ normalized.data <-
   mutate(Rel.pS6=pS6/S6) %>%
   mutate(Norm.pS6=Rel.pS6/mean(Rel.pS6[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.pAMPK=pAMPK/AMPK) %>%
-  mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.mitoband1=mitoband1/totalprotein) %>%
-  mutate(Norm.mitoband1=Rel.mitoband1/mean(Rel.mitoband1[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband1=Rel.mitoband1/mean(Rel.mitoband1[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.mitoband2=mitoband2/totalprotein) %>%
-  mutate(Norm.mitoband2=Rel.mitoband2/mean(Rel.mitoband2[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband2=Rel.mitoband2/mean(Rel.mitoband2[Genotype=='GFP'&Diet=='control']))%>%
   mutate(Rel.mitoband3=mitoband3/totalprotein) %>%
-  mutate(Norm.mitoband3=Rel.mitoband3/mean(Rel.mitoband3[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband3=Rel.mitoband3/mean(Rel.mitoband3[Genotype=='GFP'&Diet=='control']))%>%
   mutate(Rel.mitoband4=mitoband4/totalprotein) %>%
-  mutate(Norm.mitoband4=Rel.mitoband4/mean(Rel.mitoband4[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband4=Rel.mitoband4/mean(Rel.mitoband4[Genotype=='GFP'&Diet=='control']))%>%
   mutate(Rel.mitoband5=mitoband5/totalprotein) %>%
-  mutate(Norm.mitoband5=Rel.mitoband5/mean(Rel.mitoband5[Genotype=='GFP'&Diet=='control'])) #%>%
-  #mutate(Rel.ACLY=ACLY/totalprotein) %>%
-  #mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband5=Rel.mitoband5/mean(Rel.mitoband5[Genotype=='GFP'&Diet=='control'])) 
         
 summary.data <-
   normalized.data %>%
@@ -357,24 +384,24 @@ aov(Rel.ACLY ~ Diet * Genotype, data=normalized.data) %>%
 ```
 
 ```{r pACLY-barplot}
-ggplot(summary.data, aes(y=Norm.pACLY_mean,x=Diet, fill=Genotype)) +
-  geom_bar(stat='identity', position='dodge', width=0.75) +
-  geom_errorbar(aes(ymin=Norm.pACLY_mean-Norm.pACLY_se,
-                    ymax=Norm.pACLY_mean+Norm.pACLY_se),
-                width=0.5,
-                position=position_dodge(width=0.75)) +
-  theme_classic() +
-  theme(text=element_text(size=18)) +
-  labs(y="pACLY",
-       title="Effects of AMPKa1/2 knockout on pACLY levels")
-
-aov(Rel.pACLY ~ Diet + Genotype, data=normalized.data) %>%
-  tidy %>%
-  kable(caption="ANOVA for pACLY levels, no interaction")
-
-aov(Rel.pACLY ~ Diet * Genotype, data=normalized.data) %>%
-  tidy %>%
-  kable(caption="ANOVA for pACLY levels, with interaction")
+# ggplot(summary.data, aes(y=Norm.pACLY_mean,x=Diet, fill=Genotype)) +
+#   geom_bar(stat='identity', position='dodge', width=0.75) +
+#   geom_errorbar(aes(ymin=Norm.pACLY_mean-Norm.pACLY_se,
+#                     ymax=Norm.pACLY_mean+Norm.pACLY_se),
+#                 width=0.5,
+#                 position=position_dodge(width=0.75)) +
+#   theme_classic() +
+#   theme(text=element_text(size=18)) +
+#   labs(y="pACLY",
+#        title="Effects of AMPKa1/2 knockout on pACLY levels")
+# 
+# aov(Rel.pACLY ~ Diet + Genotype, data=normalized.data) %>%
+#   tidy %>%
+#   kable(caption="ANOVA for pACLY levels, no interaction")
+# 
+# aov(Rel.pACLY ~ Diet * Genotype, data=normalized.data) %>%
+#   tidy %>%
+#   kable(caption="ANOVA for pACLY levels, with interaction")
 ```
 
 ## Mitochondria Complexes Band 1
