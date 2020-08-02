@@ -89,6 +89,21 @@ ACLY.data <- read_excel(ACLY.filename)  %>% mutate(antibody="ACLY", Genotype=as.
 pAMPK.filename <- 'Male pAMPK quantification.xls'
 pAMPK.data <- read_excel(pAMPK.filename)  %>% mutate(antibody="pAMPK", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
+mitoband1.filename <- 'Male mito top band quantification.xls'
+mitoband1.data <- read_excel(mitoband1.filename)  %>% mutate(antibody="mitoband1", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the top band at 55 KD
+
+mitoband2.filename <- 'Male mito second band quantification.xls'
+mitoband2.data <- read_excel(mitoband2.filename)  %>% mutate(antibody="mitoband2", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 48 KD
+
+mitoband3.filename <- 'Male mito third band quantification.xls'
+mitoband3.data <- read_excel(mitoband3.filename)  %>% mutate(antibody="mitoband3", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 40 KD
+
+mitoband4.filename <- 'Male mito fourth band quantification.xls'
+mitoband4.data <- read_excel(mitoband4.filename)  %>% mutate(antibody="mitoband4", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 30 KD
+
+mitoband5.filename <- 'Male mito fifth band quantification.xls'
+mitoband5.data <- read_excel(mitoband5.filename)  %>% mutate(antibody="mitoband5", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes)) #this is the band at 20 KD
+
 blot.data <-bind_rows(totalprotein.data, 
                       acc.data, 
                       pacc.data,
@@ -97,7 +112,12 @@ blot.data <-bind_rows(totalprotein.data,
                       S6.data,
                       chop.data,
                       pAMPK.data,
-                      AMPK.data)
+                      AMPK.data,
+                      mitoband1.data,
+                      mitoband2.data,
+                      mitoband3.data,
+                      mitoband4.data,
+                      mitoband5.data)
 ```
 
 These data can be found in **`r getwd()`** in files named **`r acc.filename`** and **`r pacc.filename`**.  This script was most recently updated on **`r date()`**.
@@ -124,7 +144,12 @@ normalized.data <-
   mutate(Rel.pS6=pS6/S6) %>%
   mutate(Norm.pS6=Rel.pS6/mean(Rel.pS6[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.pAMPK=pAMPK/AMPK) %>%
-  mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control'])) #%>%
+  mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband1=Rel.mitoband1/mean(Rel.mitoband1[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband2=Rel.mitoband2/mean(Rel.mitoband2[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband3=Rel.mitoband3/mean(Rel.mitoband3[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband4=Rel.mitoband4/mean(Rel.mitoband4[Genotype=='GFP'&Diet=='control']))
+  mutate(Norm.mitoband5=Rel.mitoband5/mean(Rel.mitoband5[Genotype=='GFP'&Diet=='control'])) #%>%
   #mutate(Rel.ACLY=ACLY/totalprotein) %>%
   #mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control']))
         
@@ -253,6 +278,119 @@ aov(Rel.CHOP ~ Diet + Genotype, data=normalized.data) %>%
 aov(Rel.CHOP ~ Diet * Genotype, data=normalized.data) %>%
   tidy %>%
   kable(caption="ANOVA for CHOP levels, with interaction")
+```
+
+## AMP Activated Protein Kinase 
+
+```{r AMPK-barplot}
+ggplot(summary.data, aes(y=Norm.AMPK_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.AMPK_mean-Norm.AMPK_se,
+                    ymax=Norm.AMPK_mean+Norm.AMPK_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="AMPK",
+       title="Effects of AMPKa1/2 knockout on AMPK levels")
+
+aov(Rel.AMPK ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for AMPK levels, no interaction")
+
+aov(Rel.AMPK ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for AMPK levels, with interaction")
+```
+
+```{r pAMPK-barplot}
+ggplot(summary.data, aes(y=Norm.pAMPK_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.pAMPK_mean-Norm.pAMPK_se,
+                    ymax=Norm.pAMPK_mean+Norm.pAMPK_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="pAMPK",
+       title="Effects of AMPKa1/2 knockout on pAMPK levels")
+
+aov(Rel.pAMPK ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for pAMPK levels, no interaction")
+
+aov(Rel.pAMPK ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for pAMPK levels, with interaction")
+```
+
+## Mitochondria complex band 1
+
+```{r mitoband1-barplot}
+ggplot(summary.data, aes(y=Norm.mitoband1_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.mitoband1_mean-Norm.mitoband1_se,
+                    ymax=Norm.mitoband1_mean+Norm.mitoband1_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="Mito band 1",
+       title="Effects of AMPKa1/2 knockout on mitochondria complex band 1")
+
+aov(Rel.mitoband1 ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 1 levels, no interaction")
+
+aov(Rel.mitoband1 ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 1 levels, with interaction")
+```
+
+## Mitochondira Complex band 2
+
+```{r mitoband2-barplot}
+ggplot(summary.data, aes(y=Norm.mitoband2_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.mitoband2_mean-Norm.mitoband2_se,
+                    ymax=Norm.mitoband2_mean+Norm.mitoband2_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="Mito band 2",
+       title="Effects of AMPKa1/2 knockout on mitochondria complex band 2")
+
+aov(Rel.mitoband2 ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 2 levels, no interaction")
+
+aov(Rel.mitoband2 ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 2 levels, with interaction")
+```
+
+##Mitochondria Complex Band 3
+
+```{r mitoband1-barplot}
+ggplot(summary.data, aes(y=Norm.mitoband3_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.mitoband3_mean-Norm.mitoband3_se,
+                    ymax=Norm.mitoband3_mean+Norm.mitoband3_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="Mito band 3",
+       title="Effects of AMPKa1/2 knockout on mitochondria complex band 3")
+
+aov(Rel.mitoband3 ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 3 levels, no interaction")
+
+aov(Rel.mitoband3 ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for mitochondira band 3 levels, with interaction")
 ```
 
 # Session Information
