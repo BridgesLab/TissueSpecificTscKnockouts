@@ -131,6 +131,10 @@ normalized.data <-
   pivot_wider(names_from=antibody, values_from=Signal) %>%
   mutate(Rel.ACC=ACC/totalprotein) %>%
   mutate(Norm.ACC=Rel.ACC/mean(Rel.ACC[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.ACLY=ACLY/totalprotein) %>%
+  mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.pACLY=pACLY/ACLY) %>%
+  mutate(Norm.pACLY=Rel.pACLY/mean(Rel.pACLY[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.AMPK=AMPK/totalprotein) %>%
   mutate(Norm.AMPK=Rel.AMPK/mean(Rel.AMPK[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.CHOP=CHOP/totalprotein) %>%
@@ -145,10 +149,15 @@ normalized.data <-
   mutate(Norm.pS6=Rel.pS6/mean(Rel.pS6[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.pAMPK=pAMPK/AMPK) %>%
   mutate(Norm.pAMPK=Rel.pAMPK/mean(Rel.pAMPK[Genotype=='GFP'&Diet=='control']))
+  mutate(Rel.mitoband1=mitoband1/totalprotein) %>%
   mutate(Norm.mitoband1=Rel.mitoband1/mean(Rel.mitoband1[Genotype=='GFP'&Diet=='control']))
+  mutate(Rel.mitoband2=mitoband2/totalprotein) %>%
   mutate(Norm.mitoband2=Rel.mitoband2/mean(Rel.mitoband2[Genotype=='GFP'&Diet=='control']))
+  mutate(Rel.mitoband3=mitoband3/totalprotein) %>%
   mutate(Norm.mitoband3=Rel.mitoband3/mean(Rel.mitoband3[Genotype=='GFP'&Diet=='control']))
+  mutate(Rel.mitoband4=mitoband4/totalprotein) %>%
   mutate(Norm.mitoband4=Rel.mitoband4/mean(Rel.mitoband4[Genotype=='GFP'&Diet=='control']))
+  mutate(Rel.mitoband5=mitoband5/totalprotein) %>%
   mutate(Norm.mitoband5=Rel.mitoband5/mean(Rel.mitoband5[Genotype=='GFP'&Diet=='control'])) #%>%
   #mutate(Rel.ACLY=ACLY/totalprotein) %>%
   #mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control']))
