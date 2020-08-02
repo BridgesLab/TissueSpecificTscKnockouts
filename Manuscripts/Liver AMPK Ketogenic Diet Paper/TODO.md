@@ -28,3 +28,4 @@ Do we have histology for all four male KOs? and ko controls? check females as we
 Writing: methods for the western blots - google RRID called sycrunch - for every antibody you can search and gives you RRID number for that antibody - need to include antibody, RRID and catalog number - make sure western blots are good - start on introduction - what is AMPK? Why are we looking at the liver? What have people done before in the case of AMPK ko? Ketogenic diets, role of lipid oxidation/fatty liver, People have investigated the role of AMPK in the liver (cite, cite, cite), ketogenic diets are common low carb diets (can site a review). General clinical application. 
 measure fatty acid oxidation directly using the seahorse - need fresh hepatocytes of new mice to do this
 ITT data is not excluding any of the "not ko mice"
+need to get new ACC quantification off computer
