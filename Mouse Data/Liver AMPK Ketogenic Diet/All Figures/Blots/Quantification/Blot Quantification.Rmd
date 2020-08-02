@@ -333,6 +333,50 @@ aov(Rel.pAMPK ~ Diet * Genotype, data=normalized.data) %>%
   kable(caption="ANOVA for pAMPK levels, with interaction")
 ```
 
+## ATP citrate lyase
+
+```{r ACLY-barplot}
+ggplot(summary.data, aes(y=Norm.ACLY_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.ACLY_mean-Norm.ACLY_se,
+                    ymax=Norm.ACLY_mean+Norm.ACLY_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="ACLY",
+       title="Effects of AMPKa1/2 knockout on ACLY levels")
+
+aov(Rel.ACLY ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for ACLY levels, no interaction")
+
+aov(Rel.ACLY ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for ACLY levels, with interaction")
+```
+
+```{r pACLY-barplot}
+ggplot(summary.data, aes(y=Norm.pACLY_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.pACLY_mean-Norm.pACLY_se,
+                    ymax=Norm.pACLY_mean+Norm.pACLY_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="pACLY",
+       title="Effects of AMPKa1/2 knockout on pACLY levels")
+
+aov(Rel.pACLY ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for pACLY levels, no interaction")
+
+aov(Rel.pACLY ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for pACLY levels, with interaction")
+```
+
 ## Mitochondria Complexes Band 1
 
 ```{r mitoband1-barplot}
