@@ -1,5 +1,5 @@
 Look at *Need to do* for experiments that still need to be run
-Food intake data looks a little weird, needs to be fixed. exclude cages 7895,7882,7890 from food intake.These were the cages affected by the not ko. All the mice in these cages were not ko. 
+Food intake data looks a little weird, needs to be fixed. exclude cages 7895,7882,7890 from food intake.These were the cages affected by the not ko (for males). All the mice in these cages were not ko. 
 Get cartoon mouse, liver muscle, blood from dave for figure 1
 Rate of drop ITT. 
 the mice that need be excluded are (8830,8831,8715-19,8786, all cre but not ko, survived to the end) (8346, 8825, 8826, 8785, 8787, 8558,all cre, all died early so did not blot livers). 
@@ -21,3 +21,10 @@ according to script we did not have week 4 fat mass for 8344 and 8345. However, 
 8344 is missing week 3 lean mass data. check computer for this data.
 When you get into lab tomorrow: scan blots, do primary/secondary antibodies for other blots, check pACC, ACC and FAS quantification on licor, make lysates for all newly cut female livers -> CRE Control (8476, 8477, 8564, 8565, 8566) -> CRE Keto (8713, 8714, 8720) -> GFP Control (8347, 8832, 8833, 8834) -> GFP Keto (8827, 8828, 8829). For lysates (check there are enough stainless steel beads, cool centrifuge to 4C, calculate RIPA buffer needed, check notes for all the buffers needed, get ice for tissues, make sure to label enough clean tubes, check if i cut 8827,28,29 and mark on sheet if I did)
 Update the NEW blot sheet with females that I have already run. Run the four missing CRE female mice and the 3/4 CRE keto mice again. **for the extra female livers, if all other males have already been cut then it is probably those two missing female livers**
+get a figure for the males of all the pictures of all the male blots. for each picture go through quantification either me or dave can walk through during lab meeting get all this together by lab meeting - or get into form that Dave can get it in
+female mice - some are KO - look at mice that are females that are “not ko” - add those to the same running list of “not ko” and then I can re update all the scripts - get a sense of actual n 
+which mice that are “not ko” - what is the systematic rational for those? look at what injections did/didn’t work - explanation for what happened for the “not ko”
+Do we have histology for all four male KOs? and ko controls? check females as well.
+Writing: methods for the western blots - google RRID called sycrunch - for every antibody you can search and gives you RRID number for that antibody - need to include antibody, RRID and catalog number - make sure western blots are good - start on introduction - what is AMPK? Why are we looking at the liver? What have people done before in the case of AMPK ko? Ketogenic diets, role of lipid oxidation/fatty liver, People have investigated the role of AMPK in the liver (cite, cite, cite), ketogenic diets are common low carb diets (can site a review). General clinical application. 
+measure fatty acid oxidation directly using the seahorse - need fresh hepatocytes of new mice to do this
+ITT data is not excluding any of the "not ko mice"

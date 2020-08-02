@@ -18,7 +18,7 @@ output:
 
 
 
-This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Wed Jul 15 15:40:24 2020.
+This script can be found in /Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition and was most recently run on Sun Aug  2 10:55:21 2020.
 
 # Experimental Details
 
@@ -29,7 +29,7 @@ The notes about the design of this cohort can be found at
 
 
 
-This script pulled in a total of 1199 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
+This script pulled in a total of 1046 observations pulled from AMPK KD MRI Data.csv.  This includes the following number of animals in each treatment group.
 
 Modified the genotypes based on the western blot data, this data filters out mice that we are not confident of their knockout status.
 
@@ -45,7 +45,6 @@ Sex   Diet             Injection     n
 ----  ---------------  ----------  ---
 F     Control Diet     AAV-Cre      10
 F     Control Diet     AAV-GFP      12
-F     Ketogenic Diet   AAV-Cre       8
 F     Ketogenic Diet   AAV-GFP       7
 M     Control Diet     AAV-Cre       8
 M     Control Diet     AAV-GFP      10
@@ -80,14 +79,6 @@ Table: Animals in each group of this cohort
     8832  F     Control Diet     AAV-GFP   
     8833  F     Control Diet     AAV-GFP   
     8834  F     Control Diet     AAV-GFP   
-    8286  F     Ketogenic Diet   AAV-Cre   
-    8287  F     Ketogenic Diet   AAV-Cre   
-    8288  F     Ketogenic Diet   AAV-Cre   
-    8289  F     Ketogenic Diet   AAV-Cre   
-    8290  F     Ketogenic Diet   AAV-Cre   
-    8713  F     Ketogenic Diet   AAV-Cre   
-    8714  F     Ketogenic Diet   AAV-Cre   
-    8720  F     Ketogenic Diet   AAV-Cre   
     8151  F     Ketogenic Diet   AAV-GFP   
     8152  F     Ketogenic Diet   AAV-GFP   
     8153  F     Ketogenic Diet   AAV-GFP   
