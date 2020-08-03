@@ -96,6 +96,11 @@ S6.data <- read_excel(S6.filename)  %>%
     arrange(`Lane Name`) %>%
   mutate(antibody="S6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
+S6.filename <- 'Male S6.xls'
+S6.data <- read_excel(S6.filename)  %>% 
+    arrange(`Lane Name`) %>%
+  mutate(antibody="S6", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
 totalprotein.filename <- 'Male total protein.xls'
 totalprotein.data <- read_excel(totalprotein.filename)  %>%  
   arrange(`Lane Name`) %>%
@@ -105,6 +110,11 @@ ACLY.filename <- 'Male ACLY quantification.xls'
 ACLY.data <- read_excel(ACLY.filename)  %>%  
   arrange(`Lane Name`) %>%
   mutate(antibody="ACLY", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
+
+pACLY.filename <- 'Male pACLY quantification.xls'
+pACLY.data <- read_excel(ACLY.filename)  %>%  
+  arrange(`Lane Name`) %>%
+  mutate(antibody="pACLY", Genotype=as.factor(genotype.lanes), Diet=as.factor(diet.lanes))
 
 pAMPK.filename <- 'Male pAMPK quantification.xls'
 pAMPK.data <- read_excel(pAMPK.filename)  %>% 
@@ -291,6 +301,27 @@ aov(Rel.pS6 ~ Diet + Genotype, data=normalized.data) %>%
 aov(Rel.pS6 ~ Diet * Genotype, data=normalized.data) %>%
   tidy %>%
   kable(caption="ANOVA for S6 phosphorylation, with interaction")
+```
+
+```{r S6-barplot}
+ggplot(summary.data, aes(y=Norm.S6_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.S6_mean-Norm.S6_se,
+                    ymax=Norm.S6_mean+Norm.S6_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="S6/total protein",
+       title="Effects of AMPKa1/2 knockout on S6")
+
+aov(Rel.S6 ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for S6, no interaction")
+
+aov(Rel.S6 ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for S6, with interaction")
 ```
 
 # Integrated Stress Response
