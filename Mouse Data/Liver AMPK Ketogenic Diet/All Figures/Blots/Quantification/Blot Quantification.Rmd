@@ -152,6 +152,7 @@ blot.data <-bind_rows(totalprotein.data,
                       pAMPK.data,
                       AMPK.data,
                       ACLY.data,
+                      pACLY.data,
                       mitoband1.data,
                       mitoband2.data,
                       mitoband3.data,
@@ -172,8 +173,8 @@ normalized.data <-
   mutate(Norm.ACC=Rel.ACC/mean(Rel.ACC[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.ACLY=ACLY/totalprotein) %>%
   mutate(Norm.ACLY=Rel.ACLY/mean(Rel.ACLY[Genotype=='GFP'&Diet=='control'])) %>%
-  #mutate(Rel.pACLY=pACLY/ACLY) %>%
-  #mutate(Norm.pACLY=Rel.pACLY/mean(Rel.pACLY[Genotype=='GFP'&Diet=='control'])) %>%
+  mutate(Rel.pACLY=pACLY/ACLY) %>%
+  mutate(Norm.pACLY=Rel.pACLY/mean(Rel.pACLY[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.AMPK=AMPK/totalprotein) %>%
   mutate(Norm.AMPK=Rel.AMPK/mean(Rel.AMPK[Genotype=='GFP'&Diet=='control'])) %>%
   mutate(Rel.CHOP=CHOP/totalprotein) %>%
@@ -415,24 +416,24 @@ aov(Rel.ACLY ~ Diet * Genotype, data=normalized.data) %>%
 ```
 
 ```{r pACLY-barplot}
-# ggplot(summary.data, aes(y=Norm.pACLY_mean,x=Diet, fill=Genotype)) +
-#   geom_bar(stat='identity', position='dodge', width=0.75) +
-#   geom_errorbar(aes(ymin=Norm.pACLY_mean-Norm.pACLY_se,
-#                     ymax=Norm.pACLY_mean+Norm.pACLY_se),
-#                 width=0.5,
-#                 position=position_dodge(width=0.75)) +
-#   theme_classic() +
-#   theme(text=element_text(size=18)) +
-#   labs(y="pACLY",
-#        title="Effects of AMPKa1/2 knockout on pACLY levels")
-# 
-# aov(Rel.pACLY ~ Diet + Genotype, data=normalized.data) %>%
-#   tidy %>%
-#   kable(caption="ANOVA for pACLY levels, no interaction")
-# 
-# aov(Rel.pACLY ~ Diet * Genotype, data=normalized.data) %>%
-#   tidy %>%
-#   kable(caption="ANOVA for pACLY levels, with interaction")
+ggplot(summary.data, aes(y=Norm.pACLY_mean,x=Diet, fill=Genotype)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(aes(ymin=Norm.pACLY_mean-Norm.pACLY_se,
+                    ymax=Norm.pACLY_mean+Norm.pACLY_se),
+                width=0.5,
+                position=position_dodge(width=0.75)) +
+  theme_classic() +
+  theme(text=element_text(size=18)) +
+  labs(y="pACLY",
+       title="Effects of AMPKa1/2 knockout on pACLY levels")
+
+aov(Rel.pACLY ~ Diet + Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for pACLY levels, no interaction")
+
+aov(Rel.pACLY ~ Diet * Genotype, data=normalized.data) %>%
+  tidy %>%
+  kable(caption="ANOVA for pACLY levels, with interaction")
 ```
 
 ## Mitochondria Complexes Band 1
