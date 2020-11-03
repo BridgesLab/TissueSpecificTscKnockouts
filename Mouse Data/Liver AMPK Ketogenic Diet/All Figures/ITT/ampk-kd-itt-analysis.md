@@ -43,7 +43,8 @@ exp.data <- read_excel(data.filename, sheet='Sheet2') %>%
            sep=" ") %>%
   tibble::rowid_to_column("ID") %>% #index an ID column
   mutate(ID = as.factor(ID)) %>%
-  mutate(Injection = relevel(as.factor(Injection), ref="GFP")) 
+  mutate(Injection = relevel(as.factor(Injection), ref="GFP")) %>%
+  filter(!(Mouse %in% not.ko)) # removes mice that are not knockouts, but should have been
 
 data.long <-
   exp.data %>%
@@ -60,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/katherinekistler/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Sun Aug  2 10:58:24 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT 19-06-19.xlsx** and **mapping.csv**.  This script was most recently updated on **Tue Nov  3 14:22:24 2020**.
 
 # Number of Mice
 
@@ -77,16 +78,15 @@ exp.data %>%
 
 Table: Animals in each group of this cohort
 
-Sex   Diet      Injection     n
-----  --------  ----------  ---
-F     Control   GFP           8
-F     Control   Cre           7
-F     Keto      GFP           7
-F     Keto      Cre           8
-M     Control   GFP           9
-M     Control   Cre           8
-M     Keto      GFP           9
-M     Keto      Cre          11
+|Sex |Diet    |Injection |  n|
+|:---|:-------|:---------|--:|
+|F   |Control |GFP       |  8|
+|F   |Control |Cre       |  7|
+|F   |Keto    |GFP       |  7|
+|M   |Control |GFP       |  9|
+|M   |Control |Cre       |  7|
+|M   |Keto    |GFP       |  9|
+|M   |Keto    |Cre       |  4|
 
 # Analysis
 
@@ -202,60 +202,60 @@ summary(itt.lme)
 ## Formula: Glucose ~ as.factor(Time) + Diet + Sex + Injection + (1 | ID)
 ##    Data: data.long
 ## 
-## REML criterion at convergence: 5712
+## REML criterion at convergence: 4323
 ## 
 ## Scaled residuals: 
 ##    Min     1Q Median     3Q    Max 
-## -3.205 -0.674 -0.060  0.583  4.256 
+## -3.407 -0.704 -0.005  0.600  4.157 
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev.
-##  ID       (Intercept) 608      24.7    
-##  Residual             728      27.0    
-## Number of obs: 598, groups:  ID, 67
+##  ID       (Intercept) 653      25.5    
+##  Residual             734      27.1    
+## Number of obs: 454, groups:  ID, 51
 ## 
 ## Fixed effects:
-##                    Estimate Std. Error      df t value Pr(>|t|)    
-## (Intercept)         136.035      7.199  94.422   18.90  < 2e-16 ***
-## as.factor(Time)15   -30.284      4.662 523.097   -6.50  1.9e-10 ***
-## as.factor(Time)30   -60.373      4.662 523.097  -12.95  < 2e-16 ***
-## as.factor(Time)45   -66.970      4.662 523.097  -14.37  < 2e-16 ***
-## as.factor(Time)60   -60.070      4.683 523.479  -12.83  < 2e-16 ***
-## as.factor(Time)75   -42.282      4.683 523.479   -9.03  < 2e-16 ***
-## as.factor(Time)90   -20.691      4.683 523.479   -4.42  1.2e-05 ***
-## as.factor(Time)105   -6.858      4.683 523.479   -1.46     0.14    
-## as.factor(Time)120    2.793      4.683 523.479    0.60     0.55    
-## DietKeto             46.853      6.448  63.071    7.27  6.8e-10 ***
-## SexM                  6.900      6.459  63.047    1.07     0.29    
-## InjectionCre          0.515      6.437  63.045    0.08     0.94    
+##                    Estimate Std. Error     df t value Pr(>|t|)    
+## (Intercept)          133.61       7.96  73.07   16.78  < 2e-16 ***
+## as.factor(Time)15    -31.80       5.36 395.14   -5.93  6.6e-09 ***
+## as.factor(Time)30    -55.51       5.36 395.14  -10.35  < 2e-16 ***
+## as.factor(Time)45    -62.88       5.36 395.14  -11.72  < 2e-16 ***
+## as.factor(Time)60    -56.58       5.40 395.50  -10.48  < 2e-16 ***
+## as.factor(Time)75    -39.70       5.40 395.50   -7.36  1.1e-12 ***
+## as.factor(Time)90    -19.40       5.40 395.50   -3.59  0.00037 ***
+## as.factor(Time)105    -9.46       5.40 395.50   -1.75  0.08049 .  
+## as.factor(Time)120    -1.82       5.40 395.50   -0.34  0.73669    
+## DietKeto              54.77       8.15  47.20    6.72  2.1e-08 ***
+## SexM                   2.67       7.78  47.16    0.34  0.73344    
+## InjectionCre           9.79       8.27  47.15    1.18  0.24237    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Correlation of Fixed Effects:
-##             (Intr) a.(T)15 a.(T)3 a.(T)4 a.(T)6 a.(T)7 a.(T)9 a.(T)10
-## as.fct(T)15 -0.324                                                   
-## as.fct(T)30 -0.324  0.500                                            
-## as.fct(T)45 -0.324  0.500   0.500                                    
-## as.fct(T)60 -0.321  0.498   0.498  0.498                             
-## as.fct(T)75 -0.321  0.498   0.498  0.498  0.497                      
-## as.fct(T)90 -0.321  0.498   0.498  0.498  0.497  0.497               
-## as.fc(T)105 -0.321  0.498   0.498  0.498  0.497  0.497  0.497        
-## as.fc(T)120 -0.321  0.498   0.498  0.498  0.497  0.497  0.497  0.497 
-## DietKeto    -0.415  0.000   0.000  0.000 -0.002 -0.002 -0.002 -0.002 
-## SexM        -0.471  0.000   0.000  0.000  0.002  0.002  0.002  0.002 
-## InjectionCr -0.414  0.000   0.000  0.000 -0.002 -0.002 -0.002 -0.002 
-##             a.(T)12 DietKt SexM  
-## as.fct(T)15                      
-## as.fct(T)30                      
-## as.fct(T)45                      
-## as.fct(T)60                      
-## as.fct(T)75                      
-## as.fct(T)90                      
-## as.fc(T)105                      
-## as.fc(T)120                      
-## DietKeto    -0.002               
-## SexM         0.002  -0.041       
-## InjectionCr -0.002  -0.072 -0.012
+##             (Intr) a.(T)15 a.(T)3 a.(T)4 a.(T)6 a.(T)7 a.(T)9 a.(T)10 a.(T)12
+## as.fct(T)15 -0.337                                                           
+## as.fct(T)30 -0.337  0.500                                                    
+## as.fct(T)45 -0.337  0.500   0.500                                            
+## as.fct(T)60 -0.334  0.497   0.497  0.497                                     
+## as.fct(T)75 -0.334  0.497   0.497  0.497  0.496                              
+## as.fct(T)90 -0.334  0.497   0.497  0.497  0.496  0.496                       
+## as.fc(T)105 -0.334  0.497   0.497  0.497  0.496  0.496  0.496                
+## as.fc(T)120 -0.334  0.497   0.497  0.497  0.496  0.496  0.496  0.496         
+## DietKeto    -0.414  0.000   0.000  0.000 -0.004 -0.004 -0.004 -0.004  -0.004 
+## SexM        -0.455  0.000   0.000  0.000  0.003  0.003  0.003  0.003   0.003 
+## InjectionCr -0.417  0.000   0.000  0.000 -0.003 -0.003 -0.003 -0.003  -0.003 
+##             DietKt SexM  
+## as.fct(T)15              
+## as.fct(T)30              
+## as.fct(T)45              
+## as.fct(T)60              
+## as.fct(T)75              
+## as.fct(T)90              
+## as.fc(T)105              
+## as.fc(T)120              
+## DietKeto                 
+## SexM        -0.156       
+## InjectionCr  0.271 -0.104
 ```
 
 ```r
@@ -268,12 +268,12 @@ anova(itt.lme) %>%
 
 Table: Type III Analysis of Variance Table with Satterthwaite's method for ITT mixed linear model.
 
-term                   sumsq     meansq   NumDF   DenDF   statistic   p.value
-----------------  ----------  ---------  ------  ------  ----------  --------
-as.factor(Time)    393473.26   49184.16       8   523.3      67.555     0.000
-Diet                38440.17   38440.17       1    63.1      52.798     0.000
-Sex                   830.88     830.88       1    63.0       1.141     0.289
-Injection               4.66       4.66       1    63.0       0.006     0.936
+|term            |    sumsq|  meansq| NumDF| DenDF| statistic| p.value|
+|:---------------|--------:|-------:|-----:|-----:|---------:|-------:|
+|as.factor(Time) | 240382.2| 30047.8|     8| 395.3|    40.953|   0.000|
+|Diet            |  33119.4| 33119.4|     1|  47.2|    45.140|   0.000|
+|Sex             |     86.1|    86.1|     1|  47.2|     0.117|   0.733|
+|Injection       |   1028.4|  1028.4|     1|  47.2|     1.402|   0.242|
 
 ```r
 anova(itt.lme,itt.lme.null) %>% 
@@ -285,10 +285,10 @@ anova(itt.lme,itt.lme.null) %>%
 
 Table: Chi-squared test for effects of AAV injection on ITT.
 
-term            df    AIC    BIC   logLik   deviance   statistic   Chi.Df   p.value
--------------  ---  -----  -----  -------  ---------  ----------  -------  --------
-itt.lme.null    13   5795   5852    -2884       5769          NA       NA        NA
-itt.lme         14   5797   5858    -2884       5769       0.007        1     0.935
+|term         | npar|  AIC|  BIC| logLik| deviance| statistic| df| p.value|
+|:------------|----:|----:|----:|------:|--------:|---------:|--:|-------:|
+|itt.lme.null |   13| 4411| 4464|  -2192|     4385|        NA| NA|      NA|
+|itt.lme      |   14| 4411| 4469|  -2192|     4383|       1.5|  1|   0.221|
 
 ## Normalized ITT
 
@@ -384,7 +384,6 @@ data.long %>%
 
 ```r
 lm(Glucose ~ Diet + Sex + Injection, data = data.long %>% filter(Time==0)) %>%
-  summary %>%
   tidy %>%
   kable(caption="Linear model for effects on fasting glucose levels.")
 ```
@@ -393,12 +392,12 @@ lm(Glucose ~ Diet + Sex + Injection, data = data.long %>% filter(Time==0)) %>%
 
 Table: Linear model for effects on fasting glucose levels.
 
-term            estimate   std.error   statistic   p.value
--------------  ---------  ----------  ----------  --------
-(Intercept)        138.2        6.16       22.46     0.000
-DietKeto            28.3        6.11        4.63     0.000
-SexM                11.0        6.12        1.80     0.077
-InjectionCre        10.9        6.10        1.78     0.080
+|term         | estimate| std.error| statistic| p.value|
+|:------------|--------:|---------:|---------:|-------:|
+|(Intercept)  |    134.4|      6.81|     19.74|   0.000|
+|DietKeto     |     29.1|      7.79|      3.74|   0.000|
+|SexM         |     17.2|      7.43|      2.31|   0.025|
+|InjectionCre |     12.5|      7.90|      1.58|   0.120|
 
 ## Area Under the Curve
 
@@ -450,7 +449,6 @@ lm(AUC ~ Diet + Sex + Injection,
    data = data.long %>% 
      group_by(ID, Diet, Sex, Injection) %>%
      summarize(AUC = sum(Glucose))) %>% 
-  summary %>%
   tidy %>%
   kable(caption="Linear model for effects on ITT area under curve.")
 ```
@@ -459,12 +457,12 @@ lm(AUC ~ Diet + Sex + Injection,
 
 Table: Linear model for effects on ITT area under curve.
 
-term            estimate   std.error   statistic   p.value
--------------  ---------  ----------  ----------  --------
-(Intercept)        447.2         114       3.914     0.000
-DietKeto           216.8         111       1.949     0.054
-SexM                26.0         112       0.233     0.816
-InjectionCre        41.5         111       0.374     0.709
+|term         | estimate| std.error| statistic| p.value|
+|:------------|--------:|---------:|---------:|-------:|
+|(Intercept)  |    929.7|      64.9|    14.324|   0.000|
+|DietKeto     |    485.8|      74.8|     6.497|   0.000|
+|SexM         |     30.2|      71.2|     0.425|   0.673|
+|InjectionCre |     81.5|      75.7|     1.077|   0.287|
 
 # Interpretation
 
@@ -478,13 +476,13 @@ sessionInfo()
 ```
 
 ```
-## R version 3.5.1 (2018-07-02)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS High Sierra 10.13.6
+## R version 4.0.2 (2020-06-22)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Catalina 10.15.7
 ## 
 ## Matrix products: default
-## BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -493,25 +491,25 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] lmerTest_3.1-0 broom_0.5.2    lme4_1.1-21    Matrix_1.2-14 
-## [5] ggplot2_3.1.0  readxl_1.3.1   dplyr_0.8.1    tidyr_0.8.2   
-## [9] knitr_1.20    
+## [1] lmerTest_3.1-2 broom_0.7.0    lme4_1.1-23    Matrix_1.2-18  ggplot2_3.3.2 
+## [6] readxl_1.3.1   dplyr_1.0.2    tidyr_1.1.2    knitr_1.29    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.1          nloptr_1.2.1        pillar_1.4.1       
-##  [4] compiler_3.5.1      cellranger_1.1.0    RColorBrewer_1.1-2 
-##  [7] highr_0.7           plyr_1.8.4          tools_3.5.1        
-## [10] boot_1.3-20         digest_0.6.25       nlme_3.1-137       
-## [13] lattice_0.20-35     evaluate_0.11       tibble_2.1.3       
-## [16] gtable_0.2.0        pkgconfig_2.0.2     rlang_0.4.7        
-## [19] yaml_2.2.0          withr_2.1.2         stringr_1.3.1      
-## [22] generics_0.0.2      rprojroot_1.3-2     grid_3.5.1         
-## [25] tidyselect_0.2.5    glue_1.4.1          R6_2.4.0           
-## [28] rmarkdown_1.10      minqa_1.2.4         purrr_0.3.4        
-## [31] reshape2_1.4.3      magrittr_1.5        MASS_7.3-50        
-## [34] splines_3.5.1       backports_1.1.2     scales_1.0.0       
-## [37] htmltools_0.3.6     assertthat_0.2.1    colorspace_1.3-2   
-## [40] numDeriv_2016.8-1.1 labeling_0.3        stringi_1.2.4      
-## [43] lazyeval_0.2.1      munsell_0.5.0       crayon_1.3.4
+##  [1] Rcpp_1.0.5          nloptr_1.2.2.2      RColorBrewer_1.1-2 
+##  [4] cellranger_1.1.0    pillar_1.4.6        compiler_4.0.2     
+##  [7] highr_0.8           tools_4.0.2         boot_1.3-25        
+## [10] statmod_1.4.34      digest_0.6.25       evaluate_0.14      
+## [13] lifecycle_0.2.0     tibble_3.0.3        gtable_0.3.0       
+## [16] nlme_3.1-149        lattice_0.20-41     mgcv_1.8-31        
+## [19] pkgconfig_2.0.3     rlang_0.4.7         yaml_2.2.1         
+## [22] xfun_0.16           withr_2.2.0         stringr_1.4.0      
+## [25] generics_0.0.2      vctrs_0.3.4         grid_4.0.2         
+## [28] tidyselect_1.1.0    glue_1.4.2          R6_2.4.1           
+## [31] rmarkdown_2.3       minqa_1.2.4         farver_2.0.3       
+## [34] purrr_0.3.4         magrittr_1.5        backports_1.1.9    
+## [37] MASS_7.3-52         scales_1.1.1        ellipsis_0.3.1     
+## [40] htmltools_0.5.0     splines_4.0.2       colorspace_1.4-1   
+## [43] numDeriv_2016.8-1.1 labeling_0.3        stringi_1.4.6      
+## [46] munsell_0.5.0       crayon_1.3.4
 ```
 

@@ -68,7 +68,8 @@ exp.data <- read_excel(data.filename, sheet='Sheet2') %>%
            sep=" ") %>%
   tibble::rowid_to_column("ID") %>% #index an ID column
   mutate(ID = as.factor(ID)) %>%
-  mutate(Injection = relevel(as.factor(Injection), ref="GFP")) 
+  mutate(Injection = relevel(as.factor(Injection), ref="GFP")) %>%
+  filter(!(Mouse %in% not.ko)) # removes mice that are not knockouts, but should have been
 
 data.long <-
   exp.data %>%
@@ -281,7 +282,6 @@ data.long %>%
 
 ```{r fasting-glucose-stats}
 lm(Glucose ~ Diet + Sex + Injection, data = data.long %>% filter(Time==0)) %>%
-  summary %>%
   tidy %>%
   kable(caption="Linear model for effects on fasting glucose levels.")
 ```
@@ -329,7 +329,6 @@ lm(AUC ~ Diet + Sex + Injection,
    data = data.long %>% 
      group_by(ID, Diet, Sex, Injection) %>%
      summarize(AUC = sum(Glucose))) %>% 
-  summary %>%
   tidy %>%
   kable(caption="Linear model for effects on ITT area under curve.")
 ```
