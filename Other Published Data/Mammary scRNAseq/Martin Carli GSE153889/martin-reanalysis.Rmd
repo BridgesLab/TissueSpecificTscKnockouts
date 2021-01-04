@@ -1,0 +1,235 @@
+---
+title: "Re-analysis of Marin-Carli et al sMEC Data"
+author: "Dave Bridges"
+date: "January 4, 2021"
+bibliography: "../references.bib"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To re-analyse cell populations from the Martin-Carli *et al*'s scRNAseq study of lactating mammary glands.  This work is described in @MartinCarli2020.  This follows the analysis flow suggested for Seurat 3.2 seen at https://satijalab.org/seurat/v3.2/pbmc3k_tutorial.html
+
+# Data Input
+
+Downloaded the data from GSE15889 and removed prefixes from filenames.
+
+```{r data-entry}
+library(Seurat)
+martin.counts <- Read10X(data.dir = '.')
+martin.dataset <- CreateSeuratObject(counts = martin.counts,
+                              project = "sMEC", 
+                             min.cells = 3, 
+                             min.features = 200)
+```
+
+## Preprocessing
+
+```{r pre-processing}
+martin.dataset[["percent.mt"]] <- PercentageFeatureSet(martin.dataset, pattern = "^MT-")
+VlnPlot(martin.dataset, 
+        features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
+        ncol = 3)
+
+plot1 <- FeatureScatter(martin.dataset, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(martin.dataset, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2
+```
+## Normalizing Data 
+
+Normalizes the feature expression for each cell by the total expression  x 1000, then log transforms
+
+```{r normalize}
+martin.dataset <- NormalizeData(martin.dataset, 
+                                normalization.method = "LogNormalize",
+                                scale.factor = 10000)
+```
+
+## Highly Variable Features
+
+Features with high cell to cell variability (highly expressed in some cells but not others)
+
+```{r variable-features}
+martin.dataset <- FindVariableFeatures(martin.dataset, 
+                                       election.method = "vst", 
+                                       nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(martin.dataset), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(martin.dataset)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot2
+```
+
+## Scaling
+
+Shifts expression so that mean expression across cells is 0, and variance is 1.  This reduces the impact of outliers on downstream analyses.  We did not regress out specific sources of heterogeneity like mitochondrial contamination or cell cycle stage.
+
+```{r scaling}
+all.genes <- rownames(martin.dataset)
+martin.dataset <- ScaleData(martin.dataset, features = all.genes)
+```
+
+# Dimensionality Reductions
+
+```{r dimensionality-pca}
+martin.dataset <- RunPCA(martin.dataset, features = VariableFeatures(object = martin.dataset))
+
+print(martin.dataset[["pca"]], dims = 1:5, nfeatures = 5)
+VizDimLoadings(martin.dataset, dims = 1:2, reduction = "pca")
+DimPlot(martin.dataset, reduction = "pca")
+DimHeatmap(martin.dataset, dims = 1:9, cells = 500, balanced = TRUE)
+```
+
+# Determination of Number of Clusters
+
+Used the JackStraw procedure in @Macosko2015, sampling 1% of the data re-running the PCA and constructing a null distribution of feature scores, then repeating.  This identified 'significant' PCs.  We also did an elbow plot.
+
+```{r cluster-numbers}
+martin.dataset <- JackStraw(martin.dataset, num.replicate = 100)
+martin.dataset <- ScoreJackStraw(martin.dataset, dims=1:20)
+JackStrawPlot(martin.dataset, dims=1:20)
+ElbowPlot(martin.dataset)
+```
+
+Based on this we decided to use 13 PCs to cluster the cells.  
+
+#  Clustering Cell Types
+
+Seurat 3.2 uses a K-nearest neighbor approach  then tries to partition this into commmunities of cell types.  
+
+## Identification and Assignment of Clusters
+
+```{r neighbor-cluster-identification}
+martin.dataset <- FindNeighbors(martin.dataset, dims = 1:13) #based on 5 clusters from the elbow plot
+martin.dataset <- FindClusters(martin.dataset, resolution = 0.5)
+```
+
+
+## Non-Linear Dimensionality Reduction
+
+Did both UMAP and t-SNE plots using 13 clusters
+
+### UMAP
+
+```{r umap-plot-initial, fig.cap="UMAP plot of secreted MECs"}
+martin.dataset <- RunUMAP(martin.dataset, dims = 1:13, label=TRUE)
+DimPlot(martin.dataset, reduction = "umap")
+```
+
+### t-SNE Plots
+
+```{r tsne-plot-initial, fig.cap="t-SNE plot of secreted MECs"}
+martin.dataset <- RunTSNE(martin.dataset, dims = 1:13, label=TRUE)
+DimPlot(martin.dataset, reduction = "tsne")
+#VlnPlot(martin.dataset, features = "UMAP_2")
+```
+
+```{r cluster-classification}
+cluster.markers.all <- FindAllMarkers(martin.dataset, 
+                                      only.pos = TRUE,
+                                      min.pct = 0.5, 
+                                      logfc.threshold = 0.5)
+
+cluster.markers.all %>% 
+  group_by(cluster) %>% 
+  top_n(n = 2, wt = avg_logFC) %>%
+  kable(caption="Cell Specific Markers (All)")
+```
+
+# Feature Analysis
+
+## Analysis of clusters
+
+```{r feature-analysis}
+genes.of.interest <- c("Wap","Csn2","Csn3","Oxtr","Acta2","Krt14","Fasn", "Acly","Fabp4","Slc27a6") %>% toupper
+protein.secreted <- c("Wap","Csn2","Csn3","Ltf","Lalba") %>% toupper
+hormone.sensing <- c('Esr1', 'Prlr', 'Pgr', 'S100a6','Cited1') %>% toupper
+myoepithelial <- c('Oxtr', 'Acta2', 'Krt4','Krt14') %>% toupper
+alveolar.differentiated <- c('Wap', 'Csn2', 'Glycam1','Lalba') %>% toupper
+alveolar.progenitor <- c('Wap', 'Csn2', 'Glycam1','Lalba','Cd14','Kit') %>% toupper
+basal.cells <- c('Krt4', 'Krt14', 'Pdpn', 'Etv5','Acta2') %>% toupper
+milk.fat.globules <- c('Pas3','Sluc1','Btn1a1','Pas7','Muc1','Plin2') %>% toupper
+carb.transporters <-c('Slc2a1','Slc35a2','Slc50a1') %>% toupper
+fat.transporters <-c('Fabp3','Cd36','Agpat2','Agpat3') %>% toupper
+cluster.markers.all %>%
+  filter(gene %in% genes.of.interest) %>%
+  kable(caption="Clusters of genes of interest")
+
+VlnPlot(martin.dataset, features = genes.of.interest)
+
+p1 <- FeaturePlot(martin.dataset, features = genes.of.interest,
+            combine=F,
+            ncol=2)
+library(ggplot2)
+fix.sc <- scale_color_gradientn( colours = c('lightgrey', 'blue'),  limits = c(1, 8))
+p2 <- lapply(p1, function (x) x + fix.sc)
+CombinePlots(p2)
+for(i in 1:length(p2)) {
+  p2[[i]] <- p2[[i]] + NoLegend() + NoAxes()
+}
+
+cowplot::plot_grid(plotlist = p2)
+FeaturePlot(martin.dataset, features = protein.secreted) 
+FeaturePlot(martin.dataset, features = alveolar.progenitor)
+FeaturePlot(martin.dataset, features = alveolar.differentiated)
+FeaturePlot(martin.dataset, features = basal.cells)
+FeaturePlot(martin.dataset, features = hormone.sensing)
+FeaturePlot(martin.dataset, features = myoepithelial)
+FeaturePlot(martin.dataset, features = milk.fat.globules)
+FeaturePlot(martin.dataset, features = genes.of.interest)
+FeaturePlot(martin.dataset, features = carb.transporters)
+FeaturePlot(martin.dataset, features = fat.transporters)
+
+
+top10 <- cluster.markers.all %>% group_by(cluster) %>% top_n(n = 5, wt = avg_logFC)
+DoHeatmap(martin.dataset, features = top10$gene) + NoLegend()
+```
+
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
