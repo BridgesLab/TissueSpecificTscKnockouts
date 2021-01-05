@@ -39,6 +39,7 @@ se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
 #load these packages, nearly always needed
 library(tidyr)
 library(dplyr)
+library(tibble)
 
 # sets maize and blue color scheme
 color.scheme <- c('#00274c', '#ffcb05')
@@ -130,9 +131,11 @@ martin.dataset <- JackStraw(martin.dataset, num.replicate = 100)
 martin.dataset <- ScoreJackStraw(martin.dataset, dims=1:20)
 JackStrawPlot(martin.dataset, dims=1:20)
 ElbowPlot(martin.dataset)
+
+pcs.used <- 7
 ```
 
-Based on this we decided to use 13 PCs to cluster the cells.  
+Based on this we decided to use `r pcs.used` PCs to cluster the cells.  
 
 #  Clustering Cell Types
 
@@ -141,29 +144,30 @@ Seurat 3.2 uses a K-nearest neighbor approach  then tries to partition this into
 ## Identification and Assignment of Clusters
 
 ```{r neighbor-cluster-identification}
-martin.dataset <- FindNeighbors(martin.dataset, dims = 1:13) #based on 5 clusters from the elbow plot
-martin.dataset <- FindClusters(martin.dataset, resolution = 0.5)
+martin.dataset <- FindNeighbors(martin.dataset, dims = 1:pcs.used) #based on 7 clusters from the elbow plot
+martin.dataset <- FindClusters(martin.dataset) #default resolution is 0.8, use above 1.0 if you want a larger number of communities 
 ```
 
 
 ## Non-Linear Dimensionality Reduction
 
-Did both UMAP and t-SNE plots using 13 clusters
-
-### UMAP
-
-```{r umap-plot-initial, fig.cap="UMAP plot of secreted MECs"}
-martin.dataset <- RunUMAP(martin.dataset, dims = 1:13, label=TRUE)
-DimPlot(martin.dataset, reduction = "umap")
-```
+Did both UMAP and t-SNE plots using `r pcs.used` clusters
 
 ### t-SNE Plots
 
 ```{r tsne-plot-initial, fig.cap="t-SNE plot of secreted MECs"}
-martin.dataset <- RunTSNE(martin.dataset, dims = 1:13, label=TRUE)
+martin.dataset <- RunTSNE(martin.dataset, dims = 1:pcs.used, label=TRUE)
 DimPlot(martin.dataset, reduction = "tsne")
 #VlnPlot(martin.dataset, features = "UMAP_2")
 ```
+
+### UMAP
+
+```{r umap-plot-initial, fig.cap="UMAP plot of secreted MECs"}
+martin.dataset <- RunUMAP(martin.dataset, dims = 1:pcs.used)
+DimPlot(martin.dataset, reduction = "umap", label=T)
+```
+
 
 ```{r cluster-classification}
 cluster.markers.all <- FindAllMarkers(martin.dataset, 
@@ -173,12 +177,163 @@ cluster.markers.all <- FindAllMarkers(martin.dataset,
 
 cluster.markers.all %>% 
   group_by(cluster) %>% 
-  top_n(n = 2, wt = avg_logFC) %>%
+  top_n(n = 3, wt = avg_logFC) %>%
   kable(caption="Cell Specific Markers (All)")
 ```
 
 # Feature Analysis
 
+## Annotation of clusters
+
+Used for cell marker enrichment
+
+```{r cluster-data}
+cell.marker.site <- 'http://bio-bigdata.hrbmu.edu.cn/CellMarker/download/Human_cell_markers.txt'
+cell_marker_data <- vroom::vroom(cell.marker.site)
+library(clusterProfiler)
+## instead of `cellName`, users can use other features (e.g. `cancerType`)
+cell_markers <- vroom::vroom(cell.marker.site) %>%
+   tidyr::unite("cellMarker", tissueType, cancerType, cellName, sep=", ") %>% 
+   dplyr::select(cellMarker, geneSymbol) %>%
+   dplyr::mutate(geneSymbol = strsplit(geneSymbol, ', '))
+```
+
+Used CellMarker for enrichment analyses `r cell.marker.site`.  See @Zhang2019a and http://bio-bigdata.hrbmu.edu.cn/CellMarker for details on this resource
+
+### Cluster 5
+
+```{r cluster-annotation-5, fig.cap='Markers of cluster 5'}
+# find all markers distinguishing cluster 5 from other communities
+cluster5.markers <- FindMarkers(martin.dataset, ident.1 =5, 
+                                logfc.threshold = 0.5, 
+                                min.pct=0.25,
+                                test.use = "roc", 
+                                only.pos = TRUE) #using ROC as classification power
+FeaturePlot(martin.dataset, features = rownames(cluster5.markers)[1:6]) 
+VlnPlot(martin.dataset, features = rownames(cluster5.markers)[1:6], pt.size=0)
+
+geneList <- cluster5.markers[,'avg_logFC']
+names(geneList) <- rownames(cluster5.markers)
+geneList <- sort(geneList, decreasing=T)
+
+cm5 <- GSEA(geneList, TERM2GENE = cell_markers)
+kable(cm5)
+
+```
+
+### Cluster 9
+
+```{r cluster-annotation-9, fig.cap='Markers of cluster 9'}
+# find all markers distinguishing cluster 9 from other communities
+cluster9.markers <- FindMarkers(martin.dataset, ident.1 =9, 
+                                logfc.threshold = 0.5, 
+                                min.pct=0.25,
+                                test.use = "roc", 
+                                only.pos = TRUE)
+
+FeaturePlot(martin.dataset, features = rownames(cluster9.markers)[1:6]) 
+VlnPlot(martin.dataset, features = rownames(cluster9.markers)[1:6], pt.size=0)
+
+geneList <- cluster9.markers[,'avg_logFC']
+names(geneList) <- rownames(cluster9.markers)
+geneList <- sort(geneList, decreasing=T)
+
+cm9 <- GSEA(geneList, TERM2GENE = cell_markers)
+kable(cm9)
+```
+
+### Cluster 6
+
+```{r cluster-annotation-6, fig.cap='Markers of cluster 6'}
+# find all markers distinguishing cluster 96 from other communities
+cluster6.markers <- FindMarkers(martin.dataset, ident.1 =6, 
+                                logfc.threshold = 0.5, 
+                                min.pct=0.25,
+                                test.use = "roc", 
+                                only.pos = TRUE)
+
+FeaturePlot(martin.dataset, features = rownames(cluster6.markers)[1:6]) 
+VlnPlot(martin.dataset, features = rownames(cluster6.markers)[1:6], pt.size=0)
+
+geneList <- cluster6.markers[,'avg_logFC']
+names(geneList) <- rownames(cluster6.markers)
+geneList <- sort(geneList, decreasing=T)
+
+cm6 <- GSEA(geneList, TERM2GENE = cell_markers)
+kable(cm6)
+```
+
+### Cluster 12
+
+```{r cluster-annotation-12, fig.cap='Markers of cluster 12'}
+cluster12.markers <- FindMarkers(martin.dataset, ident.1 =12, 
+                                logfc.threshold = 0.5, 
+                                min.pct=0.25,
+                                test.use = "roc", 
+                                only.pos = TRUE)
+
+FeaturePlot(martin.dataset, features = rownames(cluster12.markers)[1:6]) 
+VlnPlot(martin.dataset, features = rownames(cluster12.markers)[1:6], pt.size=0)
+
+geneList <- cluster12.markers[,'avg_logFC']
+names(geneList) <- rownames(cluster12.markers)
+geneList <- sort(geneList, decreasing=T)
+
+cm12 <- GSEA(geneList, TERM2GENE = cell_markers)
+kable(cm12)
+```
+
+### Cluster 10
+
+```{r cluster-annotation-10, fig.cap='Markers of cluster 10'}
+cluster10.markers <- FindMarkers(martin.dataset, ident.1 =10, 
+                                logfc.threshold = 0.5, 
+                                min.pct=0.25,
+                                test.use = "roc", 
+                                only.pos = TRUE)
+
+FeaturePlot(martin.dataset, features = rownames(cluster10.markers)[1:6]) 
+VlnPlot(martin.dataset, features = rownames(cluster10.markers)[1:6], pt.size=0)
+
+geneList <- cluster10.markers[,'avg_logFC']
+names(geneList) <- rownames(cluster10.markers)
+geneList <- sort(geneList, decreasing=T)
+
+cm10 <- GSEA(geneList, TERM2GENE = cell_markers)
+kable(cm10)
+```
+
+### Other
+
+```{r cluster-annotation-other, fig.cap='Markers of cluster 12'}
+cluster.all.markers <- FindMarkers(martin.dataset, 
+                                ident.1 =c(0,1,2,3,4,7,8,11),
+                                ident.2 =c(5,9,6,12),
+                                logfc.threshold = 0.5, 
+                                min.pct=0.25,
+                                test.use = "roc", 
+                                only.pos = TRUE)
+
+FeaturePlot(martin.dataset, features = rownames(cluster.all.markers)[1:6]) 
+VlnPlot(martin.dataset, features = rownames(cluster.all.markers)[1:6], pt.size=0)
+
+geneList <- cluster.all.markers[,'avg_logFC']
+names(geneList) <- rownames(cluster.all.markers)
+geneList <- sort(geneList, decreasing=T)
+
+cm.all <- GSEA(geneList, TERM2GENE = cell_markers)
+kable(cm.all)
+```
+
+## Summary of Clusters
+
+```{r cluster-summary}
+new.cluster.ids <- c(0,1,2,3,4,'T-Cells','Monocytes',7,8,'Monocytes/Dendritic Cells',10,11,12)
+names(new.cluster.ids) <- levels(martin.dataset)
+martin.dataset <- RenameIdents(martin.dataset, new.cluster.ids)
+DimPlot(martin.dataset, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+```
+,
 ## Analysis of clusters
 
 ```{r feature-analysis}
@@ -192,6 +347,10 @@ basal.cells <- c('Krt4', 'Krt14', 'Pdpn', 'Etv5','Acta2') %>% toupper
 milk.fat.globules <- c('Pas3','Sluc1','Btn1a1','Pas7','Muc1','Plin2') %>% toupper
 carb.transporters <-c('Slc2a1','Slc35a2','Slc50a1') %>% toupper
 fat.transporters <-c('Fabp3','Cd36','Agpat2','Agpat3') %>% toupper
+t.cells <-c('CD3','CD4','CD8','CD7','CTLA4') %>% toupper
+b.cells <-c('CD19','CD27','CD20','IgD','CD38','CD138','CD24') %>% toupper
+interleukins <-c('IL6','TNFA','IL10') %>% toupper
+mtor <-c('RPTOR','MTOR','LST8') %>% toupper
 cluster.markers.all %>%
   filter(gene %in% genes.of.interest) %>%
   kable(caption="Clusters of genes of interest")
@@ -220,6 +379,10 @@ FeaturePlot(martin.dataset, features = milk.fat.globules)
 FeaturePlot(martin.dataset, features = genes.of.interest)
 FeaturePlot(martin.dataset, features = carb.transporters)
 FeaturePlot(martin.dataset, features = fat.transporters)
+FeaturePlot(martin.dataset, features = t.cells)
+FeaturePlot(martin.dataset, features = b.cells)
+FeaturePlot(martin.dataset, features = interleukins)
+FeaturePlot(martin.dataset, features = mtor)
 
 
 top10 <- cluster.markers.all %>% group_by(cluster) %>% top_n(n = 5, wt = avg_logFC)
