@@ -1,5 +1,5 @@
 ---
-title: "Body Composition of Cohort 3 AJ Mice on KD"
+title: "Body Composition of AJ Mice on KD"
 author: "Cody Cousineau and Dave Bridges"
 date: "June 11, 2019"
 output:
