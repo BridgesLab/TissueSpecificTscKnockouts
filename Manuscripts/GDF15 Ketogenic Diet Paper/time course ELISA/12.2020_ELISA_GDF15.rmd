@@ -1,0 +1,164 @@
+---
+title: "GDF15_ELISA_12.14.2020"
+author: "Molly C. Mulcahy"
+date: "12/22/2020"
+output: pdf_document
+---
+#setup
+```{r setup, include=FALSE}
+
+library(lme4)
+library(readr)
+library(knitr)
+library(dplyr)
+library(ggplot2)
+library(car)
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+```
+
+
+#data entry
+```{r data-entry-12-14-2020}
+
+#Enters results from Dilution Factor = 5
+my.assays.GDF15.data <- read_csv("12.14.2020_results.csv",
+                           col_types = cols(
+                            Sample = col_character(),
+                            Dilution = col_double(),
+                             Well = col_factor(levels = NULL),
+                            raw = col_double(),
+                            Conc. = col_double()
+                           ))
+                   
+mapping.data <-read_csv("12.14.2020_mapping.csv",
+                        col_types = cols(
+                          well =	col_factor(levels = NULL),
+                          ID = col_factor(levels = NULL),
+                          diet	= col_factor(levels = NULL),
+                          time	= col_double(),
+                          study = col_factor(levels = NULL)
+                        ))
+
+full.data <- merge(mapping.data, my.assays.GDF15.data, by = "Well")%>%
+  select(ID, Well, study, time, diet, study, Conc.,Raw)
+non.ID<-c("blank", "pos.control")
+```
+
+
+#Analysis
+```{r time-course}
+#make dataset for time course study
+time.course.data<-full.data%>%
+  filter(study == "time.course")%>%
+  group_by(time)%>%
+  summarize(average.GDF15 = mean(Conc.),
+            error.GDF15 = se(Conc.))
+
+#Plot of time course study- averaged
+ggplot(time.course.data, aes(time, average.GDF15))+
+  geom_point(col = "dodgerblue")+
+  geom_errorbar(aes(ymin = average.GDF15 - error.GDF15, ymax = average.GDF15 + error.GDF15), col = "dodgerblue")+
+  geom_line(col = "dodgerblue")+
+  labs(title = "GDF15 in Ketogenic Diets", y= "GDF15 concentration (pg/mL)", x = "Time (days)")+
+  expand_limits(x = 0, y = 0)+
+  geom_hline(yintercept=294, linetype = "dotdash")
+  
+# time course study-Individual plots
+time.course.ID.data<-full.data%>%
+  filter(study=="time.course")
+ggplot(time.course.ID.data, aes(time, `Conc.`, col = ID))+
+  geom_point(aes(col = ID))+
+  #geom_errorbar(aes(ymin = average.GDF15 - error.GDF15, ymax = average.GDF15 + error.GDF15), col = "dodgerblue")+
+  geom_line(aes(col = ID))+
+  labs(title = "GDF15 in Ketogenic Diets", y= "GDF15 concentration (pg/mL)", x = "Time (days)")
+```
+#Maternal Metformin Serum
+```{r maternal-metformin}
+#data entry
+non.sample<-c("Blank","pos.control","160","36")#160 had low volume/didn't register on the ELISA
+mat.serum.raw.data<-"12.22.2020_results.csv"
+Met.mat.data<-read_csv(mat.serum.raw.data,
+         col_types = cols(
+  Sample = col_factor(levels = NULL),
+  Dilution = col_double(),
+  Well = col_factor(levels = NULL),
+  Raw = col_double(),
+  `Background
+Corrected` = col_double(),
+  Conc. = col_double()))%>%
+  filter(!(Sample %in% non.sample))
+mapping.met.mat<-"12.22.2020_mapping.csv"
+mapping.mat.met.data<-read_csv(mapping.met.mat,
+  col_types = cols(
+    Sample = col_factor(NULL),
+    diet = col_factor(levels = NULL)))
+mapped.mat.met<-merge(mapping.mat.met.data, Met.mat.data, by = "Sample")
+
+#plot
+liver.paper.colors <- c("white","mediumblue")
+summary.mat.met<-mapped.mat.met%>%
+  na.omit%>%
+  group_by(diet)%>%
+  summarize(avg.conc = mean(Conc.),
+            er.conc = se(Conc.),
+            n = length(Conc.))
+
+ggplot(summary.mat.met, aes(diet, avg.conc, fill = diet))+
+  geom_col(aes(fill = diet))+
+  geom_col(col = "black")+
+  geom_errorbar(aes(ymin = avg.conc -er.conc, ymax = avg.conc + er.conc), width = 0.2)+
+  labs(title = "GDF15 in Maternal Serum", y = "GDF15 concentration (pg/mL)")+
+  scale_fill_manual(values= liver.paper.colors)+
+  theme_classic()
+
+#stats
+mat.met.aov <- aov(Conc. ~ diet, mapped.mat.met)
+summary(mat.met.aov)#no effect of diet p=0.41
+```
+
+
+#Mammary Gland Study
+```{r mammary-gland}
+total.pro<-c("263000","216000","158000","272000","198000","282000","148000","319000")
+ID<-c("160B", "29B", "194B", "165B", "164B", "33B", "200B", "167B")
+pro.norm<-data.frame(total.pro, ID)
+#make dataset for time course study
+MG.data<-full.data%>%
+  filter(study == "MG")
+#add in protein normalization
+mapped.data.MG<-merge(MG.data, pro.norm, by = "ID")%>%
+transform(total.pro, pro.num = as.numeric(total.pro))
+
+MG.data.norm<-mapped.data.MG%>%
+  mutate(norm.GDF15 = Conc./pro.num)%>%
+  group_by(diet)%>%
+  summarize(avg.GDF15.MG = mean(norm.GDF15),
+            er.GDF15.MG = se(norm.GDF15))
+
+#Plot of time course study
+ggplot(MG.data.norm, aes(diet, avg.GDF15.MG, fill = diet))+
+  geom_col(aes(stat = "identity"))+
+  geom_errorbar(aes(ymin = avg.GDF15.MG - er.GDF15.MG, ymax = avg.GDF15.MG + er.GDF15.MG), width = 0.2)+
+  labs(title = "GDF15 in Ketogenic Diets", y= "GDF15 concentration (pg/mL)/total protein(Signal)", x = "Time (days)")
+#stats
+MG.data.norm.stats<-mapped.data.MG%>%
+  mutate(norm.GDF15 = Conc./pro.num)
+
+diet.aov<-aov(norm.GDF15 ~ diet, MG.data.norm.stats)
+summary(diet.aov)#p-value = 0.22
+```
