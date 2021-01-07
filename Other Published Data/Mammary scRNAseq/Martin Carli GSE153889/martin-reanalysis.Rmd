@@ -332,6 +332,8 @@ new.cluster.ids <- c(0,1,2,3,4,'T-Cells','Monocytes',7,8,'Monocytes/Dendritic Ce
 names(new.cluster.ids) <- levels(martin.dataset)
 martin.dataset <- RenameIdents(martin.dataset, new.cluster.ids)
 DimPlot(martin.dataset, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+
+prop.table(table(Idents(martin.dataset))) %>% kable(caption="Cell proportions in each cluster")
 ```
 ,
 ## Analysis of clusters
@@ -344,7 +346,7 @@ myoepithelial <- c('Oxtr', 'Acta2', 'Krt4','Krt14') %>% toupper
 alveolar.differentiated <- c('Wap', 'Csn2', 'Glycam1','Lalba') %>% toupper
 alveolar.progenitor <- c('Wap', 'Csn2', 'Glycam1','Lalba','Cd14','Kit') %>% toupper
 basal.cells <- c('Krt4', 'Krt14', 'Pdpn', 'Etv5','Acta2') %>% toupper
-milk.fat.globules <- c('Pas3','Sluc1','Btn1a1','Pas7','Muc1','Plin2') %>% toupper
+milk.fat.globules <- c('Pas3','Sluc1','Btn1a1','Pas7','Muc1','Plin2','Xdh') %>% toupper
 carb.transporters <-c('Slc2a1','Slc35a2','Slc50a1') %>% toupper
 fat.transporters <-c('Fabp3','Cd36','Agpat2','Agpat3') %>% toupper
 t.cells <-c('CD3','CD4','CD8','CD7','CTLA4') %>% toupper
