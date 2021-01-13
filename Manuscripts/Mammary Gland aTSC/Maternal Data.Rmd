@@ -426,8 +426,8 @@ write.csv(maternal.feedingefficiency, file = "MyData.csv");
  p <- ggplot(maternal.feedingefficiency, is.na= NA,
        aes(y= feedingeff,
            x=Week,
-           col=MaternalGenotype, na.rm =T, xmin=0, xmax=7, ymin=-200, ymax=100)) +
-      scale_x_continuous(breaks=seq(0,7,0.5))+
+           col=MaternalGenotype, na.rm =T, xmin=0, xmax=6.5, ymin=-200, ymax=100)) +
+      scale_x_continuous(breaks=seq(0,6.5,0.5))+
     scale_y_continuous(breaks=seq(-200,100,50))+
   geom_point() +
   geom_smooth()  +
@@ -438,7 +438,7 @@ write.csv(maternal.feedingefficiency, file = "MyData.csv");
    theme(text = element_text(size=18))+
     geom_vline(xintercept = 3.97, lty=2)+
   #facet_grid(~Cohort)+
-  labs(x="Week", y="Feeding Efficiency",title="Feeding Efficiency of Dams per Treatment")   
+  labs(x="Week", y="Feeding Efficiency",title="Feeding Efficiency of Dams per Genotype")   
 p
 
 maternal.feedingefficiency %>%

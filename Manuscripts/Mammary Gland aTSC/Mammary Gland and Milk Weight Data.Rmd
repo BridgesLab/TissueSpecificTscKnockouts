@@ -63,6 +63,9 @@ mgaverageweights <- MG.data %>%
 mutate(Average.Weights= mean(Weight, na.rm=T))
 kable(mgaverageweights,caption = "Average Mammary Gland Weights across Genotypes")
 
+#Effect size: RMG= (0.607-0.503)/0.503 *100 = 20.68% less mass in KO
+#Effect size: LMG= (0.618-0.48)/0.48 *100 = 28.75% less mass in KO
+
 
 gland.mouse.weight <- gather(mgaverageweights, value= 'GlandWeight', key=Gland, -ID, -Genotype, -D16)
 

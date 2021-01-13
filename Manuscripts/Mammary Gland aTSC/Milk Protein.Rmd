@@ -90,6 +90,10 @@ t.test(NormalizedValue ~ Genotype, data=Milkprotein %>% filter(Protein=="Albumin
 ```{r milk_protein_percentages_batch2_licorquantification}
 proteincomp2 <- Milkproteinbatch2 %>%  #this is using the raw area values from the LiCOR machine
   group_by(Genotype, Protein) %>%
+  filter(Protein!= "Band1") %>%
+  filter(Protein!= "Band2") %>%
+  filter(Protein!= "Band6") %>%
+  filter(Protein!= "Band8") %>%
 summarize(Average.Protein = mean(Value, na.rm=T),
         SE.Average.Protein = se(Value))
 kable(proteincomp2)
@@ -108,7 +112,7 @@ p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
   geom_errorbar(position=position_dodge(0.5), width=0.2) +
   xlab("Protein") +
   ylab("Protein Quantification") +
-  labs(title="Protein in Milk of KO and WT Dams from Batch 2") +
+  labs(title="Protein in Milk of KO and WT Dams") + #from BATCH 2 only
   expand_limits(y=0) +
   theme_classic() +
      theme(text = element_text(size=13)) 
@@ -154,7 +158,7 @@ aes(x=Genotype, y= Total, fill=Genotype, na.rm =T))
 p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
   xlab("Protein") +
   ylab("Protein Quantification") +
-  labs(title="Sum of Total Protein in Milk of KO and WT Dams from Batch 2") +
+  labs(title="Sum of Total Protein in Milk of KO and WT Dams") + #from Batch 2
   expand_limits(y=0) +
   theme_classic() +
      theme(text = element_text(size=13)) 
@@ -180,6 +184,6 @@ p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
   theme_classic() +
      theme(text = element_text(size=13)) 
 #EFFECT SIZE for average total protein is: (33.4-30.6)/30.6 *100 = 9.15%
-#t.test(Total ~ Genotype, data=totalproteinbatch2 %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on total milk protein"))
+t.test(Value~Genotype, data=Milkproteinbatch2) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on total milk protein")
 ```
 

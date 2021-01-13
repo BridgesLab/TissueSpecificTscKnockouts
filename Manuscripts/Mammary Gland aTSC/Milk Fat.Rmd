@@ -202,7 +202,7 @@ library(ggplot2)
            ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
   labs(x="Genotype",
        y="Average Fat Percentage %",
-       title="Average Milk Fat Percentage per Genotype from Batch 2 Only") +
+       title="Average Milk Fat Percentage per Genotype") + #from Batch 2 Only
   expand_limits(y=0, x=0) +
   theme_classic() 
 
