@@ -348,8 +348,23 @@ library(ggplot2)
   #scale_fill_manual(values=color.scheme) +
      theme(text = element_text(size=13)) 
   
-t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males")  #p=0.119
-t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in females") #p=0.047
+Pup.weightspercagePND7 %>% filter(Sex=="Male", MaternalGenotype=="WT") %>% pull(Average.Weight) %>% shapiro.test(.)$p.value
+
+Pup.weightspercagePND7 %>%
+  group_by(Sex,MaternalGenotype) %>%
+  summarize(Shapiro=shapiro.test(Average.Weight)$p.value) %>%
+  kable(caption="Shapiro tests for PND7 pup weights aggregated by cage")
+#based on shapiro assume normaliity
+library(car)
+leveneTest(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males") 
+#assume equal variance
+
+leveneTest(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in females") 
+#assume equal variance
+
+t.test(Average.Weight ~ MaternalGenotype, var.equal=T, data=Pup.weightspercagePND7 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males")  #p=0.119
+t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Female"),
+       var.equal=T) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in females") #p=0.047
 ```
 
 ```{r PUPweight_graphsPND14}
