@@ -65,6 +65,22 @@ ggplot(time.course.data, aes(time, average.GDF15))+
 ![](figures/kd-time-course-1.png)<!-- -->
 
 ```r
+ggplot(time.course.data %>% filter(!(time %in% c(1,2))),
+       aes(time, average.GDF15))+
+  geom_point()+
+  geom_errorbar(aes(ymin = average.GDF15 - error.GDF15, 
+                    ymax = average.GDF15 + error.GDF15))+
+  geom_line()+
+  labs(title = "", y= "GDF15 concentration (pg/mL)", x = "Time on KD (days)")+
+  expand_limits(x = 0, y = 0)+
+  geom_hline(yintercept=294, lty = 2) +
+  theme_classic() +
+  theme(text=element_text(size=18))
+```
+
+![](figures/kd-time-course-2.png)<!-- -->
+
+```r
 # time course study-Individual plots
 time.course.ID.data<-full.data%>%
   filter(study=="time.course")
@@ -75,4 +91,4 @@ ggplot(time.course.ID.data, aes(time, `Conc.`, col = ID))+
   labs(title = "GDF15 in Ketogenic Diets", y= "GDF15 concentration (pg/mL)", x = "Time (days)")
 ```
 
-![](figures/kd-time-course-2.png)<!-- -->
+![](figures/kd-time-course-3.png)<!-- -->
