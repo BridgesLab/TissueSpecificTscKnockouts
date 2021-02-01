@@ -3,3 +3,4 @@
 
 # Data to Analyse
 * Food Intake
+* Check calculations for Figure 2E

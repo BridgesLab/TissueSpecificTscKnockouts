@@ -73,7 +73,10 @@ time.course.data<-full.data%>%
   filter(study == "time.course")%>%
   group_by(time)%>%
   summarize(average.GDF15 = mean(Conc.),
-            error.GDF15 = se(Conc.))
+            error.GDF15 = se(Conc.),
+            shapiro.GDF15 = shapiro.test(Conc.)$p.value)
+
+time.course.data %>% filter(time=='0') %>% pull(average.GDF15) -> baseline.gdf15
 
 #Plot of time course study- averaged
 ggplot(time.course.data, aes(time, average.GDF15))+
@@ -82,7 +85,7 @@ ggplot(time.course.data, aes(time, average.GDF15))+
   geom_line(col = "dodgerblue")+
   labs(title = "GDF15 in Ketogenic Diets", y= "GDF15 concentration (pg/mL)", x = "Time (days)")+
   expand_limits(x = 0, y = 0)+
-  geom_hline(yintercept=294, linetype = "dotdash")
+  geom_hline(yintercept=baseline.gdf15, linetype = "dotdash")
 
 ggplot(time.course.data %>% filter(!(time %in% c(1,2))),
        aes(time, average.GDF15))+
@@ -92,7 +95,7 @@ ggplot(time.course.data %>% filter(!(time %in% c(1,2))),
   geom_line()+
   labs(title = "", y= "GDF15 concentration (pg/mL)", x = "Time on KD (days)")+
   expand_limits(x = 0, y = 0)+
-  geom_hline(yintercept=294, lty = 2) +
+  geom_hline(yintercept=baseline.gdf15, lty = 2) +
   theme_classic() +
   theme(text=element_text(size=18))
   
@@ -104,4 +107,20 @@ ggplot(time.course.ID.data, aes(time, `Conc.`, col = ID))+
   #geom_errorbar(aes(ymin = average.GDF15 - error.GDF15, ymax = average.GDF15 + error.GDF15), col = "dodgerblue")+
   geom_line(aes(col = ID))+
   labs(title = "GDF15 in Ketogenic Diets", y= "GDF15 concentration (pg/mL)", x = "Time (days)")
+```
+
+## Statistics
+
+```{r time-course-stats}
+gdf15.stats <-
+  full.data%>%
+  filter(study == "time.course") %>%
+  group_by(time) %>%
+  summarize(T.Test=t.test(Conc., mu=baseline.gdf15)$p.value,
+            Wilcox.Test = wilcox.test(Conc., mu=baseline.gdf15)$p.value)
+
+time.course.data %>%
+  full_join(gdf15.stats) %>%
+  mutate(Percent.Change=average.GDF15/baseline.gdf15) %>%
+  kable(caption="Summary statistics for GDF15 time course")
 ```

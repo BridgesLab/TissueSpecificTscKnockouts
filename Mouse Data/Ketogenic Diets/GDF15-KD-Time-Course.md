@@ -50,7 +50,10 @@ time.course.data<-full.data%>%
   filter(study == "time.course")%>%
   group_by(time)%>%
   summarize(average.GDF15 = mean(Conc.),
-            error.GDF15 = se(Conc.))
+            error.GDF15 = se(Conc.),
+            shapiro.GDF15 = shapiro.test(Conc.)$p.value)
+
+time.course.data %>% filter(time=='0') %>% pull(average.GDF15) -> baseline.gdf15
 
 #Plot of time course study- averaged
 ggplot(time.course.data, aes(time, average.GDF15))+
@@ -59,7 +62,7 @@ ggplot(time.course.data, aes(time, average.GDF15))+
   geom_line(col = "dodgerblue")+
   labs(title = "GDF15 in Ketogenic Diets", y= "GDF15 concentration (pg/mL)", x = "Time (days)")+
   expand_limits(x = 0, y = 0)+
-  geom_hline(yintercept=294, linetype = "dotdash")
+  geom_hline(yintercept=baseline.gdf15, linetype = "dotdash")
 ```
 
 ![](figures/kd-time-course-1.png)<!-- -->
@@ -73,7 +76,7 @@ ggplot(time.course.data %>% filter(!(time %in% c(1,2))),
   geom_line()+
   labs(title = "", y= "GDF15 concentration (pg/mL)", x = "Time on KD (days)")+
   expand_limits(x = 0, y = 0)+
-  geom_hline(yintercept=294, lty = 2) +
+  geom_hline(yintercept=baseline.gdf15, lty = 2) +
   theme_classic() +
   theme(text=element_text(size=18))
 ```
@@ -92,3 +95,35 @@ ggplot(time.course.ID.data, aes(time, `Conc.`, col = ID))+
 ```
 
 ![](figures/kd-time-course-3.png)<!-- -->
+
+## Statistics
+
+
+```r
+gdf15.stats <-
+  full.data%>%
+  filter(study == "time.course") %>%
+  group_by(time) %>%
+  summarize(T.Test=t.test(Conc., mu=baseline.gdf15)$p.value,
+            Wilcox.Test = wilcox.test(Conc., mu=baseline.gdf15)$p.value)
+
+time.course.data %>%
+  full_join(gdf15.stats) %>%
+  mutate(Percent.Change=average.GDF15/baseline.gdf15) %>%
+  kable(caption="Summary statistics for GDF15 time course")
+```
+
+
+
+Table: Summary statistics for GDF15 time course
+
+| time| average.GDF15| error.GDF15| shapiro.GDF15| T.Test| Wilcox.Test| Percent.Change|
+|----:|-------------:|-----------:|-------------:|------:|-----------:|--------------:|
+|  0.0|           294|        31.5|         0.554|  1.000|       1.000|           1.00|
+|  0.5|           855|        66.3|         0.715|  0.000|       0.031|           2.91|
+|  1.0|           495|        52.1|         0.417|  0.018|       0.062|           1.68|
+|  2.0|           376|        33.8|         0.465|  0.072|       0.125|           1.28|
+|  4.0|           556|        77.9|         0.455|  0.028|       0.062|           1.89|
+|  7.0|           403|        49.1|         0.803|  0.090|       0.125|           1.37|
+| 14.0|           387|        78.4|         0.006|  0.301|       0.188|           1.32|
+| 21.0|           463|        62.7|         0.231|  0.075|       0.125|           1.57|
