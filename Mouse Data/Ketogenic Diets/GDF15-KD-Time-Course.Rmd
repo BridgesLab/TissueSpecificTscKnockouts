@@ -121,6 +121,6 @@ gdf15.stats <-
 
 time.course.data %>%
   full_join(gdf15.stats) %>%
-  mutate(Percent.Change=average.GDF15/baseline.gdf15) %>%
+  mutate(Fold.Change=average.GDF15/baseline.gdf15) %>%
   kable(caption="Summary statistics for GDF15 time course")
 ```

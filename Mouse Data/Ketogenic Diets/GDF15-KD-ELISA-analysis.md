@@ -47,7 +47,7 @@ exp.data <- read_csv(filename, skip=30,
                                       Conc= col_double()))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets** in a file named **GDF15 ELISA Results.csv**.  This script was most recently updated on **Tue May 26 21:52:32 2020**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets** in a file named **GDF15 ELISA Results.csv**.  This script was most recently updated on **Mon Feb  1 10:38:11 2021**.
 
 # Analysis
 
@@ -151,9 +151,9 @@ t.test(Concentration ~ Diet, filter(kd.data, Sex=="F"), var.equal=T) %>%
 
 Table: Female t-test
 
- estimate1   estimate2   statistic   p.value   parameter   conf.low   conf.high  method              alternative 
-----------  ----------  ----------  --------  ----------  ---------  ----------  ------------------  ------------
-      14.6        31.1       -2.07     0.063          11      -34.1        1.06  Two Sample t-test   two.sided   
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method            |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------|:-----------|
+|    -16.5|      14.6|      31.1|     -2.07|   0.063|        11|    -34.1|      1.06|Two Sample t-test |two.sided   |
 
 ```r
 #for male mice
@@ -201,9 +201,9 @@ t.test(Concentration ~ Diet, filter(kd.data, Sex=="M"), var.equal=T) %>%
 
 Table: Male t-test
 
- estimate1   estimate2   statistic   p.value   parameter   conf.low   conf.high  method              alternative 
-----------  ----------  ----------  --------  ----------  ---------  ----------  ------------------  ------------
-      28.7        46.2       -1.61     0.119          27      -39.8         4.8  Two Sample t-test   two.sided   
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method            |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------|:-----------|
+|    -17.5|      28.7|      46.2|     -1.61|   0.119|        27|    -39.8|       4.8|Two Sample t-test |two.sided   |
 
 ```r
 summary.data.no.cht %>% filter(Diet %in% c('CD','KD')) %>%  kable(caption="Summary statistics for effects of a ketogenic diet")
@@ -213,12 +213,12 @@ summary.data.no.cht %>% filter(Diet %in% c('CD','KD')) %>%  kable(caption="Summa
 
 Table: Summary statistics for effects of a ketogenic diet
 
-Diet   Sex    GDF15   Error    N
------  ----  ------  ------  ---
-CD     M       28.7    4.72   10
-CD     F       14.6    5.92    7
-KD     M       46.2    7.43   19
-KD     F       31.1    5.16    6
+|Diet |Sex | GDF15| Error|  N|
+|:----|:---|-----:|-----:|--:|
+|CD   |M   |  28.7|  4.72| 10|
+|CD   |F   |  14.6|  5.92|  7|
+|KD   |M   |  46.2|  7.43| 19|
+|KD   |F   |  31.1|  5.16|  6|
 
 ```r
 library(broom)
@@ -233,11 +233,11 @@ gdf15.lm%>%
 
 Table: ANOVA for effects of sex and ketogenic diet on GDF15 levels
 
-term           estimate   std.error   statistic   p.value
-------------  ---------  ----------  ----------  --------
-(Intercept)        28.9        6.82        4.24     0.000
-SexF              -14.6        8.27       -1.77     0.085
-DietKD             17.2        7.79        2.21     0.033
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |     28.9|      6.82|      4.24|   0.000|
+|SexF        |    -14.6|      8.27|     -1.77|   0.085|
+|DietKD      |     17.2|      7.79|      2.21|   0.033|
 
 ```r
 lm(Concentration ~ Sex * Diet,
@@ -250,12 +250,12 @@ lm(Concentration ~ Sex * Diet,
 
 Table: ANOVA for interacti g effects of sex and ketogenic diet on GDF15 levels
 
-term           estimate   std.error   statistic   p.value
-------------  ---------  ----------  ----------  --------
-(Intercept)      28.692        7.81       3.675     0.001
-SexF            -14.114       12.17      -1.160     0.253
-DietKD           17.498        9.64       1.814     0.078
-SexF:DietKD      -0.966       16.78      -0.058     0.954
+|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |   28.692|      7.81|     3.675|   0.001|
+|SexF        |  -14.114|     12.17|    -1.160|   0.253|
+|DietKD      |   17.498|      9.64|     1.814|   0.078|
+|SexF:DietKD |   -0.966|     16.78|    -0.058|   0.954|
 
 There was a 59.44% sex adjusted increase in GDF15 levels.
 
@@ -371,9 +371,9 @@ sessionInfo()
 ```
 
 ```
-## R version 4.0.0 (2020-04-24)
+## R version 4.0.2 (2020-06-22)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.4
+## Running under: macOS  10.16
 ## 
 ## Matrix products: default
 ## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
@@ -386,21 +386,20 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.3.0 broom_0.5.6   car_3.0-7     carData_3.0-3 forcats_0.5.0
-## [6] readr_1.3.1   dplyr_0.8.5   tidyr_1.0.3   knitr_1.28   
+## [1] ggplot2_3.3.3 broom_0.7.3   car_3.0-10    carData_3.0-4 forcats_0.5.0
+## [6] readr_1.4.0   dplyr_1.0.2   tidyr_1.1.2   knitr_1.30   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] zip_2.0.4         Rcpp_1.0.4.6      highr_0.8         pillar_1.4.4     
-##  [5] compiler_4.0.0    cellranger_1.1.0  tools_4.0.0       digest_0.6.25    
-##  [9] gtable_0.3.0      lattice_0.20-41   nlme_3.1-147      evaluate_0.14    
-## [13] lifecycle_0.2.0   tibble_3.0.1      pkgconfig_2.0.3   rlang_0.4.6      
-## [17] openxlsx_4.1.5    curl_4.3          yaml_2.2.1        haven_2.2.0      
-## [21] xfun_0.13         rio_0.5.16        withr_2.2.0       stringr_1.4.0    
-## [25] generics_0.0.2    vctrs_0.2.4       hms_0.5.3         grid_4.0.0       
-## [29] tidyselect_1.0.0  glue_1.4.0        data.table_1.12.8 R6_2.4.1         
-## [33] readxl_1.3.1      foreign_0.8-79    rmarkdown_2.1     farver_2.0.3     
-## [37] purrr_0.3.4       magrittr_1.5      scales_1.1.0      backports_1.1.6  
-## [41] ellipsis_0.3.0    htmltools_0.4.0   assertthat_0.2.1  abind_1.4-5      
-## [45] colorspace_1.4-1  labeling_0.3      stringi_1.4.6     munsell_0.5.0    
-## [49] crayon_1.3.4
+##  [1] zip_2.1.1         Rcpp_1.0.5        highr_0.8         pillar_1.4.7     
+##  [5] compiler_4.0.2    cellranger_1.1.0  tools_4.0.2       digest_0.6.27    
+##  [9] gtable_0.3.0      evaluate_0.14     lifecycle_0.2.0   tibble_3.0.4     
+## [13] pkgconfig_2.0.3   rlang_0.4.10      openxlsx_4.2.3    curl_4.3         
+## [17] yaml_2.2.1        haven_2.3.1       xfun_0.19         rio_0.5.16       
+## [21] withr_2.3.0       stringr_1.4.0     generics_0.1.0    vctrs_0.3.6      
+## [25] hms_0.5.3         grid_4.0.2        tidyselect_1.1.0  glue_1.4.2       
+## [29] data.table_1.13.6 R6_2.5.0          readxl_1.3.1      foreign_0.8-81   
+## [33] rmarkdown_2.6     farver_2.0.3      purrr_0.3.4       magrittr_2.0.1   
+## [37] scales_1.1.1      backports_1.2.1   ellipsis_0.3.1    htmltools_0.5.0  
+## [41] abind_1.4-5       colorspace_2.0-0  labeling_0.4.2    stringi_1.5.3    
+## [45] munsell_0.5.0     crayon_1.3.4
 ```

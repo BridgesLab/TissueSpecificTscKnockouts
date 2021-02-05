@@ -522,7 +522,7 @@ summary {
 <a class="sourceLine" id="cb5-7" data-line-number="7"></a>
 <a class="sourceLine" id="cb5-8" data-line-number="8">time.course.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-9" data-line-number="9"><span class="st">  </span><span class="kw">full_join</span>(gdf15.stats) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Percent.Change=</span>average.GDF15<span class="op">/</span>baseline.gdf15) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Fold.Change=</span>average.GDF15<span class="op">/</span>baseline.gdf15) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-11" data-line-number="11"><span class="st">  </span><span class="kw">kable</span>(<span class="dt">caption=</span><span class="st">&quot;Summary statistics for GDF15 time course&quot;</span>)</a></code></pre></div>
 <table>
 <caption>Summary statistics for GDF15 time course</caption>
@@ -534,7 +534,7 @@ summary {
 <th align="right">shapiro.GDF15</th>
 <th align="right">T.Test</th>
 <th align="right">Wilcox.Test</th>
-<th align="right">Percent.Change</th>
+<th align="right">Fold.Change</th>
 </tr>
 </thead>
 <tbody>
