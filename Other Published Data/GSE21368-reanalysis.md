@@ -368,7 +368,7 @@ combined.genes %>%
 ![](figures/kd-mtsc-gene-overlap-1.png)<!-- -->
 
 ```r
-interesting.genes <- c('Ppargc1a',"Slc16a1",'Slc16a2','Bdh1')
+interesting.genes <- c('Ppargc1a',"Slc16a1",'Slc16a2','Bdh1','Oxct1','Creb1','Atf4','Ddit3','Srsf7','Rbm15') #RBM15 and SRSF7 are predicted TF of SLC16A1 by MAGIC
 combined.genes %>%
   filter(external_gene_name %in% interesting.genes) %>%
   kable(caption="Selected genes")
@@ -380,10 +380,16 @@ Table: Selected genes
 
 |external_gene_name | log2FC_TSC| pval_TSC| padj_TSC| log2FC_KD| pval_KD| padj_KD|
 |:------------------|----------:|--------:|--------:|---------:|-------:|-------:|
-|Ppargc1a           |      -0.59|    0.003|    0.016|     -3.29|   0.000|   0.000|
-|Slc16a1            |       1.76|    0.000|    0.000|     -1.04|   0.000|   0.000|
-|Slc16a2            |       0.43|    0.039|    0.113|      1.38|   0.000|   0.002|
-|Bdh1               |       1.10|    0.002|    0.012|     -1.33|   0.002|   0.010|
+|Oxct1              |      0.604|    0.000|    0.000|     1.230|   0.000|   0.000|
+|Srsf7              |     -0.344|    0.038|    0.111|    -1.003|   0.000|   0.001|
+|Ddit3              |      1.142|    0.000|    0.000|    -1.966|   0.002|   0.009|
+|Creb1              |     -0.430|    0.002|    0.010|    -0.782|   0.006|   0.021|
+|Ppargc1a           |     -0.590|    0.003|    0.016|    -3.295|   0.000|   0.000|
+|Slc16a1            |      1.764|    0.000|    0.000|    -1.038|   0.000|   0.000|
+|Slc16a2            |      0.430|    0.039|    0.113|     1.380|   0.000|   0.002|
+|Atf4               |      0.294|    0.077|    0.185|     1.864|   0.005|   0.019|
+|Bdh1               |      1.103|    0.002|    0.012|    -1.331|   0.002|   0.010|
+|Rbm15              |     -0.045|    0.835|    0.911|    -0.427|   0.057|   0.109|
 
 ```r
 combined.genes %>%
@@ -449,6 +455,56 @@ combined.genes %>%
   write.csv('Genes Significant in both KD hearts and TSC.csv')
 ```
 
+# Pathway Analysis
+
+
+```r
+library(clusterProfiler)
+library(org.Mm.eg.db)
+go.enrich.up <- enrichGO(gene=intersect(sig.hcr.genes.up, sig.mtsc.genes.up), 
+             ont ="BP", 
+             keyType = "SYMBOL", 
+             OrgDb = org.Mm.eg.db)
+library(enrichplot)
+upsetplot(go.enrich.up)
+```
+
+![](figures/kd-mtsc-pathway-analysis-overlap-1.png)<!-- -->
+
+```r
+dotplot(go.enrich.up)
+```
+
+![](figures/kd-mtsc-pathway-analysis-overlap-2.png)<!-- -->
+
+```r
+emapplot(go.enrich.up)
+```
+
+![](figures/kd-mtsc-pathway-analysis-overlap-3.png)<!-- -->
+
+```r
+go.enrich.down <- enrichGO(gene=intersect(sig.hcr.genes.down, sig.mtsc.genes.down), 
+             ont ="BP", 
+             keyType = "SYMBOL", 
+             OrgDb = org.Mm.eg.db)
+upsetplot(go.enrich.down)
+```
+
+![](figures/kd-mtsc-pathway-analysis-overlap-4.png)<!-- -->
+
+```r
+dotplot(go.enrich.down)
+```
+
+![](figures/kd-mtsc-pathway-analysis-overlap-5.png)<!-- -->
+
+```r
+emapplot(go.enrich.down)
+```
+
+![](figures/kd-mtsc-pathway-analysis-overlap-6.png)<!-- -->
+
 
 ```r
 sessionInfo()
@@ -467,29 +523,52 @@ sessionInfo()
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
+## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] venneuler_1.1-0     rJava_0.9-13        ggplot2_3.3.3      
-##  [4] maptools_1.0-2      sp_1.4-4            umap_0.2.7.0       
-##  [7] limma_3.44.3        GEOquery_2.56.0     Biobase_2.48.0     
-## [10] BiocGenerics_0.34.0 broom_0.7.3         dplyr_1.0.2        
-## [13] tidyr_1.1.2         knitr_1.30         
+##  [1] enrichplot_1.8.1       org.Mm.eg.db_3.11.4    AnnotationDbi_1.50.3  
+##  [4] IRanges_2.22.2         S4Vectors_0.26.1       clusterProfiler_3.16.1
+##  [7] venneuler_1.1-0        rJava_0.9-13           ggplot2_3.3.3         
+## [10] maptools_1.1-1         sp_1.4-5               umap_0.2.7.0          
+## [13] limma_3.44.3           GEOquery_2.56.0        Biobase_2.48.0        
+## [16] BiocGenerics_0.34.0    broom_0.7.5            dplyr_1.0.5           
+## [19] tidyr_1.1.3            knitr_1.31            
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] reticulate_1.18  tidyselect_1.1.0 xfun_0.19        purrr_0.3.4     
-##  [5] splines_4.0.2    lattice_0.20-41  colorspace_2.0-0 vctrs_0.3.6     
-##  [9] generics_0.1.0   htmltools_0.5.0  mgcv_1.8-33      yaml_2.2.1      
-## [13] rlang_0.4.10     pillar_1.4.7     withr_2.3.0      foreign_0.8-81  
-## [17] glue_1.4.2       lifecycle_0.2.0  stringr_1.4.0    munsell_0.5.0   
-## [21] gtable_0.3.0     evaluate_0.14    labeling_0.4.2   curl_4.3        
-## [25] fansi_0.4.1      highr_0.8        Rcpp_1.0.5       readr_1.4.0     
-## [29] openssl_1.4.3    backports_1.2.1  scales_1.1.1     jsonlite_1.7.2  
-## [33] farver_2.0.3     RSpectra_0.16-0  hms_0.5.3        askpass_1.1     
-## [37] digest_0.6.27    stringi_1.5.3    grid_4.0.2       cli_2.2.0       
-## [41] tools_4.0.2      magrittr_2.0.1   tibble_3.0.4     crayon_1.3.4    
-## [45] pkgconfig_2.0.3  ellipsis_0.3.1   Matrix_1.3-0     xml2_1.3.2      
-## [49] assertthat_0.2.1 rmarkdown_2.6    rstudioapi_0.13  R6_2.5.0        
-## [53] nlme_3.1-151     compiler_4.0.2
+##   [1] fgsea_1.14.0        colorspace_2.0-0    ggridges_0.5.3     
+##   [4] ellipsis_0.3.1      qvalue_2.20.0       rstudioapi_0.13    
+##   [7] farver_2.1.0        urltools_1.7.3      graphlayouts_0.7.1 
+##  [10] ggrepel_0.9.1       bit64_4.0.5         scatterpie_0.1.5   
+##  [13] RSpectra_0.16-0     fansi_0.4.2         xml2_1.3.2         
+##  [16] splines_4.0.2       cachem_1.0.4        GOSemSim_2.14.2    
+##  [19] polyclip_1.10-0     jsonlite_1.7.2      GO.db_3.11.4       
+##  [22] ggforce_0.3.3       BiocManager_1.30.10 readr_1.4.0        
+##  [25] compiler_4.0.2      httr_1.4.2          rvcheck_0.1.8      
+##  [28] backports_1.2.1     assertthat_0.2.1    Matrix_1.3-2       
+##  [31] fastmap_1.1.0       cli_2.3.1           tweenr_1.0.1       
+##  [34] htmltools_0.5.1.1   prettyunits_1.1.1   tools_4.0.2        
+##  [37] igraph_1.2.6        gtable_0.3.0        glue_1.4.2         
+##  [40] reshape2_1.4.4      DO.db_2.9           fastmatch_1.1-0    
+##  [43] Rcpp_1.0.6          jquerylib_0.1.3     vctrs_0.3.6        
+##  [46] nlme_3.1-152        ggraph_2.0.5        xfun_0.22          
+##  [49] stringr_1.4.0       lifecycle_1.0.0     DOSE_3.14.0        
+##  [52] europepmc_0.4       MASS_7.3-53.1       scales_1.1.1       
+##  [55] tidygraph_1.2.0     hms_1.0.0           ggupset_0.3.0      
+##  [58] RColorBrewer_1.1-2  yaml_2.2.1          curl_4.3           
+##  [61] memoise_2.0.0       reticulate_1.18     gridExtra_2.3      
+##  [64] downloader_0.4      sass_0.3.1          triebeard_0.3.0    
+##  [67] stringi_1.5.3       RSQLite_2.2.4       highr_0.8          
+##  [70] BiocParallel_1.22.0 rlang_0.4.10        pkgconfig_2.0.3    
+##  [73] evaluate_0.14       lattice_0.20-41     purrr_0.3.4        
+##  [76] labeling_0.4.2      cowplot_1.1.1       bit_4.0.4          
+##  [79] tidyselect_1.1.0    plyr_1.8.6          magrittr_2.0.1     
+##  [82] R6_2.5.0            generics_0.1.0      DBI_1.1.1          
+##  [85] pillar_1.5.1        foreign_0.8-81      withr_2.4.1        
+##  [88] mgcv_1.8-34         tibble_3.1.0        crayon_1.4.1       
+##  [91] utf8_1.2.1          rmarkdown_2.7       viridis_0.5.1      
+##  [94] progress_1.2.2      grid_4.0.2          data.table_1.14.0  
+##  [97] blob_1.2.1          digest_0.6.27       gridGraphics_0.5-1 
+## [100] openssl_1.4.3       munsell_0.5.0       ggplotify_0.0.5    
+## [103] viridisLite_0.3.0   bslib_0.2.4         askpass_1.1
 ```
