@@ -202,7 +202,7 @@ fisher.table.up <-
        dimnames = list(KD.Sig = c("Sig", "Total"),
                        mTSC.Sig = c("KD", "mTSC")))
 
-kable(fisher.table, caption="Contingency table for comparason of KD and mTSC, up-regulated genes")
+kable(fisher.table.up, caption="Contingency table for comparason of KD and mTSC, up-regulated genes")
 
 fisher.table.down <-
   matrix(c(length(unique(sig.hcr.genes.down)),
@@ -216,9 +216,9 @@ fisher.table.down <-
 kable(fisher.table.down, caption="Contingency table for comparason of KD and mTSC, down-regulated genes")
 ```
 
-Wentz et al identified `r length(unique(sig.hcr.genes))` significantly differentially expressed genes in their analysis out of a total of `r length(unique(fit2$genes$Gene.symbol))` genes assessed.  Of these differentially expressed genes. `r length(sig.overlap)` genes overlapped with our `r dim(sig.mtsc.data)[1]` significantly different genes from *Tsc1* knockout mice quadriceps.  This is a significant level of overlap (p=`r fisher.test(fisher.table)$p.value`).
+Wentz et al identified `r length(unique(sig.hcr.genes))` significantly differentially expressed genes in their analysis out of a total of `r length(unique(fit2$genes$Gene.symbol))` genes assessed.  Of these differentially expressed genes. `r length(sig.overlap)` genes overlapped with our `r dim(sig.mtsc.data)[1]` significantly different genes from *Tsc1* knockout mice quadriceps.  This is a significant level of overlap (`r fisher.test(fisher.table)$estimate` fold enrichment; p=`r fisher.test(fisher.table)$p.value`).
 
-Focusing specifically on directionality, this is a significant level of overlap for up (p=`r fisher.test(fisher.table.up)$p.value`) and dowregulated genes (p=`r fisher.test(fisher.table.down)$p.value`)
+Focusing specifically on directionality, this is a significant level of overlap for up (`r fisher.test(fisher.table.up)$estimate` times more likely; p=`r fisher.test(fisher.table.up)$p.value`) and dowregulated genes (`r fisher.test(fisher.table.down)$estimate` times more likely; p=`r fisher.test(fisher.table.down)$p.value`)
 
 ```{r kd-mtsc-gene-overlap}
 combined.genes <-

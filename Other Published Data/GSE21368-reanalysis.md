@@ -293,7 +293,7 @@ fisher.table.up <-
        dimnames = list(KD.Sig = c("Sig", "Total"),
                        mTSC.Sig = c("KD", "mTSC")))
 
-kable(fisher.table, caption="Contingency table for comparason of KD and mTSC, up-regulated genes")
+kable(fisher.table.up, caption="Contingency table for comparason of KD and mTSC, up-regulated genes")
 ```
 
 
@@ -302,7 +302,7 @@ Table: Contingency table for comparason of KD and mTSC, up-regulated genes
 
 |      |    KD| mTSC|
 |:-----|-----:|----:|
-|Sig   | 12290| 2689|
+|Sig   |  9382|  999|
 |Total | 21723| 4403|
 
 ```r
@@ -327,9 +327,9 @@ Table: Contingency table for comparason of KD and mTSC, down-regulated genes
 |Sig   |  2908|  426|
 |Total | 21723| 4403|
 
-Wentz et al identified 12290 significantly differentially expressed genes in their analysis out of a total of 21723 genes assessed.  Of these differentially expressed genes. 2689 genes overlapped with our 4403 significantly different genes from *Tsc1* knockout mice quadriceps.  This is a significant level of overlap (p=0.005).
+Wentz et al identified 12290 significantly differentially expressed genes in their analysis out of a total of 21723 genes assessed.  Of these differentially expressed genes. 2689 genes overlapped with our 4403 significantly different genes from *Tsc1* knockout mice quadriceps.  This is a significant level of overlap (0.926 fold enrichment; p=0.005).
 
-Focusing specifically on directionality, this is a significant level of overlap for up (p=8.184&times; 10^-74^) and dowregulated genes (p=8.123&times; 10^-10^)
+Focusing specifically on directionality, this is a significant level of overlap for up (1.903 times more likely; p=8.184&times; 10^-74^) and dowregulated genes (1.384 times more likely; p=8.123&times; 10^-10^)
 
 
 ```r
