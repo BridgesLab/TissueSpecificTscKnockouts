@@ -469,6 +469,70 @@ lm(AUC ~ Diet + Sex + Injection,
   kable(caption="Linear model for effects on ITT area under curve.")
 ```
 
+# Rate of Glucose Drop
+
+```{r glucose-drop}
+glucose.cutoff <- 30
+
+rate.data <-
+  data.long %>%
+  filter(Time<=glucose.cutoff)
+
+animal.rate.data <-
+  rate.data %>%
+  group_by(ID, Injection, Diet, Sex) %>%
+  do(rate.fit = tidy(lm(Glucose~Time, data=.))) %>%
+  unnest(rate.fit) %>%
+  filter(term=='Time')
+
+rate.data.summary <- 
+  animal.rate.data %>%
+  group_by(Injection, Diet, Sex) %>%
+  summarize(Rate.mean = mean(estimate,na.rm=T),
+            Rate.se = se(estimate))
+
+ggplot(rate.data.summary,
+       aes(y=Rate.mean,
+             x=Diet,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection,
+                                                        ymin=Rate.mean-Rate.se,
+                                                        ymax=Rate.mean+Rate.se), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Glucose Change (mg/dl/min)")
+
+rate.data.summary %>%
+      mutate(Sex = fct_recode(as.factor(Sex),
+                                "Female"="F",
+                                "Male"="M")) %>%
+      mutate(Diet = fct_recode(as.factor(Diet),
+                                "Ketogenic Diet"="Keto",
+                                "Control Diet"="Control")) %>%
+      mutate(Injection = fct_recode(as.factor(Injection),
+                                "AAV-Tbg-GFP"="GFP",
+                                "AAV-Tbg-Cre"="Cre")) %>%
+  ggplot(aes(y=Rate.mean,
+             x=Diet,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),
+                aes(group=Injection,
+                    ymin=Rate.mean-Rate.se,
+                    ymax=Rate.mean+Rate.se), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Glucose Change (mg/dl/min)") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.15,0.1),
+        legend.background = element_rect(fill = "transparent"),
+        legend.title=element_blank())
+```
+
+
 # Interpretation
 
 A brief summary of what the interpretation of these results were

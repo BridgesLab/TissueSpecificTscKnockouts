@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 11:01:31 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 11:16:10 2021**.
 
 # Number of Mice
 
@@ -700,6 +700,77 @@ Table: Linear model for effects on ITT area under curve.
 |DietKeto     |    520.0|      62.9|      8.27|   0.000|
 |SexM         |    -24.9|      62.3|     -0.40|   0.691|
 |InjectionCre |     67.3|      62.1|      1.08|   0.282|
+
+# Rate of Glucose Drop
+
+
+```r
+glucose.cutoff <- 30
+
+rate.data <-
+  data.long %>%
+  filter(Time<=glucose.cutoff)
+
+animal.rate.data <-
+  rate.data %>%
+  group_by(ID, Injection, Diet, Sex) %>%
+  do(rate.fit = tidy(lm(Glucose~Time, data=.))) %>%
+  unnest(rate.fit) %>%
+  filter(term=='Time')
+
+rate.data.summary <- 
+  animal.rate.data %>%
+  group_by(Injection, Diet, Sex) %>%
+  summarize(Rate.mean = mean(estimate,na.rm=T),
+            Rate.se = se(estimate))
+
+ggplot(rate.data.summary,
+       aes(y=Rate.mean,
+             x=Diet,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection,
+                                                        ymin=Rate.mean-Rate.se,
+                                                        ymax=Rate.mean+Rate.se), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Glucose Change (mg/dl/min)")
+```
+
+![](figures/glucose-drop-1.png)<!-- -->
+
+```r
+rate.data.summary %>%
+      mutate(Sex = fct_recode(as.factor(Sex),
+                                "Female"="F",
+                                "Male"="M")) %>%
+      mutate(Diet = fct_recode(as.factor(Diet),
+                                "Ketogenic Diet"="Keto",
+                                "Control Diet"="Control")) %>%
+      mutate(Injection = fct_recode(as.factor(Injection),
+                                "AAV-Tbg-GFP"="GFP",
+                                "AAV-Tbg-Cre"="Cre")) %>%
+  ggplot(aes(y=Rate.mean,
+             x=Diet,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),
+                aes(group=Injection,
+                    ymin=Rate.mean-Rate.se,
+                    ymax=Rate.mean+Rate.se), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Glucose Change (mg/dl/min)") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.15,0.1),
+        legend.background = element_rect(fill = "transparent"),
+        legend.title=element_blank())
+```
+
+![](figures/glucose-drop-2.png)<!-- -->
+
 
 # Interpretation
 
