@@ -54,7 +54,7 @@ Injected 0.75 mU/g of lean body mass to animals fasted for 6h after 2 weeks of K
 ```{r data-input}
 library(readxl) #loads the readr package
 
-data.filename <- 'ITT 19-06-19.xlsx' #make this a separate line, you can use any variable you want
+data.filename <- 'ITT Data.xlsx' #make this a separate line, you can use any variable you want
 not.ko <- scan('../Non-Knockout Mice.txt')
 exp.data <- read_excel(data.filename) %>% filter(!(Mouse %in% not.ko)) #removed mice that are not ko
 
