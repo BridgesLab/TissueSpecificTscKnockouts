@@ -260,6 +260,32 @@ data.long.norm %>%
         legend.title=element_blank())
 ```
 
+### Analysis at the 60 Minute Time Point
+
+```{r glucose-60min}
+data.long.norm %>%
+  filter(Time==60) %>%
+  group_by(Sex,Diet,Injection) %>%
+  summarize(Glucose.1h = mean(Glucose, na.rm=T),
+            Glucose.1h.SE = se(Glucose),
+            n = length(Glucose)) %>%
+  mutate(Delta.GFP = Glucose.1h/Glucose.1h[Injection=="GFP"]) %>%
+  kable(caption="Summary of glucose levels at the 60 minute time point")
+
+data.long.norm %>%
+  filter(Time==60) %>%
+  filter(Sex=="F") %>%
+  lm(Glucose~Diet*Injection, data=.) %>%
+  summary %>% tidy %>% kable(caption="Effect modification by knockout on diet in female mice.")
+
+data.long.norm %>%
+  filter(Time==60) %>%
+  filter(Sex=="M") %>%
+  lm(Glucose~Diet*Injection, data=.) %>%
+  summary %>% tidy %>% kable(caption="Effect modification by knockout on diet in male mice.")
+```
+
+
 
 ```{r itt-norm-line-gfp, fig.cap="Lineplot of ITT from GFP injected mice only, normalized to fasting glucose"}
 data.long.norm %>%

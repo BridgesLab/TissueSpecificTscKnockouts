@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 10:08:16 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 10:27:50 2021**.
 
 # Number of Mice
 
@@ -356,6 +356,75 @@ data.long.norm %>%
 ```
 
 ![Dotplot of ITT, normalized to fasting glucose](figures/itt-norm-line-all-2.png)
+
+### Analysis at the 60 Minute Time Point
+
+
+```r
+data.long.norm %>%
+  filter(Time==60) %>%
+  group_by(Sex,Diet,Injection) %>%
+  summarize(Glucose.1h = mean(Glucose, na.rm=T),
+            Glucose.1h.SE = se(Glucose),
+            n = length(Glucose)) %>%
+  mutate(Delta.GFP = Glucose.1h/Glucose.1h[Injection=="GFP"]) %>%
+  kable(caption="Summary of glucose levels at the 60 minute time point")
+```
+
+
+
+Table: Summary of glucose levels at the 60 minute time point
+
+|Sex |Diet    |Injection | Glucose.1h| Glucose.1h.SE|  n| Delta.GFP|
+|:---|:-------|:---------|----------:|-------------:|--:|---------:|
+|F   |Control |GFP       |      109.5|         10.04|  8|     1.000|
+|F   |Control |Cre       |       76.0|         14.58|  7|     0.694|
+|F   |Keto    |GFP       |      120.3|          7.15|  9|     1.000|
+|F   |Keto    |Cre       |      164.0|          8.43|  9|     1.363|
+|M   |Control |GFP       |       73.8|         12.07|  9|     1.000|
+|M   |Control |Cre       |       97.0|         14.20|  7|     1.315|
+|M   |Keto    |GFP       |      127.9|          8.92| 12|     1.000|
+|M   |Keto    |Cre       |      138.8|         12.46| 11|     1.085|
+
+```r
+data.long.norm %>%
+  filter(Time==60) %>%
+  filter(Sex=="F") %>%
+  lm(Glucose~Diet*Injection, data=.) %>%
+  summary %>% tidy %>% kable(caption="Effect modification by knockout on diet in female mice.")
+```
+
+
+
+Table: Effect modification by knockout on diet in female mice.
+
+|term                  | estimate| std.error| statistic| p.value|
+|:---------------------|--------:|---------:|---------:|-------:|
+|(Intercept)           |    109.5|      10.0|    10.909|   0.000|
+|DietKeto              |     10.8|      13.8|     0.785|   0.439|
+|InjectionCre          |    -33.5|      14.7|    -2.280|   0.030|
+|DietKeto:InjectionCre |     77.2|      19.9|     3.882|   0.001|
+
+```r
+data.long.norm %>%
+  filter(Time==60) %>%
+  filter(Sex=="M") %>%
+  lm(Glucose~Diet*Injection, data=.) %>%
+  summary %>% tidy %>% kable(caption="Effect modification by knockout on diet in male mice.")
+```
+
+
+
+Table: Effect modification by knockout on diet in male mice.
+
+|term                  | estimate| std.error| statistic| p.value|
+|:---------------------|--------:|---------:|---------:|-------:|
+|(Intercept)           |     73.8|      12.9|     5.719|   0.000|
+|DietKeto              |     54.2|      16.6|     3.254|   0.003|
+|InjectionCre          |     23.2|      18.9|     1.232|   0.227|
+|DietKeto:InjectionCre |    -12.3|      24.3|    -0.509|   0.614|
+
+
 
 
 ```r
