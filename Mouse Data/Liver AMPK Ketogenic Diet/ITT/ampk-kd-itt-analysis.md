@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 11:16:10 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 11:59:15 2021**.
 
 # Number of Mice
 
@@ -771,10 +771,26 @@ rate.data.summary %>%
 
 ![](figures/glucose-drop-2.png)<!-- -->
 
+## Rate of Drop Statistics
 
-# Interpretation
 
-A brief summary of what the interpretation of these results were
+```r
+rate.data.summary %>% 
+  group_by(Sex) %>%
+  filter(Injection=='GFP') %>%
+  mutate(Rate.Change=Rate.mean/mean(Rate.mean[Diet=="Control"], na.rm=T)*100)
+```
+
+```
+## # A tibble: 4 x 6
+## # Groups:   Sex [2]
+##   Injection Diet    Sex   Rate.mean Rate.se Rate.Change
+##   <fct>     <chr>   <chr>     <dbl>   <dbl>       <dbl>
+## 1 GFP       Control F         -1.07   0.268       100  
+## 2 GFP       Control M         -2.30   0.269       100  
+## 3 GFP       Keto    F         -2.15   0.362       201. 
+## 4 GFP       Keto    M         -2.19   0.295        95.4
+```
 
 # Session Information
 
@@ -819,8 +835,8 @@ sessionInfo()
 ## [40] grid_4.0.2          cli_2.3.1           tools_4.0.2        
 ## [43] magrittr_2.0.1      sass_0.3.1          tibble_3.1.0       
 ## [46] crayon_1.4.1        pkgconfig_2.0.3     ellipsis_0.3.1     
-## [49] MASS_7.3-53.1       assertthat_0.2.1    minqa_1.2.4        
-## [52] rmarkdown_2.7       R6_2.5.0            boot_1.3-27        
-## [55] nlme_3.1-152        compiler_4.0.2
+## [49] MASS_7.3-53.1       rstudioapi_0.13     assertthat_0.2.1   
+## [52] minqa_1.2.4         rmarkdown_2.7       R6_2.5.0           
+## [55] boot_1.3-27         nlme_3.1-152        compiler_4.0.2
 ```
 

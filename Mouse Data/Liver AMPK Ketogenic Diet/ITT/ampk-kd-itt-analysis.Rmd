@@ -532,10 +532,14 @@ rate.data.summary %>%
         legend.title=element_blank())
 ```
 
+## Rate of Drop Statistics
 
-# Interpretation
-
-A brief summary of what the interpretation of these results were
+```{r drop-statistics}
+rate.data.summary %>% 
+  group_by(Sex) %>%
+  filter(Injection=='GFP') %>%
+  mutate(Rate.Change=Rate.mean/mean(Rate.mean[Diet=="Control"], na.rm=T)*100)
+```
 
 # Session Information
 
