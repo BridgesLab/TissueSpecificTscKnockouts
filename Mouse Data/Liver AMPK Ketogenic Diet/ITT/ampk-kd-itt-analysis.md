@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 10:02:43 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 10:08:16 2021**.
 
 # Number of Mice
 
@@ -318,6 +318,44 @@ data.long.norm %>%
 ```
 
 ![Dotplot of ITT, normalized to fasting glucose](figures/itt-norm-line-all-1.png)
+
+```r
+library(forcats)
+
+data.long.norm %>%
+      mutate(Sex = fct_recode(Sex,
+                                "Female"="F",
+                                "Male"="M")) %>%
+      mutate(Diet = fct_recode(Diet,
+                                "Ketogenic Diet"="Keto",
+                                "Control Diet"="Control")) %>%
+      mutate(Injection = fct_recode(Injection,
+                                "AAV-Tbg-GFP"="GFP",
+                                "AAV-Tbg-Cre"="Cre")) %>%
+  group_by(Sex,Diet,Injection,Time) %>%
+  summarize(Mean = mean(Glucose.norm,na.rm=T),
+            Error = se(Glucose.norm)) %>%
+  ggplot(aes(y=Mean,
+             x=Time,
+             ymin=Mean-Error,
+             ymax=Mean+Error,
+             col=Injection)) +
+  geom_line() +
+  geom_errorbar() +
+  expand_limits(y=0) +
+  geom_hline(yintercept=100, lty=2)+
+  facet_grid(Diet~Sex) +
+  labs(y="Blood Glucose (% of Basal)",
+       x="Insulin (min)") +
+  theme_classic() +
+  scale_color_grey() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.15,0.90),
+        legend.background = element_rect(fill = "transparent"),
+        legend.title=element_blank())
+```
+
+![Dotplot of ITT, normalized to fasting glucose](figures/itt-norm-line-all-2.png)
 
 
 ```r
