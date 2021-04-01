@@ -1,0 +1,282 @@
+---
+title: "Body Composition of AMPK Knockout Mice on KD"
+author: "Katherine Kistler, Cody Cousineau and Dave Bridges"
+date: "June 11, 2019"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    toc: yes
+    fig_caption: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    toc: yes
+    fig_caption: yes
+---
+
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+         length = length, ...)
+
+
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(readr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This script can be found in `r getwd()` and was most recently run on `r date()`.
+
+# Experimental Details
+
+The notes about the design of this cohort can be found at
+
+# Data Entry
+
+```{r data-entry}
+library (readr)
+mri.data.file <- 'AMPK KD MRI Data.csv'
+not.ko <- scan('../Non-Knockout Mice.txt')
+exp.data <- read_csv(mri.data.file) %>% 
+    filter(!(MouseID %in% not.ko))  #removed mice that are not KO
+```
+
+
+This script pulled in a total of `r dim(exp.data)[1]` observations pulled from `r mri.data.file`.  This includes the following number of animals in each treatment group.
+
+Modified the genotypes based on the western blot data, this data filters out mice that we are not confident of their knockout status.
+
+
+# Enrolled Animals
+
+This is for animals where we have any body composition data.  This may include animals that did not make it to the end of the study.
+
+```{r enrollees}
+exp.data %>%
+  group_by(Sex,Diet, Injection) %>%
+  distinct(animal.id, .keep_all = T) %>%
+  count %>%
+  kable(caption="Animals in each group of this cohort")
+
+exp.data %>%
+  group_by(Sex,Diet, Injection) %>%
+  distinct(animal.id, .keep_all = T) %>%
+  arrange(Sex,Diet,Injection) %>%
+  select(MouseID,Sex,Diet,Injection) %>%
+  kable(caption="Animals in each group of this cohort")
+```
+
+
+# Body Weight
+
+```{r body-weight-scatterplot, fig.cap="Scatter Plot of Body Weights"}
+library(ggplot2)
+
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  ggplot(aes(y=Mass,x=diet.time,col=Diet,lty=Injection)) +
+  geom_point() +
+    facet_grid(.~Sex) +
+  stat_smooth() +
+  labs(title="Body Weight",
+       x="Time on Diet (Weeks)",
+       y="Body Weight (g)")
+```
+
+```{r body-weight-individual, fig.cap="Line Plot of Individual Body Weights"}
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  ggplot(aes(y=Mass,x=diet.time,col=Diet,group=animal.id,lty=Injection)) +
+  geom_line() +
+  geom_point() +
+  facet_grid(.~Sex) +
+  labs(title="Body Weight",
+       subtitle="Individual Trajectories",
+       x="Time on Diet (Weeks)",
+       y="Body Weight (g)") 
+```
+
+```{r body-weight-lineplot, fig.cap="Line Plot of Body Weights"}
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  filter(Sex=='M') %>%
+  group_by(Diet,Sex,Injection,diet.time) %>%
+  summarize(Average = mean(Mass),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet,lty=Injection)) +
+  theme_classic() +
+  theme(legend.position='none') +
+  theme(text=element_text(size=18)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Body Weight",
+       x="Time on Diet (Weeks)",
+       y="Body Weight (g)")
+```
+
+```{r body-weight-lineplot-change, fig.cap="Line Plot of Change in Body Weights"}
+exp.data %>%
+  filter(assay=='Body Weight') %>%
+  filter(Sex=='M') %>%
+  group_by(Diet,Sex,Injection,diet.time) %>%
+  summarize(Average = mean(Mass.Change, na.rm=T),
+            SE = se(Mass.Change)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet,lty=Injection)) +
+   theme_classic() +
+  theme(text=element_text(size=18)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Body Weight",
+       x="Time on Diet (Weeks)",
+       y="Change in Body Weight (g)")
+```
+
+# Lean Mass
+
+```{r lean-mass-scatterplot, fig.cap="Scatter Plot of Lean Mass"}
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  ggplot(aes(y=Mass,x=diet.time,col=Diet,lty=Injection)) +
+  geom_point() +
+  facet_grid(.~Sex) +
+  stat_smooth() +
+  labs(title="Lean Mass",
+       x="Time on Diet (Weeks)",
+       y="Lean Mass (g)")
+```
+
+```{r lean-mass-lineplot, fig.cap="Line Plot of Lean Mass"}
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  filter(Sex=='M') %>%
+  group_by(Diet,Sex,Injection,diet.time) %>%
+  summarize(Average = mean(Mass, na.rm=T),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet,lty=Injection)) +
+  theme_classic() +
+  theme(legend.position='none') +
+  theme(text=element_text(size=18)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Lean Mass",
+       x="Time on Diet (Weeks)",
+       y="Lean Mass (g)") 
+```
+
+```{r lean-mass-lineplot-change, fig.cap="Line Plot of Change in Lean Mass"}
+exp.data %>%
+  filter(assay=='Lean Mass') %>%
+  group_by(Diet,Sex,Injection,diet.time) %>%
+  summarize(Average = mean(Mass.Change, na.rm=T),
+            SE = se(Mass.Change)) %>%
+   filter(Sex=='M') %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet,lty=Injection)) +
+   theme_classic() +
+  theme(text=element_text(size=18)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Lean Mass",
+       x="Time on Diet (Weeks)",
+       y="Change in Lean Mass (g)") 
+```
+
+# Fat Mass
+
+```{r fat-mass-scatterplot, fig.cap="Scatter Plot of Fat Mass"}
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  ggplot(aes(y=Mass,x=diet.time,col=Diet,lty=Injection)) +
+  geom_point() +
+  facet_grid(.~Sex) +
+  stat_smooth() +
+  labs(title="Fat Mass",
+       x="Time on Diet (Weeks)",
+       y="Fat Mass (g)")
+
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  ggplot(aes(y=Mass,x=diet.time,col=Diet,lty=Injection,group=animal.id)) +
+  geom_line() +
+  facet_grid(.~Sex) +
+  labs(title="Fat Mass",
+       x="Time on Diet (Weeks)",
+       y="Fat Mass (g)")
+```
+
+```{r fat-mass-lineplot, fig.cap="Line Plot of Fat Mass"}
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  filter(Sex=='M') %>%
+  group_by(Diet,Sex,Injection,diet.time) %>%
+  summarize(Average = mean(Mass,na.rm=T),
+            SE = se(Mass)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet,lty=Injection)) +
+  theme_classic() +
+  theme(legend.position='none') +
+  theme(text=element_text(size=18)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Fat Mass",
+       x="Time on Diet (Weeks)",
+       y="Fat Mass (g)") 
+```
+
+```{r fat-mass-lineplot-change, fig.cap="Line Plot of Change in Fat Mass"}
+exp.data %>%
+  filter(assay=='Total Fat Mass') %>%
+  group_by(Diet,Sex,Injection,diet.time) %>%
+  summarize(Average = mean(Mass.Change,na.rm=T),
+            SE = se(Mass.Change)) %>%
+  ggplot(aes(y=Average,
+             ymin=Average-SE,
+             ymax=Average+SE,
+             x=diet.time,col=Diet,lty=Injection)) +
+   theme_classic() +
+  theme(text=element_text(size=18)) +
+  geom_errorbar(width=0.5) +
+  geom_line() +
+    facet_grid(.~Sex) +
+  labs(title="Fat Mass",
+       x="Time on Diet (Weeks)",
+       y="Change in Fat Mass (g)") 
+```

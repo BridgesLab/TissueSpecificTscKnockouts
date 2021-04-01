@@ -1,0 +1,171 @@
+---
+title: "AMPK Knockout, Ketogenic Diet Food Intake Analysis"
+author: "Katherine Kistler and Dave Bridges"
+date: "June 24, 2019"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+library(tidyr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+
+# Raw Data
+
+```{r data-input}
+library(readr) #loads the readr package
+downloaded_file <- "AMPK KO Experiment - Food Intake.csv"
+downloaded_mapping_file <- "AMPK KO Experiment - Cage Mapping.csv"
+
+#this loads the file into a dataframe called exp.data 
+exp.data <- read_csv(downloaded_file, col_types = 
+                       cols(cage = col_factor(levels=NULL),
+                            diet = col_factor(levels=NULL),
+                           `food final (g)`= col_double(),
+                           `food initial (g)` = col_double()))
+library(lubridate)
+food.data <-
+  exp.data %>%
+    filter(!(is.na(`food final (g)`))) %>% #removed rows with no information
+    filter(!(is.na(`food initial (g)`))) %>%
+  mutate(Food.Intake.Total=(`food initial (g)`-`food final (g)`)/7) %>% #this is in grams per day per cage
+  filter(Food.Intake.Total>0) %>% #filtered out any negative values (mostly ongoing cages)
+  rename(Cage = cage) %>%
+  select(Cage, Food.Intake.Total,`date (start to end)`,`food initial (g)`,`food final (g)`) %>%
+  separate(`date (start to end)`, into =c('Start','End'), sep='-') %>%
+  mutate(Start = mdy(Start),
+         End = mdy(End)) %>%
+  mutate(Duration = End-Start) %>%
+  mutate(Food.Intake.Day = Food.Intake.Total/as.numeric(Duration))
+#calorie intake is a metric entered at the level of the spreadsheet where the calories eaten per cage is divided by the number of animals in each cage and multiplied by the utilizable energy in each diet (Diet= 4.73 kcal/g, NCD=2.91 kcal/g).
+
+mapping.data <- read_csv(downloaded_mapping_file,
+                         col_types = cols(
+  Cage = col_factor(levels=NULL),
+  Sex = col_factor(levels=NULL),
+  `Number of Mice` = col_integer(),
+  DOB = col_date(format = ""),
+  Treatment = col_factor(levels=NULL),
+  `Feeder Label` =col_factor(levels=NULL),
+  Diet = col_factor(levels=NULL)
+))
+
+
+food.intake.data <- 
+  full_join(mapping.data, food.data, by=c('Cage'='Cage')) %>%
+  rename(Cage.Size = `Number of Mice`) %>%
+  mutate(Food.Intake = Food.Intake.Day/Cage.Size) %>% #this is in grams per cage per mouse
+  rename(Diet.Start = `Start of Diet`) %>%
+  mutate(Diet.Start = mdy(Diet.Start)) %>%
+  mutate(Diet.Time = as.numeric(End - Diet.Start),
+         Weeks = round(Diet.Time/7)) %>%
+  rename(Injection= Treatment) %>%   
+  mutate(Calorie.Intake = case_when(Diet == 'Keto' ~ Food.Intake * 6.4, 
+                                    Diet =="Chow" ~ Food.Intake * 2.91, #need to manually set when cages are on chow
+                                     Diet =="Control" ~ Food.Intake * 3.8)) 
+  
+
+food.intake.summary <-
+  food.intake.data %>%
+  filter(Calorie.Intake<4) %>% #tested removing implausible values
+  group_by(Diet,Sex,Weeks,Injection) %>%
+  summarize_at(vars(Food.Intake:Calorie.Intake),
+               .funs=list(mean = function(x) mean(x,na.rm=T),
+                          se = se))
+```
+
+These data can be found in **`r getwd()`** in a file named **`r ifelse(downloaded_file %in% dir(), downloaded_file, "no file found")`**.  These were mapped to cages using the file `r downloaded_mapping_file`.  This script was most recently updated on **`r date()`**.
+
+
+# Sample Size
+
+```{r sample.size} 
+food.intake.data %>%
+  distinct(Cage, Diet,Sex,Injection, .keep_all = T) %>%
+  group_by(Diet,Sex,Injection) %>%
+  count %>%
+  kable(caption="Number of cages in the study")
+```
+
+# Analysis
+
+```{r calorie-intake-dotplot, fig.cap="Food intake by calorie and diet"}
+library(ggplot2)
+#average food intake per animal per day
+ggplot(data = food.intake.data %>% filter(Calorie.Intake<4),
+       aes(x=Weeks, y=Calorie.Intake, color=Injection))+
+  geom_point()+
+  geom_smooth() +
+  facet_grid(Sex~Diet)+
+  labs(x="Weeks in weeks", y="Calorie Intake (per mouse/day)")
+```
+
+```{r calorie-intake-lineplot, fig.cap="Food intake by calorie and diet"}
+#average food intake per animal per day
+ggplot(data = food.intake.summary,
+       aes(x=Weeks, 
+                                       y=Calorie.Intake_mean,
+                                       ymin=Calorie.Intake_mean-Calorie.Intake_se,
+                                       ymax=Calorie.Intake_mean+Calorie.Intake_se,
+                                       color=Injection)) +
+ theme_classic() +
+   theme(text=element_text(size=18)) +
+   geom_line() +
+  geom_errorbar() +
+  facet_grid(Sex~Diet) +
+  labs(x="Age in weeks", y="Calorie Intake (per mouse/day)")
+
+ggplot(data = food.intake.summary, aes(x=Weeks, 
+                                       y=Calorie.Intake_mean,
+                                       ymin=Calorie.Intake_mean-Calorie.Intake_se,
+                                       ymax=Calorie.Intake_mean+Calorie.Intake_se,
+                                       color=Diet)) +
+theme_classic() +
+   theme(text=element_text(size=18)) +
+  geom_line() +
+  geom_errorbar() +
+  facet_grid(Sex~Injection) +
+  labs(x="Age in weeks",
+       y="Calorie Intake (per mouse/day)")
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
