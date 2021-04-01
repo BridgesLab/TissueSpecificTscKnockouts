@@ -1,0 +1,189 @@
+---
+title: "Milk Protein Quantification PND16 from First Parity and 6th Parity Mice"
+author: "Noura El Habbal"
+date: "2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Raw Data
+
+```{r data-files}
+MilkProtein.file <- 'Milk Gel Protein PND16 from 6th Parity Mice.csv'
+MilkProtein2.file <- 'Milk Gel Protein PND16 from First Parity Mice using Licor.csv'
+```
+
+```{r data-input}
+library(readr) #loads the readr package
+#load sample mapping file
+Milkprotein <- read_csv(MilkProtein.file, na=c("N/A",NA))  %>% mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+Milkproteinbatch2 <- read_csv(MilkProtein2.file, na=c("N/A",NA))  %>% mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+```
+
+
+```{r milk_protein_batch1}
+proteincomp <- Milkprotein %>%  #average protein in milk from batch 1 using raw values, gel done by Gregg lab
+  group_by(Genotype, Protein) %>%
+summarize(Average.Protein = mean(Value, na.rm=T),
+        SE.Average.Protein = se(Value))
+kable(proteincomp)
+
+#EFFECT SIZES for each protein in KO vs WT:
+#aCasein:(37594-24543)/24543 *100 =53.18% (p=0.236)
+#Albumin:(45872-38382)/38382 *100 = 19.52% (p=0.27)
+#bCasein:(26135-17559)/17559 *100 = 48.84% (p=0.326)
+#Lactoferrin:(54190-47397)/47397 *100 = 14.33% (p=0.525)
+#WAP:(36074-25020)/25020 *100 = 44.18% (p=0.22)
+
+library(ggplot2)
+p <- ggplot(proteincomp,
+aes(x=Protein, y= Average.Protein, fill=Genotype, na.rm =T, ymax= Average.Protein + SE.Average.Protein, ymin=Average.Protein - SE.Average.Protein))  
+p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
+  geom_errorbar(position=position_dodge(0.5), width=0.2) +
+  xlab("Protein") +
+  ylab("Protein Value") +
+  labs(title="Protein in Milk of KO and WT Dams from Batch 1") +
+  expand_limits(y=0) +
+  theme_classic() +
+     theme(text = element_text(size=13)) 
+
+t.test(NormalizedValue ~ Genotype, data=Milkprotein %>% filter(Protein=="aCasein")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition")  #0.236
+t.test(NormalizedValue ~ Genotype, data=Milkprotein %>% filter(Protein=="bCasein")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on bCasein milk composition") #0.326
+t.test(NormalizedValue ~ Genotype, data=Milkprotein %>% filter(Protein=="WAP")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on WAP milk composition") #0.22
+t.test(NormalizedValue ~ Genotype, data=Milkprotein %>% filter(Protein=="Lactoferrin")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Lactoferrin milk composition") #0.525
+t.test(NormalizedValue ~ Genotype, data=Milkprotein %>% filter(Protein=="Albumin")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Albumin milk composition") #0.27
+
+```
+
+```{r milk_protein_percentages_batch2_licorquantification}
+proteincomp2 <- Milkproteinbatch2 %>%  #this is using the raw area values from the LiCOR machine
+  group_by(Genotype, Protein) %>%
+  filter(Protein!= "Band1") %>%
+  filter(Protein!= "Band2") %>%
+  filter(Protein!= "Band6") %>%
+  filter(Protein!= "Band8") %>%
+summarize(Average.Protein = mean(Value, na.rm=T),
+        SE.Average.Protein = se(Value))
+kable(proteincomp2)
+
+#EFFECT SIZES for each protein in KO vs WT:
+#aCasein:(281.8-219.8)/219.8 *100 =28.21% (p=0.238)
+#Albumin:(756.3-613.2)/613.2 *100 = 23.34% (p=0.14)
+#bCasein:(120.0-96.1)/96.1 *100 = 24.87% (p=0.315)
+#Lactoferrin:(580.8-495.2)/495.2 *100 = 17.29% (p=0.245)
+#WAP:(355.7-323.8)/323.8 *100 = 9.85% (p=0.438)
+
+library(ggplot2)
+p <- ggplot(proteincomp2,
+aes(x=Protein, y= Average.Protein, fill=Genotype, na.rm =T, ymax= Average.Protein + SE.Average.Protein, ymin=Average.Protein - SE.Average.Protein))  
+p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
+  geom_errorbar(position=position_dodge(0.5), width=0.2) +
+  xlab("Protein") +
+  ylab("Protein Quantification") +
+  labs(title="Protein in Milk of KO and WT Dams") + #from BATCH 2 only
+  expand_limits(y=0) +
+  theme_classic() +
+     theme(text = element_text(size=13)) 
+
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="aCasein")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on aCasein milk composition") #0.238
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="bCasein")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on bCasein milk composition") #0.315
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="WAP")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on WAP milk composition") #0.438
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="Lactoferrin")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Lactoferrin milk composition") #0.245
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="Albumin")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Albumin milk composition") #0.14
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="Band1")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Albumin milk composition") #0.949
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="Band2")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Albumin milk composition") #0.618
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="Band6")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Albumin milk composition") #0.261
+t.test(Value ~ Genotype, data=Milkproteinbatch2 %>% filter(Protein=="Band8")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on Albumin milk composition") #0.103
+```
+
+```{r milk_totalproteinbatch2}
+#This is the total visible protein (all the seen bands for each sample) per sample in batch 2
+totalproteinpersamplebatch2 <- Milkproteinbatch2 %>% 
+  group_by(Genotype, ID) %>%
+  mutate(Total = sum(Value))
+kable(totalproteinpersamplebatch2)
+
+library(ggplot2)
+p <- ggplot(totalproteinpersamplebatch2,
+aes(x=as.factor(ID), y= Total, fill=Genotype, na.rm =T))
+p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
+  xlab("Protein") +
+  ylab("Protein Quantification") +
+  labs(title="Sum of Total Protein in Milk of KO and WT Dams per Sample from Batch 2") +
+  expand_limits(y=0) +
+  theme_classic() +
+     theme(text = element_text(size=13)) 
+
+#This is the total visible protein (all the seen bands for each sample) per genotype in batch 2
+totalproteinpergenotypebatch2 <- Milkproteinbatch2 %>% 
+  group_by(Genotype) %>%
+   mutate(Total = sum(Value))
+kable(totalproteinpergenotypebatch2)
+
+library(ggplot2)
+p <- ggplot(totalproteinpersamplebatch2,
+aes(x=Genotype, y= Total, fill=Genotype, na.rm =T))
+p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
+  xlab("Protein") +
+  ylab("Protein Quantification") +
+  labs(title="Sum of Total Protein in Milk of KO and WT Dams") + #from Batch 2
+  expand_limits(y=0) +
+  theme_classic() +
+     theme(text = element_text(size=13)) 
+#EFFECT SIZE for total protein per genotype is: (15193-10661)/10661 *100 = 42.5%
+
+
+#This is the average quantified total protein per genotype
+totalproteinbatch2 <- totalproteinpersamplebatch2 %>%
+  group_by(Genotype) %>%
+  summarize(Average.Protein= mean(Value, na.rm=T),
+            SE.Average.Protein = se(Value))
+kable(totalproteinbatch2)
+
+library(ggplot2)
+p <- ggplot(totalproteinbatch2,
+aes(x=Genotype, y= Average.Protein, fill=Genotype, na.rm =T, ymax= Average.Protein + SE.Average.Protein, ymin=Average.Protein - SE.Average.Protein))  
+p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
+  geom_errorbar(position=position_dodge(0.5), width=0.2) +
+  xlab("Protein") +
+  ylab("Protein Quantification") +
+  labs(title="Average Total Protein in Milk of KO and WT Dams from Batch 2") +
+  expand_limits(y=0) +
+  theme_classic() +
+     theme(text = element_text(size=13)) 
+#EFFECT SIZE for average total protein is: (33.4-30.6)/30.6 *100 = 9.15%
+t.test(Value~Genotype, data=Milkproteinbatch2) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on total milk protein")
+```
+
