@@ -569,6 +569,20 @@ animal.rate.data %>% filter(Injection=="GFP", Sex=="M") %>%
   t.test(estimate~Diet, data=., var.equal=T) %>% tidy() %>% kable(caption="Effects of diet on male GFP mice")
 
 animal.rate.data %>% filter(Injection=="GFP") %>% aov(estimate ~ Diet*Sex, data=.) %>% tidy %>% kable(caption="Sex and diet interaction on glucose drop rate for GFP mice")
+
+# effects of knockout on KD
+animal.rate.data %>% filter(Diet=="Keto") %>% lm(estimate ~ Sex+Injection, data=.) %>% tidy %>% 
+  mutate(Percent.Effect = estimate/estimate[term=="(Intercept)"]*100) %>% kable(caption="Effects of diet and knockout on glucose drop rate for ketogenic diet mice")
+
+animal.rate.data %>% filter(Diet=="Keto") %>% lm(estimate ~ Sex*Injection, data=.) %>% tidy %>% kable(caption="Effects of diet and knockout on glucose drop rate for ketogenic diet mice, including interaction of sex and knockout")
+```
+
+# Recovery from Nadir
+
+```{r calculate-nadir}
+data.long %>%
+  group_by(ID) %>%
+  mutate()
 ```
 
 # Session Information

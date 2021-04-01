@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 15:09:42 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 15:15:58 2021**.
 
 # Number of Mice
 
@@ -905,6 +905,37 @@ Table: Sex and diet interaction on glucose drop rate for GFP mice
 |Sex       |  1|  3.10|  3.104|      3.50|   0.070|
 |Diet:Sex  |  1|  3.27|  3.265|      3.68|   0.063|
 |Residuals | 34| 30.14|  0.886|        NA|      NA|
+
+```r
+# effects of knockout on KD
+animal.rate.data %>% filter(Diet=="Keto") %>% lm(estimate ~ Sex+Injection, data=.) %>% tidy %>% 
+  mutate(Percent.Effect = estimate/estimate[term=="(Intercept)"]*100) %>% kable(caption="Effects of diet and knockout on glucose drop rate for ketogenic diet mice")
+```
+
+
+
+Table: Effects of diet and knockout on glucose drop rate for ketogenic diet mice
+
+|term         | estimate| std.error| statistic| p.value| Percent.Effect|
+|:------------|--------:|---------:|---------:|-------:|--------------:|
+|(Intercept)  |   -2.089|     0.309|    -6.762|   0.000|         100.00|
+|SexM         |   -0.150|     0.344|    -0.437|   0.665|           7.18|
+|InjectionCre |    0.481|     0.341|     1.410|   0.167|         -23.05|
+
+```r
+animal.rate.data %>% filter(Diet=="Keto") %>% lm(estimate ~ Sex*Injection, data=.) %>% tidy %>% kable(caption="Effects of diet and knockout on glucose drop rate for ketogenic diet mice, including interaction of sex and knockout")
+```
+
+
+
+Table: Effects of diet and knockout on glucose drop rate for ketogenic diet mice, including interaction of sex and knockout
+
+|term              | estimate| std.error| statistic| p.value|
+|:-----------------|--------:|---------:|---------:|-------:|
+|(Intercept)       |   -2.152|     0.368|    -5.840|   0.000|
+|SexM              |   -0.040|     0.487|    -0.082|   0.935|
+|InjectionCre      |    0.607|     0.521|     1.166|   0.251|
+|SexM:InjectionCre |   -0.225|     0.696|    -0.323|   0.748|
 
 # Session Information
 
