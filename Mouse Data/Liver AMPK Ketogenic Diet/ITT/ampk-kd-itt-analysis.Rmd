@@ -285,7 +285,31 @@ data.long.norm %>%
   summary %>% tidy %>% kable(caption="Effect modification by knockout on diet in male mice.")
 ```
 
+### Effect Modification by Knockout and Diet
 
+We tested for the interaction between genotype and diet for each sex, at each time point.
+
+```{r diet-genotype-time-points}
+diet.geno.effect <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(diet.geno.effect) <- c("Sex","Time","Estimate","Pval")
+
+for (AnimalSex in levels(as.factor(data.long.norm$Sex))){
+  for (TimePoint in levels(as.factor(data.long.norm$Time))) {
+    dataset <- filter(data.long.norm, Time==TimePoint,Sex==AnimalSex)
+    time.sex.model <- lm(Glucose.norm ~ Diet*Injection, data=dataset)
+    estimate <- coef(time.sex.model)['DietKeto:InjectionCre']
+    pval <- tidy(summary(time.sex.model)) %>% filter(term=="DietKeto:InjectionCre") %>% pull(p.value)
+    diet.geno.effect <- rbind(diet.geno.effect,
+                           list(Sex=AnimalSex,
+                                Time=TimePoint,
+                                Estimate=estimate,
+                                Pval=pval))
+    
+  }
+}
+
+kable(diet.geno.effect, row.names=F)
+```
 
 ```{r itt-norm-line-gfp, fig.cap="Lineplot of ITT from GFP injected mice only, normalized to fasting glucose"}
 data.long.norm %>%

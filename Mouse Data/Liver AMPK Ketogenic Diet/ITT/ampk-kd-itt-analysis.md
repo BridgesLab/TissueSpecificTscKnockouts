@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 10:29:55 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 11:01:31 2021**.
 
 # Number of Mice
 
@@ -424,7 +424,55 @@ Table: Effect modification by knockout on diet in male mice.
 |InjectionCre          |     23.2|      18.9|     1.232|   0.227|
 |DietKeto:InjectionCre |    -12.3|      24.3|    -0.509|   0.614|
 
+### Effect Modification by Knockout and Diet
 
+We tested for the interaction between genotype and diet for each sex, at each time point.
+
+
+```r
+diet.geno.effect <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(diet.geno.effect) <- c("Sex","Time","Estimate","Pval")
+
+for (AnimalSex in levels(as.factor(data.long.norm$Sex))){
+  for (TimePoint in levels(as.factor(data.long.norm$Time))) {
+    dataset <- filter(data.long.norm, Time==TimePoint,Sex==AnimalSex)
+    time.sex.model <- lm(Glucose.norm ~ Diet*Injection, data=dataset)
+    estimate <- coef(time.sex.model)['DietKeto:InjectionCre']
+    pval <- tidy(summary(time.sex.model)) %>% filter(term=="DietKeto:InjectionCre") %>% pull(p.value)
+    diet.geno.effect <- rbind(diet.geno.effect,
+                           list(Sex=AnimalSex,
+                                Time=TimePoint,
+                                Estimate=estimate,
+                                Pval=pval))
+    
+  }
+}
+
+kable(diet.geno.effect, row.names=F)
+```
+
+
+
+|Sex |Time | Estimate|  Pval|
+|:---|:----|--------:|-----:|
+|F   |0    |    0.000| 0.245|
+|F   |15   |   20.048| 0.153|
+|F   |30   |   19.765| 0.069|
+|F   |45   |   35.765| 0.031|
+|F   |60   |   62.267| 0.003|
+|F   |75   |   86.289| 0.005|
+|F   |90   |   88.036| 0.018|
+|F   |105  |   75.885| 0.047|
+|F   |120  |   58.615| 0.088|
+|M   |0    |    0.000| 0.395|
+|M   |15   |  -13.322| 0.235|
+|M   |30   |   -6.612| 0.478|
+|M   |45   |  -14.384| 0.206|
+|M   |60   |   -8.253| 0.567|
+|M   |75   |  -13.094| 0.382|
+|M   |90   |   -0.376| 0.982|
+|M   |105  |    6.801| 0.672|
+|M   |120  |    5.889| 0.712|
 
 
 ```r
