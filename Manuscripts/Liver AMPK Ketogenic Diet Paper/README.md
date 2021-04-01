@@ -15,3 +15,5 @@
 | Figure 5A | NA | NA (Schematic) |
 | Figure 5B | ****Need to put in once TG assay is done *****
 | Figure 6A | Mouse Data/Liver AMPK Ketogenic Diet/ITT/ampk-kd-itt-analysis.Rmd | fasting-glucose-barplot-2.pdf |
+| Figure 6B | Mouse Data/Liver AMPK Ketogenic Diet/ITT/ampk-kd-itt-analysis.Rmd | itt-norm-line-all-2.pdf |
+| Figure 6C | Mouse Data/Liver AMPK Ketogenic Diet/ITT/ampk-kd-itt-analysis.Rmd | glucose-drop-2.pdf |

@@ -539,6 +539,36 @@ rate.data.summary %>%
   group_by(Sex) %>%
   filter(Injection=='GFP') %>%
   mutate(Rate.Change=Rate.mean/mean(Rate.mean[Diet=="Control"], na.rm=T)*100)
+
+# difference in GFP females
+animal.rate.data %>% filter(Injection=="GFP", Sex=="F") %>%
+  t.test(estimate~Diet, data=.) %>% tidy() %>% kable(caption="Effects of diet on female GFP mice")
+
+
+bind_rows(
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="F", Diet=="Control")$estimate)) %>% mutate(Diet='Control'),
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="F", Diet=="Keto")$estimate)) %>% mutate(Diet='Ketogenic'))  %>%
+  kable(caption="Normality tests for female GFP mice")
+
+library(car)
+animal.rate.data %>% filter(Injection=="GFP", Sex=="F") %>%
+  leveneTest(estimate~Diet, data=.) %>% tidy() %>% kable(caption="Leven test for diet in female GFP mice")
+
+animal.rate.data %>% filter(Injection=="GFP", Sex=="F") %>%
+  t.test(estimate~Diet, data=., var.equal=T) %>% tidy() %>% kable(caption="Effects of diet on female GFP mice")
+
+bind_rows(
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="M", Diet=="Control")$estimate)) %>% mutate(Diet='Control'),
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="M", Diet=="Keto")$estimate)) %>% mutate(Diet='Ketogenic'))  %>%
+  kable(caption="Normality tests for male GFP mice")
+
+animal.rate.data %>% filter(Injection=="GFP", Sex=="M") %>%
+  leveneTest(estimate~Diet, data=.) %>% tidy() %>% kable(caption="Leven test for diet in male GFP mice")
+
+animal.rate.data %>% filter(Injection=="GFP", Sex=="M") %>%
+  t.test(estimate~Diet, data=., var.equal=T) %>% tidy() %>% kable(caption="Effects of diet on male GFP mice")
+
+animal.rate.data %>% filter(Injection=="GFP") %>% aov(estimate ~ Diet*Sex, data=.) %>% tidy %>% kable(caption="Sex and diet interaction on glucose drop rate for GFP mice")
 ```
 
 # Session Information

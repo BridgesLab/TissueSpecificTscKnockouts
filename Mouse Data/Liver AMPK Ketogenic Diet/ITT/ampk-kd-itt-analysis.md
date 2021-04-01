@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 11:59:15 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 15:09:42 2021**.
 
 # Number of Mice
 
@@ -792,6 +792,120 @@ rate.data.summary %>%
 ## 4 GFP       Keto    M         -2.19   0.295        95.4
 ```
 
+```r
+# difference in GFP females
+animal.rate.data %>% filter(Injection=="GFP", Sex=="F") %>%
+  t.test(estimate~Diet, data=.) %>% tidy() %>% kable(caption="Effects of diet on female GFP mice")
+```
+
+
+
+Table: Effects of diet on female GFP mice
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
+|     1.08|     -1.07|     -2.15|       2.4|   0.031|      14.3|    0.117|      2.04|Welch Two Sample t-test |two.sided   |
+
+```r
+bind_rows(
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="F", Diet=="Control")$estimate)) %>% mutate(Diet='Control'),
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="F", Diet=="Keto")$estimate)) %>% mutate(Diet='Ketogenic'))  %>%
+  kable(caption="Normality tests for female GFP mice")
+```
+
+
+
+Table: Normality tests for female GFP mice
+
+| statistic| p.value|method                      |Diet      |
+|---------:|-------:|:---------------------------|:---------|
+|     0.953|   0.744|Shapiro-Wilk normality test |Control   |
+|     0.965|   0.847|Shapiro-Wilk normality test |Ketogenic |
+
+```r
+library(car)
+animal.rate.data %>% filter(Injection=="GFP", Sex=="F") %>%
+  leveneTest(estimate~Diet, data=.) %>% tidy() %>% kable(caption="Leven test for diet in female GFP mice")
+```
+
+
+
+Table: Leven test for diet in female GFP mice
+
+| statistic| p.value| df| df.residual|
+|---------:|-------:|--:|-----------:|
+|       0.5|    0.49|  1|          15|
+
+```r
+animal.rate.data %>% filter(Injection=="GFP", Sex=="F") %>%
+  t.test(estimate~Diet, data=., var.equal=T) %>% tidy() %>% kable(caption="Effects of diet on female GFP mice")
+```
+
+
+
+Table: Effects of diet on female GFP mice
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method            |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------|:-----------|
+|     1.08|     -1.07|     -2.15|      2.35|   0.033|        15|      0.1|      2.06|Two Sample t-test |two.sided   |
+
+```r
+bind_rows(
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="M", Diet=="Control")$estimate)) %>% mutate(Diet='Control'),
+  tidy(shapiro.test(filter(animal.rate.data, Injection=="GFP", Sex=="M", Diet=="Keto")$estimate)) %>% mutate(Diet='Ketogenic'))  %>%
+  kable(caption="Normality tests for male GFP mice")
+```
+
+
+
+Table: Normality tests for male GFP mice
+
+| statistic| p.value|method                      |Diet      |
+|---------:|-------:|:---------------------------|:---------|
+|     0.932|   0.501|Shapiro-Wilk normality test |Control   |
+|     0.915|   0.247|Shapiro-Wilk normality test |Ketogenic |
+
+```r
+animal.rate.data %>% filter(Injection=="GFP", Sex=="M") %>%
+  leveneTest(estimate~Diet, data=.) %>% tidy() %>% kable(caption="Leven test for diet in male GFP mice")
+```
+
+
+
+Table: Leven test for diet in male GFP mice
+
+| statistic| p.value| df| df.residual|
+|---------:|-------:|--:|-----------:|
+|     0.305|   0.587|  1|          19|
+
+```r
+animal.rate.data %>% filter(Injection=="GFP", Sex=="M") %>%
+  t.test(estimate~Diet, data=., var.equal=T) %>% tidy() %>% kable(caption="Effects of diet on male GFP mice")
+```
+
+
+
+Table: Effects of diet on male GFP mice
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method            |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------|:-----------|
+|   -0.105|      -2.3|     -2.19|    -0.253|   0.803|        19|   -0.969|      0.76|Two Sample t-test |two.sided   |
+
+```r
+animal.rate.data %>% filter(Injection=="GFP") %>% aov(estimate ~ Diet*Sex, data=.) %>% tidy %>% kable(caption="Sex and diet interaction on glucose drop rate for GFP mice")
+```
+
+
+
+Table: Sex and diet interaction on glucose drop rate for GFP mice
+
+|term      | df| sumsq| meansq| statistic| p.value|
+|:---------|--:|-----:|------:|---------:|-------:|
+|Diet      |  1|  1.95|  1.945|      2.19|   0.148|
+|Sex       |  1|  3.10|  3.104|      3.50|   0.070|
+|Diet:Sex  |  1|  3.27|  3.265|      3.68|   0.063|
+|Residuals | 34| 30.14|  0.886|        NA|      NA|
+
 # Session Information
 
 
@@ -815,28 +929,32 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] forcats_0.5.1  lmerTest_3.1-3 broom_0.7.5    lme4_1.1-26    Matrix_1.3-2  
-##  [6] ggplot2_3.3.3  readxl_1.3.1   dplyr_1.0.5    tidyr_1.1.3    knitr_1.31    
+##  [1] car_3.0-10     carData_3.0-4  forcats_0.5.1  lmerTest_3.1-3 broom_0.7.5   
+##  [6] lme4_1.1-26    Matrix_1.3-2   ggplot2_3.3.3  readxl_1.3.1   dplyr_1.0.5   
+## [11] tidyr_1.1.3    knitr_1.31    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] statmod_1.4.35      tidyselect_1.1.0    xfun_0.22          
-##  [4] bslib_0.2.4         purrr_0.3.4         splines_4.0.2      
-##  [7] lattice_0.20-41     colorspace_2.0-0    vctrs_0.3.6        
-## [10] generics_0.1.0      htmltools_0.5.1.1   yaml_2.2.1         
-## [13] mgcv_1.8-34         utf8_1.2.1          rlang_0.4.10       
-## [16] jquerylib_0.1.3     pillar_1.5.1        nloptr_1.2.2.2     
-## [19] glue_1.4.2          withr_2.4.1         DBI_1.1.1          
-## [22] RColorBrewer_1.1-2  lifecycle_1.0.0     stringr_1.4.0      
-## [25] munsell_0.5.0       gtable_0.3.0        cellranger_1.1.0   
-## [28] evaluate_0.14       labeling_0.4.2      fansi_0.4.2        
-## [31] highr_0.8           Rcpp_1.0.6          backports_1.2.1    
-## [34] scales_1.1.1        jsonlite_1.7.2      farver_2.1.0       
-## [37] digest_0.6.27       stringi_1.5.3       numDeriv_2016.8-1.1
-## [40] grid_4.0.2          cli_2.3.1           tools_4.0.2        
-## [43] magrittr_2.0.1      sass_0.3.1          tibble_3.1.0       
-## [46] crayon_1.4.1        pkgconfig_2.0.3     ellipsis_0.3.1     
-## [49] MASS_7.3-53.1       rstudioapi_0.13     assertthat_0.2.1   
-## [52] minqa_1.2.4         rmarkdown_2.7       R6_2.5.0           
-## [55] boot_1.3-27         nlme_3.1-152        compiler_4.0.2
+##  [1] Rcpp_1.0.6          lattice_0.20-41     assertthat_0.2.1   
+##  [4] digest_0.6.27       utf8_1.2.1          R6_2.5.0           
+##  [7] cellranger_1.1.0    backports_1.2.1     evaluate_0.14      
+## [10] highr_0.8           pillar_1.5.1        rlang_0.4.10       
+## [13] curl_4.3            minqa_1.2.4         rstudioapi_0.13    
+## [16] data.table_1.14.0   nloptr_1.2.2.2      jquerylib_0.1.3    
+## [19] rmarkdown_2.7       labeling_0.4.2      splines_4.0.2      
+## [22] statmod_1.4.35      stringr_1.4.0       foreign_0.8-81     
+## [25] munsell_0.5.0       compiler_4.0.2      numDeriv_2016.8-1.1
+## [28] xfun_0.22           pkgconfig_2.0.3     mgcv_1.8-34        
+## [31] htmltools_0.5.1.1   tidyselect_1.1.0    tibble_3.1.0       
+## [34] rio_0.5.26          fansi_0.4.2         crayon_1.4.1       
+## [37] withr_2.4.1         MASS_7.3-53.1       grid_4.0.2         
+## [40] nlme_3.1-152        jsonlite_1.7.2      gtable_0.3.0       
+## [43] lifecycle_1.0.0     DBI_1.1.1           magrittr_2.0.1     
+## [46] scales_1.1.1        zip_2.1.1           cli_2.3.1          
+## [49] stringi_1.5.3       farver_2.1.0        bslib_0.2.4        
+## [52] ellipsis_0.3.1      generics_0.1.0      vctrs_0.3.6        
+## [55] openxlsx_4.2.3      boot_1.3-27         RColorBrewer_1.1-2 
+## [58] tools_4.0.2         glue_1.4.2          purrr_0.3.4        
+## [61] hms_1.0.0           abind_1.4-5         yaml_2.2.1         
+## [64] colorspace_2.0-0    haven_2.3.1         sass_0.3.1
 ```
 
