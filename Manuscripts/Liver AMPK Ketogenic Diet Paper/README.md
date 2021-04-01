@@ -14,4 +14,4 @@
 | Figure 4G | Mouse Data/Liver AMPK Ketogenic Diet/All Figures/Body Composition/Body_Composition.RMD | gwat-barplot-1.pdf|
 | Figure 5A | NA | NA (Schematic) |
 | Figure 5B | ****Need to put in once TG assay is done *****
-| Figure 6A | Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT/ampk-kd-itt-analysis.RMD | |
+| Figure 6A | Mouse Data/Liver AMPK Ketogenic Diet/ITT/ampk-kd-itt-analysis.Rmd | fasting-glucose-barplot-2.pdf |

@@ -260,6 +260,7 @@ ggplot(data.long.norm %>% filter(Time==0),
 ```
 
 ```{r fasting-glucose-barplot, fig.cap="Barplot of glucose levels after 6h fast"}
+library(forcats)
 data.long %>% 
   filter(Time==0) %>%
   group_by(Injection,Sex,Diet) %>%
@@ -276,13 +277,63 @@ data.long %>%
   facet_grid(.~Sex) +
   labs(y="Fasting Glucose (mg/dL)",
        title="Fasting Glucose")
+
+data.long %>% 
+  filter(Time==0) %>%
+  group_by(Injection,Sex,Diet) %>%
+    mutate(Sex = fct_recode(Sex,
+                                "Female"="F",
+                                "Male"="M")) %>%
+      mutate(Diet = fct_recode(Diet,
+                                "Ketogenic Diet"="Keto",
+                                "Control Diet"="Control")) %>%
+      mutate(Injection = fct_recode(Injection,
+                                "AAV-Tbg-GFP"="GFP",
+                                "AAV-Tbg-Cre"="Cre")) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) %>%
+  ggplot(aes(y=Mean,
+             x=Diet,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection,
+                                                        ymin=Mean-Error,
+                                                        ymax=Mean+Error), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Fasting Glucose (mg/dL)",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.15,0.90),
+        legend.background = element_rect(fill = "transparent"),
+        legend.title=element_blank())
 ```
 
 ### Fasting Glucose Statistics
 
 ```{r fasting-glucose-stats}
+fg.summary <- 
+  data.long %>% 
+  filter(Time==0) %>%
+  group_by(Injection,Sex,Diet) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) 
+
+lm(Glucose ~ Diet + Sex + Injection + Sex:Diet, data = data.long %>% filter(Time==0)) %>%
+  tidy %>%
+  kable(caption="Linear model for effects on fasting glucose levels, tests for diet modification by sex.")
+
+lm(Glucose ~ Diet + Sex + Injection + Sex:Injection, data = data.long %>% filter(Time==0)) %>%
+  tidy %>%
+  kable(caption="Linear model for effects on fasting glucose levels, tests for knockout modification by sex.")
+
+
+
 lm(Glucose ~ Diet + Sex + Injection, data = data.long %>% filter(Time==0)) %>%
   tidy %>%
+    mutate(Percent.Increase = estimate/estimate[1]*100) %>%
   kable(caption="Linear model for effects on fasting glucose levels.")
 ```
 

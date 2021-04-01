@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/All Figures/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 09:33:21 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 10:02:43 2021**.
 
 # Number of Mice
 
@@ -360,6 +360,7 @@ ggplot(data.long.norm %>% filter(Time==0),
 
 
 ```r
+library(forcats)
 data.long %>% 
   filter(Time==0) %>%
   group_by(Injection,Sex,Diet) %>%
@@ -380,12 +381,92 @@ data.long %>%
 
 ![Barplot of glucose levels after 6h fast](figures/fasting-glucose-barplot-1.png)
 
+```r
+data.long %>% 
+  filter(Time==0) %>%
+  group_by(Injection,Sex,Diet) %>%
+    mutate(Sex = fct_recode(Sex,
+                                "Female"="F",
+                                "Male"="M")) %>%
+      mutate(Diet = fct_recode(Diet,
+                                "Ketogenic Diet"="Keto",
+                                "Control Diet"="Control")) %>%
+      mutate(Injection = fct_recode(Injection,
+                                "AAV-Tbg-GFP"="GFP",
+                                "AAV-Tbg-Cre"="Cre")) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) %>%
+  ggplot(aes(y=Mean,
+             x=Diet,
+             fill=Injection)) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),aes(group=Injection,
+                                                        ymin=Mean-Error,
+                                                        ymax=Mean+Error), width=0.5) +
+  expand_limits(y=0) +
+  facet_grid(.~Sex) +
+  labs(y="Fasting Glucose (mg/dL)",
+       x="") +
+  theme_classic() +
+  scale_fill_grey() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.15,0.90),
+        legend.background = element_rect(fill = "transparent"),
+        legend.title=element_blank())
+```
+
+![Barplot of glucose levels after 6h fast](figures/fasting-glucose-barplot-2.png)
+
 ### Fasting Glucose Statistics
 
 
 ```r
+fg.summary <- 
+  data.long %>% 
+  filter(Time==0) %>%
+  group_by(Injection,Sex,Diet) %>%
+  summarize(Mean = mean(Glucose,na.rm=T),
+            Error = se(Glucose)) 
+
+lm(Glucose ~ Diet + Sex + Injection + Sex:Diet, data = data.long %>% filter(Time==0)) %>%
+  tidy %>%
+  kable(caption="Linear model for effects on fasting glucose levels, tests for diet modification by sex.")
+```
+
+
+
+Table: Linear model for effects on fasting glucose levels, tests for diet modification by sex.
+
+|term          | estimate| std.error| statistic| p.value|
+|:-------------|--------:|---------:|---------:|-------:|
+|(Intercept)   |   142.67|      8.85|    16.123|   0.000|
+|DietKeto      |    18.81|     11.02|     1.707|   0.093|
+|SexM          |    15.08|     11.33|     1.331|   0.188|
+|InjectionCre  |    -3.29|      7.45|    -0.442|   0.660|
+|DietKeto:SexM |     9.32|     15.06|     0.619|   0.538|
+
+```r
+lm(Glucose ~ Diet + Sex + Injection + Sex:Injection, data = data.long %>% filter(Time==0)) %>%
+  tidy %>%
+  kable(caption="Linear model for effects on fasting glucose levels, tests for knockout modification by sex.")
+```
+
+
+
+Table: Linear model for effects on fasting glucose levels, tests for knockout modification by sex.
+
+|term              | estimate| std.error| statistic| p.value|
+|:-----------------|--------:|---------:|---------:|-------:|
+|(Intercept)       |   141.47|      8.63|    16.388|   0.000|
+|DietKeto          |    23.79|      7.53|     3.160|   0.002|
+|SexM              |    17.61|     10.31|     1.709|   0.092|
+|InjectionCre      |    -6.41|     11.00|    -0.583|   0.562|
+|SexM:InjectionCre |     5.80|     14.96|     0.388|   0.700|
+
+```r
 lm(Glucose ~ Diet + Sex + Injection, data = data.long %>% filter(Time==0)) %>%
   tidy %>%
+    mutate(Percent.Increase = estimate/estimate[1]*100) %>%
   kable(caption="Linear model for effects on fasting glucose levels.")
 ```
 
@@ -393,12 +474,12 @@ lm(Glucose ~ Diet + Sex + Injection, data = data.long %>% filter(Time==0)) %>%
 
 Table: Linear model for effects on fasting glucose levels.
 
-|term         | estimate| std.error| statistic| p.value|
-|:------------|--------:|---------:|---------:|-------:|
-|(Intercept)  |   139.94|      7.64|    18.326|   0.000|
-|DietKeto     |    23.80|      7.48|     3.182|   0.002|
-|SexM         |    20.36|      7.43|     2.740|   0.008|
-|InjectionCre |    -3.28|      7.41|    -0.442|   0.660|
+|term         | estimate| std.error| statistic| p.value| Percent.Increase|
+|:------------|--------:|---------:|---------:|-------:|----------------:|
+|(Intercept)  |   139.94|      7.64|    18.326|   0.000|           100.00|
+|DietKeto     |    23.80|      7.48|     3.182|   0.002|            17.01|
+|SexM         |    20.36|      7.43|     2.740|   0.008|            14.55|
+|InjectionCre |    -3.28|      7.41|    -0.442|   0.660|            -2.34|
 
 ## Area Under the Curve
 
@@ -492,8 +573,8 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] lmerTest_3.1-3 broom_0.7.5    lme4_1.1-26    Matrix_1.3-2   ggplot2_3.3.3 
-## [6] readxl_1.3.1   dplyr_1.0.5    tidyr_1.1.3    knitr_1.31    
+##  [1] forcats_0.5.1  lmerTest_3.1-3 broom_0.7.5    lme4_1.1-26    Matrix_1.3-2  
+##  [6] ggplot2_3.3.3  readxl_1.3.1   dplyr_1.0.5    tidyr_1.1.3    knitr_1.31    
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] statmod_1.4.35      tidyselect_1.1.0    xfun_0.22          
@@ -509,11 +590,11 @@ sessionInfo()
 ## [31] highr_0.8           Rcpp_1.0.6          backports_1.2.1    
 ## [34] scales_1.1.1        jsonlite_1.7.2      farver_2.1.0       
 ## [37] digest_0.6.27       stringi_1.5.3       numDeriv_2016.8-1.1
-## [40] grid_4.0.2          tools_4.0.2         magrittr_2.0.1     
-## [43] sass_0.3.1          tibble_3.1.0        crayon_1.4.1       
-## [46] pkgconfig_2.0.3     ellipsis_0.3.1      MASS_7.3-53.1      
-## [49] assertthat_0.2.1    minqa_1.2.4         rmarkdown_2.7      
-## [52] R6_2.5.0            boot_1.3-27         nlme_3.1-152       
-## [55] compiler_4.0.2
+## [40] grid_4.0.2          cli_2.3.1           tools_4.0.2        
+## [43] magrittr_2.0.1      sass_0.3.1          tibble_3.1.0       
+## [46] crayon_1.4.1        pkgconfig_2.0.3     ellipsis_0.3.1     
+## [49] MASS_7.3-53.1       assertthat_0.2.1    minqa_1.2.4        
+## [52] rmarkdown_2.7       R6_2.5.0            boot_1.3-27        
+## [55] nlme_3.1-152        compiler_4.0.2
 ```
 
