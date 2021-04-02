@@ -29,7 +29,7 @@
 }
 \usepackage{hyperref}
 \hypersetup{
-            pdftitle={Noura Analysis of RNAseq studies},
+            pdftitle={Analysis of aTSC Mammary RNAseq studies},
             pdfauthor={Dave Bridges, Noura El Habbal},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -104,7 +104,7 @@
 \makeatother
 
 
-\title{Noura Analysis of RNAseq studies}
+\title{Analysis of aTSC Mammary RNAseq studies}
 \author{Dave Bridges, Noura El Habbal}
 \date{September 2, 2020}
 
@@ -170,7 +170,7 @@ Prior to this analysis, reads were mapped to GRCm38 CDS via Salmon v
 These data can be found in
 \textbf{/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/Mammary
 Gland Adipocyte Tsc1 Knockout} in a set of folders located in quants.
-This script was most recently updated on \textbf{Fri Apr 2 10:42:40
+This script was most recently updated on \textbf{Fri Apr 2 12:12:11
 2021}.
 
 \begin{Shaded}
@@ -195,16 +195,16 @@ This script was most recently updated on \textbf{Fri Apr 2 10:42:40
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{summary}\NormalTok{(dds.genotype) }
+\KeywordTok{summary}\NormalTok{(dds.genotype, }\DataTypeTok{alpha=}\FloatTok{0.05}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## 
 ## out of 17605 with nonzero total read count
-## adjusted p-value < 0.1
-## LFC > 0 (up)       : 153, 0.87%
-## LFC < 0 (down)     : 112, 0.64%
+## adjusted p-value < 0.05
+## LFC > 0 (up)       : 85, 0.48%
+## LFC < 0 (down)     : 54, 0.31%
 ## outliers [1]       : 56, 0.32%
 ## low counts [2]     : 3363, 19%
 ## (mean count < 3)
@@ -233,11 +233,16 @@ This script was most recently updated on \textbf{Fri Apr 2 10:42:40
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(pheatmap)}
 \NormalTok{ntd <-}\StringTok{ }\KeywordTok{normTransform}\NormalTok{(dds)}
-\NormalTok{selected.genes <-}\StringTok{ }\KeywordTok{order}\NormalTok{(dds.genotype}\OperatorTok{$}\NormalTok{padj)[}\DecValTok{1}\OperatorTok{:}\DecValTok{200}\NormalTok{] }\CommentTok{# pick the 50 most significantly changed genes (up vs down)}
+\NormalTok{selected.genes <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(dds.genotype, padj}\OperatorTok{<}\FloatTok{0.05}\NormalTok{) }\CommentTok{# pick the 50 most significantly changed genes (up vs down)}
 \NormalTok{df <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{colData}\NormalTok{(dds)}\OperatorTok{$}\NormalTok{Genotype)}
-\KeywordTok{rownames}\NormalTok{(df) <-}\StringTok{ }\KeywordTok{colnames}\NormalTok{(}\KeywordTok{assay}\NormalTok{(ntd)[selected.genes,])}
+\KeywordTok{rownames}\NormalTok{(df) <-}\StringTok{ }\KeywordTok{colnames}\NormalTok{(}\KeywordTok{assay}\NormalTok{(ntd)[}\KeywordTok{rownames}\NormalTok{(selected.genes),])}
+
+\NormalTok{name.mapping <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(dds.genotype}\OperatorTok{$}\NormalTok{symbol)}
+\NormalTok{heatmap.data <-}\StringTok{ }\KeywordTok{assay}\NormalTok{(ntd)[}\KeywordTok{rownames}\NormalTok{(selected.genes),]}
+\KeywordTok{rownames}\NormalTok{(heatmap.data) <-}\StringTok{ }\NormalTok{name.mapping[}\KeywordTok{rownames}\NormalTok{(selected.genes),]}
+
 \NormalTok{df <-}\StringTok{ }\KeywordTok{rename}\NormalTok{(df, }\StringTok{'colData.dds..Genotype'}\NormalTok{=}\StringTok{'Genotype'}\NormalTok{)}
-\KeywordTok{pheatmap}\NormalTok{(}\KeywordTok{assay}\NormalTok{(ntd)[selected.genes,],}
+\KeywordTok{pheatmap}\NormalTok{(heatmap.data,}
          \DataTypeTok{cluster_rows=}\NormalTok{T,}
          \DataTypeTok{show_rownames =}\NormalTok{ F,}
          \DataTypeTok{cluster_cols =}\NormalTok{ T,}
@@ -251,18 +256,34 @@ This script was most recently updated on \textbf{Fri Apr 2 10:42:40
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{selected.genes <-}\StringTok{ }\KeywordTok{order}\NormalTok{(dds.genotype}\OperatorTok{$}\NormalTok{padj)[}\DecValTok{1}\OperatorTok{:}\DecValTok{265}\NormalTok{]}
-\KeywordTok{pheatmap}\NormalTok{(}\KeywordTok{assay}\NormalTok{(ntd)[selected.genes,],}
+\KeywordTok{pheatmap}\NormalTok{(heatmap.data,}
+         \DataTypeTok{cluster_rows=}\NormalTok{T,}
+         \DataTypeTok{show_rownames =}\NormalTok{ T,}
+         \DataTypeTok{show_colnames =}\NormalTok{ F,}
+         \DataTypeTok{fontsize_row =} \DecValTok{3}\NormalTok{,}
+         \DataTypeTok{cluster_cols =}\NormalTok{ T,}
+         \DataTypeTok{legend_labels=}\NormalTok{F,}
+         \DataTypeTok{border_color=}\OtherTok{NA}\NormalTok{,}
+         \DataTypeTok{scale=}\StringTok{'row'}\NormalTok{,}
+         \DataTypeTok{main=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures-noura/heatmap-2.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pheatmap}\NormalTok{(heatmap.data,}
          \DataTypeTok{cluster_rows=}\NormalTok{T,}
          \DataTypeTok{show_rownames =}\NormalTok{ F,}
          \DataTypeTok{cluster_cols =}\NormalTok{ T,}
          \CommentTok{#annotation_col=df,}
          \DataTypeTok{scale=}\StringTok{'none'}\NormalTok{, }\CommentTok{#row is each row is the gene with each row having the same average value, normalized. In scale none, each row is still a ngene but no longer with normalized expression, harder to see since genes have different expression levels }
-         \DataTypeTok{main=}\StringTok{"Top 200 Genotype modified genes"}\NormalTok{)}
+         \DataTypeTok{main=}\StringTok{"Significantly modified genes"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{figures-noura/heatmap-2.png}
+\includegraphics{figures-noura/heatmap-3.png}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -278,7 +299,7 @@ This script was most recently updated on \textbf{Fri Apr 2 10:42:40
 \StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
 \StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\KeywordTok{bquote}\NormalTok{(}\OperatorTok{~-}\NormalTok{log[}\DecValTok{10}\NormalTok{]}\OperatorTok{~}\NormalTok{Q}\OperatorTok{~}\NormalTok{value),}
        \DataTypeTok{x=}\KeywordTok{bquote}\NormalTok{(}\OperatorTok{~}\NormalTok{log[}\DecValTok{2}\NormalTok{]}\OperatorTok{~}\NormalTok{fold}\OperatorTok{~}\NormalTok{change),}
-       \DataTypeTok{subtitle=}\StringTok{"Adipocyte Tsc1 Knockout Mammary Gland RNAseq"}\NormalTok{) }\OperatorTok{+}
+       \DataTypeTok{subtitle=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{geom_text}\NormalTok{(}\DataTypeTok{data=}\KeywordTok{subset}\NormalTok{(topT, }\KeywordTok{abs}\NormalTok{(log2FoldChange) }\OperatorTok{>}\StringTok{ }\DecValTok{2} \OperatorTok{|}\StringTok{ }\OperatorTok{-}\KeywordTok{log10}\NormalTok{(padj) }\OperatorTok{>}\StringTok{ }\FloatTok{2.5}\NormalTok{),}
             \KeywordTok{aes}\NormalTok{(log2FoldChange,}\OperatorTok{-}\KeywordTok{log10}\NormalTok{(padj),}\DataTypeTok{label=}\NormalTok{symbol),}
             \DataTypeTok{check_overlap =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{nudge_x =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}

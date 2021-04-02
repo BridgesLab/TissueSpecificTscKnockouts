@@ -82,6 +82,11 @@ for (file in log.files) {
 
 ```{r mapping-summary}
 mapping.data %>%
+  separate(file, into=c('Folder','Sample','Aux','Meta'), sep="/") %>%
+  select(-Folder,-Aux,-Meta) %>%
+  kable(caption="Sample level mapping results")
+
+mapping.data %>%
   select(-file) %>%
   summarize_all(.funs=list(Average=mean,Min=min,Max=max)) %>%
   pivot_longer(everything(), names_sep="_", names_to=c('Measure','Stat')) %>%

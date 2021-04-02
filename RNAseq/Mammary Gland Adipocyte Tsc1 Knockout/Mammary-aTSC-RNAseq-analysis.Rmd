@@ -1,5 +1,5 @@
 ---
-title: "Noura Analysis of  RNAseq studies"
+title: "Analysis of aTSC Mammary RNAseq studies"
 author: "Dave Bridges, Noura El Habbal"
 date: "September 2, 2020"
 output:
@@ -109,10 +109,8 @@ dds.genotype$symbol <- mapIds(org.Mm.eg.db,
 # Summary of Results
 
 ```{r results-summary}
-summary(dds.genotype) 
+summary(dds.genotype, alpha=0.05)
 ```
-
-
 
 # MA Plot
 
@@ -124,11 +122,16 @@ plotMA(dds.genotype, main="Effect of Genotype") #top vs bottom is comparing the 
 ```{r heatmap}
 library(pheatmap)
 ntd <- normTransform(dds)
-selected.genes <- order(dds.genotype$padj)[1:200] # pick the 50 most significantly changed genes (up vs down)
+selected.genes <- subset(dds.genotype, padj<0.05) # pick the 50 most significantly changed genes (up vs down)
 df <- data.frame(colData(dds)$Genotype)
-rownames(df) <- colnames(assay(ntd)[selected.genes,])
+rownames(df) <- colnames(assay(ntd)[rownames(selected.genes),])
+
+name.mapping <- as.data.frame(dds.genotype$symbol)
+heatmap.data <- assay(ntd)[rownames(selected.genes),]
+rownames(heatmap.data) <- name.mapping[rownames(selected.genes),]
+
 df <- rename(df, 'colData.dds..Genotype'='Genotype')
-pheatmap(assay(ntd)[selected.genes,],
+pheatmap(heatmap.data,
          cluster_rows=T,
          show_rownames = F,
          cluster_cols = T,
@@ -136,14 +139,24 @@ pheatmap(assay(ntd)[selected.genes,],
          scale='row',
          main="Significantly differentially expressed genes")
 
-selected.genes <- order(dds.genotype$padj)[1:265]
-pheatmap(assay(ntd)[selected.genes,],
+pheatmap(heatmap.data,
+         cluster_rows=T,
+         show_rownames = T,
+         show_colnames = F,
+         fontsize_row = 3,
+         cluster_cols = T,
+         legend_labels=F,
+         border_color=NA,
+         scale='row',
+         main="")
+
+pheatmap(heatmap.data,
          cluster_rows=T,
          show_rownames = F,
          cluster_cols = T,
          #annotation_col=df,
          scale='none', #row is each row is the gene with each row having the same average value, normalized. In scale none, each row is still a ngene but no longer with normalized expression, harder to see since genes have different expression levels 
-         main="Top 200 Genotype modified genes")
+         main="Significantly modified genes")
 ```
 
 ```{r volcano-plot}
@@ -159,7 +172,7 @@ ggplot(topT,(aes(y=-log10(padj),
   geom_point() +
   labs(y=bquote(~-log[10]~Q~value),
        x=bquote(~log[2]~fold~change),
-       subtitle="Adipocyte Tsc1 Knockout Mammary Gland RNAseq") +
+       subtitle="") +
     geom_text(data=subset(topT, abs(log2FoldChange) > 2 | -log10(padj) > 2.5),
             aes(log2FoldChange,-log10(padj),label=symbol),
             check_overlap = TRUE, nudge_x = 0.5) +

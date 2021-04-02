@@ -163,6 +163,50 @@ Ran samples through salmon, this script analyzes their log files
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{mapping.data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{separate}\NormalTok{(file, }\DataTypeTok{into=}\KeywordTok{c}\NormalTok{(}\StringTok{'Folder'}\NormalTok{,}\StringTok{'Sample'}\NormalTok{,}\StringTok{'Aux'}\NormalTok{,}\StringTok{'Meta'}\NormalTok{), }\DataTypeTok{sep=}\StringTok{"/"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{Folder,}\OperatorTok{-}\NormalTok{Aux,}\OperatorTok{-}\NormalTok{Meta) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Sample level mapping results"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrr@{}}
+\caption{Sample level mapping results}\tabularnewline
+\toprule
+Sample & processed & mapped & percent.mapped\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Sample & processed & mapped & percent.mapped\tabularnewline
+\midrule
+\endhead
+NEH-Sample\_1415-NEH-1\_quant & 68797630 & 36919689 &
+53.7\tabularnewline
+NEH-Sample\_1415-NEH-10\_quant & 53074920 & 29967599 &
+56.5\tabularnewline
+NEH-Sample\_1415-NEH-11\_quant & 60844806 & 33393597 &
+54.9\tabularnewline
+NEH-Sample\_1415-NEH-2\_quant & 60837388 & 33004083 &
+54.2\tabularnewline
+NEH-Sample\_1415-NEH-3\_quant & 46190369 & 25817975 &
+55.9\tabularnewline
+NEH-Sample\_1415-NEH-4\_quant & 46879516 & 26061239 &
+55.6\tabularnewline
+NEH-Sample\_1415-NEH-5\_quant & 56732424 & 30472454 &
+53.7\tabularnewline
+NEH-Sample\_1415-NEH-6\_quant & 69409104 & 37894237 &
+54.6\tabularnewline
+NEH-Sample\_1415-NEH-7\_quant & 60796832 & 34385159 &
+56.6\tabularnewline
+NEH-Sample\_1415-NEH-8\_quant & 56688381 & 30427723 &
+53.7\tabularnewline
+NEH-Sample\_1415-NEH-9\_quant & 50846057 & 26973283 &
+53.0\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mapping.data }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{file) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{summarize_all}\NormalTok{(}\DataTypeTok{.funs=}\KeywordTok{list}\NormalTok{(}\DataTypeTok{Average=}\NormalTok{mean,}\DataTypeTok{Min=}\NormalTok{min,}\DataTypeTok{Max=}\NormalTok{max)) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}\KeywordTok{everything}\NormalTok{(), }\DataTypeTok{names_sep=}\StringTok{"_"}\NormalTok{, }\DataTypeTok{names_to=}\KeywordTok{c}\NormalTok{(}\StringTok{'Measure'}\NormalTok{,}\StringTok{'Stat'}\NormalTok{)) }\OperatorTok{%>%}

@@ -7,6 +7,8 @@ This document indicates where the raw data for each table and figure panel can b
 
 | Figure | Script | Figure |
 | ------ | ------ | ------ |
+| Figure 7A | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | heatmap-2.pdf |
+| Figure 7B | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | volcano-plot-1.pdf |
 
 # Tables 
 
