@@ -15,33 +15,7 @@ output:
     toc: yes
 ---
 
-```{r global_options, include=FALSE}
-library(knitr)
-#figures makde will go to directory called figures, will make them as both png and pdf files 
-opts_chunk$set(fig.path='figures-noura/',
-               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
-options(scipen = 2, digits = 3)
-# set echo and message to TRUE if you want to display code blocks and code output respectively
 
-knitr::knit_hooks$set(inline = function(x) {
-  knitr:::format_sci(x, 'md')
-})
-
-
-superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
-  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
-  length = length, ...)
-
-  
-se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
-
-#load these packages, nearly always needed
-library(tidyr)
-library(dplyr)
-
-# sets maize and blue color scheme
-color.scheme <- c('#00274c', '#ffcb05')
-```
 
 # Purpose
 
@@ -49,7 +23,8 @@ color.scheme <- c('#00274c', '#ffcb05')
 
 Imported normalized counts from Salmon aligned data, analyzed via DESeq2
 
-```{r data-input}
+
+```r
 library(readr) #loads the readr package
 counts.file <- 'DESeq2 Normalized Counts.csv'
 design.file <- 'Design Table.csv'
@@ -78,13 +53,14 @@ long.merged.data <-
   full_join(long.counts.table, by=c('names'='Sample'))
 ```
 
-These data can be found in **`r getwd()`**.  The counts file is `r counts.file` but the design file is `r design.file`.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/Mammary Gland Adipocyte Tsc1 Knockout**.  The counts file is DESeq2 Normalized Counts.csv but the design file is Design Table.csv.
 
 # Analysis
 
 # Single Gene Graphs
 
-```{r genes.of.interest}
+
+```r
 #use MGI symbols and add them to this list
 
 human.mouse.mapping.table <- 'http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt'
@@ -109,7 +85,8 @@ sig.genes <- filter(deseq.results, padj<0.05) %>% pull(symbol)
 genes.to.plot <- c(genes.of.interest)#,sig.genes)
 ```
 
-```{r barplots}
+
+```r
 library(ggplot2)
 for (gene in genes.to.plot){
   barplot <- long.merged.data %>%
@@ -137,7 +114,8 @@ for (gene in genes.to.plot){
 }
 ```
 
-```{r boxplots}
+
+```r
 for (gene in genes.to.plot){
   barplot <- long.merged.data %>%
     dplyr::filter(mgi_symbol==gene) %>%
@@ -162,7 +140,8 @@ for (gene in genes.to.plot){
 
 # Grouped Gene Sets
 
-```{r gene-sets}
+
+```r
 gene.sets <- tibble(name="Fatty Acid Synthesis", genes = list('Fasn','Acly','Acaca'))
 gene.sets <- 
   gene.sets %>% 
@@ -227,6 +206,52 @@ for (set in gene.sets$name) {
 
 # Session Information
 
-```{r session-information, echo=T}
+
+```r
 sessionInfo()
+```
+
+```
+## R version 4.0.2 (2020-06-22)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS  10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] ggplot2_3.3.3  biomaRt_2.46.3 readr_1.4.0    dplyr_1.0.5    tidyr_1.1.3   
+## [6] knitr_1.31    
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.6           prettyunits_1.1.1    assertthat_0.2.1    
+##  [4] digest_0.6.27        utf8_1.2.1           BiocFileCache_1.14.0
+##  [7] R6_2.5.0             stats4_4.0.2         RSQLite_2.2.5       
+## [10] evaluate_0.14        httr_1.4.2           pillar_1.5.1        
+## [13] rlang_0.4.10         progress_1.2.2       curl_4.3            
+## [16] rstudioapi_0.13      jquerylib_0.1.3      blob_1.2.1          
+## [19] S4Vectors_0.28.1     rmarkdown_2.7        labeling_0.4.2      
+## [22] stringr_1.4.0        bit_4.0.4            munsell_0.5.0       
+## [25] compiler_4.0.2       xfun_0.22            pkgconfig_2.0.3     
+## [28] askpass_1.1          BiocGenerics_0.36.0  htmltools_0.5.1.1   
+## [31] openssl_1.4.3        tidyselect_1.1.0     tibble_3.1.0        
+## [34] IRanges_2.24.1       XML_3.99-0.6         fansi_0.4.2         
+## [37] crayon_1.4.1         dbplyr_2.1.0         withr_2.4.1         
+## [40] rappdirs_0.3.3       grid_4.0.2           jsonlite_1.7.2      
+## [43] gtable_0.3.0         lifecycle_1.0.0      DBI_1.1.1           
+## [46] magrittr_2.0.1       scales_1.1.1         cli_2.3.1           
+## [49] stringi_1.5.3        cachem_1.0.4         farver_2.1.0        
+## [52] xml2_1.3.2           bslib_0.2.4          ellipsis_0.3.1      
+## [55] generics_0.1.0       vctrs_0.3.7          tools_4.0.2         
+## [58] bit64_4.0.5          Biobase_2.50.0       glue_1.4.2          
+## [61] purrr_0.3.4          hms_1.0.0            parallel_4.0.2      
+## [64] fastmap_1.1.0        yaml_2.2.1           AnnotationDbi_1.52.0
+## [67] colorspace_2.0-0     memoise_2.0.0        sass_0.3.1
 ```
