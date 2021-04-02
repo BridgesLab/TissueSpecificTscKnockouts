@@ -61,7 +61,7 @@ summary.data <-
                                       se=se))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 15:15:58 2021**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Liver AMPK Ketogenic Diet/ITT** in a file named **ITT Data.xlsx** and **mapping.csv**.  This script was most recently updated on **Thu Apr  1 19:47:42 2021**.
 
 # Number of Mice
 
@@ -194,72 +194,6 @@ library(lmerTest)
 itt.lme <- lmer(Glucose~as.factor(Time)+Diet+Sex+Injection+(1|ID), data=data.long)
 itt.lme.null <- lmer(Glucose~as.factor(Time)+Diet+Sex+(1|ID), data=data.long)
 
-summary(itt.lme)
-```
-
-```
-## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-## lmerModLmerTest]
-## Formula: Glucose ~ as.factor(Time) + Diet + Sex + Injection + (1 | ID)
-##    Data: data.long
-## 
-## REML criterion at convergence: 6372
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.252 -0.588 -0.042  0.565  5.281 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  ID       (Intercept)  714     26.7    
-##  Residual             1059     32.5    
-## Number of obs: 643, groups:  ID, 72
-## 
-## Fixed effects:
-##                    Estimate Std. Error      df t value Pr(>|t|)    
-## (Intercept)         127.914      7.899 107.945   16.19  < 2e-16 ***
-## as.factor(Time)15   -24.236      5.423 563.249   -4.47  9.5e-06 ***
-## as.factor(Time)30   -55.236      5.423 563.249  -10.19  < 2e-16 ***
-## as.factor(Time)45   -58.583      5.423 563.249  -10.80  < 2e-16 ***
-## as.factor(Time)60   -46.721      5.446 563.686   -8.58  < 2e-16 ***
-## as.factor(Time)75   -21.763      5.446 563.686   -4.00  7.3e-05 ***
-## as.factor(Time)90    -0.425      5.446 563.686   -0.08     0.94    
-## as.factor(Time)105    5.786      5.446 563.686    1.06     0.29    
-## as.factor(Time)120   11.814      5.446 563.686    2.17     0.03 *  
-## DietKeto             58.029      6.887  68.293    8.43  3.6e-12 ***
-## SexM                 -2.965      6.838  68.183   -0.43     0.67    
-## InjectionCre          7.667      6.821  68.152    1.12     0.27    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Correlation of Fixed Effects:
-##             (Intr) a.(T)15 a.(T)3 a.(T)4 a.(T)6 a.(T)7 a.(T)9 a.(T)10 a.(T)12
-## as.fct(T)15 -0.343                                                           
-## as.fct(T)30 -0.343  0.500                                                    
-## as.fct(T)45 -0.343  0.500   0.500                                            
-## as.fct(T)60 -0.341  0.498   0.498  0.498                                     
-## as.fct(T)75 -0.341  0.498   0.498  0.498  0.497                              
-## as.fct(T)90 -0.341  0.498   0.498  0.498  0.497  0.497                       
-## as.fc(T)105 -0.341  0.498   0.498  0.498  0.497  0.497  0.497                
-## as.fc(T)120 -0.341  0.498   0.498  0.498  0.497  0.497  0.497  0.497         
-## DietKeto    -0.460  0.000   0.000  0.000 -0.003 -0.003 -0.003 -0.003  -0.003 
-## SexM        -0.455  0.000   0.000  0.000  0.002  0.002  0.002  0.002   0.002 
-## InjectionCr -0.401  0.000   0.000  0.000 -0.002 -0.002 -0.002 -0.002  -0.002 
-##             DietKt SexM  
-## as.fct(T)15              
-## as.fct(T)30              
-## as.fct(T)45              
-## as.fct(T)60              
-## as.fct(T)75              
-## as.fct(T)90              
-## as.fc(T)105              
-## as.fc(T)120              
-## DietKeto                 
-## SexM        -0.048       
-## InjectionCr -0.035  0.023
-```
-
-```r
 anova(itt.lme) %>% 
   tidy %>% 
   kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for ITT mixed linear model.")
@@ -356,6 +290,82 @@ data.long.norm %>%
 ```
 
 ![Dotplot of ITT, normalized to fasting glucose](figures/itt-norm-line-all-2.png)
+
+### Normalized ITT Stats
+
+
+```r
+itt.lme.norm <- lmer(Glucose~as.factor(Time)+Diet+Sex+Injection+(1|ID), data=data.long.norm)
+itt.lme.null.norm <- lmer(Glucose~as.factor(Time)+Diet+Sex+(1|ID), data=data.long.norm)
+
+anova(itt.lme.norm) %>% 
+  tidy %>% 
+  kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for ITT after normalization's mixed linear model.")
+```
+
+
+
+Table: Type III Analysis of Variance Table with Satterthwaite's method for ITT after normalization's mixed linear model.
+
+|term            |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
+|:---------------|------:|------:|-----:|-----:|---------:|-------:|
+|as.factor(Time) | 422514|  52814|     8| 563.5|    49.885|   0.000|
+|Diet            |  75170|  75170|     1|  68.3|    71.001|   0.000|
+|Sex             |    199|    199|     1|  68.2|     0.188|   0.666|
+|Injection       |   1337|   1337|     1|  68.2|     1.263|   0.265|
+
+```r
+anova(itt.lme.norm,itt.lme.null.norm) %>% 
+  tidy %>%
+  kable(caption="Chi-squared test for effects of AAV injection on ITT after normalization.")
+```
+
+
+
+Table: Chi-squared test for effects of AAV injection on ITT after normalization.
+
+|term              | npar|  AIC|  BIC| logLik| deviance| statistic| df| p.value|
+|:-----------------|----:|----:|----:|------:|--------:|---------:|--:|-------:|
+|itt.lme.null.norm |   13| 6458| 6517|  -3216|     6432|        NA| NA|      NA|
+|itt.lme.norm      |   14| 6459| 6522|  -3216|     6431|      1.32|  1|    0.25|
+
+```r
+#females on diet x genotype
+itt.lme.norm.f <- lmer(Glucose~as.factor(Time)+Diet+Injection+Diet:Injection+(1|ID), data=data.long.norm %>% filter(Sex=="F"))
+anova(itt.lme.norm.f) %>% 
+  tidy %>% 
+  kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for female ITT after normalization.")
+```
+
+
+
+Table: Type III Analysis of Variance Table with Satterthwaite's method for female ITT after normalization.
+
+|term            |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
+|:---------------|------:|------:|-----:|-----:|---------:|-------:|
+|as.factor(Time) | 210861|  26358|     8|   256|    19.791|   0.000|
+|Diet            |  55992|  55992|     1|    29|    42.043|   0.000|
+|Injection       |    823|    823|     1|    29|     0.618|   0.438|
+|Diet:Injection  |  13063|  13063|     1|    29|     9.808|   0.004|
+
+```r
+#males on diet x genotype
+itt.lme.norm.m <- lmer(Glucose~as.factor(Time)+Diet+Injection+Diet:Injection+(1|ID), data=data.long.norm %>% filter(Sex=="M"))
+anova(itt.lme.norm.m) %>% 
+  tidy %>% 
+  kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for male ITT after normalization.")
+```
+
+
+
+Table: Type III Analysis of Variance Table with Satterthwaite's method for male ITT after normalization.
+
+|term            |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
+|:---------------|------:|------:|-----:|-----:|---------:|-------:|
+|as.factor(Time) | 238994|  29874|     8| 299.3|    39.253|   0.000|
+|Diet            |  28388|  28388|     1|  35.2|    37.300|   0.000|
+|Injection       |    443|    443|     1|  35.2|     0.583|   0.450|
+|Diet:Injection  |    198|    198|     1|  35.2|     0.261|   0.613|
 
 ### Analysis at the 60 Minute Time Point
 

@@ -190,8 +190,6 @@ library(lmerTest)
 itt.lme <- lmer(Glucose~as.factor(Time)+Diet+Sex+Injection+(1|ID), data=data.long)
 itt.lme.null <- lmer(Glucose~as.factor(Time)+Diet+Sex+(1|ID), data=data.long)
 
-summary(itt.lme)
-
 anova(itt.lme) %>% 
   tidy %>% 
   kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for ITT mixed linear model.")
@@ -199,6 +197,7 @@ anova(itt.lme) %>%
 anova(itt.lme,itt.lme.null) %>% 
   tidy %>%
   kable(caption="Chi-squared test for effects of AAV injection on ITT.")
+
 ```
 
 ## Normalized ITT
@@ -258,6 +257,33 @@ data.long.norm %>%
         legend.position=c(0.15,0.90),
         legend.background = element_rect(fill = "transparent"),
         legend.title=element_blank())
+```
+
+### Normalized ITT Stats
+
+```{r itt-norm-stats}
+itt.lme.norm <- lmer(Glucose~as.factor(Time)+Diet+Sex+Injection+(1|ID), data=data.long.norm)
+itt.lme.null.norm <- lmer(Glucose~as.factor(Time)+Diet+Sex+(1|ID), data=data.long.norm)
+
+anova(itt.lme.norm) %>% 
+  tidy %>% 
+  kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for ITT after normalization's mixed linear model.")
+
+anova(itt.lme.norm,itt.lme.null.norm) %>% 
+  tidy %>%
+  kable(caption="Chi-squared test for effects of AAV injection on ITT after normalization.")
+
+#females on diet x genotype
+itt.lme.norm.f <- lmer(Glucose~as.factor(Time)+Diet+Injection+Diet:Injection+(1|ID), data=data.long.norm %>% filter(Sex=="F"))
+anova(itt.lme.norm.f) %>% 
+  tidy %>% 
+  kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for female ITT after normalization.")
+
+#males on diet x genotype
+itt.lme.norm.m <- lmer(Glucose~as.factor(Time)+Diet+Injection+Diet:Injection+(1|ID), data=data.long.norm %>% filter(Sex=="M"))
+anova(itt.lme.norm.m) %>% 
+  tidy %>% 
+  kable(caption="Type III Analysis of Variance Table with Satterthwaite's method for male ITT after normalization.")
 ```
 
 ### Analysis at the 60 Minute Time Point
@@ -575,14 +601,6 @@ animal.rate.data %>% filter(Diet=="Keto") %>% lm(estimate ~ Sex+Injection, data=
   mutate(Percent.Effect = estimate/estimate[term=="(Intercept)"]*100) %>% kable(caption="Effects of diet and knockout on glucose drop rate for ketogenic diet mice")
 
 animal.rate.data %>% filter(Diet=="Keto") %>% lm(estimate ~ Sex*Injection, data=.) %>% tidy %>% kable(caption="Effects of diet and knockout on glucose drop rate for ketogenic diet mice, including interaction of sex and knockout")
-```
-
-# Recovery from Nadir
-
-```{r calculate-nadir}
-data.long %>%
-  group_by(ID) %>%
-  mutate()
 ```
 
 # Session Information
