@@ -12,6 +12,7 @@ This document indicates where the raw data for each table and figure panel can b
 | Figure 7C | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | Milk Proteins Plot.pdf |
 | Figure 7D | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | PPARg Targets Plot.pdf |
 | Figure 7E | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | Eicosanoid Signaling Plot.pdf |
+| Figure 7F | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Cluster-Profiler.Rmd | go-bp-3.pdf |
 
 # Tables 
 

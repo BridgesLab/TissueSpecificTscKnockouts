@@ -476,14 +476,22 @@ pre code {
 <a class="sourceLine" id="cb2-23" data-line-number="23"><span class="st">  </span><span class="kw">distinct</span>(human, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-24" data-line-number="24"><span class="st">  </span><span class="kw">write_tsv</span>(output.file, <span class="dt">col_names =</span> F)</a>
 <a class="sourceLine" id="cb2-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb2-26" data-line-number="26">output.file.exp &lt;-<span class="st"> 'GSEA Ranked File - Effects of aTSC Knockout expressed.rnk'</span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26">output.file &lt;-<span class="st"> 'GSEA Ranked File - Effects of aTSC Knockout - Mouse.rnk'</span></a>
 <a class="sourceLine" id="cb2-27" data-line-number="27">mapped.data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-28" data-line-number="28"><span class="st">  </span><span class="kw">arrange</span>(<span class="op">-</span>log2FoldChange) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-29" data-line-number="29"><span class="st">  </span><span class="kw">filter</span>(baseMean<span class="op">&gt;</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="st">  </span><span class="kw">select</span>(human, log2FoldChange) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-31" data-line-number="31"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(log2FoldChange))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32"><span class="st">  </span><span class="kw">distinct</span>(human, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-33" data-line-number="33"><span class="st">  </span><span class="kw">write_tsv</span>(output.file.exp, <span class="dt">col_names =</span> F)</a></code></pre></div>
+<a class="sourceLine" id="cb2-29" data-line-number="29"><span class="st">  </span><span class="kw">select</span>(symbol, log2FoldChange) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(log2FoldChange))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-31" data-line-number="31"><span class="st">  </span><span class="kw">distinct</span>(symbol, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-32" data-line-number="32"><span class="st">  </span><span class="kw">write_tsv</span>(output.file, <span class="dt">col_names =</span> F)</a>
+<a class="sourceLine" id="cb2-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb2-34" data-line-number="34">output.file.exp &lt;-<span class="st"> 'GSEA Ranked File - Effects of aTSC Knockout expressed.rnk'</span></a>
+<a class="sourceLine" id="cb2-35" data-line-number="35">mapped.data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-36" data-line-number="36"><span class="st">  </span><span class="kw">arrange</span>(<span class="op">-</span>log2FoldChange) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-37" data-line-number="37"><span class="st">  </span><span class="kw">filter</span>(baseMean<span class="op">&gt;</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-38" data-line-number="38"><span class="st">  </span><span class="kw">select</span>(human, log2FoldChange) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-39" data-line-number="39"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(log2FoldChange))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-40" data-line-number="40"><span class="st">  </span><span class="kw">distinct</span>(human, <span class="dt">.keep_all=</span>T) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-41" data-line-number="41"><span class="st">  </span><span class="kw">write_tsv</span>(output.file.exp, <span class="dt">col_names =</span> F)</a></code></pre></div>
 <p>Used the Jax human mouse orthology tables at <a href="http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt" class="uri">http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt</a></p>
 <p>Ran through GSEA 4.1.0 against MSigDB 7.2</p>
 </div>

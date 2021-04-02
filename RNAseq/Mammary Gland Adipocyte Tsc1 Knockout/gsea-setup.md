@@ -69,6 +69,14 @@ mapped.data %>%
   distinct(human, .keep_all=T) %>%
   write_tsv(output.file, col_names = F)
 
+output.file <- 'GSEA Ranked File - Effects of aTSC Knockout - Mouse.rnk'
+mapped.data %>%
+  arrange(-log2FoldChange) %>%
+  select(symbol, log2FoldChange) %>%
+  filter(!(is.na(log2FoldChange))) %>%
+  distinct(symbol, .keep_all=T) %>%
+  write_tsv(output.file, col_names = F)
+
 output.file.exp <- 'GSEA Ranked File - Effects of aTSC Knockout expressed.rnk'
 mapped.data %>%
   arrange(-log2FoldChange) %>%

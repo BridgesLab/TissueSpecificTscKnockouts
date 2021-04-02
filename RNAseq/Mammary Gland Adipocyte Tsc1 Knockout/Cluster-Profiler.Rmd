@@ -55,6 +55,10 @@ GSEA was run with folders put in this subfolder
 library(readr) #loads the readr package
 gene.list.file <- 'GSEA Ranked File - Effects of aTSC Knockout.rnk'
 gene.list <- read_tsv(gene.list.file, col_names = c('Gene','logFC'))
+
+gene.list.file.mouse <- 'GSEA Ranked File - Effects of aTSC Knockout - Mouse.rnk'
+gene.list.mouse <- read_tsv(gene.list.file.mouse, col_names = c('Gene','logFC'))
+
 gene.list.file.exp <- 'GSEA Ranked File - Effects of aTSC Knockout expressed.rnk'
 gene.list.exp <- read_tsv(gene.list.file.exp, col_names = c('Gene','logFC'))
 
@@ -67,14 +71,11 @@ gene.list <-
   full_join(gene.mapping, by=c('Gene'='ind')) %>%
   na.omit
 
-genes <- gene.list %>% pull(values)
+genes <- gene.list %>% pull(logFC)
+names(genes) <- gene.list$values
 
-gene.list.exp <-
-  gene.list.exp %>%
-  full_join(gene.mapping, by=c('Gene'='ind')) %>%
-  na.omit
-
-genes.exp <- gene.list.exp %>% pull(values)
+mouse.gene.list <- gene.list.mouse$logFC
+names(mouse.gene.list) <- gene.list.mouse$Gene
 ```
 
 # Gene Ontology
@@ -84,71 +85,64 @@ library(clusterProfiler)
 gsea.gene.list <- gene.list$logFC
 names(gsea.gene.list) <- gene.list$values
 gsea.gene.list <- sort(gsea.gene.list, decreasing=T)
-go.bp <- gseGO(geneList     = gsea.gene.list,
-              OrgDb        = org.Hs.eg.db,
+#for mice
+library(org.Mm.eg.db)
+go.bp <- gseGO(geneList     = mouse.gene.list,
+              OrgDb        = org.Mm.eg.db,
+              keyType = "SYMBOL",
               ont          = "BP",
               minGSSize    = 10,
               maxGSSize    = 500,
+              eps=0,
               pvalueCutoff = 0.05,
-              verbose      = FALSE) %>%
-  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
+              verbose      = TRUE)
+
+go.bp %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant GO - BP Pathays")
 
 go.bp.file <- 'GSEA Results - Gene Ontology - Biological Pathways.csv'
 go.bp %>%
   as.data.frame %>%
   write_csv(file=go.bp.file)
 
-#emapplot(go.bp, color='NES')
+library(enrichplot)
+go.bp <- pairwise_termsim(go.bp, method="JC")
+go.bp.simplified <- simplify(go.bp, cutoff=0.7, by='p.adjust', select_fun=min)
 
+library(enrichplot)
+library(ggnewscale)
+cnetplot(go.bp.simplified, foldChange=mouse.gene.list,node_label="category")
+heatplot(go.bp.simplified, foldChange = mouse.gene.list)
+
+go.bp <- pairwise_termsim(go.bp, method="JC")
+emapplot(go.bp, layout="nicely", color="NES",
+         cex_line=0.5,
+         cex_label_category=0.5)
+gseaplot2(go.bp, geneSetID = c(1,7))
 ```
 
-
-# KEGG 
-
-```{r kegg, fig.cap="KEGG enrichment plot"}
-kegg <- gseKEGG(geneList     = gsea.gene.list,
-              keyType          = "ncbi-geneid",
-              pvalueCutoff = 0.05,
-              verbose      = FALSE) %>%
-  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
-
-kegg.file <- 'GSEA Results - KEGG.csv'
-kegg %>%
-  as.data.frame %>%
-  write_csv(file=kegg.file)
-
-#emapplot(kegg, color='NES')
-```
-
-# Disease Ontology 
-
-```{r disease-ontology, fig.cap="Disease ontology enrichment plot"}
-library(DOSE)
-do <- gseDO(geneList     = gsea.gene.list) %>%
-  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
-
-do.file <- 'GSEA Results - DO.csv'
-do %>%
-  as.data.frame %>%
-  write_csv(file=do.file)
-
-#emapplot(do, color='NES')
-```
-
-# Disease Gene Network
+# Wikipathways
 
 From DisGeNET
 
-```{r dgn, fig.cap="DisGeNET enrichment plot"}
-dgn <- gseDGN(geneList     = gsea.gene.list, verbose=F) %>%
-  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
+```{r wp, fig.cap="Wikipathways enrichment plot"}
+# need entrez ids
 
-dgn.file <- 'GSEA Results - DGN.csv'
-dgn %>%
+
+mouse.gene.list.wp <- mouse.gene.list
+names(mouse.gene.list.wp) <- bitr(names(mouse.gene.list), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")$ENTREZID
+
+wp <- gseWP(geneList     = mouse.gene.list.wp, 
+             verbose=F,
+             organism="Mus musculus") 
+
+wp %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant Wikipathways")
+
+wp.file <- 'GSEA Results - Wikipathways.csv'
+wp %>%
   as.data.frame %>%
-  write_csv(file=dgn.file)
+  write_csv(file=wp.file)
 
-#emapplot(dgn, color='NES')
+gseaplot2(wp, geneSetID = 1:2)
 ```
 
 
@@ -162,15 +156,19 @@ cells <- cell_marker_data %>%
     dplyr::select(cellName, geneID) %>%
     dplyr::mutate(geneID = strsplit(geneID, ', ')) %>%
     tidyr::unnest()
-cm <- GSEA(gsea.gene.list, TERM2GENE = cells) %>%
-  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
-cm.file <- 'GSEA Results - Cell Markers'
+cm <- GSEA(genes, TERM2GENE = cells) 
+
+cm %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant cell types")
+
+cm.file <- 'GSEA Results - Cell Marker.csv'
 cm %>%
   as.data.frame %>%
   write_csv(file=cm.file)
 
-#emapplot(cm, color='NES')
-#ridgeplot(cm)
+cm <- pairwise_termsim(cm, method="JC")
+emapplot(cm, color='NES')
+upsetplot(cm)
+ridgeplot(cm, fill="NES")
 ```
 
 # Session Information
