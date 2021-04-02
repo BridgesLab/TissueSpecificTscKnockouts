@@ -170,7 +170,7 @@ Prior to this analysis, reads were mapped to GRCm38 CDS via Salmon v
 These data can be found in
 \textbf{/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/RNAseq/Mammary
 Gland Adipocyte Tsc1 Knockout} in a set of folders located in quants.
-This script was most recently updated on \textbf{Fri Apr 2 10:16:45
+This script was most recently updated on \textbf{Fri Apr 2 10:42:40
 2021}.
 
 \begin{Shaded}
@@ -326,9 +326,9 @@ Analysis}\label{principal-components-analysis}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{output.file <-}\StringTok{ 'Noura DESeq2 Results - Genotype.csv'}
-\NormalTok{output.counts <-}\StringTok{ 'Noura DESeq2 Normalized Counts.csv'}
-\NormalTok{output.design <-}\StringTok{ 'Noura Design Table.csv'}
+\NormalTok{output.file <-}\StringTok{ 'DESeq2 Results.csv'}
+\NormalTok{output.counts <-}\StringTok{ 'DESeq2 Normalized Counts.csv'}
+\NormalTok{output.design <-}\StringTok{ 'Design Table.csv'}
 
 \KeywordTok{write.csv}\NormalTok{(}\KeywordTok{as.data.frame}\NormalTok{(dds.genotype), }\DataTypeTok{file=}\NormalTok{output.file)}
 \KeywordTok{write.csv}\NormalTok{(}\KeywordTok{counts}\NormalTok{(dds, }\DataTypeTok{normalized=}\NormalTok{T), }\DataTypeTok{file=}\NormalTok{output.counts)}

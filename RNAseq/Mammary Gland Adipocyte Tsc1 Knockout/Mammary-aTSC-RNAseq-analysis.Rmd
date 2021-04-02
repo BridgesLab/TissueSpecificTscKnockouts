@@ -191,9 +191,9 @@ plotPCA(vsd, intgroup=c("Genotype")) #overall seeing how similar samples are to 
 ```
 
 ```{r reporting-tools}
-output.file <- 'Noura DESeq2 Results - Genotype.csv'
-output.counts <- 'Noura DESeq2 Normalized Counts.csv'
-output.design <- 'Noura Design Table.csv'
+output.file <- 'DESeq2 Results.csv'
+output.counts <- 'DESeq2 Normalized Counts.csv'
+output.design <- 'Design Table.csv'
 
 write.csv(as.data.frame(dds.genotype), file=output.file)
 write.csv(counts(dds, normalized=T), file=output.counts)
