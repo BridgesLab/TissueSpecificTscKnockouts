@@ -33,6 +33,8 @@ curl ftp://ftp.ensembl.org/pub/release-101/fasta/mus_musculus/cds/Mus_musculus.G
 
 salmon index -t Mus_musculus.GRCm38.cds.all.fa.gz -i mouse_index
 
+#note that the index is not in the git repositiry and has to be remade if you download these data
+
 this file is set as salmon-quant-bridges.sh or salmon-quant-gregg.sh
 #!/bin/bash
 for fn in 1415-NEH/NovaA-284/1415-NEH/Sample_1415-NEH-{1..11};
