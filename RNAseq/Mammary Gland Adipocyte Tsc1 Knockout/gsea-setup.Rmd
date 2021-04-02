@@ -1,0 +1,126 @@
+---
+title: "Preparation of aTSC Mammary Gland datasets for GSEA analyses"
+author: "Dave Bridges"
+date: "September 25, 2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures-gregg/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To generate files for GSEA and gene set enrichment analyses
+
+# Raw Data
+
+Imported DESeq analysed data
+
+These data can be found in **`r getwd()`**.  
+
+# Analysis
+
+# Data Entry
+
+```{r genes.of.interest}
+library(readr)
+deseq.results.file <-  'DESeq2 Results.csv'
+deseq.results <- read_csv(deseq.results.file)
+
+```
+
+# GSEA Prerank Input
+
+Needs human gene identifiers, re-arranged in order by fold change, output into a tsv file.
+
+```{r human-gene-table}
+human.mouse.mapping.table <- 'http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt'
+mapping.table <- read_tsv(human.mouse.mapping.table) %>%
+  select(`Common Organism Name`,Symbol,`HomoloGene ID`) 
+  
+wide.mapping.table <- pivot_wider(mapping.table,
+                                  names_from=`Common Organism Name`,
+                                  values_from = Symbol,
+                                  id_cols=`HomoloGene ID`) %>%
+  rename("Mouse"='mouse, laboratory') %>%
+  mutate(Mouse=as.factor(as.character(Mouse))) %>%
+    mutate(human=as.factor(as.character(human)))
+
+mapped.data <-
+  deseq.results %>%
+  left_join(wide.mapping.table, by=c('symbol'='Mouse')) %>%
+  filter(human !='NULL')
+
+output.file <- 'GSEA Ranked File - Effects of aTSC Knockout.rnk'
+mapped.data %>%
+  arrange(-log2FoldChange) %>%
+  select(human, log2FoldChange) %>%
+  filter(!(is.na(log2FoldChange))) %>%
+  distinct(human, .keep_all=T) %>%
+  write_tsv(output.file, col_names = F)
+
+output.file.exp <- 'GSEA Ranked File - Effects of aTSC Knockout expressed.rnk'
+mapped.data %>%
+  arrange(-log2FoldChange) %>%
+  filter(baseMean>100) %>%
+  select(human, log2FoldChange) %>%
+  filter(!(is.na(log2FoldChange))) %>%
+  distinct(human, .keep_all=T) %>%
+  write_tsv(output.file.exp, col_names = F)
+```
+
+Used the Jax human mouse orthology tables at `r human.mouse.mapping.table`
+
+Ran through GSEA 4.1.0 against MSigDB 7.2
+
+# Erichr files
+
+For this just need a list of differentially expressed up and downregulated genes
+
+```{r enrichr-file}
+deseq.results %>% filter(padj<0.05) %>% pull(symbol) %>% write('Differentially expressed genes.txt')
+deseq.results %>% filter(padj<0.05,log2FoldChange>0) %>% pull(symbol) %>% write('Differentially expressed upregulated genes.txt')
+deseq.results %>% filter(padj<0.05,log2FoldChange<0) %>% pull(symbol) %>% write('Differentially expressed downregulated genes.txt')
+```
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```

@@ -142,6 +142,7 @@ for (gene in genes.to.plot){
 
 
 ```r
+library(stringr)
 gene.sets <- tibble(name="Fatty Acid Synthesis", genes = list('Fasn','Acly','Acaca'))
 gene.sets <- 
   gene.sets %>% 
@@ -164,7 +165,9 @@ gene.sets <-
   add_row(name="LTB4 Receptors",
           genes=list('Ltb4r1','Ltb4r2')) %>%
   add_row(name="B-Cell Regulators",
-          genes=list('Ccl28','Ccr10','Vcam1','Slc30a2','Ackr2')) #CCL28 binds to CCR10 on B-cells (see http://dx.doi.org/10.1007/s10911-010-9188-7 and its ref45). VCAM-1 blocking decreases IgA secretion (ref 52)
+          genes=list('Ccl28','Ccr10','Vcam1','Slc30a2','Ackr2')) %>% #CCL28 binds to CCR10 on B-cells (see http://dx.doi.org/10.1007/s10911-010-9188-7 and its ref45). VCAM-1 blocking decreases IgA secretion (ref 52)
+    add_row(name="DMRT Targets",
+          genes=list(str_to_title(c('BMI1','E2F1','EED','EZH2','JARID2','KLF4','MTF2','MYBL2','MYC','PAX3','PHC1','PPARD','RNF2','SMAD4','SMARCA4','STAT3','SUZ12','TP53','ZNF217')))) # from https://maayanlab.cloud/Harmonizome/gene/DMRT2 CHEA Transcription Factor Targets
 
 
 
@@ -227,8 +230,8 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.3.3  biomaRt_2.46.3 readr_1.4.0    dplyr_1.0.5    tidyr_1.1.3   
-## [6] knitr_1.31    
+## [1] stringr_1.4.0  ggplot2_3.3.3  biomaRt_2.46.3 readr_1.4.0    dplyr_1.0.5   
+## [6] tidyr_1.1.3    knitr_1.31    
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_1.0.6           prettyunits_1.1.1    assertthat_0.2.1    
@@ -238,20 +241,20 @@ sessionInfo()
 ## [13] rlang_0.4.10         progress_1.2.2       curl_4.3            
 ## [16] rstudioapi_0.13      jquerylib_0.1.3      blob_1.2.1          
 ## [19] S4Vectors_0.28.1     rmarkdown_2.7        labeling_0.4.2      
-## [22] stringr_1.4.0        bit_4.0.4            munsell_0.5.0       
-## [25] compiler_4.0.2       xfun_0.22            pkgconfig_2.0.3     
-## [28] askpass_1.1          BiocGenerics_0.36.0  htmltools_0.5.1.1   
-## [31] openssl_1.4.3        tidyselect_1.1.0     tibble_3.1.0        
-## [34] IRanges_2.24.1       XML_3.99-0.6         fansi_0.4.2         
-## [37] crayon_1.4.1         dbplyr_2.1.0         withr_2.4.1         
-## [40] rappdirs_0.3.3       grid_4.0.2           jsonlite_1.7.2      
-## [43] gtable_0.3.0         lifecycle_1.0.0      DBI_1.1.1           
-## [46] magrittr_2.0.1       scales_1.1.1         cli_2.3.1           
-## [49] stringi_1.5.3        cachem_1.0.4         farver_2.1.0        
-## [52] xml2_1.3.2           bslib_0.2.4          ellipsis_0.3.1      
-## [55] generics_0.1.0       vctrs_0.3.7          tools_4.0.2         
-## [58] bit64_4.0.5          Biobase_2.50.0       glue_1.4.2          
-## [61] purrr_0.3.4          hms_1.0.0            parallel_4.0.2      
-## [64] fastmap_1.1.0        yaml_2.2.1           AnnotationDbi_1.52.0
-## [67] colorspace_2.0-0     memoise_2.0.0        sass_0.3.1
+## [22] bit_4.0.4            munsell_0.5.0        compiler_4.0.2      
+## [25] xfun_0.22            pkgconfig_2.0.3      askpass_1.1         
+## [28] BiocGenerics_0.36.0  htmltools_0.5.1.1    openssl_1.4.3       
+## [31] tidyselect_1.1.0     tibble_3.1.0         IRanges_2.24.1      
+## [34] XML_3.99-0.6         fansi_0.4.2          crayon_1.4.1        
+## [37] dbplyr_2.1.0         withr_2.4.1          rappdirs_0.3.3      
+## [40] grid_4.0.2           jsonlite_1.7.2       gtable_0.3.0        
+## [43] lifecycle_1.0.0      DBI_1.1.1            magrittr_2.0.1      
+## [46] scales_1.1.1         cli_2.3.1            stringi_1.5.3       
+## [49] cachem_1.0.4         farver_2.1.0         xml2_1.3.2          
+## [52] bslib_0.2.4          ellipsis_0.3.1       generics_0.1.0      
+## [55] vctrs_0.3.7          tools_4.0.2          bit64_4.0.5         
+## [58] Biobase_2.50.0       glue_1.4.2           purrr_0.3.4         
+## [61] hms_1.0.0            parallel_4.0.2       fastmap_1.1.0       
+## [64] yaml_2.2.1           AnnotationDbi_1.52.0 colorspace_2.0-0    
+## [67] memoise_2.0.0        sass_0.3.1
 ```

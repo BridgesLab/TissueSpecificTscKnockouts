@@ -163,6 +163,7 @@ for (gene in genes.to.plot){
 # Grouped Gene Sets
 
 ```{r gene-sets}
+library(stringr)
 gene.sets <- tibble(name="Fatty Acid Synthesis", genes = list('Fasn','Acly','Acaca'))
 gene.sets <- 
   gene.sets %>% 
@@ -185,7 +186,9 @@ gene.sets <-
   add_row(name="LTB4 Receptors",
           genes=list('Ltb4r1','Ltb4r2')) %>%
   add_row(name="B-Cell Regulators",
-          genes=list('Ccl28','Ccr10','Vcam1','Slc30a2','Ackr2')) #CCL28 binds to CCR10 on B-cells (see http://dx.doi.org/10.1007/s10911-010-9188-7 and its ref45). VCAM-1 blocking decreases IgA secretion (ref 52)
+          genes=list('Ccl28','Ccr10','Vcam1','Slc30a2','Ackr2')) %>% #CCL28 binds to CCR10 on B-cells (see http://dx.doi.org/10.1007/s10911-010-9188-7 and its ref45). VCAM-1 blocking decreases IgA secretion (ref 52)
+    add_row(name="DMRT Targets",
+          genes=list(str_to_title(c('BMI1','E2F1','EED','EZH2','JARID2','KLF4','MTF2','MYBL2','MYC','PAX3','PHC1','PPARD','RNF2','SMAD4','SMARCA4','STAT3','SUZ12','TP53','ZNF217')))) # from https://maayanlab.cloud/Harmonizome/gene/DMRT2 CHEA Transcription Factor Targets
 
 
 
