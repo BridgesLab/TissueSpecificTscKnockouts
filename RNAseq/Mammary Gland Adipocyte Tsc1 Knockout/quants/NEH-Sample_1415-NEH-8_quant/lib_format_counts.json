@@ -1,0 +1,22 @@
+{
+    "read_files": "[ 1415-NEH/NovaA-284/1415-NEH/Sample_1415-NEH-8/1415-NEH-8_ATCTGACC-CTCGACTT_S218_R1_001.fastq.gz, 1415-NEH/NovaA-284/1415-NEH/Sample_1415-NEH-8/1415-NEH-8_ATCTGACC-CTCGACTT_S218_R2_001.fastq.gz]",
+    "expected_format": "ISR",
+    "compatible_fragment_ratio": 1.0,
+    "num_compatible_fragments": 30427723,
+    "num_assigned_fragments": 30427723,
+    "num_frags_with_concordant_consistent_mappings": 24976238,
+    "num_frags_with_inconsistent_or_orphan_mappings": 5494074,
+    "strand_mapping_bias": 0.0000021620503155552475,
+    "MSF": 0,
+    "OSF": 0,
+    "ISF": 54,
+    "MSR": 0,
+    "OSR": 0,
+    "ISR": 24976238,
+    "SF": 4452963,
+    "SR": 1041057,
+    "MU": 0,
+    "OU": 0,
+    "IU": 0,
+    "U": 0
+}

@@ -1,0 +1,207 @@
+---
+title: "Noura Analysis of  RNAseq studies"
+author: "Dave Bridges, Noura El Habbal"
+date: "September 2, 2020"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures-noura/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To analyse aTSC mammary gland RNAseq dataset
+
+# Experimental Details
+
+Prior to this analysis, reads were mapped to GRCm38 CDS via Salmon v 1.3.0 with flags `--gc-bias`, `--validateMappings` and `-l A`.  These data were saved into the quants folders.
+
+```{r data-input}
+library(tximport) #loads the tximport package, needed to bring in the salmon files
+quant.directories <- 'quants'
+sample.directories <- list.dirs(quant.directories, 
+                                recursive=F) #identify directories that contain salmon output
+sample.directories <- sample.directories[grepl('NEH', sample.directories)] #only noura samples
+salmon.files <- file.path(sample.directories,"quant.sf") #locate quant files for each directory
+salmon.files <- salmon.files[file.exists(salmon.files)]
+
+library("tximeta")
+
+WT <- c(2,4,6,8,10)
+WT.names <- paste('1415-NEH-',WT, sep="")
+KO <- c(1,3,5,7,9,11)
+KO.names <- paste('1415-NEH-',KO, sep="")
+
+
+coldata <- data.frame(files=salmon.files, 
+                      stringsAsFactors = F) %>%
+  separate(col=files,
+           sep='_',
+           into=c('Folder','names'),
+           remove=F) %>%
+  mutate(Genotype=case_when(names %in% WT.names~'WT',
+                            names %in% KO.names~'KO')) %>%
+  mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+
+makeLinkedTxome(indexDir='mouse_index',
+                source="Ensembl", organism="Mus musculus",
+                release="101", genome="GRCm38.101",
+                fasta='Mus_musculus.GRCm38.cds.all.fa.gz',
+                gtf='Mus_musculus.GRCm38.101.gtf.gz')
+
+se <- tximeta(coldata) # looks at all transcripts  and combines them together
+#se.exons <- addExons(se) #to summarize to gene level data (individual exons, not done yet)
+gse <- summarizeToGene(se) # the total number of genes 22Kx11 samples
+```
+
+These data can be found in **`r getwd()`** in a set of folders located in `r quant.directories`. This script was most recently updated on **`r date()`**.
+
+```{r deseq2-analysis}
+library(DESeq2)
+dds <- DESeqDataSet(gse, ~Genotype)
+dds$Genotype <- relevel(dds$Genotype, ref = "WT")
+dds <- DESeq(dds) #normalizing samples to each other
+dds.genotype <- results(dds,contrast=c("Genotype","KO","WT")) #this must be column - numerator - denominator
+
+library("org.Mm.eg.db")
+dds.genotype$symbol <- mapIds(org.Mm.eg.db,
+                     keys=rownames(dds.genotype),
+                     column="SYMBOL",
+                     keytype="ENSEMBL",
+                     multiVals="first") #annotated with common gene symbols
+```
+
+# Summary of Results
+
+```{r results-summary}
+summary(dds.genotype) 
+```
+
+
+
+# MA Plot
+
+```{r ma-plot}
+plotMA(dds.genotype, main="Effect of Genotype") #top vs bottom is comparing the 2 genotypes KO vs WT differences, 0x-axis means there is no difference in that gene's expression 
+#x-axis is showing gene abundance , the more the count, the more to the right the dot will be 
+```
+
+```{r heatmap}
+library(pheatmap)
+ntd <- normTransform(dds)
+selected.genes <- order(dds.genotype$padj)[1:200] # pick the 50 most significantly changed genes (up vs down)
+df <- data.frame(colData(dds)$Genotype)
+rownames(df) <- colnames(assay(ntd)[selected.genes,])
+df <- rename(df, 'colData.dds..Genotype'='Genotype')
+pheatmap(assay(ntd)[selected.genes,],
+         cluster_rows=T,
+         show_rownames = F,
+         cluster_cols = T,
+         annotation_col=df,
+         scale='row',
+         main="Significantly differentially expressed genes")
+
+selected.genes <- order(dds.genotype$padj)[1:265]
+pheatmap(assay(ntd)[selected.genes,],
+         cluster_rows=T,
+         show_rownames = F,
+         cluster_cols = T,
+         #annotation_col=df,
+         scale='none', #row is each row is the gene with each row having the same average value, normalized. In scale none, each row is still a ngene but no longer with normalized expression, harder to see since genes have different expression levels 
+         main="Top 200 Genotype modified genes")
+```
+
+```{r volcano-plot}
+#from https://www.biostars.org/p/282295/
+
+#par(mar=c(5,5,5,5), cex=1.0, cex.main=1.4, cex.axis=1.4, cex.lab=1.4)
+
+topT <- as.data.frame(dds.genotype)
+library(ggplot2)
+ggplot(topT,(aes(y=-log10(padj),
+                x=log2FoldChange,
+                col=padj>0.05))) +
+  geom_point() +
+  labs(y=bquote(~-log[10]~Q~value),
+       x=bquote(~log[2]~fold~change),
+       subtitle="Adipocyte Tsc1 Knockout Mammary Gland RNAseq") +
+    geom_text(data=subset(topT, abs(log2FoldChange) > 2 | -log10(padj) > 2.5),
+            aes(log2FoldChange,-log10(padj),label=symbol),
+            check_overlap = TRUE, nudge_x = 0.5) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position="none") +
+  scale_colour_grey() +
+  xlim(-5,5)
+
+#Adjusted P values (FDR Q values)
+with(topT, plot(log2FoldChange, -log10(padj), pch=20, main="Volcano plot", cex=1.0, xlab=bquote(~log[2]~fold~change), ylab=bquote(~-log[10]~Q~value)))
+
+with(subset(topT, padj<0.05 & abs(log2FoldChange)>2), points(log2FoldChange, -log10(padj), pch=20, col="red", cex=0.5))
+
+#with(subset(topT, padj<0.05 & abs(log2FoldChange)>2), text(log2FoldChange, -log10(padj), labels=subset(rownames(topT), topT$padj<0.05 & abs(topT$log2FoldChange)>2), cex=0.8, pos=3))
+
+#Add lines for absolute FC>2 and P-value cut-off at FDR Q<0.05
+abline(v=0, col="black", lty=3, lwd=1.0)
+abline(v=-2, col="black", lty=4, lwd=2.0)
+abline(v=2, col="black", lty=4, lwd=2.0)
+abline(h=-log10(max(topT$pvalue[topT$padj<0.05], na.rm=TRUE)), col="black", lty=4, lwd=2.0)
+```
+
+# Principal Components Analysis
+
+```{r pca}
+vsd <- vst(dds, blind=FALSE)
+plotPCA(vsd, intgroup=c("Genotype")) #overall seeing how similar samples are to each other, across sample variance, this is not due to genotype since the genotypes are not clustered alone in two separate clusters
+```
+
+```{r reporting-tools}
+output.file <- 'Noura DESeq2 Results - Genotype.csv'
+output.counts <- 'Noura DESeq2 Normalized Counts.csv'
+output.design <- 'Noura Design Table.csv'
+
+write.csv(as.data.frame(dds.genotype), file=output.file)
+write.csv(counts(dds, normalized=T), file=output.counts)
+write.csv(coldata, file=output.design)
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
