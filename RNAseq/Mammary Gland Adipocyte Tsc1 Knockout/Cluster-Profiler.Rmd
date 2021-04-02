@@ -1,0 +1,180 @@
+---
+title: "Cluster Profiler Analysis for aTSC Mammary Glands"
+author: "Dave Bridges"
+date: "December 21, 2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures-noura/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To use cluster profiler as part of DOSE to do gene set enrichments
+
+# Raw Data
+
+GSEA was run with folders put in this subfolder
+
+```{r data-input, message=FALSE}
+library(readr) #loads the readr package
+gene.list.file <- 'GSEA Ranked File - Effects of aTSC Knockout.rnk'
+gene.list <- read_tsv(gene.list.file, col_names = c('Gene','logFC'))
+gene.list.file.exp <- 'GSEA Ranked File - Effects of aTSC Knockout expressed.rnk'
+gene.list.exp <- read_tsv(gene.list.file.exp, col_names = c('Gene','logFC'))
+
+library(org.Hs.eg.db)
+gene.mapping <- stack(unlist(mget(x=gene.list$Gene,envir=org.Hs.egALIAS2EG,ifnotfound=NA)))
+
+library(tidyr)
+gene.list <-
+  gene.list %>%
+  full_join(gene.mapping, by=c('Gene'='ind')) %>%
+  na.omit
+
+genes <- gene.list %>% pull(values)
+
+gene.list.exp <-
+  gene.list.exp %>%
+  full_join(gene.mapping, by=c('Gene'='ind')) %>%
+  na.omit
+
+genes.exp <- gene.list.exp %>% pull(values)
+```
+
+# Gene Ontology
+
+```{r go-bp, fig.cap="GO-BP Enrichment Plot"}
+library(clusterProfiler)
+gsea.gene.list <- gene.list$logFC
+names(gsea.gene.list) <- gene.list$values
+gsea.gene.list <- sort(gsea.gene.list, decreasing=T)
+go.bp <- gseGO(geneList     = gsea.gene.list,
+              OrgDb        = org.Hs.eg.db,
+              ont          = "BP",
+              minGSSize    = 10,
+              maxGSSize    = 500,
+              pvalueCutoff = 0.05,
+              verbose      = FALSE) %>%
+  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
+
+go.bp.file <- 'GSEA Results - Gene Ontology - Biological Pathways.csv'
+go.bp %>%
+  as.data.frame %>%
+  write_csv(file=go.bp.file)
+
+#emapplot(go.bp, color='NES')
+
+```
+
+
+# KEGG 
+
+```{r kegg, fig.cap="KEGG enrichment plot"}
+kegg <- gseKEGG(geneList     = gsea.gene.list,
+              keyType          = "ncbi-geneid",
+              pvalueCutoff = 0.05,
+              verbose      = FALSE) %>%
+  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
+
+kegg.file <- 'GSEA Results - KEGG.csv'
+kegg %>%
+  as.data.frame %>%
+  write_csv(file=kegg.file)
+
+#emapplot(kegg, color='NES')
+```
+
+# Disease Ontology 
+
+```{r disease-ontology, fig.cap="Disease ontology enrichment plot"}
+library(DOSE)
+do <- gseDO(geneList     = gsea.gene.list) %>%
+  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
+
+do.file <- 'GSEA Results - DO.csv'
+do %>%
+  as.data.frame %>%
+  write_csv(file=do.file)
+
+#emapplot(do, color='NES')
+```
+
+# Disease Gene Network
+
+From DisGeNET
+
+```{r dgn, fig.cap="DisGeNET enrichment plot"}
+dgn <- gseDGN(geneList     = gsea.gene.list, verbose=F) %>%
+  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
+
+dgn.file <- 'GSEA Results - DGN.csv'
+dgn %>%
+  as.data.frame %>%
+  write_csv(file=dgn.file)
+
+#emapplot(dgn, color='NES')
+```
+
+
+# Cell Markers
+
+```{r cell-markers, fig.cap="Cell markers enrichment plot"}
+cell_marker_data <- vroom::vroom('http://bio-bigdata.hrbmu.edu.cn/CellMarker/download/Human_cell_markers.txt')
+
+## instead of `cellName`, users can use other features (e.g. `cancerType`)
+cells <- cell_marker_data %>%
+    dplyr::select(cellName, geneID) %>%
+    dplyr::mutate(geneID = strsplit(geneID, ', ')) %>%
+    tidyr::unnest()
+cm <- GSEA(gsea.gene.list, TERM2GENE = cells) %>%
+  setReadable(org.Hs.eg.db, keyType = "ENTREZID")
+cm.file <- 'GSEA Results - Cell Markers'
+cm %>%
+  as.data.frame %>%
+  write_csv(file=cm.file)
+
+#emapplot(cm, color='NES')
+#ridgeplot(cm)
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
