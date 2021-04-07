@@ -308,6 +308,18 @@ library(ggplot2)
 
   library(broom)
   t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND1) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND1 weights")
+  
+shapiro.test(Pup.weightspercagePND1$Average.Weight)$p.value
+#based on shapiro assume normality at pnd1
+library(car)
+leveneTest(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND1) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND1 weights on offspring, not separated by sex") #p=0.065 assume equal variance
+
+aov(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND1 ) %>% tidy %>% kable(caption="Pup weight at PND1")
+
+lm(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND1 ) %>% tidy %>% kable(caption="Pup weight at PND1")
+
+#within group 
+t.test(Average.Weight ~ MaternalGenotype, var.equal=T, data=Pup.weightspercagePND1) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND1 weights in offspring")  #p=0.074
 ```
 
 ```{r PUPweight_graphsPND7}
