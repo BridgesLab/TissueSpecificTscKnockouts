@@ -275,3 +275,58 @@ exp.data %>%
        x="Time on Diet (Weeks)",
        y="Change in Fat Mass (g)") 
 ```
+
+## Fat Mass Statistics
+
+Used mixed linear modelling to analyze changes in fat mass after diet start
+
+```{r fat-mass-stats}
+library(lme4)
+library(lmerTest)
+library(broom)
+
+fat.mass.lm <- lmer(Mass ~ diet.time + Sex + Sex:diet.time + (1+diet.time|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass'))
+
+#for wt mice only
+fat.mass.lm.wt <- lmer(Mass ~ diet.time * Diet *  Sex * (1+diet.time|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Injection=="AAV-GFP"))
+coef(summary(fat.mass.lm.wt)) %>% kable(caption="ANOVA for null mixed linear model for AAV-GFP controls only, wktith all interactions")
+```
+
+This involved a complicated mixed linear model.  First, looking at AAV-GFP mice with a random uncorrelated slopes and intercepts intercept for time on diet, and only filtering for values after the diet change, we found significant three way interaction between sex, diet and time (p=`r coef(summary(fat.mass.lm.wt))[8,5]`).  Based on this we constructed separate models for each sex.
+
+### Fat Mass Models for Male Mice
+
+```{r fat-mass-males-states}
+# for male mice only
+fat.mass.lm.m <- lmer(Mass ~ diet.time * Diet * Injection + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="M"))
+coef(summary(fat.mass.lm.m)) %>% kable(caption="ANOVA for full mixed linear model for male controls only") 
+fat.mass.lm.m.reduced <- lmer(Mass ~  diet.time + Diet + diet.time:Diet + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="M"))
+coef(summary(fat.mass.lm.m.reduced)) %>% kable(caption="ANOVA for reduced mixed linear model for male controls only") 
+
+fat.mass.lm.m.geno <- lmer(Mass ~  diet.time + Diet + diet.time:Diet + Injection + Injection:diet.time + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="M"))
+coef(summary(fat.mass.lm.m.geno)) %>% kable(caption="ANOVA for mixed linear model for male mice, looking at effect of injection") 
+
+fat.mass.lm.m.null <- lmer(Mass ~  diet.time + Diet + diet.time:Diet + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="M"))
+anova(fat.mass.lm.m.null, fat.mass.lm.m.geno) %>% tidy %>% kable(caption="Chi squared test for overall effect of knockout in male mice")
+```
+
+For male mice, there was a significant effect of diet (increases fat mass gain), but hte efect of knockout was not significant, though it trended towards less fat mass gain.
+
+### Fat Mass Models for Female Mice
+
+```{r fat-mass-emales-states}
+# for female mice only
+fat.mass.lm.f <- lmer(Mass ~ diet.time * Diet * Injection + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="F"))
+coef(summary(fat.mass.lm.f)) %>% kable(caption="ANOVA for full mixed linear model for female controls only") 
+
+fat.mass.lm.f.reduced <- lmer(Mass ~  diet.time + Diet + diet.time:Diet + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="F"))
+coef(summary(fat.mass.lm.f.reduced)) %>% kable(caption="ANOVA for reduced mixed linear model for female controls only") 
+
+fat.mass.lm.f.geno <- lmer(Mass ~  diet.time + Diet + diet.time:Diet + Injection + Injection:diet.time + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="F"))
+coef(summary(fat.mass.lm.f.geno)) %>% kable(caption="ANOVA for mixed linear model for female mice, looking at effect of injection") 
+
+fat.mass.lm.f.null <- lmer(Mass ~  diet.time + Diet + diet.time:Diet + (1|MouseID) + (diet.time-1|MouseID), data=filter(exp.data, diet.time>=0, assay=='Total Fat Mass', Sex=="F"))
+anova(fat.mass.lm.f.null, fat.mass.lm.f.geno) %>% tidy %>% kable(caption="Chi squared test for overall effect of knockout in female mice")
+```
+
+For female mice there was neither a significant effect of diet or genotype.
