@@ -214,9 +214,11 @@ t.test(PND7 ~ MaternalGenotype, data=Pup.data %>% filter(Sex=="Female")) %>% tid
 
 aov(Average.Weight ~ MaternalGenotype + Sex,
      data=filter(Pup.weightspercagePND7)) %>% tidy() %>% kable()
+lm(Average.Weight ~ MaternalGenotype + Sex,
+     data=filter(Pup.weightspercagePND7)) %>% tidy() %>% kable() #KO pups are 0.289/4.022 8100 = 7.19%  heavier than WT p =0.01 
 
 aov(Average.Weight ~ MaternalGenotype + Sex + MaternalGenotype:Sex,
-     data=filter(Pup.weightspercagePND7)) %>% tidy() %>% kable()
+     data=filter(Pup.weightspercagePND7)) %>% tidy() %>% kable(caption="Test for sex-modification, not significant")
 
 ```
 
