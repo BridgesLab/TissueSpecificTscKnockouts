@@ -5,7 +5,6 @@
 *-Ex.R
 
 # R data files from past sessions
-<<<<<<< HEAD
 *.Rdata
 
 DS_Store files from a mac
@@ -19,9 +18,7 @@ DS_Store files from a mac
 *.pyc
 =======
 .Rdata
->>>>>>> b220571ba32b9bc353962d3da398465f13830b35
 .Rproj.user
 Manuscripts/Muscle Tsc1 Knockout Paper/~$nuscript.docx
-Manuscripts/Muscle Tsc1 Knockout Paper/~$nuscript.docx
-Manuscripts/Muscle Tsc1 Knockout Paper/~$nuscript.docx
-Manuscripts/Mammary Gland aTSC/~$nuscript.docx
+Manuscripts/Liver AMPK Ketogenic Diet Paper/~$nuscript.docx
+

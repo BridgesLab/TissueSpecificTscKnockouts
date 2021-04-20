@@ -1,0 +1,68 @@
+Mouse,Sex,Diet,Injection,Date ,BW,BG (fed),Ketone,eWAT weight,iWAT weight,quad weight,gastroc weight,Notes
+8148,M,Control,GFP,7/2/19,26.1,146,0.3,295.5,171.1,192.7,185.1,
+8149,M,Control,GFP,7/2/19,25,234,0.4,233.6,210,180.3,133.7,
+8151,F,Keto,GFP,7/2/19,20.1,181,1.9,381.2,143,157.9,101.2,BW taken after eWAT disection
+8152,F,Keto,GFP,7/2/19,23,152,1.3,514.3,,170.5,117.2,did not add iWAT to casset
+8153,F,Keto,GFP,7/2/19,23,133,1.7,400.4,152.4,150.1,106,
+8154,F,Keto,GFP,7/2/19,25.4,142,2.4,480,268.8,178.6,137.9,
+8187,M,Keto,GFP,7/2/19,29.7,172,0.8,903,463.2,184,137.2,
+8188,M,Keto,GFP,7/2/19,24.9,152,1.1,317.8,225.2,179.9,130.7,
+8190,M,Keto,GFP,7/2/19,27.8,145,0.8,570.9,293.4,163.9,147.2,
+8191,M,Control,Cre,7/2/19,25.3,188,0.6,348.6,219.2,187,133.9,
+8192,M,Control,Cre,7/2/19,25.7,188,0.3,305,198.4,185.3,153.9,
+8193,M,Control,Cre,7/2/19,24.8,215,0.5,160.5,163.6,186.4,135.5,
+8194,M,Control,Cre,7/2/19,26.9,157,0.6,293.7,218.5,175.8,172.2,
+8263,M,Control,GFP,7/2/19,28.8,138,0.8,422.9,253.6,207.5,147,
+8265,F,Control,Cre,7/2/19,18.9,154,6,323,78.6,145.5,46.9,
+8284,M,Keto,Cre,7/2/19,26.9,133,1.2,523.9,221,123,107.5,Pale stippled liver
+8285,M,Keto,Cre,7/2/19,25.6,126,1.2,723.3,430.5,172.9,125.7,"pale stippled liver, iWAT and eWAT cassettes switched"
+8286,F,Keto,Cre,7/2/19,,154,2.4,491.1,204,135,103,
+8287,F,Keto,Cre,7/2/19,24.2,190,1.9,550.2,453.8,160.2,107.7,
+8288,F,Keto,Cre,7/2/19,21.2,214,0.8,369.1,161.7,57,88.5,
+8289,F,Keto,Cre,7/2/19,20.3,167,1.1,343.8,135.8,146.1,104.6,
+8290,F,Keto,Cre,7/2/19,20.9,239,not measured,272.5,74.3,152.1,113.4,switched all 8290 and 8287 cassets
+8348,F,Control,GFP,7/16/19,22,179,not measured,342.9,202.5,130.9,109.7,"Liver looked pale on edges. eWAT and iWAT histology came from left side of body, quad also from left side. 8347 and 8348 were found in 8344 & 45 cage. Both mice were switched. Both males were in female cage and both females were in male cage. Earlier that morning the mice were MRIed so I beleive the mice were only switched for about 4 hours.The cages had opposite food so the mice were exposed to the other diet for at least a few hours before sacrifice. THe MRI data on the mouse database were consistant with previous weights indicating the mice were probably only switched that morning. This means they were exposed to opposite food for about 4 hours. "
+8347,F,Control,GFP,7/16/19,20.7,129,not measured,245.8,197.2,160.5,119.1,put large liver all in histology casset. Small liver lobe is frozen
+8344,M,Keto,CRE,7/16/19,24.1,213,not measured,436.3,176.5,167.4,123.8,
+8345,M,Keto,CRE,7/16/19,25.4,108,not measured,458.5,200.4,162,129,
+8457,M,Control,GFP,8/6/19,21.9,132,not measured,206.3,122.2,102.9,81,No eWAT or iWAT histology
+8473,M,Keto,GFP,8/6/19,28.3,205,not measured,518.9,214.4,169.2,136.1,
+8474,M,Keto,GFP,8/6/19,28.6,204,not measured,432,188.9,182.5,133.5,
+8475,F,Control,CRE,8/6/19,20.7,222,not measured,333.3,183,149,188.3,Got body weight after removed liver and eWAT
+8476,F,Control,CRE,8/6/19,21.7,167,not measured,400.6,187.5,95.6,56.4,
+8477,F,Control,CRE,8/6/19,22,192,not measured,319,198,103,70.6,Liver and iWAT histology swtiched 
+8556,M,Control,CRE,08/20/19,23.8,161,not measured,238.8,151.8,167.8,120.5,
+8557,M,Control,CRE,08/20/19,24,173,not measured,227.4,156.8,184,133.1,
+8559,M,Control,CRE,08/20/19,25.6,197,not measured,230.1,107.4,192.7,148.5,
+8560,F,Control,GFP,08/20/19,20.9,169,not measured,210,120.3,159.1,120,
+8564,F,Control,CRE,08/20/19,19.4,139,not measured,157.8,69.3,127.8,103.8,
+8565,F,Control,CRE,08/20/19,18.1,missed,not measured,293.1,228.7,79.1,57,Put 8565 liver in 8560 liver tube
+8566,F,Control,CRE,08/20/19,21.1,130,not measured,308.5,178.9,93.8,99.8,both quads pale 
+8708,M,Control,GFP,9/10/19,25.6,235,,279.5,162.3,188.8,132.6,"liver=gastroc tube, eWAT = quad tube"
+8709,M,Control,GFP,9/10/19,27.2,207,,555.4,250.2,179.4,108.4,
+8710,M,Control,GFP,9/10/19,24.3,144,,224.3,125.5,157.6,140.6,"collected eWAT on other side (gastroc tube exploded, no more gastroc sample) "
+8711,M,Control,GFP,9/10/19,24.5,missed,,293.1,132.2,183.9,135.5,body weight w/o liver & iWAT
+8712,M,Control,GFP,9/10/19,24.3,131,,260.4,105.8,163.8,140.1,blood glucose taken after dead
+8713,F,Keto,CRE,9/10/19,23.2,168,,606.6,296.9,127.1,82.2,
+8714,F,Keto,CRE,9/10/19,24.7,223,,503.1,238.8,167.8,122.2,
+8720,F,Keto,CRE,9/10/19,24,176,,296.6,172.5,172.5,84.3,
+8715,M,Keto,CRE,9/10/19,28.2,160,,281.9,144.7,144.7,149.1,blood collected from chest after dead
+8716,M,Keto,CRE,9/10/19,26.4,173,,192.4,194,194,134.3,
+8717,M,Keto,CRE,9/10/19,27.6,233,,230.7,155.3,155.3,113.8,
+8718,M,Keto,CRE,9/10/19,27.5,141,,223.9,167.5,167.5,103.5,
+8719,M,Keto,CRE,9/10/19,28.9,166,,283.5,198.5,198.5,131.2,gastroc tube exploded (no more gastroc sample)
+8786,M,Control,CRE,,25.6,218,,293.6,149.3,171.8,156.8,
+8789,F,Control,GFP,,20.9,152,,251.2,111,106.8,130.5,
+8790,F,Control,GFP,,23.3,220,,549.3,298.6,144.7,119.4,
+8821,M,Keto,GFP,,26.5,204,,360.8,157.8,167.6,125.3,liver is very pale 
+8822,M,Keto,GFP,,24.2,127,,382.7,212.9,133.9,125.8,
+8823,M,Keto,GFP,,24.6,169,,222.9,198.7,165.4,127.7,
+8824,M,Keto,GFP,,26.3,155,,277.1,252.4,126.2,161.1,
+8830,M,Keto,CRE,,29,174,,765.5,336.6,171,137.5,
+8831,M,Keto,CRE,,27,140,,417.5,161.1,128,183.9,Put left gastroc in muslce cryo and right gastroc in tube
+8827,F,Keto,GFP,,22.9,245,,330.2,156.3,146.4,113.9,
+8828,F,Keto,GFP,,21,165,,344.9,182.7,145.8,94.9,liver is pale
+8829,F,Keto,GFP,,22.3,129,,276,138.9,156.5,109.3,
+8832,F,Control,GFP,,20.1,152,,386,231.7,131.2,130.5,liver is pale
+8833,F,Control,GFP,,21.3,168,,332.9,164.4,153.6,117.3,
+8834,F,Control,GFP,,23.5,186,,452.6,310.1,144.1,104.2,liver is pale and small
