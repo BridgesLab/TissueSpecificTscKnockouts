@@ -3,8 +3,8 @@ title: "aTSC Lipidomics"
 author: "Noura El Habbal and Dave Bridges"
 date: "12/14/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -660,10 +660,10 @@ lipidomics.data %>%
 lipidomics.data %>%
   group_by(Genotype) %>%
   summarise_at(.vars=vars(starts_with('%'),`MUFA/SFA`,`Ratio n6/n3`),
-               .funs=mean) %>%
-  pivot_longer(!Genotype, names_to='Lipid') %>%
-  pivot_wider(names_from='Genotype',values_from='value') %>%
-  mutate(Percent.Change = KO/WT*100) %>%
+               .funs=list(mean=mean,se=se)) %>%
+  pivot_longer(!Genotype, names_to=c('Lipid','Statistic'), names_sep="_") %>%
+  pivot_wider(names_from=c('Genotype','Statistic'), names_sep="_", values_from='value') %>%
+  mutate(Percent.Change = KO_mean/WT_mean*100) %>%
   full_join(select(summary.stats, Lipid, Test,P.Value,Sig)) %>% 
     write_csv("Summary Table of Lipidomics Data.csv") #supplemental figure
 
