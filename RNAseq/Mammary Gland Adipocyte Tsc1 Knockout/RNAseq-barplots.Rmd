@@ -57,7 +57,8 @@ design.file <- 'Design Table.csv'
 counts.table <- read_csv(counts.file) 
 
 library(biomaRt)
-ensembl = useMart("ensembl",dataset="mmusculus_gene_ensembl")
+ensembl = useMart("ensembl",
+                  dataset="mmusculus_gene_ensembl")
 gene.mapping <- getBM(attributes=c('mgi_symbol','ensembl_gene_id'),
                       values=counts.table$X1,
                       filters='ensembl_gene_id',
@@ -194,7 +195,7 @@ gene.sets <-
     add_row(name="Eicosanoid Signaling",
           genes=list('Cyp2e1','Gpx3','Ephx2','Pla2g4a','Ptgs1')) %>%
     add_row(name="Lipogenesis - All",
-          genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Scd2','Scd3','Scd4',paste('Elovl', seq(1,7), sep=""), 'Fads1','Fads2','Fads2b','Fads3','Fads6','Ptgs1','Ptg2s2','Alox12','Alox12b','Alox12e','Alox15','Alox5','Alox8','Aloxe3')) %>%
+          genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Scd2','Scd3','Scd4',paste('Elovl', seq(1,7), sep=""), 'Fads1','Fads2','Fads2b','Fads3','Fads6','Ptgs1','Ptg2s2','Alox12','Alox12b','Alox12e','Alox15','Alox5','Alox8','Aloxe3','Agpat1','Agpat2','Agpat3','Agpat4','Agpat5','Gpat3','Gpat4','Lpin1','Lpin2','Lpin3','Dgat1','Dgat2')) %>%
       add_row(name="Lipogenesis Genes",
           genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Elovl1','Elovl5', 'Fads1','Fads2')) %>%
       add_row(name="Protectin Metabolism",
