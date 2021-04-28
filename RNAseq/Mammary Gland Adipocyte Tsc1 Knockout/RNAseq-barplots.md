@@ -171,7 +171,7 @@ gene.sets <-
           genes=list(str_to_title(c('BMI1','E2F1','EED','EZH2','JARID2','KLF4','MTF2','MYBL2','MYC','PAX3','PHC1','PPARD','RNF2','SMAD4','SMARCA4','STAT3','SUZ12','TP53','ZNF217')))) %>% # from https://maayanlab.cloud/Harmonizome/gene/DMRT2 CHEA Transcription Factor Targets
     add_row(name="PPARg Targets",
           genes=list('Plin4','Adipoq','Fabp4','Cav2','Pparg')) %>%
-    add_row(name="Eicosanoid Signaling",
+    add_row(name="Eicosanoid Metabolism",
           genes=list('Cyp2e1','Gpx3','Ephx2','Pla2g4a','Ptgs1')) %>%
     add_row(name="Lipogenesis - All",
           genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Scd2','Scd3','Scd4',paste('Elovl', seq(1,7), sep=""), 'Fads1','Fads2','Fads2b','Fads3','Fads6','Ptgs1','Ptg2s2','Alox12','Alox12b','Alox12e','Alox15','Alox5','Alox8','Aloxe3','Agpat1','Agpat2','Agpat3','Agpat4','Agpat5','Gpat3','Gpat4','Lpin1','Lpin2','Lpin3','Dgat1','Dgat2')) %>%

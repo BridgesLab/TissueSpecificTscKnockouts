@@ -19,5 +19,5 @@ This document indicates where the raw data for each table and figure panel can b
 | Table | Script | Figure |
 | ------ | ------ | ------ |
 | Supplementary Table 1 | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/RNAseq-barplots.Rmd | DESeq2 Results.csv|
-| Supplementary Table 2 | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/RNAseq-barplots.Rmd | DESeq2 Results.csv|
-| Supplementary Table 3 | Lipidomics Analysis.Rmd | Summary Table of Lipidomics Data.csv|
+| Supplementary Table 2 | Lipidomics Analysis.Rmd | Summary Table of Lipidomics Data.csv|
+| Supplementary Table 3 | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Cluster-Profiler.Rmd | GSEA Results - Gene Ontology - Biological Pathways.csv|

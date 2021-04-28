@@ -116,8 +116,16 @@ heatplot(go.bp.simplified, foldChange = mouse.gene.list)
 go.bp <- pairwise_termsim(go.bp, method="JC")
 emapplot(go.bp, layout="nicely", color="NES",
          cex_line=0.5,
+         showCategory = 50,
          cex_label_category=0.5)
-gseaplot2(go.bp, geneSetID = c(1,7))
+gseaplot2(go.bp, geneSetID = c(1,7,8))
+
+as.data.frame(go.bp) %>%
+  mutate(Significant = if_else(qvalues<0.05, 'Significant','NS')) %>%
+  mutate(Direction =  if_else(NES > 0, 'Upregulated', 'Downregulated'))  %>%
+  group_by(Significant,Direction) %>%
+  count %>%
+  kable(caption="Summary pf GO-BP pathways")
 ```
 
 # Wikipathways
