@@ -1,23 +1,16 @@
 
 
-# Data to Analyse
+# Before Submission
 
-## Maternal Effects
+## Analyses
 
-* Calculate the effect size and significance of the changes in postnatal fat mass and food intake
+* Calculate number of DE pathways
 
-## Offspring Effects
 
-* Calculate a 2-way anova for body weight at PND7 with the formula Weight ~ Sex + Genotype and ask if Genotype is significant.  Test the model  Weight ~ Sex + Genotype + Sex:Genotype and report if the interaction is significant or not
-* Calculate percent increase for both of the above
+## Writing
 
-## Milk Effects
-
-* Calculate the effect size and p-value for the crematocrit
-* Calculate effect sizes for milk proteins
-
-# Experiments to Do
-
-* Milk total protein
-* Milk lactose
-* qPCR
+* Elaborate on genes and markers from different pathways.
+* Add more about triglyceride enzymes (Figure 7C)
+* Reference for milk fat variability
+* Refs for rapamycin treatment during mammary adipoctye differentiation.
+* Write about benefits of DHA in milk
