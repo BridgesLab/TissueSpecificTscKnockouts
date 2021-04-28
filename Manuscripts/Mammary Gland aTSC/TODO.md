@@ -5,6 +5,7 @@
 ## Analyses
 
 * Calculate number of DE pathways
+* Stats for lme for adipocytes
 
 
 ## Writing
@@ -14,3 +15,4 @@
 * Reference for milk fat variability
 * Refs for rapamycin treatment during mammary adipoctye differentiation.
 * Write about benefits of DHA in milk
+* Figure legends

@@ -198,6 +198,8 @@ gene.sets <-
           genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Scd2','Scd3','Scd4',paste('Elovl', seq(1,7), sep=""), 'Fads1','Fads2','Fads2b','Fads3','Fads6','Ptgs1','Ptg2s2','Alox12','Alox12b','Alox12e','Alox15','Alox5','Alox8','Aloxe3','Agpat1','Agpat2','Agpat3','Agpat4','Agpat5','Gpat3','Gpat4','Lpin1','Lpin2','Lpin3','Dgat1','Dgat2')) %>%
       add_row(name="Lipogenesis Genes",
           genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Elovl1','Elovl5', 'Fads1','Fads2')) %>%
+        add_row(name="Thermogenesis Genes",
+          genes=list('Ucp1','Ucp2','Ucp3','Sln','Prdm16')) %>%
       add_row(name="Protectin Metabolism",
           genes=list('Ptgs1','Ptgs2','Ptgds','Cyp1a1','Cyp1a2','Lta4h','Alox12','Alox12b','Alox12e','Alox15','Alox5','Alox8','Aloxe3','Gpx3','Gpx4','Cyp2e1','Cyp3a4','Cyp2c8','Cyp2d6','Cyp2c9','Hpgd','Ephx1','Ephx2','Ephx3','Ephx4','Gstm4','Ltc4s')) # from https://reactome.org/PathwayBrowser/#/R-HSA-9018677&PATH=R-HSA-1430728,R-HSA-556833,R-HSA-9018678&DTAB=MT
   
