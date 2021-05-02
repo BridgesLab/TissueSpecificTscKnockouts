@@ -68,16 +68,22 @@ maternal.weights <-
            col=MaternalGenotype,na.rm= T ,
            fill=MaternalGenotype, na.rm =T, ymin=15, ymax=40, xmin=-21, xmax= 21))+
        scale_x_continuous(breaks=seq(-26,16,2)) +
-     scale_y_continuous(breaks= seq(15,40,5))+
-    
-     
+     #scale_y_continuous(breaks= seq(15,40,5))+ #removed this tto allow y=0 to be limit
   geom_point() +
       geom_smooth(span=0.2)  +
-  expand_limits(x=0) +
+  expand_limits(y=0) +
   theme_classic() +
      theme(text = element_text(size=13)) +
      geom_vline(xintercept = 0, lty=2)+
-  labs(x = "Days From Delivery (0)", y= "Body Weight (g)", title="Body Weights of Dams during Gestation and Lactation") 
+  #labs(x = "Days From Delivery (0)", y= "Body Weight (g)", title="Body Weights of Dams during Gestation and Lactation") removed title from figure
+    scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Body Weight (g)",
+         x="Days From Delivery (0)")
   
   deltaBWchangefromdelivery <-
   maternal.weights %>%
@@ -97,17 +103,26 @@ maternal.weights <-
   expand_limits(x=0) +
   theme_classic() +
      theme(text = element_text(size=13)) +
-  labs(x = "Days From Delivery (0)", y= "Body Weight (g)", title="Body Weight Change from Delivery Day and during Lactation") 
+  #labs(x = "Days From Delivery (0)", y= "Body Weight (g)", title="Body Weight Change from Delivery Day and during Lactation") 
+    scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Body Weight (g)",
+         x="Days From Delivery (0)")
 ```
 ```{r postnatal-bodyweight-stats}
 library(lme4)
 library(lmerTest)
-pnbw.lme <- lmer(BW.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=deltaBWchangefromdelivery) #If we use lm function here we would get an interaction effect of maternalgenotype:daysfromdelivery = 0.0643; to then get the effect size over the 16 days postnatal, we would do 0.0643*16 to get 1.0288grams gained more per day for KO dams. lm would not group by dam but rather would consider each data point as a unique data point, and we need to group by dam so that the function counts the true n of the dams, so we will use lmer.
+pnbw.lme <- lmer(BW.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=deltaBWchangefromdelivery) #If we use lm function here we would get an interaction effect of maternalgenotype:daysfromdelivery = 0.0643; to then get the effect size over the 16 days postnatal, we would do 0.0481*16 to get 0.7696grams gained more per day for KO dams. lm would not group by dam but rather would consider each data point as a unique data point, and we need to group by dam so that the function counts the true n of the dams, so we will use lmer.
+pnbw.lme %>% summary() 
 #But since we care about comparing the slopes of WT vs KO dam trends in weight over time (until PND16), we will use lmer function to see interaction of geonotype:time, and this function allows us to group by mouse 
 fixef(pnbw.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnbw.lme)['DayfromDelivery'] #this is the effect size which is the estimate of genotype:daysfromdelivery - estimate for daysfromdelivery
 
 
-## The effect size is -0.102*16= -1.632 grams weight loss over 16 days postnatal for KO dams compared to WT. This is not a significant effect with p-value= 0.061
+## The effect size is -0.183*16= -2.928 grams weight loss over 16 days postnatal for KO dams compared to WT. This is not a significant effect with p-value= 0.21
 summary(pnbw.lme)
 ```
 ```{r Fat_mass_during_pregnancyandlactation}
@@ -125,14 +140,21 @@ maternal.weights <-
            fill=MaternalGenotype, na.rm =T, ymin=0, ymax=5, xmin=-21, xmax= 21))+
        scale_x_continuous(breaks=seq(-26,16,2)) +
      scale_y_continuous(breaks= seq(0,5,0.5))+
-     
   geom_point() +
   geom_smooth(span=0.2)  +
-  expand_limits(x=0) +
+  expand_limits(y=0) +
   theme_classic() +
        theme(text = element_text(size=13)) +
      geom_vline(xintercept = 0, lty=2)+
-  labs(x = "Days From Delivery (0)", y= "Fat Mass (g)", title="Fat Mass of Dams during Gestation and Lactation") 
+  #labs(x = "Days From Delivery (0)", y= "Fat Mass (g)", title="Fat Mass of Dams during Gestation and Lactation") 
+    scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Fat Mass (g)",
+         x="Days From Delivery (0)")
   
   
   
@@ -150,14 +172,22 @@ maternal.weights <-
              col=MaternalGenotype, na.rm=T,
              fill=MaternalGenotype, na.rm =T, ymin=-3, ymax=3, xmin=0, xmax= 21))+
        scale_x_continuous(breaks=seq(0,21,1)) +
-     scale_y_continuous(breaks= seq(-3,3,1))+
+     #scale_y_continuous(breaks= seq(-3,3,1))+
+      expand_limits(y=0) +
   geom_point() +
       geom_smooth ()  +
   expand_limits(x=0) +
   theme_classic() +
        theme(text = element_text(size=13)) +
-  labs(x = "Days From Delivery (0)", y= "Fat Mass (g)", title="Fat Mass Change from Delivery Day and during Lactation")
-     
+  #labs(x = "Days From Delivery (0)", y= "Fat Mass (g)", title="Fat Mass Change from Delivery Day and during Lactation")
+      scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Change in Fat Mass (g)",
+         x="Days From Delivery (0)")
 ```
 
 ### Postnatal fat mass change statistics
@@ -169,7 +199,7 @@ pnfat.lme <- lmer(Fat.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=delta
 fixef(pnfat.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnfat.lme)['DayfromDelivery']
 summary(pnfat.lme)
 
-## The effect size is 0.125*16= 2 grams additional weight gain over 16 days postnatal for KO dams compared to WT. This is a significant effect with p-value <0.001
+## The effect size is 0.136*16= 2.176 grams additional weight gain over 16 days postnatal for KO dams compared to WT. This is a significant effect with p-value <0.001
 ```
 
 ```{r lean_mass_during_pregnancyandlactation}
@@ -186,15 +216,23 @@ maternal.weights <-
            col=MaternalGenotype,na.rm= T ,
            fill=MaternalGenotype, na.rm =T, ymin=10, ymax=30, xmin=-21, xmax= 21))+
        scale_x_continuous(breaks=seq(-26,16,2)) +
-     scale_y_continuous(breaks= seq(10,30,2))+
-     
+     #scale_y_continuous(breaks= seq(10,30,2))+
+     expand_limits(y=0)+
   geom_point() +
   geom_smooth(span=0.2)  +
   expand_limits(x=0) +
   theme_classic() +
        theme(text = element_text(size=13)) +
      geom_vline(xintercept = 0, lty=2)+
-  labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Lean Mass of Dams during Gestation and Lactation") 
+  #labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Lean Mass of Dams during Gestation and Lactation") 
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Lean Mass (g)",
+         x="Days From Delivery (0)")
   
   
   
@@ -212,13 +250,22 @@ maternal.weights <-
              col=MaternalGenotype, na.rm=T,
              fill=MaternalGenotype, na.rm =T, ymin=-3, ymax=6, xmin=0, xmax= 21))+
        scale_x_continuous(breaks=seq(0,21,1)) +
-     scale_y_continuous(breaks= seq(-3,6,1))+
+     #scale_y_continuous(breaks= seq(-3,6,1))+
+    expand_limits(y=0)+
   geom_point() +
       geom_smooth ()  +
   expand_limits(x=0) +
   theme_classic() +
        theme(text = element_text(size=13)) +
-  labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Lean Mass Change from Delivery Day and during Lactation")
+  #labs(x = "Days From Delivery (0)", y= "Change in Lean Mass (g)", title="Lean Mass Change from Delivery Day and during Lactation")
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Change in Lean Mass (g)",
+         x="Days From Delivery (0)")
      
 ```
 
@@ -229,7 +276,7 @@ pnlean.lme <- lmer(Lean.Lact~DayfromDelivery*MaternalGenotype + (1|ID), data=del
 fixef(pnlean.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnlean.lme)['DayfromDelivery']
 summary(pnlean.lme)
 
-## The effect size is -0.167*16= -2.672 grams additional lean mass loss over 16 days postnatal for KO dams compared to WT. This is not a significant effect with p-value= 0.404
+## The effect size is -0.245*16= -3.92 grams additional lean mass loss over 16 days postnatal for KO dams compared to WT. This is not a significant effect with p-value= 0.860
 ```
 
 ```{r Freewater_during_pregnancyandlactation}
@@ -245,14 +292,22 @@ maternal.weights <-
            col=MaternalGenotype,na.rm= T ,
            fill=MaternalGenotype, na.rm =T, ymin=0, ymax=6, xmin=-21, xmax= 21))+
        scale_x_continuous(breaks=seq(-26,16,2)) +
-     scale_y_continuous(breaks= seq(0,6,0.5))+
-     
+     #scale_y_continuous(breaks= seq(0,6,0.5))+
+    expand_limits(y=0)+
   geom_point() +
   geom_smooth()  +
   expand_limits(x=0) +
   theme_classic() +
      geom_vline(xintercept = 0, lty=2)+
-  labs(x = "Days From Delivery (0)", y= "Free Water Mass (g)", title="Free Water Mass of KO and WT Dams during Gestation and Lactation") 
+  #labs(x = "Days From Delivery (0)", y= "Free Water Mass (g)", title="Free Water Mass of KO and WT Dams during Gestation and Lactation") 
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Free Water Mass (g)",
+         x="Days From Delivery (0)")
      
 ```
 ```{r Totalwater_during_pregnancyandlactation}
@@ -270,14 +325,22 @@ maternal.weights <-
            fill=MaternalGenotype, na.rm =T, ymin=5, ymax=30, xmin=-21, xmax= 21))+
          theme_classic()  +
        scale_x_continuous(breaks=seq(-26,16,2)) +
-     scale_y_continuous(breaks= seq(5,30,5))+
-     
+     #scale_y_continuous(breaks= seq(5,30,5))+
+     expand_limits(y=0)+
   geom_point() +
   geom_smooth()  +
   expand_limits(x=0) +
        theme_classic()  +
      geom_vline(xintercept = 0, lty=2)+
-  labs(x = "Days From Delivery (0)", y= "Total Water Mass (g)", title="Total Water Mass of KO and WT Dams during Gestation and Lactation") 
+  #labs(x = "Days From Delivery (0)", y= "Total Water Mass (g)", title="Total Water Mass of KO and WT Dams during Gestation and Lactation") 
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Total Water Mass (g)",
+         x="Days From Delivery (0)")
      
 ```
 ```{r food_intake}
@@ -291,14 +354,23 @@ maternal.weights <-
            x=Week,
            col=MaternalGenotype, na.rm =T, xmin=1, xmax=7, ymin=20, ymax=45)) +
       scale_x_continuous(breaks=seq(0,7,0.5))+
-    scale_y_continuous(breaks=seq(5,100,5))+
+    #scale_y_continuous(breaks=seq(5,100,5))+
+    expand_limits(y=0)+
   geom_point() +
   geom_smooth()  +
  #facet_grid(~Treatment) +
   expand_limits(x=0)+
   theme_classic() +
      geom_vline(xintercept = 4, lty=2)+
-  labs(x="Week", y="Average Food Intake (g)", title="Average Dam Weekly Food Intake before and after Delivery at around Week 4")
+  #labs(x="Week", y="Average Food Intake (g)", title="Average Dam Weekly Food Intake before and after Delivery at around Week 4")
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Average Food Intake (g)",
+         x="Week")
   
    foodintakefromdelivery <- #data frame for food intake postpartum only
   maternal.weights %>%
@@ -317,7 +389,15 @@ maternal.weights <-
   expand_limits(x=0) +
   theme_classic() +
        theme(text = element_text(size=13)) +
-  labs(x = "Days From Delivery (0)", y= "Lean Mass (g)", title="Food Intake from Delivery Day and during Lactation")
+  #labs(x = "Days From Delivery (0)", y= "Change in Food Intake (g)", title="Food Intake from Delivery Day and during Lactation")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Change in Food Intake (g)",
+         x="Days From Delivery (0)")
 
 ```
 ```{r postnatal-foodintake-stats}
@@ -438,7 +518,15 @@ write.csv(maternal.feedingefficiency, file = "MyData.csv");
    theme(text = element_text(size=18))+
     geom_vline(xintercept = 3.97, lty=2)+
   #facet_grid(~Cohort)+
-  labs(x="Week", y="Feeding Efficiency",title="Feeding Efficiency of Dams per Genotype")   
+  #labs(x="Week", y="Feeding Efficiency",title="Feeding Efficiency of Dams per Genotype") 
+scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Feeding Efficiency",
+         x="Week")
 p
 
 maternal.feedingefficiency %>%
@@ -452,7 +540,15 @@ maternal.feedingefficiency %>%
          col=MaternalGenotype)) +
   geom_point() +
   geom_errorbar() +
-  geom_vline(xintercept = 3.97, lty=2)
+  geom_vline(xintercept = 3.97, lty=2)+
   # geom_vline(yintercept = 0)
+scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.2,0.9)) +
+    labs(y="Feeding Efficiency (g)",
+         x="Week")
 
 ```

@@ -6,6 +6,7 @@
 
 * Calculate number of DE pathways
 * Stats for lme for adipocytes
+* Food intake to be checked and done by week rather than MWF
 
 
 ## Writing

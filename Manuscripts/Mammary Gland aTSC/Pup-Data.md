@@ -99,6 +99,13 @@ Table: Welch's t-test for effects of maternal genotype on births
 |Residuals        | 10| 0.045|  0.005|        NA|      NA|
 
 
+
+|term               | estimate| std.error| statistic| p.value|
+|:------------------|--------:|---------:|---------:|-------:|
+|(Intercept)        |    1.286|     0.028|     46.75|   0.000|
+|MaternalGenotypeKO |    0.078|     0.039|      1.99|   0.074|
+
+
 | MaternalID|MaternalGenotype |Sex    | Average.Weight| SE.Average.Weight| Average.size| Total|is.na |
 |----------:|:----------------|:------|--------------:|-----------------:|------------:|-----:|:-----|
 |       7981|KO               |Female |           4.20|             0.000|            2|     2|NA    |
@@ -157,6 +164,16 @@ Table: Welch's t-test for effects of maternal genotype on PND7 weights in males
 |Residuals        | 18| 0.941|  0.052|        NA|      NA|
 
 
+
+|term               | estimate| std.error| statistic| p.value|
+|:------------------|--------:|---------:|---------:|-------:|
+|(Intercept)        |    4.022|     0.088|    45.573|   0.000|
+|MaternalGenotypeKO |    0.289|     0.101|     2.864|   0.010|
+|SexMale            |   -0.005|     0.100|    -0.053|   0.958|
+
+
+
+Table: Test for sex-modification, not significant
 
 |term                 | df| sumsq| meansq| statistic| p.value|
 |:--------------------|--:|-----:|------:|---------:|-------:|
@@ -267,13 +284,52 @@ Table: Welch's t-test for effects of maternal genotype on PND7 weights in males
 |MaternalGenotype:Sex |  1| 0.033|  0.033|     0.076|   0.786|
 |Residuals            | 17| 7.305|  0.430|        NA|      NA|
 
-![](figures/PUPweight_graphsPND1-1.png)<!-- -->![](figures/PUPweight_graphsPND1-2.png)<!-- -->
+![](figures/PUPweight_graphsPND0.5-1.png)<!-- -->![](figures/PUPweight_graphsPND0.5-2.png)<!-- -->
 
 Table: Welch's t-test for effects of maternal genotype on PND1 weights
 
 | estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
 |--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
 |   -0.078|      1.29|      1.36|     -1.99|    0.09|      6.43|   -0.171|     0.016|Welch Two Sample t-test |two.sided   |
+
+```
+## [1] 0.39
+```
+
+
+
+Table: Welch's t-test for effects of maternal genotype on PND1 weights on offspring, not separated by sex
+
+|term  | df| statistic| p.value|
+|:-----|--:|---------:|-------:|
+|group |  1|      4.31|   0.065|
+|      | 10|        NA|      NA|
+
+
+
+Table: Pup weight at PND1
+
+|term             | df| sumsq| meansq| statistic| p.value|
+|:----------------|--:|-----:|------:|---------:|-------:|
+|MaternalGenotype |  1| 0.018|  0.018|      3.97|   0.074|
+|Residuals        | 10| 0.045|  0.005|        NA|      NA|
+
+
+
+Table: Pup weight at PND1
+
+|term               | estimate| std.error| statistic| p.value|
+|:------------------|--------:|---------:|---------:|-------:|
+|(Intercept)        |    1.286|     0.028|     46.75|   0.000|
+|MaternalGenotypeKO |    0.078|     0.039|      1.99|   0.074|
+
+
+
+Table: Welch's t-test for effects of maternal genotype on PND1 weights in offspring
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method            |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------|:-----------|
+|   -0.078|      1.29|      1.36|     -1.99|   0.074|        10|   -0.164|     0.009|Two Sample t-test |two.sided   |
 
 ![](figures/PUPweight_graphsPND7-1.png)<!-- -->![](figures/PUPweight_graphsPND7-2.png)<!-- -->
 
@@ -376,15 +432,11 @@ Table: Welch's t-test for effects of maternal genotype on PND16 weights in femal
 
 ![](figures/pupbodymass_PND16MRI-1.png)<!-- -->
 
-Table: Welch's t-test for effects of maternal genotype on aCasein milk composition
-
 | estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
 |--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
 |   -0.011|      8.43|      8.44|    -0.045|   0.965|        12|   -0.556|     0.534|Welch Two Sample t-test |two.sided   |
 
 
-
-Table: Welch's t-test for effects of maternal genotype on aCasein milk composition
 
 | estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
 |--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
@@ -392,15 +444,11 @@ Table: Welch's t-test for effects of maternal genotype on aCasein milk compositi
 
 
 
-Table: Welch's t-test for effects of maternal genotype on aCasein milk composition
-
 | estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
 |--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
 |   -0.094|     0.922|      1.02|    -0.683|   0.511|      9.68|   -0.401|     0.214|Welch Two Sample t-test |two.sided   |
 
 
-
-Table: Welch's t-test for effects of maternal genotype on aCasein milk composition
 
 | estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
 |--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
@@ -408,16 +456,51 @@ Table: Welch's t-test for effects of maternal genotype on aCasein milk compositi
 
 
 
-Table: Welch's t-test for effects of maternal genotype on aCasein milk composition
-
 | estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
 |--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
 |    0.089|      6.84|      6.75|     0.506|    0.62|      15.3|   -0.286|     0.464|Welch Two Sample t-test |two.sided   |
 
 
 
-Table: Welch's t-test for effects of maternal genotype on aCasein milk composition
-
 | estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
 |--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
 |   -0.171|      6.51|      6.68|    -0.875|   0.391|      21.7|   -0.576|     0.234|Welch Two Sample t-test |two.sided   |
+
+```
+## # A tibble: 43 x 17
+## # Groups:   MaternalGenotype [2]
+##    MaternalGenotype MaternalID Sex      BW   Fat  Lean FreeWater TotalWater
+##    <fct>                 <dbl> <chr> <dbl> <dbl> <dbl>     <dbl>      <dbl>
+##  1 WT                     8162 Male    7.6  0.74  6.23     0           5.95
+##  2 WT                     8162 Male    7.8  0.76  6.58     1.46        4.27
+##  3 WT                     8162 Fema…   7.5  0.94  5.91     0.19        5.66
+##  4 WT                     8162 Fema…   7.8  0.67  6.5      0           5.27
+##  5 KO                     8161 Male    8.1  0.95  6.42     0.580       6.73
+##  6 KO                     8161 Male    8.2  0.98  6.74     0.88        6.13
+##  7 KO                     8161 Fema…   7.8  1.01  6.22     1.22        7.23
+##  8 KO                     8161 Fema…   7.5  0.68  6.25     0.33        5.93
+##  9 KO                     7983 Male    7.8  0.76  6.25     0.04        5.86
+## 10 KO                     7983 Fema…  10    1.57  7.4      0.18        6.72
+## # … with 33 more rows, and 9 more variables: DateofBirth <chr>,
+## #   DateofMRI <chr>, Notes <lgl>, AverageBW <dbl>, AverageFat <dbl>,
+## #   AverageLean <dbl>, AverageBWpermaternalgenotype <dbl>,
+## #   AverageLeanpermaternalgenotype <dbl>, AverageFatpermaternalgenotype <dbl>
+```
+
+![](figures/pupbodymass_PND16MRI-2.png)<!-- -->
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
+|   -0.205|      8.22|      8.43|     -1.08|   0.286|      40.9|   -0.589|     0.178|Welch Two Sample t-test |two.sided   |
+
+
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
+|   -0.079|      0.96|      1.04|      -1.1|   0.279|        39|   -0.224|     0.066|Welch Two Sample t-test |two.sided   |
+
+
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method                  |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------------|:-----------|
+|   -0.073|      6.64|      6.72|    -0.535|   0.595|      40.2|   -0.346|     0.201|Welch Two Sample t-test |two.sided   |
