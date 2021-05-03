@@ -82,15 +82,19 @@ sfamufapufa.percentage%>% pull(Average.sfa) #or average.sfa or average.mufa to s
 #PUFA effect size: 22.7-21.7 / 21.7 * 100= 4.6% increase in PUFA in KO 
 
 #Barplot SFA%
-ggplot(sfamufapufa.percentage, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
-  theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Sum of SFA (%)",title="Average SFA % of milk by Genotype")
+ggplot(sfamufapufa.percentage,
+       aes(x=Genotype, y=Average.sfa, fill=Genotype))+
+  geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  #labs(x="Genotype", y="Average Sum of SFA (%)",title="Average SFA % of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Average Sum of SFA (%)",
+         x="Maternal Genotype")
 
 #Statistics
 #%SFA
@@ -108,14 +112,21 @@ t.test(`%SFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(c
 
 #Barplot MUFA
 ggplot(sfamufapufa.percentage, is.na=NA,
-       aes(x=`Genotype`, y=Average.mufa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.mufa - SE.Average.mufa, ymax=Average.mufa + SE.Average.mufa))+
+       aes(x=`Genotype`, y=Average.mufa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5, aes(ymin=Average.mufa - SE.Average.mufa, ymax=Average.mufa + SE.Average.mufa))+
   theme_classic() +
   expand_limits(y=1)+
    theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Sum of MUFA (%)",title="Average MUFA % of milk by Genotype")
+  #labs(x="Genotype", y="Average Sum of MUFA (%)",title="Average MUFA % of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Average Sum of MUFA (%)",
+         x="Maternal Genotype")
 
 #Statistics %MUFA
 shapiro.percentKOmufa<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%MUFA`)
@@ -131,14 +142,21 @@ t.test(`%MUFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(
 
 #Barplot PUFA%
 ggplot(sfamufapufa.percentage, is.na=NA,
-       aes(x=`Genotype`, y=Average.pufa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.pufa - SE.Average.pufa, ymax=Average.pufa + SE.Average.pufa))+
+       aes(x=`Genotype`, y=Average.pufa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5,aes(ymin=Average.pufa - SE.Average.pufa, ymax=Average.pufa + SE.Average.pufa))+
   theme_classic() +
   expand_limits(y=1)+
    theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Sum of PUFA (%)",title="Average PUFA % of milk by Genotype")
+  #labs(x="Genotype", y="Average Sum of PUFA (%)",title="Average PUFA % of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Average Sum of PUFA (%)",
+         x="Maternal Genotype")
 
 #Statistics %PUFA
 shapiro.percentKOpufa<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%PUFA`)
@@ -159,14 +177,21 @@ mufasfaratio%>% pull(Average.ratio)
 #effect size: 0.836-0.676 / 0.676 *100= 23.67% increase in MUFA/SFa ratio in KO
 
 ggplot(mufasfaratio, is.na=NA,
-       aes(x=`Genotype`, y=Average.ratio, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.ratio - SE.Average.ratio, ymax=Average.ratio + SE.Average.ratio))+
+       aes(x=`Genotype`, y=Average.ratio, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5,aes(ymin=Average.ratio - SE.Average.ratio, ymax=Average.ratio + SE.Average.ratio))+
   theme_classic() +
   expand_limits(y=1)+
    theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average MUFA/SFA Ratio",title="Average MUFA:SFA ratio of milk by Genotype")
+  #labs(x="Genotype", y="Average MUFA/SFA Ratio",title="Average MUFA:SFA ratio of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Average MUFA/SFA Ratio",
+         x="Maternal Genotype")
 
 #Statistics MUFA/SFa ratio
 shapiro.percentKOratio<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`MUFA/SFA`)
@@ -187,14 +212,22 @@ sumLCFA <- lipidomics.data %>%
             SE.Average.lcfa= se(`Sum (n mol)`))
 
 ggplot(sumLCFA, is.na=NA,
-       aes(x=`Genotype`, y=Average.lcfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.lcfa - SE.Average.lcfa, ymax=Average.lcfa + SE.Average.lcfa))+
+       aes(x=`Genotype`, y=Average.lcfa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5,aes(ymin=Average.lcfa - SE.Average.lcfa, ymax=Average.lcfa + SE.Average.lcfa))+
   theme_classic() +
   expand_limits(y=1)+
    theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Sum of LCFA (n mol)",title="Average Sum of LCFA of milk by Genotype")
+  #labs(x="Genotype", y="Average Sum of LCFA (n mol)",title="Average Sum of LCFA of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Average Sum of LCFA (n mol)",
+         x="Maternal Genotype")
+
 
 #Statistics sum LCFA
 shapiro.percentKOLCFA<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`Sum (n mol)`)
@@ -218,14 +251,22 @@ percent184%>% pull(Average.sfa)
 #effect size= 1.293-0.809 / 0.809 *100 = 59.83% increase in KO
 
 ggplot(percent184, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat= "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
   expand_limits(y=1)+
    theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 18:4 (n mol)",title="Average %18:4 of milk by Genotype")
+  #labs(x="Genotype", y="Average Percent of 18:4 (n mol)",title="Average %18:4 of milk by Genotype")
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Average Percent of 18:4 (n mol)",
+         x="Maternal Genotype")
+
 #Statistics `%18:4 (n-3)
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:4 (n-3)`)
 shapiro.percentKO #p-value = 0.7 --> normal distribution of KO %

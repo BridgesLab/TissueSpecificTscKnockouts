@@ -71,11 +71,14 @@ gland.mouse.weight <- gather(mgaverageweights, value= 'GlandWeight', key=Gland, 
 
 library(ggplot2)
 p <- ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland', 'LMGland', "Weight'")),
-            aes(x=Gland, y=GlandWeight, color=Genotype))+    labs(x="Right and Left Mammary Glands",
-       y="Weight",
-       title="Mammary Gland Weights") +
-  theme_classic()
-
+            aes(x=Gland, y=GlandWeight, color=Genotype))+ 
+  #labs(x="Right and Left Mammary Glands",
+       #y="Weight",
+       #title="Mammary Gland Weights") +
+  theme_classic() +
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() 
 
   
 ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland', 'LMGland')),
@@ -135,12 +138,18 @@ gland.mouse.weight %>%
   geom_errorbar(width=0.5, aes( ymin=mean-se,
              ymax=mean+se)) +
   facet_grid(~Gland) +
-    labs(x="",
-       y="Weight",
-       title="Mammary Gland Weights") +
+    #labs(x="",
+       #y="Weight",
+       #title="Mammary Gland Weights") +
     theme_classic() +
-  #scale_fill_manual(values=color.scheme) +
-    theme(text = element_text(size=13))
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.4)) +
+    labs(y="Weight (g)",
+         x="Maternal Genotype")
 
 
 t.test(as.numeric(GlandWeight) ~ Genotype, data=gland.mouse.weight %>% filter(Gland=="RMGland")) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on right mammary gland weights")  
@@ -214,12 +223,18 @@ milk.weights %>%
   geom_errorbar(width=0.5, aes(ymin=Mean-Error,
          ymax=Mean+Error))+
  theme_classic()+
-    labs(x="Maternal Genotype",
-       y="Weight Gained by Pup (g)",
-       title="Milk Production") +
+    #labs(x="Maternal Genotype",
+      # y="Weight Gained by Pup (g)",
+       #title="Milk Production") +
       theme_classic() +
-  #scale_fill_manual(values=color.scheme) +
-    theme(text = element_text(size=13))
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Weight Gained by Pup (g)",
+         x="Maternal Genotype")
 
 
 t.test(Pup.Gained.Weight.Pup ~ MaternalGenotype, data=milk.weights) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on milk production")  
@@ -239,11 +254,17 @@ milk.weights %>%
   geom_errorbar(width=0.5, aes( ymin=Mean-Error,
          ymax=Mean+Error))+
  theme_classic()+
-    labs(x="Maternal Genotype",
-       y="Dam Lost Weight (g)",
-       title="Milk Production") +
+    #labs(x="Maternal Genotype",
+      # y="Dam Lost Weight (g)",
+       #title="Milk Production") +
       theme_classic()  +
- #scale_fill_manual(values=color.scheme) +  #add this to make the colors maize an
-    theme(text = element_text(size=13))
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.3)) +
+    labs(y="Weight Lost by Dam (g)",
+         x="Maternal Genotype")
 
 ```
