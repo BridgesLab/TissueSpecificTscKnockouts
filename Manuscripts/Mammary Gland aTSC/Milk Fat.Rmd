@@ -241,9 +241,9 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.1,0.9)) +
-    labs(y="Average Fat Percentage %",
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Average Fat (%)",
          x="Maternal Genotype")
 ```
 
