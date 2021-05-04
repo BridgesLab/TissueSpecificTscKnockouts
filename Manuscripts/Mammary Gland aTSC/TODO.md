@@ -10,7 +10,6 @@
 * To add Allison's representative images H&E
 * To add adipocyte sizing and counting bar graphs to Word document
 * To redraw figure 1, timeline using adobe
-* To draw the omega3 and omega6 figure on Adobe 
 
 ## Writing
 
