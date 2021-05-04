@@ -91,8 +91,8 @@ ggplot(sfamufapufa.percentage,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average Sum of SFA (%)",
          x="Maternal Genotype")
 
@@ -124,8 +124,8 @@ ggplot(sfamufapufa.percentage, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average Sum of MUFA (%)",
          x="Maternal Genotype")
 
@@ -155,8 +155,8 @@ ggplot(sfamufapufa.percentage, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average Sum of PUFA (%)",
          x="Maternal Genotype")
 
@@ -190,8 +190,8 @@ ggplot(mufasfaratio, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average MUFA/SFA Ratio",
          x="Maternal Genotype")
 
@@ -224,8 +224,8 @@ ggplot(sumLCFA, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average Sum of LCFA (n mol)",
          x="Maternal Genotype")
 
@@ -262,8 +262,8 @@ ggplot(percent184, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 18:4 n3 (%)",
          x="Maternal Genotype")
 
@@ -298,8 +298,8 @@ ggplot(percent225n3, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 22:5 n3 (%)",
          x="Maternal Genotype")
 
@@ -333,8 +333,8 @@ geom_bar(position = "dodge", stat = "identity")+
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 22:5 n6 (%)",
          x="Maternal Genotype")
 #Statistics `%22:5 (n-6)
@@ -367,8 +367,8 @@ ggplot(percent204n6, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 20:4 n6 (%)",
          x="Maternal Genotype")
 
@@ -400,8 +400,8 @@ ggplot(percent224n6, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 22:4 n6 (%)",
          x="Maternal Genotype")
 
@@ -433,8 +433,8 @@ ggplot(percent203n6, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 20:3 n6 (%)",
          x="Maternal Genotype")
 
@@ -468,8 +468,8 @@ ggplot(percent182, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 18:2 n6 (%)",
          x="Maternal Genotype")
 
@@ -503,8 +503,8 @@ ggplot(percent183, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average 18:3 n6 (%)",
          x="Maternal Genotype")
   
@@ -542,8 +542,8 @@ ggplot(n6n3ratio, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average n6:n3 Ratio",
          x="Maternal Genotype")
 
@@ -579,8 +579,8 @@ ggplot(n6n3.percentage, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average n3 (%)",
          x="Maternal Genotype")
 
@@ -607,8 +607,8 @@ ggplot(n6n3.percentage, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average n6 (%)",
          x="Maternal Genotype")
 #Statistics
@@ -643,8 +643,8 @@ ggplot(ALA, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average ALA (%)",
          x="Maternal Genotype")
   
@@ -677,8 +677,8 @@ ggplot(EPA, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average EPA (%)",
          x="Maternal Genotype")
 
@@ -713,8 +713,8 @@ ggplot(DHA, is.na=NA,
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average DHA (%)",
          x="Maternal Genotype")
   
