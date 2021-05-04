@@ -98,8 +98,8 @@ p + geom_bar(stat='identity', position=position_dodge(), width =0.5) + #match wi
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.5)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Survival Rate",
          x="Maternal Genotype")
 
@@ -121,7 +121,7 @@ library(ggplot2)
 p <- ggplot(bornpups,
 aes(x=MaternalGenotype, y= Average.Born.Pups, fill=MaternalGenotype, na.rm =T))
 
-p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
+p + geom_bar(stat='identity', position=position_dodge(0.5)) +
   geom_errorbar(position=position_dodge(0.5), width=0.2, aes(ymax= Average.Born.Pups + SE.Average.Born.Pups, ymin=Average.Born.Pups - SE.Average.Born.Pups)) +
   #xlab("Genotype of Mother") +
   #ylab("Average Number of Pups Born") +
@@ -132,8 +132,8 @@ p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Average Number of Pups Born",
          x="Maternal Genotype")
 
@@ -153,8 +153,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Survival Rate",
          x="Maternal Genotype")
      
@@ -180,26 +180,26 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.5)) +
-    labs(y="Survival Rate per Cage (%)",
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Survival Rate (%)",
          x="Maternal Genotype")
  
   p <- ggplot(numberofpups.per.cage,
        aes(x=MaternalGenotype, y= alive.percent,fill= MaternalGenotype))  #alive percent and survival rate are the same thing, one is in % and other is rate
 
  p + geom_bar(stat='identity', position=position_dodge(0.5), width =0.5) +
-  #labs(title="Survival Rate Per Cage",
-      # y="Survival Rate Per Cage (%)",
+  #labs(title="Survival Rate",
+      # y="Survival Rate (%)",
       # x="Maternal ID") +
   theme_classic()+
     scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.5)) +
-    labs(y="Survival Rate per Cage (%)",
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Survival Rate (%)",
          x="Maternal Genotype")
 
 ggplot(numberofpups.per.cage %>% group_by(MaternalID, MaternalGenotype) %>% summarize(Avg=mean(alive.percent)),
@@ -334,8 +334,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND0.5 (g)",
          x="Dam ID")
   
@@ -359,8 +359,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.2,0.5)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND0.5 (g)",
          x="Maternal Genotype")
   
@@ -404,8 +404,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.2,0.5)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND7.5 (g)",
          x="Dam ID")
   
@@ -427,8 +427,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND7.5 (g)",
          x="Maternal Genotype")
   
@@ -476,8 +476,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.2,0.5)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND14.5 (g)",
          x="Dam ID")
   
@@ -499,8 +499,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND14.5 (g)",
          x="Maternal Genotype")
 
@@ -530,8 +530,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.2,0.5)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND16.5 (g)",
          x="Dam ID")
   
@@ -553,8 +553,8 @@ library(ggplot2)
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups at PND16.5 (g)",
          x="Maternal Genotype")
 
@@ -590,8 +590,8 @@ rbind(Pup.weightspercagePND14 %>% mutate(Age=14),
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.2)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight of Pups (g)",
          x="Age (Days)")
 ```
