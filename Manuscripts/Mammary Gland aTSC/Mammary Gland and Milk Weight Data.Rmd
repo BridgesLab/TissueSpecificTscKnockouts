@@ -146,8 +146,8 @@ gland.mouse.weight %>%
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.4)) +
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight (g)",
          x="Maternal Genotype")
 
@@ -231,8 +231,8 @@ milk.weights %>%
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight Gained by Pup (g)",
          x="Maternal Genotype")
 
@@ -262,8 +262,8 @@ milk.weights %>%
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
     labs(y="Weight Lost by Dam (g)",
          x="Maternal Genotype")
 
