@@ -211,7 +211,7 @@ Analysis
 
 ```
 ## DayfromDelivery:MaternalGenotypeKO 
-##                              -6.34
+##                              -5.26
 ```
 
 ```
@@ -220,37 +220,37 @@ Analysis
 ## Formula: FoodIntake ~ DayfromDelivery * MaternalGenotype + (1 | ID)
 ##    Data: foodintakefromdelivery
 ## 
-## REML criterion at convergence: 383
+## REML criterion at convergence: 363
 ## 
 ## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.0086 -0.6949 -0.0838  0.5130  1.7704 
+##    Min     1Q Median     3Q    Max 
+## -2.008 -0.606 -0.108  0.527  1.904 
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev.
-##  ID       (Intercept) 212      14.6    
-##  Residual             329      18.1    
-## Number of obs: 45, groups:  ID, 10
+##  ID       (Intercept) 198      14.1    
+##  Residual             319      17.9    
+## Number of obs: 43, groups:  ID, 10
 ## 
 ## Fixed effects:
 ##                                    Estimate Std. Error     df t value Pr(>|t|)
-## (Intercept)                          15.990     10.237 13.643    1.56   0.1412
-## DayfromDelivery                       3.052      0.923 34.043    3.30   0.0022
-## MaternalGenotypeKO                   32.888     13.896 15.634    2.37   0.0312
-## DayfromDelivery:MaternalGenotypeKO   -3.288      1.227 33.732   -2.68   0.0113
-##                                      
-## (Intercept)                          
-## DayfromDelivery                    **
-## MaternalGenotypeKO                 * 
-## DayfromDelivery:MaternalGenotypeKO * 
+## (Intercept)                          17.974     10.037 12.092    1.79    0.098
+## DayfromDelivery                       2.489      0.958 31.074    2.60    0.014
+## MaternalGenotypeKO                   30.738     13.601 13.791    2.26    0.041
+## DayfromDelivery:MaternalGenotypeKO   -2.772      1.257 30.826   -2.21    0.035
+##                                     
+## (Intercept)                        .
+## DayfromDelivery                    *
+## MaternalGenotypeKO                 *
+## DayfromDelivery:MaternalGenotypeKO *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Correlation of Fixed Effects:
 ##             (Intr) DyfrmD MtrGKO
-## DayfrmDlvry -0.583              
-## MtrnlGntyKO -0.737  0.430       
-## DyfrmD:MGKO  0.439 -0.753 -0.608
+## DayfrmDlvry -0.590              
+## MtrnlGntyKO -0.738  0.435       
+## DyfrmD:MGKO  0.449 -0.762 -0.604
 ```
 
 
