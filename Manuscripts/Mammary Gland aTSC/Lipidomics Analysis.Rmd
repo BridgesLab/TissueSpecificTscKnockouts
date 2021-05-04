@@ -92,7 +92,7 @@ ggplot(sfamufapufa.percentage,
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          legend.position = c(0.5,0.2)) +
     labs(y="Average Sum of SFA (%)",
          x="Maternal Genotype")
 
@@ -116,15 +116,14 @@ ggplot(sfamufapufa.percentage, is.na=NA,
  geom_bar(position= "dodge", stat='identity') +
    geom_errorbar(width=0.5, aes(ymin=Average.mufa - SE.Average.mufa, ymax=Average.mufa + SE.Average.mufa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
+  expand_limits(y=0)+
   #labs(x="Genotype", y="Average Sum of MUFA (%)",title="Average MUFA % of milk by Genotype")
  scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          legend.position = c(0.5,0.2)) +
     labs(y="Average Sum of MUFA (%)",
          x="Maternal Genotype")
 
@@ -146,15 +145,14 @@ ggplot(sfamufapufa.percentage, is.na=NA,
  geom_bar(position= "dodge", stat='identity') +
    geom_errorbar(width=0.5,aes(ymin=Average.pufa - SE.Average.pufa, ymax=Average.pufa + SE.Average.pufa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
+  expand_limits(y=0)+
   #labs(x="Genotype", y="Average Sum of PUFA (%)",title="Average PUFA % of milk by Genotype")
  scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          legend.position = c(0.5,0.2)) +
     labs(y="Average Sum of PUFA (%)",
          x="Maternal Genotype")
 
@@ -181,15 +179,14 @@ ggplot(mufasfaratio, is.na=NA,
  geom_bar(position= "dodge", stat='identity') +
    geom_errorbar(width=0.5,aes(ymin=Average.ratio - SE.Average.ratio, ymax=Average.ratio + SE.Average.ratio))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
+  expand_limits(y=0)+
   #labs(x="Genotype", y="Average MUFA/SFA Ratio",title="Average MUFA:SFA ratio of milk by Genotype")
  scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          legend.position = c(0.5,0.2)) +
     labs(y="Average MUFA/SFA Ratio",
          x="Maternal Genotype")
 
@@ -216,15 +213,14 @@ ggplot(sumLCFA, is.na=NA,
  geom_bar(position= "dodge", stat='identity') +
    geom_errorbar(width=0.5,aes(ymin=Average.lcfa - SE.Average.lcfa, ymax=Average.lcfa + SE.Average.lcfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
+  expand_limits(y=0)+
   #labs(x="Genotype", y="Average Sum of LCFA (n mol)",title="Average Sum of LCFA of milk by Genotype")
  scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
+          legend.position = c(0.5,0.2)) +
     labs(y="Average Sum of LCFA (n mol)",
          x="Maternal Genotype")
 
@@ -255,16 +251,15 @@ ggplot(percent184, is.na=NA,
  geom_bar(position= "dodge", stat= "identity")+
    geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  #labs(x="Genotype", y="Average Percent of 18:4 (n mol)",title="Average %18:4 of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 18:4",title="Average %18:4 of milk by Genotype")
    scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-          legend.position = c(0.5,0.3)) +
-    labs(y="Average Percent of 18:4 (n mol)",
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 18:4 n3 (%)",
          x="Maternal Genotype")
 
 #Statistics `%18:4 (n-3)
@@ -288,14 +283,20 @@ percent225n3 <- lipidomics.data %>%
 percent225n3%>% pull(Average.sfa)
 
 ggplot(percent225n3, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position="dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 22:5 (%)",title="Average %22:5 (n-3) of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 22:5 (%)",title="Average %22:5 (n-3) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 22:5 n3 (%)",
+         x="Maternal Genotype")
 
 #Statistics `%22:5 (n-3)
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:5 (n-3)`)
@@ -317,14 +318,20 @@ percent225n6 <- lipidomics.data %>%
             SE.Average.sfa= se(`%22:5 (n-6)`))
 
 ggplot(percent225n6, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 22:5 (%)",title="Average %22:5 (n-6) of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 22:5 (%)",title="Average %22:5 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 22:5 n6 (%)",
+         x="Maternal Genotype")
 #Statistics `%22:5 (n-6)
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:5 (n-6)`)
 shapiro.percentKO #p-value = 0.2 --> normal distribution of KO %
@@ -345,14 +352,20 @@ percent204n6 <- lipidomics.data %>%
             SE.Average.sfa= se(`%20:4 (n-6)`))
 
 ggplot(percent204n6, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 20:4 (%)",title="Average %20:4 (n-6) of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 20:4 (%)",title="Average %20:4 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 20:4 n6 (%)",
+         x="Maternal Genotype")
 
 #Statistics 
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%20:4 (n-6)`)
@@ -372,14 +385,20 @@ percent224n6 <- lipidomics.data %>%
             SE.Average.sfa= se(`%22:4 (n-6)`))
 
 ggplot(percent224n6, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat= "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 22:4 (%)",title="Average %22:4 (n-6) of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 22:4 (%)",title="Average %22:4 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 22:4 n6 (%)",
+         x="Maternal Genotype")
 
 #Statistics 
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:4 (n-6)`)
@@ -399,14 +418,20 @@ percent203n6 <- lipidomics.data %>%
             SE.Average.sfa= se(`%20:3 (n-6)`))
 
 ggplot(percent203n6, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 20:3 (%)",title="Average %20:3 (n-6) of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 20:3 (%)",title="Average %20:3 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 20:3 n6 (%)",
+         x="Maternal Genotype")
 
 #Statistics 20:3 (n-6)
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%20:3 (n-6)`)
@@ -428,14 +453,20 @@ percent182 <- lipidomics.data %>%
             SE.Average.sfa= se(`%18:2 (n-6)cc`))
 
 ggplot(percent182, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 18:2 (cc)",title="Average %18:2 of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 18:2 (cc)",title="Average %18:2 of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 18:2 n6 (%)",
+         x="Maternal Genotype")
 
 #Statistics %18:2 (n-6)cc
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:2 (n-6)cc`)
@@ -457,15 +488,21 @@ percent183 <- lipidomics.data %>%
             SE.Average.sfa= se(`%18:3 (n-6)`))
 
 ggplot(percent183, is.na=NA,
-       aes(x=`Genotype`, y=Average.sfa, col=`Genotype`))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average Percent of 18:3",title="Average %18:3 of milk by Genotype")
-
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 18:3",title="Average %18:3 of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average 18:3 n6 (%)",
+         x="Maternal Genotype")
+  
 #Statistics %18:3 (n-6)
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:3 (n-6)`)
 shapiro.percentKO #p-value = 0.2 --> normal distribution of KO %
@@ -490,14 +527,20 @@ n6n3ratio%>%pull(Average.omegaratio)
 #effect size of n6:n3 ratio= 7.55-5.77 / 5.77 * 100= 30.85% reduction in KO compared to WT
 
 ggplot(n6n3ratio, is.na=NA,
-       aes(x=Genotype, y=Average.omegaratio, col=Genotype))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.omegaratio - SE.Average.omegaratio, ymax=Average.omegaratio + SE.Average.omegaratio))+
+       aes(x=Genotype, y=Average.omegaratio, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.omegaratio - SE.Average.omegaratio, ymax=Average.omegaratio + SE.Average.omegaratio))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average n6/n3 ratio",title="Average n6/n3 ratio of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average n6/n3 ratio",title="Average n6/n3 ratio of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average n6:n3 Ratio",
+         x="Maternal Genotype")
 
 #Statistics Ratio n6/n3
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`Ratio n6/n3`)
@@ -520,15 +563,21 @@ n6n3.percentage%>% pull(Average.n3)
 #Effect size of %n3: 3.34-2.6 / 2.6 *100= 28.46% increase in KO compared to WT
 
 ggplot(n6n3.percentage, is.na=NA,
-       aes(x=Genotype, y=Average.n3, col=Genotype))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.n3 - SE.Average.n3, ymax=Average.n3 + SE.Average.n3))+
+       aes(x=Genotype, y=Average.n3, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3 - SE.Average.n3, ymax=Average.n3 + SE.Average.n3))+
     #facet_grid(~`Ethnic Group`) +
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average n3 percentage (%) ",title="Average n3 percentage of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average n3 percentage (%) ",title="Average n3 percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average n3 (%)",
+         x="Maternal Genotype")
 
 #Statistics
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%n3`)
@@ -542,15 +591,21 @@ t.test(`%n3`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(ca
 
 
 ggplot(n6n3.percentage, is.na=NA,
-       aes(x=Genotype, y=Average.n6, col=Genotype))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.n6 - SE.Average.n6, ymax=Average.n6 + SE.Average.n6))+
+       aes(x=Genotype, y=Average.n6, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n6 - SE.Average.n6, ymax=Average.n6 + SE.Average.n6))+
     #facet_grid(~`Ethnic Group`) +
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average n6 percentage (%) ",title="Average n6 percentage of milk by Genotype")
+  expand_limits(y=0)+
+ # labs(x="Genotype", y="Average n6 percentage (%) ",title="Average n6 percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average n6 (%)",
+         x="Maternal Genotype")
 #Statistics
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%n6`)
 shapiro.percentKO #p-value = 0.04 --> not normal distribution of KO %
@@ -573,14 +628,21 @@ ALA <- lipidomics.data %>%
             SE.Average.n3percent=se(`%18:3 (n-3)`))
 
 ggplot(ALA, is.na=NA,
-       aes(x=Genotype, y=Average.n3percent, col=Genotype))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
+       aes(x=Genotype, y=Average.n3percent, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average ALA (%)",title="Average ALA Percentage of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average ALA (%)",title="Average ALA Percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average ALA (%)",
+         x="Maternal Genotype")
+  
 #Statistics
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:3 (n-3)`)
 shapiro.percentKO #p-value = 0.5 --> normal distribution of KO %
@@ -600,14 +662,21 @@ EPA <- lipidomics.data %>%
             SE.Average.n3percent=se(`%20:5 (n-3)`))
 
 ggplot(EPA, is.na=NA,
-       aes(x=Genotype, y=Average.n3percent, col=Genotype))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
+       aes(x=Genotype, y=Average.n3percent, fill=Genotype))+
+ geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average EPA (%)",title="Average EPA Percentage of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average EPA (%)",title="Average EPA Percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average EPA (%)",
+         x="Maternal Genotype")
+
 #Statistics
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%20:5 (n-3)`)
 shapiro.percentKO #p-value = 0.5 --> normal distribution of KO %
@@ -629,14 +698,21 @@ DHA %>% pull(Average.n3percent)
 #Effect size of DHA: 0.736-0.517 / 0.517 *100= 42.36% increase in KO compared to WT
 
 ggplot(DHA, is.na=NA,
-       aes(x=Genotype, y=Average.n3percent, col=Genotype))+
-  geom_point() +
-  geom_smooth()  +
-   geom_errorbar(aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
+       aes(x=Genotype, y=Average.n3percent, fill=Genotype))+
+ geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
   theme_classic() +
-  expand_limits(y=1)+
-   theme(text = element_text(size=11))+
-  labs(x="Genotype", y="Average DHA (%)",title="Average DHA Percentage of milk by Genotype")
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average DHA (%)",title="Average DHA Percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+          legend.position = c(0.5,0.2)) +
+    labs(y="Average DHA (%)",
+         x="Maternal Genotype")
+  
 #Statistics
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:6 (n-3)`)
 shapiro.percentKO #p-value = 0.5 --> normal distribution of KO %
