@@ -22,10 +22,13 @@ This document indicates where the raw data for each table and figure panel can b
 | Figure 5B | Milk Fat.Rmd | milkfat_graphsfromallsamples-6.pdf
 
 
-
-
-
-
+| Figure 6A | Lipidomics Analysis.Rmd | SFA ratio-1.pdf
+| Figure 6B | Lipidomics Analysis.Rmd | MUFA-1.pdf
+| Figure 6C | Lipidomics Analysis.Rmd | MUFA SFA Ratio-1.pdf
+| Figure 6D | Lipidomics Analysis.Rmd | PUFA-1.pdf
+| Figure 6E | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-2.pdf
+| Figure 6F | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-3.pdf
+| Figure 6G | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-1.pdf
 
 
 | Figure 7A | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | heatmap-2.pdf |
@@ -40,6 +43,7 @@ This document indicates where the raw data for each table and figure panel can b
 | ------ | ------ | ------ |
 | Supplementary Figure 1 | Pup Data.Rmd | PUPweight_graphsPND0.5-2.pdf
 | Supplementary Figure 2 | Mammary Gland and Milk Weight Data.Rmd | milk_samples_data-11.pdf
+| Supplementary Figure 3 | Lipidomics Analysis.Rmd | sum LCFA-1.pdf
 
 
 # Tables 

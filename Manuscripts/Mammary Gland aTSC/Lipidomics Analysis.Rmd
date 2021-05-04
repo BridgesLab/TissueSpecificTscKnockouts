@@ -61,7 +61,7 @@ lipidomics.data <- read_csv(atsclipidomics.data, na=c("N/A",NA)) %>% mutate(Geno
 ```
 
 
-```{r SFA,MUFA,PUFA sum and percentages and MUFA/SFA ratio}
+```{r SFA ratio}
 library(ggplot2)
 library(tidyr)
 
@@ -108,7 +108,9 @@ library(car)
 leveneTest(`%SFA`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p-value=0.899 --> assume equal variance
 
 t.test(`%SFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %SFA by maternal genotype") #p=0.008
+```
 
+```{r MUFA}
 
 #Barplot MUFA
 ggplot(sfamufapufa.percentage, is.na=NA,
@@ -138,7 +140,9 @@ library(car)
 leveneTest(`%MUFA`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p-value=0.751 --> assume equal variance
 
 t.test(`%MUFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %MUFA by maternal genotype") #p=0.009
+```
 
+```{r PUFA}
 #Barplot PUFA%
 ggplot(sfamufapufa.percentage, is.na=NA,
        aes(x=`Genotype`, y=Average.pufa, fill=`Genotype`))+
@@ -164,8 +168,9 @@ shapiro.percentWTmufa<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")
 shapiro.percentWTmufa #p-value = 0.04 --> not normal distribution of WT PUFA%
 
 wilcox.test(`%PUFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %MUFA by maternal genotype") #p=0.69
+```
 
-
+```{r MUFA SFA Ratio}
 #MUFA/SFA ratio
 mufasfaratio <- lipidomics.data %>%
   group_by(Genotype) %>%
