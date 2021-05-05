@@ -5,10 +5,8 @@
 ## Analyses
 
 * Calculate number of DE pathways
-* Stats for lme for adipocytes for adipocytes count and sizing 
 * Food intake to be checked and done by week rather than MWF
 * To add Allison's representative images H&E
-* To add adipocyte sizing and counting bar graphs to Word document
 * To redraw figure 1, timeline using adobe
 
 ## Writing
