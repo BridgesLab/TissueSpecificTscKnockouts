@@ -328,7 +328,7 @@ library(ggplot2)
   #labs(x="Dam ID",
        #y="Weight of Pups at PND1 (g)",
        #title="Weight of Pups on PND1 per Maternal Genotype") +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
   theme_classic()+
     scale_fill_grey() +
     scale_color_grey() +
@@ -346,14 +346,13 @@ library(ggplot2)
   ggplot(aes(x=MaternalGenotype,
            y= mean,
            fill=MaternalGenotype))   + 
-  geom_point() +
-      geom_bar(stat='identity') +
+      geom_bar(stat='identity', position="dodge") +
   geom_errorbar(width=0.5, aes(ymin = mean - se,
            ymax = mean + se)) +
   #labs(x="Maternal Genotype",
        #y="Weight (g)",
        #title="Weight of Pups on PND0.5") +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
   theme_classic() +
   scale_fill_grey() +
     scale_color_grey() +
@@ -399,7 +398,7 @@ library(ggplot2)
       # y="Weight of Pups at PND7 (g)",
        #title="Weight of Pups on PND7 per Maternal Genotype") +
     facet_grid(~Sex) +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
   scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
@@ -421,7 +420,7 @@ library(ggplot2)
        #y="Weight (g)",
        #title="Weight of Pups on PND7") +
       facet_grid(~Sex) +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=c(0,5.5)) +
     theme_classic() +
   scale_fill_grey() +
     scale_color_grey() +
@@ -470,7 +469,7 @@ library(ggplot2)
        #y="Weight of Pups at PND14 (g)",
        #title="Weight of Pups on PND14 per Cage and Maternal Genotype") +
     facet_grid(~Sex) +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
     theme_classic() +
   scale_fill_grey() +
     scale_color_grey() +
@@ -493,7 +492,7 @@ library(ggplot2)
       # y="Weight (g)",
        #title="Weight of Pups on PND14") +
       facet_grid(~Sex) +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
      theme_classic() +
   scale_fill_grey() +
     scale_color_grey() +
@@ -524,7 +523,7 @@ library(ggplot2)
       # y="Weight of Pups at PND16 (g)",
        #title="Weight of Pups on PND16 per Cage and Maternal Genotype") +
     facet_grid(~Sex) +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
     theme_classic() +
   scale_fill_grey() +
     scale_color_grey() +
@@ -547,7 +546,7 @@ library(ggplot2)
        #y="Weight of Pups at PND16 (g)",
        #title="Weight of Pups on PND16 per Maternal Genotype") +
       facet_grid(~Sex) +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
      theme_classic() +
   scale_fill_grey() +
     scale_color_grey() +

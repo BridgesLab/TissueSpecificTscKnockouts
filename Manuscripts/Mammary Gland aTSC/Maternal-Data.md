@@ -109,6 +109,10 @@ Analysis
 ## MtrnlGntyKO -0.712  0.369       
 ## DyfrmD:MGKO  0.387 -0.746 -0.523
 ```
+
+```
+## [1] 1.92
+```
 ![](figures/Fat_mass_during_pregnancyandlactation-1.png)<!-- -->![](figures/Fat_mass_during_pregnancyandlactation-2.png)<!-- -->
 
 ### Postnatal fat mass change statistics
@@ -156,6 +160,22 @@ Analysis
 ## DayfrmDlvry -0.411              
 ## MtrnlGntyKO -0.710  0.292       
 ## DyfrmD:MGKO  0.307 -0.748 -0.414
+```
+
+```
+## [1] -1.05
+```
+
+```
+## [1] 2.11
+```
+
+```
+## [1] 0.0485
+```
+
+```
+## [1] -1.08
 ```
 
 ![](figures/lean_mass_during_pregnancyandlactation-1.png)<!-- -->![](figures/lean_mass_during_pregnancyandlactation-2.png)<!-- -->
@@ -251,6 +271,14 @@ Analysis
 ## DayfrmDlvry -0.590              
 ## MtrnlGntyKO -0.738  0.435       
 ## DyfrmD:MGKO  0.449 -0.762 -0.604
+```
+
+```
+## [1] 57.8
+```
+
+```
+## [1] 44.2
 ```
 
 
