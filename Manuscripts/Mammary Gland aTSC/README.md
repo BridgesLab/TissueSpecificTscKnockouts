@@ -16,27 +16,33 @@ This document indicates where the raw data for each table and figure panel can b
 
 | Figure 3 | Mammary Gland and Milk Weight Data.Rmd | mammarygland_weights-5.pdf
 
-| Figure 4 | Pup Data.Rmd | PUPweight_graphsPND7-2.pdf
+| Figure 4A | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-2.pdf
+| Figure 4B | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-1.pdf
+| Figure 4C | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-3.pdf
+| Figure 4D | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-5.pdf
+| Figure 4E | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-4.pdf
 
-| Figure 5A | Mammary Gland and Milk Weight Data.Rmd | milk_samples_data-10.pdf
-| Figure 5B | Milk Fat.Rmd | milkfat_graphsfromallsamples-6.pdf
+| Figure 5 | Pup Data.Rmd | PUPweight_graphsPND7-2.pdf
 
-
-| Figure 6A | Lipidomics Analysis.Rmd | SFA ratio-1.pdf
-| Figure 6B | Lipidomics Analysis.Rmd | MUFA-1.pdf
-| Figure 6C | Lipidomics Analysis.Rmd | MUFA SFA Ratio-1.pdf
-| Figure 6D | Lipidomics Analysis.Rmd | PUFA-1.pdf
-| Figure 6E | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-2.pdf
-| Figure 6F | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-3.pdf
-| Figure 6G | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-1.pdf
+| Figure 6A | Mammary Gland and Milk Weight Data.Rmd | milk_samples_data-10.pdf
+| Figure 6B | Milk Fat.Rmd | milkfat_graphsfromallsamples-6.pdf
 
 
-| Figure 7A | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | heatmap-2.pdf |
-| Figure 7B | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | volcano-plot-1.pdf |
-| Figure 7C | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | Milk Proteins Plot.pdf |
-| Figure 7D | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | PPARg Targets Plot.pdf |
-| Figure 7E | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | Eicosanoid Signaling Plot.pdf |
-| Figure 7F | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Cluster-Profiler.Rmd | go-bp-3.pdf |
+| Figure 7A | Lipidomics Analysis.Rmd | SFA ratio-1.pdf
+| Figure 7B | Lipidomics Analysis.Rmd | MUFA-1.pdf
+| Figure 7C | Lipidomics Analysis.Rmd | MUFA SFA Ratio-1.pdf
+| Figure 7D | Lipidomics Analysis.Rmd | PUFA-1.pdf
+| Figure 7E | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-2.pdf
+| Figure 7F | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-3.pdf
+| Figure 7G | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-1.pdf
+
+
+| Figure 8A | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | heatmap-2.pdf |
+| Figure 8B | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | volcano-plot-1.pdf |
+| Figure 8C | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | Milk Proteins Plot.pdf |
+| Figure 8D | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | PPARg Targets Plot.pdf |
+| Figure 8E | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | Eicosanoid Signaling Plot.pdf |
+| Figure 8F | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Cluster-Profiler.Rmd | go-bp-3.pdf |
 
 #Supplementary Figures
 
