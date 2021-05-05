@@ -1,0 +1,382 @@
+---
+title: "aTSC PND16.5 Mammary Gland Adipocyte Sizing and Counting"
+author: "Allison Meyer"
+date: "2/21/2021"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r global_options, include=FALSE}
+library(tidyr)
+library(dplyr)
+library(broom)
+library(knitr)
+library(readr)
+#figures made will go to directory called figures: a folder that will be created, and it will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+```
+
+# Purpose
+write purpose here for each file
+
+# Experimental Details
+
+Link to the protocol used (permalink preferred) for the experiment and include any notes relevant to your analysis.  This might include specifics not in the general protocol such as cell lines, treatment doses etc.
+
+# Raw Data
+
+```{r data-files}
+library(readr)
+library(readxl)
+library(tidyverse)
+Data.file <- 'ImageJ Adipocyte Count For R.csv'
+Individual.file <- 'ImageJ Adipocyte Count Size All.xlsx'
+Combined.file<-"Combined_individual.xlsx"
+
+#'ImageJ Adipocyte Count For R.csv' has the averaged data per image per mouse and the total-average of the 8 image's average, per mouse
+#'ImageJ Adipocyte Count Size All.xlsx' has the averaged data per image per mouse and the total-average of the 8 image's average, per mouse + the average adipocyte area - the average x the sum to get total average
+#"Combined_individual.xlsx" has each adipocyte per image on a row- thousands of rows accounting for all adipocytes from all 8 images per dam
+```
+
+```{r data-input}
+adipocyte.data <- read_csv(Data.file, na=c("N/A",NA)) %>% 
+  mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+  Individual.data<- read_excel(Individual.file, na=c("N/A",NA))
+  eightyone.data<- read_excel(Individual.file,sheet="7981", na=c("N/A",NA))
+  eightythree.data<- read_excel(Individual.file,sheet="7983", na=c("N/A",NA))
+  eightyfour.data<- read_excel(Individual.file,sheet="7984", na=c("N/A",NA))
+  sixtyone.data<- read_excel(Individual.file,sheet="8161", na=c("N/A",NA))
+  sixtytwo.data<- read_excel(Individual.file,sheet="8162", na=c("N/A",NA))
+  fortyfour.data<- read_excel(Individual.file,sheet="8444", na=c("N/A",NA))
+  fortyfive.data<- read_excel(Individual.file,sheet="8445", na=c("N/A",NA))
+  fortysix.data<- read_excel(Individual.file,sheet="8446", na=c("N/A",NA))
+  sixtyfive.data<- read_excel(Individual.file,sheet="8465", na=c("N/A",NA))
+  sixtysix.data<- read_excel(Individual.file,sheet="8466", na=c("N/A",NA))
+  sixtyseven.data<- read_excel(Individual.file,sheet="8467", na=c("N/A",NA))
+```
+
+```{r histogram for adipocyte area distribution per mouse and combined for all dams}
+#histagram should look similar to the other histagram
+eightyone.distribution <- hist(eightyone.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7981, all 8 images")
+eightythree.distribution <- hist(eightythree.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7983, all 8 images")
+eightyfour.distribution <- hist(eightyfour.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7984, all 8 images")
+sixtyone.distribution <- hist(sixtyone.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8161, all 8 images")
+sixtytwo.distribution <- hist(sixtytwo.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8162, all 8 images")
+fortyfour.distribution <- hist(fortyfour.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8444, all 8 images")
+fortyfive.distribution <- hist(fortyfive.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8445, all 8 images")
+fortysix.distribution <- hist(fortysix.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8446, all 8 images")
+sixtyfive.distribution <- hist(sixtyfive.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8465, all 8 images")
+sixtysix.distribution <- hist(sixtysix.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8466, all 8 images")
+sixtyseven.distribution <- hist(sixtyseven.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8467, all 8 images")
+
+combined.data<- read_excel(Combined.file, na=c("N/A",NA)) %>%  mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+total.distribution <- hist(combined.data$`Area`[combined.data$Genotype== "WT"], col="lightblue", main= "Adipocyte Area for all WT mice distribution") 
+total.distribution <- hist(combined.data$`Area`[combined.data$Genotype== "KO"], col="lightpink", main= "Adipocyte Area for all KO mice distribution") 
+```
+
+```{r Total Adipocyte Number and Area per Mouse}
+library(ggplot2) 
+adipocyte.mouseID <-
+  adipocyte.data %>% 
+  group_by(`MouseID`)%>%
+  filter(`Image#`=="Total")%>% 
+  mutate(Total=mean(`Adipocyte Avergae Total Area`,na.rm=T),SE.Total=se(`Adipocyte Avergae Total Area`))
+
+#graphing for Total Adipocyte Number
+ ggplot(data=adipocyte.mouseID, 
+       aes(x=as.factor(MouseID),fill=Genotype, y= `Total Adipocyte Number`, na.rm= T ))+ 
+  geom_bar(stat='identity',position=position_dodge(0.5), width =0.5) + 
+  expand_limits(y=0)+ 
+  theme_classic() +
+  labs(x="Mouse ID", y="Total Adipocyte Number",title="aTSC Mammary Gland Total Adipocyte Number")
+ 
+#Graphing for Adipocyte Average Total Area (Average multiplied by sum)
+ggplot(data=adipocyte.mouseID, 
+       aes(x=as.factor(MouseID),fill=Genotype, y= `Adipocyte Avergae Total Area`, na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5), width =0.5) + 
+  expand_limits(y=0)+ 
+  theme_classic() + 
+  labs(x="Mouse ID", y="Adipocyte Average Total Area",title="aTSC Mammary Gland Adipocyte Average Total Area") 
+
+
+#Graphing for Percent Adipocyte Area 
+ggplot(data=adipocyte.mouseID, 
+       aes(x=as.factor(MouseID),fill=Genotype, y= `Adipocyte Average Percent Area`, na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5), width =0.5) + 
+  expand_limits(y=0)+ 
+  theme_classic() + 
+  labs(x="Mouse ID", y="Adipocyte Average Percent Area",title="aTSC Mammary Gland Adipocyte Average Percent Area") 
+
+
+ #Graphing for Adipocyte Sum Area
+ggplot(data=adipocyte.mouseID, 
+       aes(x=as.factor(MouseID),fill=Genotype, y= `Sum Adipocyte Area`, na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5), width =0.5) + 
+  expand_limits(y=0)+ 
+  theme_classic() + 
+  labs(x="Mouse ID", y="Adipocyte Sum",title="aTSC Mammary Gland Adipocyte Sum") 
+
+#Graphing Adipocyte Average Area (Not multiplied by sum). I omited image 5 for 7984 because it had no adipocytes and was carrying the average adipocyte size down 
+ggplot(data=adipocyte.mouseID, 
+       aes(x=as.factor(MouseID),fill=Genotype, y= `AverageAdipocyteArea`, na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5), width =0.5) + 
+  expand_limits(y=0)+ 
+  theme_classic() + 
+  labs(x="Mouse ID", y="Average Adipocyte Area",title="aTSC Mammary Gland Adipocyte") 
+
+```
+
+```{r adipocyte size, count grouped by genoytpe}
+library(ggplot2) 
+adipocyte.genotype <-
+  adipocyte.mouseID %>%
+  group_by(`Genotype`)%>%
+  mutate(Total.Average.Area=mean(`Adipocyte Avergae Total Area`,na.rm=T),SE.Total.Average.Area=se(`Adipocyte Avergae Total Area`))%>%
+  mutate(Total.Average.Adipocyte.Number=mean(`Total Adipocyte Number`,na.rm=T),SE.Total.Average.Adipocyte.Number=se(`Total Adipocyte Number`))%>%
+  mutate(Adipocyte.Average.Percent.Adipocyte=mean(`Adipocyte Average Percent Area`,na.rm=T),SE.Adipocyte.Average.Percent.Adipocyte=se(`Adipocyte Average Percent Area`))%>%
+  mutate(Sum.Adipocyte.Area.Average=mean(`Sum Adipocyte Area`,na.rm=T),SE.Sum.Adipocyte.Area.Average=se(`Sum Adipocyte Area`))%>%
+  mutate(AverageAdipocyteArea.mean=mean(AverageAdipocyteArea, na.rm=T), AverageAdipocyteArea.se=se(AverageAdipocyteArea))
+
+
+#graphing for Total Average Area
+ ggplot(data=adipocyte.genotype, 
+       aes(x=Genotype,fill=Genotype, y= `Total.Average.Area`, na.rm= T ))+ 
+  geom_bar(stat='identity',position=position_dodge(0.5)) +
+  geom_errorbar(width=0.5,position=position_dodge(0.5), width=0.2, aes(ymin= Total.Average.Area - SE.Total.Average.Area, ymax= Total.Average.Area +SE.Total.Average.Area)) +
+  expand_limits(y=0)+ 
+  theme_classic() + 
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Total Adipocyte Average Area (mm2)",
+         x="Maternal Genotype")
+ 
+#Graphing for Adipocyte Average Number 
+ggplot(data=adipocyte.genotype, 
+       aes(x=Genotype,fill=Genotype, y= `Total.Average.Adipocyte.Number`, na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5)) + 
+  geom_errorbar(width=0.5,position=position_dodge(0.5), width=0.2, aes(ymin= Total.Average.Adipocyte.Number - SE.Total.Average.Adipocyte.Number, ymax= Total.Average.Adipocyte.Number +SE.Total.Average.Adipocyte.Number)) +
+  expand_limits(y=0)+ 
+  theme_classic() + 
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Adipocyte Average Number",
+         x="Maternal Genotype")
+
+
+#Graphing for Percent Adipocyte Area 
+ggplot(data=adipocyte.genotype, 
+       aes(x=Genotype,fill=Genotype, y= `Adipocyte.Average.Percent.Adipocyte`, na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5)) + 
+  geom_errorbar(width=0.5,position=position_dodge(0.5), width=0.2, aes(ymin= Adipocyte.Average.Percent.Adipocyte - SE.Adipocyte.Average.Percent.Adipocyte, ymax= Adipocyte.Average.Percent.Adipocyte +SE.Adipocyte.Average.Percent.Adipocyte)) +
+  expand_limits(y=0)+ 
+  theme_classic() + 
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Adipocyte Average Area (%)",
+         x="Maternal Genotype")
+
+
+ #Graphing for Adipocyte Sum
+ggplot(data=adipocyte.genotype, 
+       aes(x=Genotype,fill=Genotype, y= `Sum.Adipocyte.Area.Average`, na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5)) + 
+  geom_errorbar(width=0.5,position=position_dodge(0.5), width=0.2, aes(ymin= Sum.Adipocyte.Area.Average - SE.Sum.Adipocyte.Area.Average, ymax= Sum.Adipocyte.Area.Average +SE.Sum.Adipocyte.Area.Average)) +
+  expand_limits(y=0)+ 
+  theme_classic() + 
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Adipocyte Average Sum of Area (mm2)",
+         x="Maternal Genotype")
+
+
+ #Graphing for Average Adipocyte Area (Not multiplied by number of adipocytes)
+ggplot(data=adipocyte.genotype, 
+       aes(x=Genotype,fill=Genotype, y= AverageAdipocyteArea.mean , na.rm= T ))+
+  geom_bar(stat='identity',position=position_dodge(0.5)) + 
+  geom_errorbar(width=0.5, position=position_dodge(0.5), width=0.2, aes(ymin= AverageAdipocyteArea.mean - AverageAdipocyteArea.se, ymax= AverageAdipocyteArea.mean +AverageAdipocyteArea.se)) +
+  expand_limits(y=0)+ 
+  theme_classic() + 
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Adipocyte Average Area (mm2)",
+         x="Maternal Genotype")
+
+```
+
+``` {r stats for adipocyte number}
+#Test for normality for total adipocyte number 
+shapiro.test(adipocyte.mouseID$`Total Adipocyte Number`) #0.2 --> normally distributed, Testing normality of total adipocyte number, anything above 0.05 is normally distributed
+  KO.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "KO")$`Total Adipocyte Number`) #0.8, which means it is normally distributed for the KO
+  KO.shapiro
+ WT.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "WT")$`Total Adipocyte Number`) #0.4, which means it is normally distributed for the WT
+ WT.shapiro
+
+library(car) #levene.test needs library(car) package 
+leveneTest(`Total Adipocyte Number` ~ Genotype, data=adipocyte.mouseID) %>% tidy %>% kable(caption="Levene test for equality of variances") #This p-value= 0.165 so there fore the variances are equal
+
+t.test(`Total Adipocyte Number` ~ Genotype, data=adipocyte.mouseID, var.equal=T)%>% tidy() %>% kable()
+#p-value= 0.056, there is a significant difference between KO and WT in regards to the total adipocyte number
+
+ 
+#linear modeling if you are testing multiple variables/effects at same time  
+library(lme4)
+library(lmerTest)
+lm(`Total Adipocyte Number`~Genotype, data=adipocyte.mouseID) -> TotalAdipocyte.lm
+TotalAdipocyte.lm %>% summary
+
+lm(`TotalAdipocyteNumber`~Genotype, data=combined.data) %>% summary() #p=0.055, KO have 1097/657 * 100= 167 adipocytes more
+```
+``` {r stats for adipocyte area}
+#Test for normality for total adipocyte area 
+shapiro.test(adipocyte.mouseID$`Adipocyte Avergae Total Area`) #0.03 --> not normally distributed
+  KO.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "KO")$`Adipocyte Avergae Total Area`) #0.7, normal
+  KO.shapiro
+ WT.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "WT")$`Adipocyte Avergae Total Area`) #0.7, which means it is normally distributed for the WT
+ WT.shapiro
+
+library(car) #levene.test needs library(car) package 
+leveneTest(`Adipocyte Avergae Total Area` ~ Genotype, data=adipocyte.mouseID) %>% tidy %>% kable(caption="Levene test for equality of variances of ") # p-value= 0.019,so variances are not equal 
+
+t.test(`Adipocyte Avergae Total Area` ~ Genotype, data=adipocyte.mouseID, var.equal=F)%>% tidy() %>% kable()
+#p-value=0.081, so there is not a signifant difference between the WT and KO and the adipocyte average total area
+
+ 
+#linear modeling if you are testing multiple variables/effects at same time  
+library(lme4)
+library(lmerTest)
+lm(`Adipocyte Avergae Total Area`~Genotype, data=adipocyte.mouseID) -> AdipocyteAverageArea.lm
+AdipocyteAverageArea.lm %>% summary
+#P-value= .085, because this assumes they are normally distributed 
+
+lmer(Area~Genotype + (1|MouseID), data=combined.data) %>% summary() #p=0.36, KO have 41.28/284.87 * 100= 15% larger adipocytes area, but this is the area and not the total adipocyte are (the one multiplied by sum)
+```
+
+``` {r stats for percent adipocyte area}
+#Test for normality for Percent Adipocyte Area  
+shapiro.test(adipocyte.mouseID$`Adipocyte Average Percent Area`) #0.01 --> not normally distributed
+  KO.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "KO")$`Adipocyte Average Percent Area`) #0.7, which means it is normally distributed for the KO
+  KO.shapiro
+ WT.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "WT")$`Adipocyte Average Percent Area`) #0.6, which means it is normally distributed for the WT
+ WT.shapiro
+
+library(car) #levene.test needs library(car) package 
+leveneTest(`Adipocyte Average Percent Area` ~ Genotype, data=adipocyte.mouseID) %>% tidy %>% kable(caption="Levene test for equality of variances of ") #p-value= .008, so the variances are not equal 
+
+t.test(`Adipocyte Average Percent Area` ~ Genotype, data=adipocyte.mouseID, var.equal=F)%>% tidy() %>% kable()
+#P-value= 0.062, so there is not a significant difference between WT and KO but trending towards significance
+
+ 
+#linear modeling if you are testing multiple variables/effects at same time  
+library(lme4)
+library(lmerTest)
+lm(`Adipocyte Average Percent Area`~Genotype, data=adipocyte.mouseID) -> AdipocyteAveragePercentArea.lm
+AdipocyteAveragePercentArea.lm %>% summary
+# p-value= 0.061, so also not sigificant, but more significant since it is assuming equal variances 
+```
+
+
+
+``` {r stats for sum of adipocytes}
+#Test for normality for Sum adipocyte area  
+shapiro.test(adipocyte.mouseID$`Sum Adipocyte Area`) #0.1 --> normally distributed
+  KO.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "KO")$`Sum Adipocyte Area`) #1.0, which means it is normally distributed for the KO
+  KO.shapiro
+ WT.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "WT")$`Sum Adipocyte Area`) #0.7, which means it is normally distributed for the WT
+ WT.shapiro
+
+library(car) #levene.test needs library(car) package 
+leveneTest(`Sum Adipocyte Area` ~ Genotype, data=adipocyte.mouseID) %>% tidy %>% kable(caption="Levene test for equality of variances of ") #P-value= .071, so the variances are equal
+
+t.test(`Sum Adipocyte Area` ~ Genotype, data=adipocyte.mouseID, var.equal=T)%>% tidy() %>% kable()
+# p-value= 0.049, so this is significant 
+
+ 
+#linear modeling if you are testing multiple variables/effects at same time  
+library(lme4)
+library(lmerTest)
+lm(`Sum Adipocyte Area`~Genotype, data=adipocyte.mouseID) -> AdipocyteSumArea.lm
+AdipocyteSumArea.lm %>% summary 
+#p-value=0.049, so still significant
+```
+
+``` {r stats for average raw adipocyte area, not muliplied by adipocyte number}
+#Test for normality for average adipocyte area (not multiplied by the number of adipocytes)  
+shapiro.test(adipocyte.mouseID$`AverageAdipocyteArea`) #0.8 --> normally distributed
+  KO.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "KO")$`AverageAdipocyteArea`) #0.8, which means it is normally distributed for the KO
+  KO.shapiro
+ WT.shapiro<-shapiro.test(x=filter(adipocyte.mouseID, Genotype == "WT")$`AverageAdipocyteArea`) #0.8, which means it is normally distributed for the WT
+ WT.shapiro
+
+library(car) #levene.test needs library(car) package 
+leveneTest(`AverageAdipocyteArea` ~ Genotype, data=adipocyte.mouseID) %>% tidy %>% kable(caption="Levene test for equality of variances of ") # p-value= .716, so the variances are equal
+
+t.test(`AverageAdipocyteArea` ~ Genotype, data=adipocyte.mouseID, var.equal=T)%>% tidy() %>% kable()
+#P-value is 0.367, this is not significant
+
+ 
+#linear modeling if you are testing multiple variables/effects at same time  
+library(lme4)
+library(lmerTest)
+lm(`AverageAdipocyteArea`~Genotype, data=adipocyte.mouseID) -> AverageAdipocyteArea.lm
+AverageAdipocyteArea.lm %>% summary 
+#p-value=0.372, so still not significant 
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
