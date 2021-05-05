@@ -125,8 +125,10 @@ ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland','LMGland')) %>% muta
   scale_fill_manual(values=color.scheme) +
     theme(text = element_text(size=13))
 
+library(forcats)
 gland.mouse.weight %>% 
          filter(Gland %in% c('RMGland','LMGland')) %>%
+    mutate(Gland= fct_recode(as.factor(Gland), "Right Lower MG"= "RMGland", "Left Lower MG"= "LMGland")) %>%
          mutate(GlandWeight=as.numeric(GlandWeight)) %>%
   group_by(Genotype,Gland) %>%
   summarize(mean = mean(GlandWeight),

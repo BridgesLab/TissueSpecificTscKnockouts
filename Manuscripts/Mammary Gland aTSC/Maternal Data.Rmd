@@ -121,9 +121,10 @@ pnbw.lme %>% summary()
 #But since we care about comparing the slopes of WT vs KO dam trends in weight over time (until PND16), we will use lmer function to see interaction of geonotype:time, and this function allows us to group by mouse 
 fixef(pnbw.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnbw.lme)['DayfromDelivery'] #this is the effect size which is the estimate of genotype:daysfromdelivery - estimate for daysfromdelivery
 
-
-## The effect size is -0.183*16= -2.928 grams weight loss over 16 days postnatal for KO dams compared to WT. This is not a significant effect with p-value= 0.21
 summary(pnbw.lme)
+
+(-0.1123 + 0.0481 *16) /0.3426 #-1.92 grams more for KO, p=0.21 this is from tthe pnbw.lme summary
+
 ```
 ```{r Fat_mass_during_pregnancyandlactation}
 library(ggplot2)
@@ -200,6 +201,15 @@ fixef(pnfat.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnfat.lme)['Dayfr
 summary(pnfat.lme)
 
 ## The effect size is 0.136*16= 2.176 grams additional weight gain over 16 days postnatal for KO dams compared to WT. This is a significant effect with p-value <0.001
+
+(-0.0829 +  0.0727  *16) / (-0.0190 -0.0633 *16)  #-1.05 grams more for KO, p=0.21 this is from tthe pnbw.lme summary
+
+# (-0.0190 -0.0633 *16) tthis is lost 1g for WT
+(-0.0829 +  0.0727  *16) - (-0.0190 -0.0633 *16)
+
+(-0.0190 -0.0633 *16) -0.0829 +0.0727 *16 #KO gaining 0.0485g
+
+(-0.0190 -0.0633 *16) -((-0.0190 -0.0633 *16) -0.0829 +0.0727 *16) #-1.08 and p-value -1.7e-07
 ```
 
 ```{r lean_mass_during_pregnancyandlactation}
@@ -408,6 +418,10 @@ fixef(pnfoodintake.lme)['DayfromDelivery:MaternalGenotypeKO'] - fixef(pnfoodinta
 summary(pnfoodintake.lme)
 
 ## The effect size is -6.34*16= -101.44 grams less food consumption over 16 days postnatal for KO dams compared to WT. This is a significant effect with p-value = 0.0113
+
+17.974 +2.489*16 #W eating 57.8g over 16 days
+17.974 +2.489*16 + (30.738 -2.772*16 ) # KO eating 44.2 grams of food more over 16 days
+
 ```
 
 
