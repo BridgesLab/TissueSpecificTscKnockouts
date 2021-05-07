@@ -69,8 +69,9 @@ Combined.file<-"Combined_individual.xlsx"
 ```
 
 ```{r data-input}
-# #adipocyte.data <- read_csv(Data.file, na=c("N/A",NA)) %>% 
-#   #mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+adipocyte.data <- read_csv(Data.file, na=c("N/A",NA)) %>% 
+ mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+
 AreaData<- read_excel(Individual.file,sheet="Individuals And Totals", na=c("N/A",NA)) %>%
   filter(`Image#`!="Total") %>%
   select(`Image#`, `MouseID`, `Total Area`) %>%
@@ -79,33 +80,34 @@ AreaData<- read_excel(Individual.file,sheet="Individuals And Totals", na=c("N/A"
 AreaData
   
   
-#   eightyone.data<- read_excel(Individual.file,sheet="7981", na=c("N/A",NA))
-#   eightythree.data<- read_excel(Individual.file,sheet="7983", na=c("N/A",NA))
-#   eightyfour.data<- read_excel(Individual.file,sheet="7984", na=c("N/A",NA))
-#   sixtyone.data<- read_excel(Individual.file,sheet="8161", na=c("N/A",NA))
-#   sixtytwo.data<- read_excel(Individual.file,sheet="8162", na=c("N/A",NA))
-#   fortyfour.data<- read_excel(Individual.file,sheet="8444", na=c("N/A",NA))
-#   fortyfive.data<- read_excel(Individual.file,sheet="8445", na=c("N/A",NA))
-#   fortysix.data<- read_excel(Individual.file,sheet="8446", na=c("N/A",NA))
-#   sixtyfive.data<- read_excel(Individual.file,sheet="8465", na=c("N/A",NA))
-#   sixtysix.data<- read_excel(Individual.file,sheet="8466", na=c("N/A",NA))
-#   sixtyseven.data<- read_excel(Individual.file,sheet="8467", na=c("N/A",NA))
+  eightyone.data<- read_excel(Individual.file,sheet="7981", na=c("N/A",NA))
+  eightythree.data<- read_excel(Individual.file,sheet="7983", na=c("N/A",NA))
+  eightyfour.data<- read_excel(Individual.file,sheet="7984", na=c("N/A",NA))
+  sixtyone.data<- read_excel(Individual.file,sheet="8161", na=c("N/A",NA))
+  sixtytwo.data<- read_excel(Individual.file,sheet="8162", na=c("N/A",NA))
+  fortyfour.data<- read_excel(Individual.file,sheet="8444", na=c("N/A",NA))
+  fortyfive.data<- read_excel(Individual.file,sheet="8445", na=c("N/A",NA))
+  fortysix.data<- read_excel(Individual.file,sheet="8446", na=c("N/A",NA))
+  sixtyfive.data<- read_excel(Individual.file,sheet="8465", na=c("N/A",NA))
+  sixtysix.data<- read_excel(Individual.file,sheet="8466", na=c("N/A",NA))
+  sixtyseven.data<- read_excel(Individual.file,sheet="8467", na=c("N/A",NA))
 ```
 
 ```{r histogram for adipocyte area distribution per mouse and combined for all dams}
-# #histagram should look similar to the other histagram
-# eightyone.distribution <- hist(eightyone.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7981, all 8 images")
-# eightythree.distribution <- hist(eightythree.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7983, all 8 images")
-# eightyfour.distribution <- hist(eightyfour.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7984, all 8 images")
-# sixtyone.distribution <- hist(sixtyone.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8161, all 8 images")
-# sixtytwo.distribution <- hist(sixtytwo.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8162, all 8 images")
-# fortyfour.distribution <- hist(fortyfour.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8444, all 8 images")
-# fortyfive.distribution <- hist(fortyfive.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8445, all 8 images")
-# fortysix.distribution <- hist(fortysix.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8446, all 8 images")
-# sixtyfive.distribution <- hist(sixtyfive.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8465, all 8 images")
-# sixtysix.distribution <- hist(sixtysix.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8466, all 8 images")
-# sixtyseven.distribution <- hist(sixtyseven.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8467, all 8 images")
+#histagram should look similar to the other histagram
+eightyone.distribution <- hist(eightyone.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7981, all 8 images")
+eightythree.distribution <- hist(eightythree.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7983, all 8 images")
+eightyfour.distribution <- hist(eightyfour.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 7984, all 8 images")
+sixtyone.distribution <- hist(sixtyone.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8161, all 8 images")
+sixtytwo.distribution <- hist(sixtytwo.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8162, all 8 images")
+fortyfour.distribution <- hist(fortyfour.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8444, all 8 images")
+fortyfive.distribution <- hist(fortyfive.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8445, all 8 images")
+fortysix.distribution <- hist(fortysix.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8446, all 8 images")
+sixtyfive.distribution <- hist(sixtyfive.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8465, all 8 images")
+sixtysix.distribution <- hist(sixtysix.data$`Area`, col="lightpink", main= "Adipocyte Area Distribution for Mouse 8466, all 8 images")
+sixtyseven.distribution <- hist(sixtyseven.data$`Area`, col="lightblue", main= "Adipocyte Area Distribution for Mouse 8467, all 8 images")
 
+#new data to be used for normalized count/size to total MG area
 combined.data<- read_excel(Combined.file, na=c("N/A",NA)) %>%  mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
 combined.data
 allmergeddata <- left_join(combined.data,AreaData, by=c("MouseID"="MouseID", "Image number"="Image#"))
@@ -117,7 +119,7 @@ allmergeddata
 #total.distribution <- hist(combined.data$`Area`[combined.data$Genotype== "KO"], col="lightpink", main= "Adipocyte Area for all KO mice distribution") 
 ```
 
-```{r new Stats with Dave}
+```{r Adipocyte number normalized to total MG area, and stats for count and area}
 library(lme4)
 library(lmerTest)
 
@@ -125,15 +127,37 @@ adipocyte.number <- allmergeddata %>%
   group_by(`Image number`, `MouseID`, Genotype) %>%
   summarize(adipocyttesum= length(Area), #count
             totalarea= mean(`Total Area`)) %>% 
-  mutate(adipocytesperarea= adipocyttesum/totalarea) #this is the number of adipocytes divided total MG size or area #graph this one as fig A
+  mutate(adipocytesperarea= adipocyttesum/totalarea) #this is the number of adipocytes divided by total MG size or area #graph this one as fig A
 
 lmer(adipocytesperarea~Genotype + (1|MouseID), data=adipocyte.number)%>% summary() #p=0.057, effect size= 0.000046/0.0000267 * 100 =72% more adipocytes in KO, asking does adipocyte number vary 
 adipocyte.number
 
+#graphing normalized adipocyte count
+  ggplot(adipocyte.number,
+         aes(x=Genotype,
+           y= adipocytesperarea,
+           fill=Genotype))   + 
+      geom_bar(stat='identity', position="dodge") +
+  expand_limits(y=0) +
+  theme_classic() +
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Adipocyte Count Normalized to MG Area",
+         x="Maternal Genotype")
+
+
+#stats for adipocyte area, raw area measured by imageJ
 lmer(Area~Genotype + (1|MouseID), data=allmergeddata)%>% summary() #p=0.36 not sig, asking does , asking if average adipocyte size varies between genotype
 
 glmer(Area~Genotype + (1|MouseID), family=poisson() ,data=allmergeddata)%>% summary() #p=0.28 poisson is like looking at log area since the data is skewed 
+```
 
+
+```{r adipocyte percent of total MG}
 
 adipocyte.percent <- allmergeddata %>%
   group_by(`Image number`, `MouseID`, Genotype) %>%
@@ -143,6 +167,24 @@ adipocyte.percent <- allmergeddata %>%
 adipocyte.percent
 lmer(normalizedadipocytesarea~Genotype + (1|MouseID), data=adipocyte.percent)%>% summary() #p=0.051, effect size= 0.000046/0.0000267 * 100 =126% more area covered by adipocytes in KO (this was normalized to MG size), asking if amount of adipocyte per MG area different #fig D 
 1.723/ 0.761 *100
+
+#graphing normalized adipocyte percent of total MG area
+  ggplot(adipocyte.percent,
+         aes(x=Genotype,
+           y= normalizedadipocytesarea,
+           fill=Genotype))   + 
+      geom_bar(stat='identity', position="dodge") +
+  expand_limits(y=0) +
+  theme_classic() +
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Adipocyte Area of MG Tissue (%)",
+         x="Maternal Genotype")
+
 
 ```
 
@@ -180,7 +222,7 @@ ggplot(data=allmergeddata,
     labs(x="Adipocyte Log Area (mm2)",
          y="Density") #this shows that the KO have higher variability in size of adipocyttes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
 
-#tthird way to visualize densitty area
+#third way to visualize density area
 
 library(ggplot2)
 percentilearea <- allmergeddata %>%
@@ -202,8 +244,8 @@ ggplot(data=percentilearea,
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle=90,vjust = 0.5, hjust=0.5))+
-    labs(x="Adipocyte Area Range (mm2)",
-         y="Adipocyte (%)") #this shows that the KO have higher variabilitty in size of adipocytes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
+    labs(x="Adipocyte Area Range (um2)",
+         y="Average Adipocyte Percentage (%)") #this shows that the KO have higher variabilitty in size of adipocytes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
 
 
 
@@ -229,8 +271,8 @@ ggplot(data=percentileareabymouse,
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle=90,vjust = 0.5, hjust=0.5))+
-    labs(x="Adipocyte Area Range (mm2)",
-         y="Adipocyte (%)") #this shows that the KO have higher variabilitty in size of adipocytes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
+    labs(x="Adipocyte Area Range (um2)",
+         y="Average Adipocyte Percentage") #this shows that the KO have higher variability in size of adipocytes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
 
 
 #creating new data frame per mouse
@@ -330,7 +372,7 @@ adipocyte.genotype <-
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Total Adipocyte Average Area (mm2)",
+    labs(y="Total Adipocyte Average Area (um2)",
          x="Maternal Genotype")
  
 #Graphing for Adipocyte Average Number 
@@ -363,7 +405,7 @@ ggplot(data=adipocyte.genotype,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Adipocyte Average Area (%)",
+    labs(y="Average Adipocyte Area Percent (%)",
          x="Maternal Genotype")
 
 
@@ -380,7 +422,7 @@ ggplot(data=adipocyte.genotype,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Adipocyte Average Sum of Area (mm2)",
+    labs(y="Adipocyte Average Sum of Area (um2)",
          x="Maternal Genotype")
 
 
@@ -397,7 +439,7 @@ ggplot(data=adipocyte.genotype,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Adipocyte Average Area (mm2)",
+    labs(y="Adipocyte Average Area (um2)",
          x="Maternal Genotype")
 
 ```
