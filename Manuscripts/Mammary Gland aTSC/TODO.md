@@ -7,7 +7,7 @@
 * Calculate number of DE pathways
 * Food intake to be checked and done by week rather than MWF
 * To add Allison's representative images H&E
-* To redraw figure 1, timeline using adobe
+*Check ImageJ units so that adipocyte size can be adjusted accordingly
 
 ## Writing
 

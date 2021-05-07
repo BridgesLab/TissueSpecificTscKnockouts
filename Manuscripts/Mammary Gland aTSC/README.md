@@ -16,11 +16,9 @@ This document indicates where the raw data for each table and figure panel can b
 
 | Figure 3 | Mammary Gland and Milk Weight Data.Rmd | mammarygland_weights-5.pdf
 
-| Figure 4A | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-2.pdf
-| Figure 4B | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-1.pdf
-| Figure 4C | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-3.pdf
-| Figure 4D | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-5.pdf
-| Figure 4E | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-4.pdf
+| Figure 4A | Adipocyte Size Count.Rmd | Adipocyte number normalized to total MG area, and stats for count and area-1.pdf
+| Figure 4B | Adipocyte Size Count.Rmd | adipocyte percent of total MG-1.pdf
+| Figure 4C | Adipocyte Size Count.Rmd | graphs for density area of adipocytes-4.pdf
 
 | Figure 5 | Pup Data.Rmd | PUPweight_graphsPND7-2.pdf
 
