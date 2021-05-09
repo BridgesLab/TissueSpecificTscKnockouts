@@ -126,18 +126,31 @@ library(lmerTest)
 adipocyte.number <- allmergeddata %>%
   group_by(`Image number`, `MouseID`, Genotype) %>%
   summarize(adipocyttesum= length(Area), #count
-            totalarea= mean(`Total Area`)) %>% 
+            totalarea= mean( 400/440 *`Total Area`/1000)) %>% #this area is in nm2 (original area was in um then we did / 1000)
   mutate(adipocytesperarea= adipocyttesum/totalarea) #this is the number of adipocytes divided by total MG size or area #graph this one as fig A
 
 lmer(adipocytesperarea~Genotype + (1|MouseID), data=adipocyte.number)%>% summary() #p=0.057, effect size= 0.000046/0.0000267 * 100 =72% more adipocytes in KO, asking does adipocyte number vary 
 adipocyte.number
-
-#graphing normalized adipocyte count
-  ggplot(adipocyte.number,
+  
+#getting number by mouse tthen by genotype to graph it
+  adipocyte.numberpermouse <- adipocyte.number %>%
+  group_by(`MouseID`, Genotype) %>%
+  summarize(adipocyttesum= mean(adipocytesperarea)) #actually averaging the areas up
+  adipocyte.numberpermouse
+  
+ averagenumbernormalizedbygenotype <-  adipocyte.numberpermouse %>%
+  group_by(Genotype) %>%
+  summarize(adipocytenumbergenotpye= mean(adipocyttesum),
+            se.adipocytenumbergenotpye=se(adipocyttesum)) #actually averaging the areas up
+  averagenumbernormalizedbygenotype 
+  
+  
+  ggplot(averagenumbernormalizedbygenotype,
          aes(x=Genotype,
-           y= adipocytesperarea,
+           y= adipocytenumbergenotpye,
            fill=Genotype))   + 
       geom_bar(stat='identity', position="dodge") +
+      geom_errorbar(width=0.5, aes(ymin=adipocytenumbergenotpye- se.adipocytenumbergenotpye, ymax= adipocytenumbergenotpye + se.adipocytenumbergenotpye))+
   expand_limits(y=0) +
   theme_classic() +
   scale_fill_grey() +
@@ -146,9 +159,8 @@ adipocyte.number
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Adipocyte Count Normalized to MG Area",
-         x="Maternal Genotype")
-
+    labs(y="Adipocyte Number",
+         x="Maternal Genotype") #figure to use for A
 
 #stats for adipocyte area, raw area measured by imageJ
 lmer(Area~Genotype + (1|MouseID), data=allmergeddata)%>% summary() #p=0.36 not sig, asking does , asking if average adipocyte size varies between genotype
@@ -165,15 +177,30 @@ adipocyte.percent <- allmergeddata %>%
             totalarea= mean(`Total Area`)) %>% 
   mutate(normalizedadipocytesarea= adipocytearea/totalarea * 100) #this is the sum area of adipocytes divided by total MG area
 adipocyte.percent
-lmer(normalizedadipocytesarea~Genotype + (1|MouseID), data=adipocyte.percent)%>% summary() #p=0.051, effect size= 0.000046/0.0000267 * 100 =126% more area covered by adipocytes in KO (this was normalized to MG size), asking if amount of adipocyte per MG area different #fig D 
+lmer(normalizedadipocytesarea~Genotype + (1|MouseID), data=adipocyte.percent)%>% summary() #p=0.051, effect size= 0.000046/0.0000267 * 100 =126% more area covered by adipocytes in KO (this was normalized to MG size), asking if amount of adipocyte per MG area different
 1.723/ 0.761 *100
 
-#graphing normalized adipocyte percent of total MG area
-  ggplot(adipocyte.percent,
+
+  #new % adipocyte of total MG area
+  adipocyte.percentpermouse <- adipocyte.percent %>%
+  group_by(`MouseID`, Genotype) %>%
+  summarize(adipocytearea= mean(normalizedadipocytesarea)) #actually averaging the areas up
+  adipocyte.percentpermouse
+  
+ averageareanormalizedbygenotype <-  adipocyte.percentpermouse %>%
+  group_by(Genotype) %>%
+  summarize(adipocyteareagenotpye= mean(adipocytearea),
+            se.adipocyteareagenotpye=se(adipocytearea)) #actually averaging the areas up
+  averageareanormalizedbygenotype 
+  
+  #graph for mean+se avrage
+  
+    ggplot(averageareanormalizedbygenotype,
          aes(x=Genotype,
-           y= normalizedadipocytesarea,
+           y= adipocyteareagenotpye,
            fill=Genotype))   + 
       geom_bar(stat='identity', position="dodge") +
+      geom_errorbar(width=0.5, aes(ymin=adipocyteareagenotpye- se.adipocyteareagenotpye, ymax= adipocyteareagenotpye + se.adipocyteareagenotpye))+
   expand_limits(y=0) +
   theme_classic() +
   scale_fill_grey() +
@@ -183,16 +210,19 @@ lmer(normalizedadipocytesarea~Genotype + (1|MouseID), data=adipocyte.percent)%>%
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
     labs(y="Adipocyte Area of MG Tissue (%)",
-         x="Maternal Genotype")
-
+         x="Maternal Genotype") #figure to use for B
 
 ```
 
 ```{r graphs for density area of adipocytes}
 library(ggplot2)
+allmergeddata <- allmergeddata %>%
+  mutate(Areanm2= 400/440 *Area /1000 )
+allmergeddata
+
 
 ggplot(data=allmergeddata, 
-       aes(x=Area, fill=Genotype, na.rm= T ))+
+       aes(x=Areanm2, fill=Genotype, na.rm= T ))+
   geom_density(alpha=0.8)+
   expand_limits(y=0)+ 
   theme_classic() + 
@@ -201,16 +231,16 @@ ggplot(data=allmergeddata,
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
-    labs(x="Adipocyte Area (mm2)",
+    labs(x="Adipocyte Area (nm2)",
          y="Density") #this shows that the KO have higher variabilitty in size of adipocyttes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
 
 library(car)
-leveneTest(Area~Genotype, data=allmergeddata) %>%tidy() %>% kable() #p-value <0.001 saying that variability between KO and WT density plots is significant 
+leveneTest(Areanm2~Genotype, data=allmergeddata) %>%tidy() %>% kable() #p-value <0.001 saying that variability between KO and WT density plots is significant 
 
 #another way to show density area 
 
 ggplot(data=allmergeddata, 
-       aes(x=log(Area), fill=Genotype, na.rm= T ))+
+       aes(x=log(Areanm2), fill=Genotype, na.rm= T ))+
   geom_density(alpha=0.8)+
   expand_limits(y=0)+ 
   theme_classic() + 
@@ -219,16 +249,16 @@ ggplot(data=allmergeddata,
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
-    labs(x="Adipocyte Log Area (mm2)",
+    labs(x="Adipocyte Log Area (nm2)",
          y="Density") #this shows that the KO have higher variability in size of adipocyttes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
 
 #third way to visualize density area
 
 library(ggplot2)
 percentilearea <- allmergeddata %>%
-  mutate(range=cut(Area, breaks = c(0,100,200,300,400,500,600,700,800,900,1000,3500), right=FALSE))%>% #this shows the range of adipocyte sizes, after looking a the entire range and then breaking itt into deciles and giveing a wrt area 
+  mutate(range=cut(Areanm2, breaks = c(0,0.1,0.2,0.300,0.400,0.500,0.600,0.700,0.800,0.900,1,3.5), right=FALSE))%>% #this shows the range of adipocyte sizes, after looking a the entire range and then breaking itt into deciles and giveing a wrt area 
   group_by(Genotype, range) %>%
-  summarize(count=length(Area))%>%
+  summarize(count=length(Areanm2))%>%
   mutate(totaladipocytes= sum(count)) %>%
   mutate(percentofadipocytes=(count/totaladipocytes *100))
 
@@ -244,15 +274,15 @@ ggplot(data=percentilearea,
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle=90,vjust = 0.5, hjust=0.5))+
-    labs(x="Adipocyte Area Range (um2)",
+    labs(x="Adipocyte Area Range (nm2)",
          y="Average Adipocyte Percentage (%)") #this shows that the KO have higher variabilitty in size of adipocytes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
 
 
 
 percentileareabymouse <- allmergeddata %>%
-  mutate(range=cut(Area, breaks = c(0,100,200,300,400,500,600,700,800,900,1000,3500), right=FALSE))%>% #this shows the range of adipocyte sizes, after looking a the entire range and then breaking itt into deciles and giveing a wrt area 
+  mutate(range=cut(Areanm2, breaks = c(0,0.1,0.2,0.300,0.400,0.500,0.600,0.700,0.800,0.900,1,3.5), right=FALSE))%>% #this shows the range of adipocyte sizes, after looking a the entire range and then breaking itt into deciles and giveing a wrt area 
   group_by(Genotype,MouseID, range) %>%
-  summarize(count=length(Area))%>%
+  summarize(count=length(Areanm2))%>%
   mutate(totaladipocytes= sum(count)) %>%
   mutate(percentofadipocytes=(count/totaladipocytes *100))%>%
   group_by(Genotype, range) %>%
@@ -271,15 +301,15 @@ ggplot(data=percentileareabymouse,
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(angle=90,vjust = 0.5, hjust=0.5))+
-    labs(x="Adipocyte Area Range (um2)",
-         y="Average Adipocyte Percentage") #this shows that the KO have higher variability in size of adipocytes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
+    labs(x="Adipocyte Area Range (nm2)",
+         y="Percent of Adipocytes") #this shows that the KO have higher variability in size of adipocytes specifically more larger adipocytes than WT. Wt has higher density of smaller sized adipocytes
 
 
 #creating new data frame per mouse
 percentileareabymouseonly <- allmergeddata %>%
-  mutate(range=cut(Area, breaks = c(0,100,200,300,400,500,600,700,800,900,1000,3500), right=FALSE))%>% #this shows the range of adipocyte sizes, after looking a the entire range and then breaking itt into deciles and giveing a wrt area  old range 0,100,200,300,400,500,600,700,800,900,1000,3500)
+  mutate(range=cut(Areanm2, breaks = c(0,0.1,0.2,0.300,0.400,0.500,0.600,0.700,0.800,0.900,1,3.5), right=FALSE))%>% #this shows the range of adipocyte sizes, after looking a the entire range and then breaking itt into deciles and giveing a wrt area  old range 0,100,200,300,400,500,600,700,800,900,1000,3500)
   group_by(Genotype,MouseID, range) %>%
-  summarize(count=length(Area))%>%
+  summarize(count=length(Areanm2))%>%
   mutate(totaladipocytes= sum(count)) %>%
   mutate(percentofadipocytes=(count/totaladipocytes *100))
 
