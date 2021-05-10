@@ -100,22 +100,22 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## Formula: adipocytesperarea ~ Genotype + (1 | MouseID)
 ##    Data: adipocyte.number
 ## 
-## REML criterion at convergence: -299
+## REML criterion at convergence: -1471
 ## 
 ## Scaled residuals: 
 ##    Min     1Q Median     3Q    Max 
 ## -2.926 -0.423 -0.126  0.508  3.937 
 ## 
 ## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  MouseID  (Intercept) 0.00120  0.0347  
-##  Residual             0.00133  0.0365  
+##  Groups   Name        Variance Std.Dev. 
+##  MouseID  (Intercept) 1.46e-09 0.0000382
+##  Residual             1.61e-09 0.0000401
 ## Number of obs: 88, groups:  MouseID, 11
 ## 
 ## Fixed effects:
-##             Estimate Std. Error     df t value Pr(>|t|)  
-## (Intercept)   0.0294     0.0166 9.0000    1.77    0.110  
-## GenotypeKO    0.0490     0.0224 9.0000    2.19    0.057 .
+##              Estimate Std. Error        df t value Pr(>|t|)  
+## (Intercept) 0.0000323  0.0000182 8.9999993    1.77    0.110  
+## GenotypeKO  0.0000539  0.0000247 8.9999993    2.19    0.057 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -125,20 +125,24 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ```
 
 ```
+## [1] 167
+```
+
+```
 ## # A tibble: 88 x 6
 ## # Groups:   Image number, MouseID [88]
 ##    `Image number` MouseID Genotype adipocyttesum totalarea adipocytesperarea
 ##             <dbl>   <dbl> <fct>            <int>     <dbl>             <dbl>
-##  1              1    7981 KO                 661     2835.          0.233   
-##  2              1    7983 KO                  69     2554.          0.0270  
-##  3              1    7984 KO                   1     2758.          0.000363
-##  4              1    8161 KO                 293     2625.          0.112   
-##  5              1    8162 WT                  34     2805.          0.0121  
-##  6              1    8444 WT                  62     2620.          0.0237  
-##  7              1    8445 WT                 162     2739.          0.0592  
-##  8              1    8446 WT                 101     2776.          0.0364  
-##  9              1    8465 KO                 422     2639.          0.160   
-## 10              1    8466 KO                 176     2791.          0.0631  
+##  1              1    7981 KO                 661  2576849.       0.000257   
+##  2              1    7983 KO                  69  2321802.       0.0000297  
+##  3              1    7984 KO                   1  2507579.       0.000000399
+##  4              1    8161 KO                 293  2386745.       0.000123   
+##  5              1    8162 WT                  34  2549742.       0.0000133  
+##  6              1    8444 WT                  62  2382136.       0.0000260  
+##  7              1    8445 WT                 162  2489745.       0.0000651  
+##  8              1    8446 WT                 101  2523798.       0.0000400  
+##  9              1    8465 KO                 422  2399398.       0.000176   
+## 10              1    8466 KO                 176  2537593.       0.0000694  
 ## # … with 78 more rows
 ```
 
@@ -147,25 +151,25 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## # Groups:   MouseID [11]
 ##    MouseID Genotype adipocyttesum
 ##      <dbl> <fct>            <dbl>
-##  1    7981 KO             0.0912 
-##  2    7983 KO             0.0858 
-##  3    7984 KO             0.00779
-##  4    8161 KO             0.104  
-##  5    8162 WT             0.0165 
-##  6    8444 WT             0.0457 
-##  7    8445 WT             0.0356 
-##  8    8446 WT             0.0361 
-##  9    8465 KO             0.143  
-## 10    8466 KO             0.0388 
-## 11    8467 WT             0.0130
+##  1    7981 KO          0.000100  
+##  2    7983 KO          0.0000944 
+##  3    7984 KO          0.00000857
+##  4    8161 KO          0.000115  
+##  5    8162 WT          0.0000181 
+##  6    8444 WT          0.0000502 
+##  7    8445 WT          0.0000391 
+##  8    8446 WT          0.0000397 
+##  9    8465 KO          0.000157  
+## 10    8466 KO          0.0000426 
+## 11    8467 WT          0.0000143
 ```
 
 ```
 ## # A tibble: 2 x 3
 ##   Genotype adipocytenumbergenotpye se.adipocytenumbergenotpye
 ##   <fct>                      <dbl>                      <dbl>
-## 1 WT                        0.0294                    0.00626
-## 2 KO                        0.0784                    0.0196
+## 1 WT                     0.0000323                 0.00000689
+## 2 KO                     0.0000862                 0.0000216
 ```
 
 ![](figures/Adipocyte number normalized to total MG area, and stats for count and area-1.png)<!-- -->
@@ -238,16 +242,16 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## # Groups:   Image number, MouseID [88]
 ##    `Image number` MouseID Genotype adipocytearea totalarea normalizedadipocytes…
 ##             <dbl>   <dbl> <fct>            <dbl>     <dbl>                 <dbl>
-##  1              1    7981 KO              144166   3117987               4.62   
-##  2              1    7983 KO               24203   2809380               0.862  
-##  3              1    7984 KO                 259   3034170               0.00854
-##  4              1    8161 KO              115965   2887962               4.02   
-##  5              1    8162 WT               10390   3085188               0.337  
-##  6              1    8444 WT               37627   2882385               1.31   
-##  7              1    8445 WT               17122   3012591               0.568  
-##  8              1    8446 WT               30654   3053796               1.00   
-##  9              1    8465 KO              139326   2903272               4.80   
-## 10              1    8466 KO               59800   3070488               1.95   
+##  1              1    7981 KO              144166  2576849.                5.59  
+##  2              1    7983 KO               24203  2321802.                1.04  
+##  3              1    7984 KO                 259  2507579.                0.0103
+##  4              1    8161 KO              115965  2386745.                4.86  
+##  5              1    8162 WT               10390  2549742.                0.407 
+##  6              1    8444 WT               37627  2382136.                1.58  
+##  7              1    8445 WT               17122  2489745.                0.688 
+##  8              1    8446 WT               30654  2523798.                1.21  
+##  9              1    8465 KO              139326  2399398.                5.81  
+## 10              1    8466 KO               59800  2537593.                2.36  
 ## # … with 78 more rows
 ```
 
@@ -257,7 +261,7 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## Formula: normalizedadipocytesarea ~ Genotype + (1 | MouseID)
 ##    Data: adipocyte.percent
 ## 
-## REML criterion at convergence: 278
+## REML criterion at convergence: 310
 ## 
 ## Scaled residuals: 
 ##    Min     1Q Median     3Q    Max 
@@ -265,14 +269,14 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev.
-##  MouseID  (Intercept) 1.46     1.21    
-##  Residual             1.04     1.02    
+##  MouseID  (Intercept) 2.14     1.46    
+##  Residual             1.52     1.23    
 ## Number of obs: 88, groups:  MouseID, 11
 ## 
 ## Fixed effects:
 ##             Estimate Std. Error    df t value Pr(>|t|)  
-## (Intercept)    0.761      0.564 9.000    1.35    0.210  
-## GenotypeKO     1.723      0.764 9.000    2.26    0.051 .
+## (Intercept)    0.920      0.682 9.000    1.35    0.210  
+## GenotypeKO     2.084      0.924 9.000    2.26    0.051 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -290,25 +294,25 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## # Groups:   MouseID [11]
 ##    MouseID Genotype adipocytearea
 ##      <dbl> <fct>            <dbl>
-##  1    7981 KO               2.67 
-##  2    7983 KO               2.38 
-##  3    7984 KO               0.152
-##  4    8161 KO               3.90 
-##  5    8162 WT               0.487
-##  6    8444 WT               1.09 
-##  7    8445 WT               0.640
-##  8    8446 WT               1.29 
-##  9    8465 KO               4.60 
-## 10    8466 KO               1.20 
-## 11    8467 WT               0.291
+##  1    7981 KO               3.23 
+##  2    7983 KO               2.87 
+##  3    7984 KO               0.184
+##  4    8161 KO               4.72 
+##  5    8162 WT               0.589
+##  6    8444 WT               1.32 
+##  7    8445 WT               0.774
+##  8    8446 WT               1.56 
+##  9    8465 KO               5.57 
+## 10    8466 KO               1.46 
+## 11    8467 WT               0.352
 ```
 
 ```
 ## # A tibble: 2 x 3
 ##   Genotype adipocyteareagenotpye se.adipocyteareagenotpye
 ##   <fct>                    <dbl>                    <dbl>
-## 1 WT                       0.761                    0.187
-## 2 KO                       2.48                     0.674
+## 1 WT                       0.920                    0.227
+## 2 KO                       3.00                     0.815
 ```
 
 ![](figures/adipocyte percent of total MG-1.png)<!-- -->
@@ -330,7 +334,7 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## 10    7981              1               10   109        165.   156   177
 ## # … with 13,799 more rows, and 6 more variables: Genotype <fct>,
 ## #   TotalAdipocyteNumber <dbl>, ...10 <lgl>, TotalImageArea <lgl>, `Total
-## #   Area` <dbl>, Areanm2 <dbl>
+## #   Area` <dbl>, Areaum2 <dbl>
 ```
 
 ![](figures/graphs for density area of adipocytes-1.png)<!-- -->
@@ -345,18 +349,18 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ```
 ## # A tibble: 22 x 5
 ## # Groups:   Genotype [2]
-##    Genotype range     count totaladipocytes percentofadipocytes
-##    <fct>    <fct>     <int>           <int>               <dbl>
-##  1 WT       [0,0.1)    1135            3285              34.6  
-##  2 WT       [0.1,0.2)   734            3285              22.3  
-##  3 WT       [0.2,0.3)   398            3285              12.1  
-##  4 WT       [0.3,0.4)   253            3285               7.70 
-##  5 WT       [0.4,0.5)   202            3285               6.15 
-##  6 WT       [0.5,0.6)   220            3285               6.70 
-##  7 WT       [0.6,0.7)   141            3285               4.29 
-##  8 WT       [0.7,0.8)    63            3285               1.92 
-##  9 WT       [0.8,0.9)    58            3285               1.77 
-## 10 WT       [0.9,1)      29            3285               0.883
+##    Genotype range       count totaladipocytes percentofadipocytes
+##    <fct>    <fct>       <int>           <int>               <dbl>
+##  1 WT       [0,100)      1249            3285              38.0  
+##  2 WT       [100,200)     708            3285              21.6  
+##  3 WT       [200,300)     395            3285              12.0  
+##  4 WT       [300,400)     260            3285               7.91 
+##  5 WT       [400,500)     186            3285               5.66 
+##  6 WT       [500,600)     235            3285               7.15 
+##  7 WT       [600,700)     100            3285               3.04 
+##  8 WT       [700,800)      60            3285               1.83 
+##  9 WT       [800,900)      38            3285               1.16 
+## 10 WT       [900,1e+03)    16            3285               0.487
 ## # … with 12 more rows
 ```
 
@@ -365,18 +369,18 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ```
 ## # A tibble: 22 x 4
 ## # Groups:   Genotype [2]
-##    Genotype range     averagepercentofadipocytes se.averagepercentofadipocytes
-##    <fct>    <fct>                          <dbl>                         <dbl>
-##  1 WT       [0,0.1)                        32.3                          7.06 
-##  2 WT       [0.1,0.2)                      22.9                          2.98 
-##  3 WT       [0.2,0.3)                      13.3                          2.52 
-##  4 WT       [0.3,0.4)                       8.40                         1.49 
-##  5 WT       [0.4,0.5)                       6.80                         1.36 
-##  6 WT       [0.5,0.6)                       6.77                         1.34 
-##  7 WT       [0.6,0.7)                       4.22                         0.867
-##  8 WT       [0.7,0.8)                       1.72                         0.511
-##  9 WT       [0.8,0.9)                       1.50                         0.621
-## 10 WT       [0.9,1)                         1.00                         0.403
+##    Genotype range       averagepercentofadipocytes se.averagepercentofadipocytes
+##    <fct>    <fct>                            <dbl>                         <dbl>
+##  1 WT       [0,100)                         35.3                           7.36 
+##  2 WT       [100,200)                       22.9                           3.35 
+##  3 WT       [200,300)                       12.9                           1.95 
+##  4 WT       [300,400)                        9.08                          2.09 
+##  5 WT       [400,500)                        6.12                          1.25 
+##  6 WT       [500,600)                        6.98                          1.69 
+##  7 WT       [600,700)                        2.86                          0.649
+##  8 WT       [700,800)                        1.58                          0.626
+##  9 WT       [800,900)                        1.20                          0.501
+## 10 WT       [900,1e+03)                      0.432                         0.120
 ## # … with 12 more rows
 ```
 
@@ -389,45 +393,45 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -17.776  -1.918  -0.074   1.370  25.659 
+## -18.975  -1.748  -0.162   1.570  26.285 
 ## 
 ## Coefficients:
-##                 Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)     22.32046    1.93511   11.53  < 2e-16 ***
-## GenotypeKO       0.00311    1.12204    0.00    0.998    
-## range[0.1,0.2)   3.44939    2.59618    1.33    0.187    
-## range[0.2,0.3)  -5.41296    2.59618   -2.08    0.039 *  
-## range[0.3,0.4) -11.57439    2.59618   -4.46  2.0e-05 ***
-## range[0.4,0.5) -14.52568    2.59618   -5.60  1.7e-07 ***
-## range[0.5,0.6) -15.51906    2.59618   -5.98  3.0e-08 ***
-## range[0.6,0.7) -17.99881    2.59618   -6.93  3.2e-10 ***
-## range[0.7,0.8) -20.15267    2.59618   -7.76  5.3e-12 ***
-## range[0.8,0.9) -20.95228    2.59618   -8.07  1.1e-12 ***
-## range[0.9,1)   -21.52036    2.66100   -8.09  1.0e-12 ***
-## range[1,3.5)   -21.15827    2.66078   -7.95  2.0e-12 ***
+##                       Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)           24.97789    2.05107   12.18  < 2e-16 ***
+## GenotypeKO             0.00147    1.19343    0.00   0.9990    
+## range[100,200)         2.25776    2.75069    0.82   0.4136    
+## range[200,300)        -8.38722    2.75069   -3.05   0.0029 ** 
+## range[300,400)       -14.34692    2.75069   -5.22  9.1e-07 ***
+## range[400,500)       -18.25888    2.75069   -6.64  1.4e-09 ***
+## range[500,600)       -17.86826    2.75069   -6.50  2.7e-09 ***
+## range[600,700)       -21.81366    2.75069   -7.93  2.4e-12 ***
+## range[700,800)       -23.40603    2.75069   -8.51  1.2e-13 ***
+## range[800,900)       -24.02490    2.81937   -8.52  1.2e-13 ***
+## range[900,1e+03)     -24.54465    2.81914   -8.71  4.5e-14 ***
+## range[1e+03,3.5e+03) -24.17344    2.81914   -8.57  8.9e-14 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 6.09 on 107 degrees of freedom
-## Multiple R-squared:  0.682,	Adjusted R-squared:  0.649 
-## F-statistic: 20.9 on 11 and 107 DF,  p-value: <2e-16
+## Residual standard error: 6.45 on 106 degrees of freedom
+## Multiple R-squared:  0.699,	Adjusted R-squared:  0.668 
+## F-statistic: 22.4 on 11 and 106 DF,  p-value: <2e-16
 ```
 
 ```
 ## # A tibble: 11 x 3
-##    range       pval delta
-##    <fct>      <dbl> <dbl>
-##  1 [0,0.1)   0.0591 0.435
-##  2 [0.1,0.2) 0.388  1.23 
-##  3 [0.2,0.3) 0.0619 1.49 
-##  4 [0.3,0.4) 0.114  1.51 
-##  5 [0.4,0.5) 0.382  1.27 
-##  6 [0.5,0.6) 0.977  1.01 
-##  7 [0.6,0.7) 0.897  1.04 
-##  8 [0.7,0.8) 0.210  1.48 
-##  9 [0.8,0.9) 0.743  0.844
-## 10 [0.9,1)   0.477  0.666
-## 11 [1,3.5)   0.704  0.797
+##    range             pval delta
+##    <fct>            <dbl> <dbl>
+##  1 [0,100)         0.0601 0.464
+##  2 [100,200)       0.228  1.35 
+##  3 [200,300)       0.0394 1.53 
+##  4 [300,400)       0.374  1.31 
+##  5 [400,500)       0.575  1.18 
+##  6 [500,600)       0.927  1.03 
+##  7 [600,700)       0.492  1.20 
+##  8 [700,800)       0.995  0.997
+##  9 [800,900)       0.485  0.663
+## 10 [900,1e+03)     0.983  1.01 
+## 11 [1e+03,3.5e+03) 0.602  0.686
 ```
 
 
