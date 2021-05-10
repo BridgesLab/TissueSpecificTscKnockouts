@@ -167,6 +167,8 @@ adipocyte.number
 lmer(Area~Genotype + (1|MouseID), data=allmergeddata)%>% summary() #p=0.36 not sig, asking does , asking if average adipocyte size varies between genotype
 
 glmer(Area~Genotype + (1|MouseID), family=poisson() ,data=allmergeddata)%>% summary() #p=0.28 poisson is like looking at log area since the data is skewed 
+
+(8.620737e-05- 3.229317e-05)/ 8.620737e-05 *100 #= 63% effect size for # of adipocytes
 ```
 
 
@@ -212,6 +214,8 @@ lmer(normalizedadipocytesarea~Genotype + (1|MouseID), data=adipocyte.percent)%>%
   theme(legend.position = "none")+
     labs(y="Adipocyte Area of MG Tissue (%)",
          x="Maternal Genotype") #figure to use for B
+    
+(3.00 -0.92) / 0.92  #=2.26% more 
 
 ```
 
