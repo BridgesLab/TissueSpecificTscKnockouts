@@ -141,8 +141,8 @@ adipocyte.number
   
  averagenumbernormalizedbygenotype <-  adipocyte.numberpermouse %>%
   group_by(Genotype) %>%
-  summarize(adipocytenumbergenotpye= mean(adipocyttesum),
-            se.adipocytenumbergenotpye=se(adipocyttesum)) #actually averaging the areas up
+  summarize(adipocytenumbergenotpye= mean(adipocyttesum)*1000000,
+            se.adipocytenumbergenotpye=se(adipocyttesum)*1000000) #actually averaging the areas up, *1000000 tto gett number per mm2
   averagenumbernormalizedbygenotype 
   
   
@@ -160,7 +160,7 @@ adipocyte.number
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Adipocyte Number",
+    labs(y="Adipocyte Number (per mm2)",
          x="Maternal Genotype") #figure to use for A
 
 #stats for adipocyte area, raw area measured by imageJ
@@ -169,6 +169,7 @@ lmer(Area~Genotype + (1|MouseID), data=allmergeddata)%>% summary() #p=0.36 not s
 glmer(Area~Genotype + (1|MouseID), family=poisson() ,data=allmergeddata)%>% summary() #p=0.28 poisson is like looking at log area since the data is skewed 
 
 (8.620737e-05- 3.229317e-05)/ 8.620737e-05 *100 #= 63% effect size for # of adipocytes
+
 ```
 
 
@@ -218,6 +219,49 @@ lmer(normalizedadipocytesarea~Genotype + (1|MouseID), data=adipocyte.percent)%>%
 (3.00 -0.92) / 0.92  #=2.26% more 
 
 ```
+```{r adipocyte area graph}
+
+adipocyte.areaperimage <- allmergeddata %>%
+  group_by(`Image number`, `MouseID`, Genotype) %>%
+  mutate(Areainum2= Area/1.21) %>%
+  mutate(avarea= mean(Areainum2))
+
+adipocyte.areaperimage 
+
+lmer(Areainum2~Genotype + (1|MouseID), data=adipocyte.areaperimage)%>% summary() #p=0.36
+
+
+  #new % adipocyte of total MG area
+  adipocyte.areapermouse <- adipocyte.areaperimage %>%
+  group_by(`MouseID`, Genotype) %>%
+  summarize(adipocytearea= mean(avarea)) #actually averaging the areas up
+  adipocyte.areapermouse
+  
+ averageareabygenotype <-  adipocyte.areapermouse %>%
+  group_by(Genotype) %>%
+  summarize(adipocyteareagenotpye= mean(adipocytearea),
+            se.adipocyteareagenotpye=se(adipocytearea)) #actually averaging the areas up
+  averageareabygenotype 
+  
+  #graph for mean+se avrage
+  
+    ggplot(averageareabygenotype,
+         aes(x=Genotype,
+           y= adipocyteareagenotpye,
+           fill=Genotype))   + 
+      geom_bar(stat='identity', position="dodge") +
+      geom_errorbar(width=0.5, aes(ymin=adipocyteareagenotpye- se.adipocyteareagenotpye, ymax= adipocyteareagenotpye + se.adipocyteareagenotpye))+
+  expand_limits(y=0) +
+  theme_classic() +
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Adipocyte Average Area (um2)",
+         x="Maternal Genotype") #figure to use
+```
 
 ```{r graphs for density area of adipocytes}
 library(ggplot2)
@@ -242,6 +286,8 @@ ggplot(data=allmergeddata,
 library(car)
 library(lme4)
 leveneTest(Areaum2~Genotype, data=allmergeddata) %>%tidy() %>% kable() #p-value <0.001 saying that variability between KO and WT density plots is significant 
+ks.test(filter(allmergeddata, Genotype=="WT") %>% pull(Areaum2), filter(allmergeddata, Genotype=="KO") %>% pull(Areaum2)) %>% tidy() %>% kable() #p-value=<2e-16
+
 
 #another way to show density area 
 
@@ -464,9 +510,9 @@ ggplot(data=adipocyte.genotype,
 
  #Graphing for Average Adipocyte Area (Not multiplied by number of adipocytes)
 ggplot(data=adipocyte.genotype, 
-       aes(x=Genotype,fill=Genotype, y= AverageAdipocyteArea.mean , na.rm= T ))+
+       aes(x=Genotype,fill=Genotype, y= AverageAdipocyteArea.mean/1.21 , na.rm= T ))+
   geom_bar(stat='identity',position=position_dodge(0.5)) + 
-  geom_errorbar(width=0.5, position=position_dodge(0.5), width=0.2, aes(ymin= AverageAdipocyteArea.mean - AverageAdipocyteArea.se, ymax= AverageAdipocyteArea.mean +AverageAdipocyteArea.se)) +
+  geom_errorbar(width=0.5, position=position_dodge(0.5), width=0.2, aes(ymin= AverageAdipocyteArea.mean/1.21 - AverageAdipocyteArea.se/1.21, ymax= AverageAdipocyteArea.mean/1.21 +AverageAdipocyteArea.se/1.21)) +
   expand_limits(y=0)+ 
   theme_classic() + 
      scale_fill_grey() +

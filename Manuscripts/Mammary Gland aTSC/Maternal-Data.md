@@ -109,10 +109,6 @@ Analysis
 ## MtrnlGntyKO -0.712  0.369       
 ## DyfrmD:MGKO  0.387 -0.746 -0.523
 ```
-
-```
-## [1] 1.92
-```
 ![](figures/Fat_mass_during_pregnancyandlactation-1.png)<!-- -->![](figures/Fat_mass_during_pregnancyandlactation-2.png)<!-- -->
 
 ### Postnatal fat mass change statistics
@@ -163,19 +159,21 @@ Analysis
 ```
 
 ```
-## [1] -1.05
+##    1 
+## 0.45
 ```
 
 ```
-## [1] 2.11
+##     1 
+## -0.63
 ```
 
 ```
-## [1] 0.0485
+## [1] 1.08
 ```
 
 ```
-## [1] -1.08
+## [1] 1.71
 ```
 
 ![](figures/lean_mass_during_pregnancyandlactation-1.png)<!-- -->![](figures/lean_mass_during_pregnancyandlactation-2.png)<!-- -->
@@ -231,7 +229,7 @@ Analysis
 
 ```
 ## DayfromDelivery:MaternalGenotypeKO 
-##                              -5.26
+##                              -5.48
 ```
 
 ```
@@ -240,45 +238,37 @@ Analysis
 ## Formula: FoodIntake ~ DayfromDelivery * MaternalGenotype + (1 | ID)
 ##    Data: foodintakefromdelivery
 ## 
-## REML criterion at convergence: 363
+## REML criterion at convergence: 88.4
 ## 
 ## Scaled residuals: 
 ##    Min     1Q Median     3Q    Max 
-## -2.008 -0.606 -0.108  0.527  1.904 
+## -0.734 -0.255 -0.055  0.288  0.867 
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev.
-##  ID       (Intercept) 198      14.1    
-##  Residual             319      17.9    
-## Number of obs: 43, groups:  ID, 10
+##  ID       (Intercept) 157.6    12.56   
+##  Residual              15.3     3.91   
+## Number of obs: 14, groups:  ID, 10
 ## 
 ## Fixed effects:
 ##                                    Estimate Std. Error     df t value Pr(>|t|)
-## (Intercept)                          17.974     10.037 12.092    1.79    0.098
-## DayfromDelivery                       2.489      0.958 31.074    2.60    0.014
-## MaternalGenotypeKO                   30.738     13.601 13.791    2.26    0.041
-## DayfromDelivery:MaternalGenotypeKO   -2.772      1.257 30.826   -2.21    0.035
-##                                     
-## (Intercept)                        .
-## DayfromDelivery                    *
-## MaternalGenotypeKO                 *
-## DayfromDelivery:MaternalGenotypeKO *
+## (Intercept)                          62.785      7.783  9.435    8.07 0.000016
+## DayfromDelivery                       4.075      0.786  1.954    5.19    0.037
+## MaternalGenotypeKO                    2.301      9.665  9.901    0.24    0.817
+## DayfromDelivery:MaternalGenotypeKO   -1.405      0.908  1.950   -1.55    0.265
+##                                       
+## (Intercept)                        ***
+## DayfromDelivery                    *  
+## MaternalGenotypeKO                    
+## DayfromDelivery:MaternalGenotypeKO    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Correlation of Fixed Effects:
 ##             (Intr) DyfrmD MtrGKO
-## DayfrmDlvry -0.590              
-## MtrnlGntyKO -0.738  0.435       
-## DyfrmD:MGKO  0.449 -0.762 -0.604
-```
-
-```
-## [1] 57.8
-```
-
-```
-## [1] 44.2
+## DayfrmDlvry -0.543              
+## MtrnlGntyKO -0.805  0.437       
+## DyfrmD:MGKO  0.470 -0.866 -0.490
 ```
 
 

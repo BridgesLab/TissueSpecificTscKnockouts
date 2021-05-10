@@ -168,8 +168,8 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## # A tibble: 2 x 3
 ##   Genotype adipocytenumbergenotpye se.adipocytenumbergenotpye
 ##   <fct>                      <dbl>                      <dbl>
-## 1 WT                     0.0000323                 0.00000689
-## 2 KO                     0.0000862                 0.0000216
+## 1 WT                          32.3                       6.89
+## 2 KO                          86.2                      21.6
 ```
 
 ![](figures/Adipocyte number normalized to total MG area, and stats for count and area-1.png)<!-- -->
@@ -233,6 +233,10 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 ## Correlation of Fixed Effects:
 ##            (Intr)
 ## GenotypeKO -0.735
+```
+
+```
+## [1] 62.5
 ```
 
 
@@ -317,6 +321,88 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 
 ![](figures/adipocyte percent of total MG-1.png)<!-- -->
 
+```
+## [1] 2.26
+```
+
+```
+## # A tibble: 13,809 x 14
+## # Groups:   Image number, MouseID, Genotype [88]
+##    MouseID `Image number` `Adipocyte numb…  Area `Mean Area`   Min   Max
+##      <dbl>          <dbl>            <dbl> <dbl>       <dbl> <dbl> <dbl>
+##  1    7981              1                1   185        195.   185   205
+##  2    7981              1                2   100        193.   182   200
+##  3    7981              1                3   119        161.   153   176
+##  4    7981              1                4   171        193.   171   202
+##  5    7981              1                5   101        161.   150   174
+##  6    7981              1                6   455        192.   169   205
+##  7    7981              1                7    88        203.   196   211
+##  8    7981              1                8   181        192.   178   201
+##  9    7981              1                9   111        205.   197   212
+## 10    7981              1               10   109        165.   156   177
+## # … with 13,799 more rows, and 7 more variables: Genotype <fct>,
+## #   TotalAdipocyteNumber <dbl>, ...10 <lgl>, TotalImageArea <lgl>, `Total
+## #   Area` <dbl>, Areainum2 <dbl>, avarea <dbl>
+```
+
+```
+## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+## lmerModLmerTest]
+## Formula: Areainum2 ~ Genotype + (1 | MouseID)
+##    Data: adipocyte.areaperimage
+## 
+## REML criterion at convergence: 185965
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -1.542 -0.698 -0.256  0.504 11.285 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  MouseID  (Intercept)  3266     57.2   
+##  Residual             41232    203.1   
+## Number of obs: 13809, groups:  MouseID, 11
+## 
+## Fixed effects:
+##             Estimate Std. Error     df t value  Pr(>|t|)    
+## (Intercept)   235.43      25.86   8.91    9.10 0.0000083 ***
+## GenotypeKO     34.12      34.97   8.86    0.98      0.36    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##            (Intr)
+## GenotypeKO -0.740
+```
+
+```
+## # A tibble: 11 x 3
+## # Groups:   MouseID [11]
+##    MouseID Genotype adipocytearea
+##      <dbl> <fct>            <dbl>
+##  1    7981 KO                265.
+##  2    7983 KO                251.
+##  3    7984 KO                178.
+##  4    8161 KO                341.
+##  5    8162 WT                269.
+##  6    8444 WT                216.
+##  7    8445 WT                163.
+##  8    8446 WT                326.
+##  9    8465 KO                294.
+## 10    8466 KO                282.
+## 11    8467 WT                202.
+```
+
+```
+## # A tibble: 2 x 3
+##   Genotype adipocyteareagenotpye se.adipocyteareagenotpye
+##   <fct>                    <dbl>                    <dbl>
+## 1 WT                        235.                     28.3
+## 2 KO                        269.                     22.0
+```
+
+![](figures/adipocyte area graph-1.png)<!-- -->
+
 
 ```
 ## # A tibble: 13,809 x 13
@@ -343,6 +429,12 @@ Link to the protocol used (permalink preferred) for the experiment and include a
 |:-----|-----:|---------:|-------:|
 |group |     1|      19.7|       0|
 |      | 13807|        NA|      NA|
+
+
+
+| statistic| p.value|method                             |alternative |
+|---------:|-------:|:----------------------------------|:-----------|
+|     0.239|       0|Two-sample Kolmogorov-Smirnov test |two-sided   |
 
 ![](figures/graphs for density area of adipocytes-2.png)<!-- -->
 
