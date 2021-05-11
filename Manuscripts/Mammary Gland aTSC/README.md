@@ -12,15 +12,14 @@ This document indicates where the raw data for each table and figure panel can b
 | Figure 2C | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-1.pdf
 | Figure 2D | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-2.pdf
 | Figure 2E | Maternal Data.Rmd | food_intake-1.pdf
-| Figure 2F | Maternal Data.Rmd | numberofpupspergenotype-1.pdf
 
-| Figure 3 | Mammary Gland and Milk Weight Data.Rmd | mammarygland_weights-5.pdf
-
+| Figure 3A | Mammary Gland and Milk Weight Data.Rmd | mammarygland_weights-5.pdf
 | Figure 4A | Adipocyte Size Count.Rmd | Adipocyte number normalized to total MG area, and stats for count and area-1.pdf
 | Figure 4B | Adipocyte Size Count.Rmd | adipocyte percent of total MG-1.pdf
 | Figure 4C | Adipocyte Size Count.Rmd | graphs for density area of adipocytes-4.pdf
 
-| Figure 5 | Pup Data.Rmd | PUPweight_graphsPND7-2.pdf
+| Figure 5A | Maternal Data.Rmd | numberofpupspergenotype-1.pdf
+| Figure 5B | Pup Data.Rmd | PUPweight_graphsPND7-2.pdf
 
 | Figure 6A | Mammary Gland and Milk Weight Data.Rmd | milk_samples_data-10.pdf
 | Figure 6B | Milk Fat.Rmd | milkfat_graphsfromallsamples-6.pdf
