@@ -7,11 +7,11 @@ This document indicates where the raw data for each table and figure panel can b
 
 | Figure | Script | Figure |
 | ------ | ------ | ------ |
-| Figure 2A | Maternal Data.Rmd | body_weights_during_pregnancyandlactation-1.pdf
-| Figure 2B | Maternal Data.Rmd | lean_mass_during_pregnancyandlactation-1.pdf
-| Figure 2C | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-1.pdf
-| Figure 2D | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-2.pdf
-| Figure 2E | Maternal Data.Rmd | food_intake-1.pdf
+| Figure 1C | Maternal Data.Rmd | body_weights_during_pregnancyandlactation-1.pdf
+| Figure 1D | Maternal Data.Rmd | lean_mass_during_pregnancyandlactation-1.pdf
+| Figure 1E | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-1.pdf
+| Figure 1F | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-2.pdf
+| Figure 1G | Maternal Data.Rmd | food_intake-1.pdf
 
 | Figure 3A | Mammary Gland and Milk Weight Data.Rmd | mammarygland_weights-5.pdf
 | Figure 3B | Adipocyte Size Count.Rmd | Adipocyte number normalized to total MG area, and stats for count and area-1.pdf
