@@ -165,6 +165,8 @@ gene.sets <-
           genes=list('Gpr18','Gpr32','Cmklr1','Gpr37'))%>%
   add_row(name="LTB4 Receptors",
           genes=list('Ltb4r1','Ltb4r2')) %>%
+    add_row(name="Lipid Transporters",
+          genes=list('Apob','Apoe','Apoa1','Apoa2','Apoa4','Apoa5','Abcc1','Abcd1','Abcd2','Abcd3','Abcd4','Cd36','Fabp1','Fabp2','Fabp3','Fabp4','Fabp5','Mfsd2a','Slc27a1','Slc27a2','Slc27a3','Slc27a4','Slc27a5','Slc27a6')) %>%
   add_row(name="B-Cell Regulators",
           genes=list('Ccl28','Ccr10','Vcam1','Slc30a2','Ackr2')) %>% #CCL28 binds to CCR10 on B-cells (see http://dx.doi.org/10.1007/s10911-010-9188-7 and its ref45). VCAM-1 blocking decreases IgA secretion (ref 52)
     add_row(name="DMRT Targets",
