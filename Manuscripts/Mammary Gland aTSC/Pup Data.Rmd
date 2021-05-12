@@ -123,9 +123,6 @@ aes(x=MaternalGenotype, y= Average.Born.Pups, fill=MaternalGenotype, na.rm =T))
 
 p + geom_bar(stat='identity', position=position_dodge(0.5)) +
   geom_errorbar(position=position_dodge(0.5), width=0.2, aes(ymax= Average.Born.Pups + SE.Average.Born.Pups, ymin=Average.Born.Pups - SE.Average.Born.Pups)) +
-  #xlab("Genotype of Mother") +
-  #ylab("Average Number of Pups Born") +
-  #labs(title="Average Pups Born Per Maternal Genotype") +
   expand_limits(y=0) +
   theme_classic() +
    scale_fill_grey() +
@@ -134,7 +131,7 @@ p + geom_bar(stat='identity', position=position_dodge(0.5)) +
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average Number of Pups Born",
+    labs(y="Number of Pups Born",
          x="Maternal Genotype")
 
 
@@ -248,11 +245,8 @@ Pup.weightspermaternalgenotypePND7 <- Pup.weightspercagePND7 %>%
           Total = length(Average.Weight), is.na=NA) 
 kable(Pup.weightspermaternalgenotypePND7)
 
-#female WT average PND7 wt= 3.98, female KO average wt= 4.35, effect size= 4.35-3.98/3.98 * 100 = 9.29% , p=0.003
-#male WT weight=4.08, male KO weight=4.27, effect size= 4.27-4.08 /4.08 *100= 4.66% , p=0.061
-
-t.test(PND7 ~ MaternalGenotype, data=Pup.data %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males")  #p=0.061
-t.test(PND7 ~ MaternalGenotype, data=Pup.data %>% filter(Sex=="Female")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males")  #p=0.003
+#female WT average PND7 wt= 3.98, female KO average wt= 4.35, effect size= 4.35-3.98/3.98 * 100 = 9.29% 
+#male WT weight=4.08, male KO weight=4.27, effect size= 4.27-4.08 /4.08 *100= 4.66% 
 
 
 aov(Average.Weight ~ MaternalGenotype + Sex,
@@ -394,9 +388,6 @@ library(ggplot2)
   geom_point() +
       geom_bar(stat='identity') +
   geom_errorbar(width=0.5) +
- # labs(x="Dam ID",
-      # y="Weight of Pups at PND7 (g)",
-       #title="Weight of Pups on PND7 per Maternal Genotype") +
     facet_grid(~Sex) +
   expand_limits(y=0) +
   scale_fill_grey() +
@@ -445,12 +436,12 @@ leveneTest(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% fi
 
 aov(Average.Weight ~ MaternalGenotype * Sex, data=Pup.weightspercagePND7 ) %>% tidy %>% kable(caption="Pup weight at PND7, including moderation by sex")
 
-lm(Average.Weight ~ MaternalGenotype + Sex, data=Pup.weightspercagePND7 ) %>% tidy %>% kable(caption="Pup weight at PND7, including adjustment by sex")
+lm(Average.Weight ~ MaternalGenotype + Sex, data=Pup.weightspercagePND7 ) %>% tidy %>% kable(caption="Pup weight at PND7, including adjustment by sex") #p=0.010 for KO genotype
 
 #within group 
-t.test(Average.Weight ~ MaternalGenotype, var.equal=T, data=Pup.weightspercagePND7 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males")  #p=0.119
+t.test(Average.Weight ~ MaternalGenotype, var.equal=T, data=Pup.weightspercagePND7 %>% filter(Sex=="Male")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in males")  #p=0.142
 t.test(Average.Weight ~ MaternalGenotype, data=Pup.weightspercagePND7 %>% filter(Sex=="Female"),
-       var.equal=T) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in females") #p=0.047
+       var.equal=T) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal genotype on PND7 weights in females") #p=0.044
 ```
 
 ```{r PUPweight_graphsPND14}

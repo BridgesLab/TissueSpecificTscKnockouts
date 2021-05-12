@@ -12,18 +12,16 @@ This document indicates where the raw data for each table and figure panel can b
 | Figure 1E | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-1.pdf
 | Figure 1F | Maternal Data.Rmd | Fat_mass_during_pregnancyandlactation-2.pdf
 | Figure 1G | Maternal Data.Rmd | food_intake-1.pdf
-
 | Figure 2A | Mammary Gland and Milk Weight Data.Rmd | mammarygland_weights-5.pdf
 | Figure 2B | Adipocyte Size Count.Rmd | Adipocyte number normalized to total MG area, and stats for count and area-1.pdf
 | Figure 2C | Adipocyte Size Count.Rmd | adipocyte percent of total MG-1.pdf
 | Figure 2D | Adipocyte Size Count.Rmd | adipocyte size, count grouped by genoytpe-5.pdf
-| Figure 2E | Adipocyte Size Count.Rmd | graphs for density area of adipocytes-2.pdf
+| Figure 2E | Adipocyte Size Count.Rmd | graphs for density area of adipocytes-1.pdf
 | Figure 2F | Adipocyte Size Count.Rmd | graphs for density area of adipocytes-4.pdf
-
+| Figure 2G | 8444WT-5.jpg
+| Figure 2F | 8465KO-3.jpg
 | Figure 3A | Maternal Data.Rmd | numberofpupspergenotype-1.pdf
 | Figure 3B | Pup Data.Rmd | PUPweight_graphsPND7-2.pdf
-
-
 | Figure 4A | Milk Fat.Rmd | milkfat_graphsfromallsamples-6.pdf
 | Figure 4B | Lipidomics Analysis.Rmd | SFA ratio-1.pdf
 | Figure 4C | Lipidomics Analysis.Rmd | MUFA-1.pdf
@@ -32,8 +30,6 @@ This document indicates where the raw data for each table and figure panel can b
 | Figure 4F | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-2.pdf
 | Figure 4G | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-3.pdf
 | Figure 4H | Lipidomics Analysis.Rmd | n6/n3 ratio and percentages-1.pdf
-
-
 | Figure 5A | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | heatmap-2.pdf |
 | Figure 5B | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | volcano-plot-1.pdf |
 | Figure 5C | RNAseq/Mammary Gland Adipocyte Tsc1 Knockout/Mammary-aTSC-RNAseq-analysis.Rmd | Milk Proteins Plot.pdf |
@@ -46,10 +42,10 @@ This document indicates where the raw data for each table and figure panel can b
 | Figure | Script | Figure |
 | ------ | ------ | ------ |
 | Supplementary Figure 1A | Pup Data.Rmd | PUPweight_graphsPND0.5-2.pdf
-| Supplementary Figure 1B | 
+| Supplementary Figure 1B | Pup Data.Rmd | combined-weights_PND7_14_16-1.pdf
 | Supplementary Figure 2A | Mammary Gland and Milk Weight Data.Rmd | milk_samples_data-10.pdf
 | Supplementary Figure 2B | Mammary Gland and Milk Weight Data.Rmd | milk_samples_data-11.pdf
-| Supplementary Figure 3 | Lipidomics Analysis.Rmd | Multiple Figures|
+| Supplementary Figure 3 | Lipidomics Analysis.Rmd | Multiple Figures |
 
 # Tables 
 

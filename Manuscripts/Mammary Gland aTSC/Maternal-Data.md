@@ -275,3 +275,44 @@ Analysis
 
 
 ![](figures/maternal_feedingefficiency-1.png)<!-- -->![](figures/maternal_feedingefficiency-2.png)<!-- -->
+
+#Session Information
+
+```
+## R version 4.0.2 (2020-06-22)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS  10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] lmerTest_3.1-3 lme4_1.1-25    Matrix_1.2-18  plotrix_3.7-8  ggplot2_3.3.2 
+##  [6] readr_1.4.0    broom_0.7.2    dplyr_1.0.2    tidyr_1.1.2    knitr_1.30    
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.5          nloptr_1.2.2.2      pillar_1.4.6       
+##  [4] compiler_4.0.2      tools_4.0.2         boot_1.3-25        
+##  [7] statmod_1.4.35      digest_0.6.27       lattice_0.20-41    
+## [10] nlme_3.1-150        evaluate_0.14       lifecycle_0.2.0    
+## [13] tibble_3.0.4        gtable_0.3.0        mgcv_1.8-33        
+## [16] pkgconfig_2.0.3     rlang_0.4.8         cli_2.1.0          
+## [19] rstudioapi_0.12     yaml_2.2.1          xfun_0.19          
+## [22] withr_2.3.0         stringr_1.4.0       generics_0.1.0     
+## [25] vctrs_0.3.4         hms_0.5.3           grid_4.0.2         
+## [28] tidyselect_1.1.0    glue_1.4.2          R6_2.5.0           
+## [31] fansi_0.4.1         rmarkdown_2.5       minqa_1.2.4        
+## [34] farver_2.0.3        purrr_0.3.4         magrittr_1.5       
+## [37] MASS_7.3-53         splines_4.0.2       backports_1.2.0    
+## [40] scales_1.1.1        ellipsis_0.3.1      htmltools_0.5.0    
+## [43] assertthat_0.2.1    colorspace_2.0-0    numDeriv_2016.8-1.1
+## [46] labeling_0.4.2      stringi_1.5.3       munsell_0.5.0      
+## [49] crayon_1.3.4
+```

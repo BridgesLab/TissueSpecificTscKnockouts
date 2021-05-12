@@ -93,7 +93,7 @@ ggplot(sfamufapufa.percentage,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average Sum of SFA (%)",
+    labs(y="Sum of SFA (%)",
          x="Maternal Genotype")
 
 #Statistics
@@ -126,7 +126,7 @@ ggplot(sfamufapufa.percentage, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average Sum of MUFA (%)",
+    labs(y="Sum of MUFA (%)",
          x="Maternal Genotype")
 
 #Statistics %MUFA
@@ -157,7 +157,7 @@ ggplot(sfamufapufa.percentage, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average Sum of PUFA (%)",
+    labs(y="Sum of PUFA (%)",
          x="Maternal Genotype")
 
 #Statistics %PUFA
@@ -192,7 +192,7 @@ ggplot(mufasfaratio, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average MUFA/SFA Ratio",
+    labs(y="MUFA/SFA Ratio",
          x="Maternal Genotype")
 
 #Statistics MUFA/SFa ratio
@@ -226,7 +226,7 @@ ggplot(sumLCFA, is.na=NA,
     theme(text=element_text(size=18),
          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average Sum of LCFA (n mol)",
+    labs(y="Sum of LCFA (n mol)",
          x="Maternal Genotype")
 
 
@@ -264,7 +264,7 @@ ggplot(percent184, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 18:4 n3 (%)",
+    labs(y="18:4 n-3 (%)",
          x="Maternal Genotype")
 
 #Statistics `%18:4 (n-3)
@@ -300,7 +300,7 @@ ggplot(percent225n3, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 22:5 n3 (%)",
+    labs(y="22:5 n-3 (%)",
          x="Maternal Genotype")
 
 #Statistics `%22:5 (n-3)
@@ -335,7 +335,7 @@ geom_bar(position = "dodge", stat = "identity")+
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 22:5 n6 (%)",
+    labs(y="22:5 n-6 (%)",
          x="Maternal Genotype")
 #Statistics `%22:5 (n-6)
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:5 (n-6)`)
@@ -369,7 +369,7 @@ ggplot(percent204n6, is.na=NA,
     theme(text=element_text(size=18),
          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 20:4 n6 (%)",
+    labs(y="20:4 n-6 (%)",
          x="Maternal Genotype")
 
 #Statistics 
@@ -402,7 +402,7 @@ ggplot(percent224n6, is.na=NA,
     theme(text=element_text(size=18),
          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 22:4 n6 (%)",
+    labs(y="22:4 n-6 (%)",
          x="Maternal Genotype")
 
 #Statistics 
@@ -435,7 +435,7 @@ ggplot(percent203n6, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 20:3 n6 (%)",
+    labs(y="20:3 n-6 (%)",
          x="Maternal Genotype")
 
 #Statistics 20:3 (n-6)
@@ -470,7 +470,7 @@ ggplot(percent182, is.na=NA,
     theme(text=element_text(size=18),
          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 18:2 n6 (%)",
+    labs(y="18:2 n-6 (%)",
          x="Maternal Genotype")
 
 #Statistics %18:2 (n-6)cc
@@ -505,7 +505,7 @@ ggplot(percent183, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average 18:3 n6 (%)",
+    labs(y="18:3 n-6 (%)",
          x="Maternal Genotype")
   
 #Statistics %18:3 (n-6)
@@ -544,7 +544,7 @@ ggplot(n6n3ratio, is.na=NA,
     theme(text=element_text(size=18),
          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average n6:n3 Ratio",
+    labs(y="n-6:n-3 Ratio",
          x="Maternal Genotype")
 
 #Statistics Ratio n6/n3
@@ -581,7 +581,7 @@ ggplot(n6n3.percentage, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average n3 (%)",
+    labs(y="n-3 (%)",
          x="Maternal Genotype")
 
 #Statistics
@@ -609,7 +609,7 @@ ggplot(n6n3.percentage, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average n6 (%)",
+    labs(y="n-6 (%)",
          x="Maternal Genotype")
 #Statistics
 shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%n6`)
@@ -645,7 +645,7 @@ ggplot(ALA, is.na=NA,
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average ALA (%)",
+    labs(y="ALA (%)",
          x="Maternal Genotype")
   
 #Statistics
@@ -679,7 +679,7 @@ ggplot(EPA, is.na=NA,
     theme(text=element_text(size=18),
          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average EPA (%)",
+    labs(y="EPA (%)",
          x="Maternal Genotype")
 
 #Statistics
@@ -708,14 +708,14 @@ ggplot(DHA, is.na=NA,
    geom_errorbar(width=0.5,aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
   theme_classic() +
   expand_limits(y=0)+
-  #labs(x="Genotype", y="Average DHA (%)",title="Average DHA Percentage of milk by Genotype")
+  #labs(x="Genotype", y="DHA (%)",title="Average DHA Percentage of milk by Genotype")
   scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average DHA (%)",
+    labs(y="DHA (%)",
          x="Maternal Genotype")
   
 #Statistics

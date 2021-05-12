@@ -236,14 +236,14 @@ library(ggplot2)
   #labs(x="Genotype",
        #y="Average Fat Percentage %",
        #title="Average Milk Fat Percentage per Genotype") +
-  expand_limits(y=0, x=0) +
+  expand_limits(y=0) +
  scale_fill_grey() +
     scale_color_grey() +
     theme_classic() +
     theme(text=element_text(size=18),
           axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
   theme(legend.position = "none")+
-    labs(y="Average Fat (%)",
+    labs(y="Fat (%)",
          x="Maternal Genotype")
 ```
 
