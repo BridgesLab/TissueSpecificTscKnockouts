@@ -35,5 +35,5 @@ Other Published Data
 
 # Licence
 
-This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0.  For more information see [LICENSE](https://github.com/BridgesLab/CushingAcromegalyStudy/blob/master/LICENSE)
+This TissueSpecificTscKnockouts data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0.  For more information see [LICENSE](https://github.com/BridgesLab/TissueSpecificTscKnockouts/blob/master/LICENSE)
 
