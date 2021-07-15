@@ -1,0 +1,315 @@
+---
+title: "Re-Analysis of GSE3313 - db/db Muscles"
+author: "Dave Bridges"
+date: "March 19, 2021"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This is generated via GEO2R based on the Wentz *et al.* paper which did microarrays on hindlimb muscles from db/db or wild-type mice before or after ischemia.  For this analysis we ignored the ischemia 
+
+```{r GSE3313-geo2r, results='asis'}
+# Version info: R 3.2.3, Biobase 2.30.0, GEOquery 2.40.0, limma 3.26.8
+################################################################
+#   Differential expression analysis with limma
+library(GEOquery)
+library(limma)
+library(umap)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE3313", GSEMatrix =TRUE, AnnotGPL=TRUE)
+if (length(gset) > 1) idx <- grep("GPL1261", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+# make proper column names to match toptable 
+fvarLabels(gset) <- make.names(fvarLabels(gset))
+
+# group membership for all samples
+gsms <- "000XXXXXXXXX111XXXXXXXXX"
+sml <- strsplit(gsms, split="")[[1]]
+
+# filter out excluded samples (marked as "X")
+sel <- which(sml != "X")
+sml <- sml[sel]
+gset <- gset[ ,sel]
+
+# log2 transformation
+ex <- exprs(gset)
+qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+LogC <- (qx[5] > 100) ||
+          (qx[6]-qx[1] > 50 && qx[2] > 0)
+if (LogC) { ex[which(ex <= 0)] <- NaN
+  exprs(gset) <- log2(ex) }
+
+# assign samples to groups and set up design matrix
+gs <- factor(sml)
+groups <- make.names(c("wt","db/db"))
+levels(gs) <- groups
+gset$group <- gs
+design <- model.matrix(~group + 0, gset)
+colnames(design) <- levels(gs)
+
+fit <- lmFit(gset, design)  # fit linear model
+
+# set up contrasts of interest and recalculate model coefficients
+cts <- paste(groups[2], groups[1], sep="-") #want ko - wt
+cont.matrix <- makeContrasts(contrasts=cts, levels=design)
+fit2 <- contrasts.fit(fit, cont.matrix)
+
+# compute statistics and table of top significant genes
+fit2 <- eBayes(fit2, 0.01)
+tT <- topTable(fit2, adjust="fdr", sort.by="P", number=Inf)
+
+tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","logFC","Gene.symbol"))
+#write.table(tT, file=stdout(), row.names=F, sep="\t")
+kable(tT[1:25,], caption="Top 25 significant differences between db/db and wt muscle")
+# Visualize and quality control test results.
+# Build histogram of P-values for all genes. Normal test
+# assumption is that most genes are not differentially expressed.
+tT2 <- topTable(fit2, adjust="fdr", sort.by="B", number=Inf)
+hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
+  ylab = "Number of genes", main = "P-adj value distribution")
+
+# summarize test results as "up", "down" or "not expressed"
+dT <- decideTests(fit2, adjust.method="fdr", p.value=0.05)
+
+# Venn diagram of results
+vennDiagram(dT, circle.col=palette())
+
+# create Q-Q plot for t-statistic
+t.good <- which(!is.na(fit2$F)) # filter out bad probes
+qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
+
+# volcano plot (log P-value vs log fold change)
+colnames(fit2) # list contrast names
+ct <- 1        # choose contrast of interest
+volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
+  highlight=length(which(dT[,ct]!=0)), names=rep('+', nrow(fit2)))
+
+# MD plot (log fold change vs mean log expression)
+# highlight statistically significant (p-adj < 0.05) probes
+plotMD(fit2, column=ct, status=dT[,ct], legend=F, pch=20, cex=1)
+abline(h=0)
+
+################################################################
+# General expression data analysis
+ex <- exprs(gset)
+
+# box-and-whisker plot
+ord <- order(gs)  # order samples by group
+palette(c("#1B9E77", "#7570B3", "#E7298A", "#E6AB02", "#D95F02",
+          "#66A61E", "#A6761D", "#B32424", "#B324B3", "#666666"))
+par(mar=c(7,4,2,1))
+title <- paste ("GSE3313", "/", annotation(gset), sep ="")
+boxplot(ex[,ord], boxwex=0.6, notch=T, main=title, outline=FALSE, las=2, col=gs[ord])
+legend("topleft", groups, fill=palette(), bty="n")
+
+# expression value distribution
+par(mar=c(4,4,2,1))
+title <- paste ("GSE3313", "/", annotation(gset), " value distribution", sep ="")
+plotDensities(ex, group=gs, main=title, legend ="topright")
+
+# UMAP plot (dimensionality reduction)
+ex <- na.omit(ex) # eliminate rows with NAs
+ex <- ex[!duplicated(ex), ]  # remove duplicates
+ump <- umap(t(ex), n_neighbors = 3, random_state = 123)
+par(mar=c(3,3,2,6), xpd=TRUE)
+plot(ump$layout, main="UMAP plot, nbrs=3", xlab="", ylab="", col=gs, pch=20, cex=1.5)
+legend("topright", inset=c(-0.15,0), legend=levels(gs), pch=20,
+col=1:nlevels(gs), title="Group", pt.cex=1.5)
+library("maptools")  # point labels without overlaps
+pointLabel(ump$layout, labels = rownames(ump$layout), method="SANN", cex=0.6)
+
+# mean-variance trend, helps to see if precision weights are needed
+plotSA(fit2, main="Mean variance trend, GSE3313")
+
+
+#write to output file
+output_file <- 'GSE3313 Analysis.csv'
+write.fit(fit2, file=output_file, adjust='BH')
+
+hcr.results <- droplevels(topTable(fit2, n=Inf, adjust.method="BH")) %>%
+  select(Gene.symbol,logFC,P.Value,adj.P.Val) %>%
+  distinct(Gene.symbol, .keep_all=T)
+#annotate the probes
+sig.hcr.results <- hcr.results %>% filter(adj.P.Val<0.05)
+sig.hcr.genes <- sig.hcr.results$Gene.symbol
+
+sig.hcr.results.up <- hcr.results %>% filter(adj.P.Val<0.05&logFC>0)
+sig.hcr.genes.up <- sig.hcr.results.up$Gene.symbol
+
+sig.hcr.results.down <- hcr.results %>% filter(adj.P.Val<0.05&logFC<0)
+sig.hcr.genes.down <- sig.hcr.results.down$Gene.symbol
+
+mTsc.datafile <- '../RNAseq/data/processed/Binary DESeq Results.csv'
+mtsc.data <- read.csv(mTsc.datafile)
+
+sig.mtsc.data <- droplevels(subset(mtsc.data, padj<0.05))
+sig.mtsc.data.up <- droplevels(subset(mtsc.data, padj<0.05&log2FoldChange>0))
+sig.mtsc.data.down <- droplevels(subset(mtsc.data, padj<0.05&log2FoldChange<0))
+
+sig.mtsc.genes <- sig.mtsc.data$external_gene_name
+sig.mtsc.genes.up <- sig.mtsc.data.up$external_gene_name
+sig.mtsc.genes.down <- sig.mtsc.data.down$external_gene_name
+
+sig.overlap <- intersect(sig.hcr.genes, sig.mtsc.genes)
+sig.overlap.up <- intersect(sig.hcr.genes.up, sig.mtsc.genes.up)
+sig.overlap.down <- intersect(sig.hcr.genes.down, sig.mtsc.genes.down)
+
+fisher.table <-
+  matrix(c(length(unique(sig.hcr.genes)),
+           length(unique(fit2$genes$Gene.symbol)), 
+           length(sig.overlap),
+           dim(sig.mtsc.data)[1]),
+       nrow = 2,
+       dimnames = list(KD.Sig = c("Sig", "Total"),
+                       mTSC.Sig = c("db/db", "mTSC")))
+
+kable(fisher.table, caption="Contingency table for comparason of db/db and mTSC, all genes")
+
+fisher.table.up <-
+  matrix(c(length(unique(sig.hcr.genes.up)),
+           length(unique(fit2$genes$Gene.symbol)), 
+           length(sig.overlap.up),
+           dim(sig.mtsc.data)[1]),
+       nrow = 2,
+       dimnames = list(KD.Sig = c("Sig", "Total"),
+                       mTSC.Sig = c("db/db", "mTSC")))
+
+kable(fisher.table.up, caption="Contingency table for comparason of db/db and mTSC, up-regulated genes")
+
+fisher.table.down <-
+  matrix(c(length(unique(sig.hcr.genes.down)),
+           length(unique(fit2$genes$Gene.symbol)), 
+           length(sig.overlap.down),
+           dim(sig.mtsc.data)[1]),
+       nrow = 2,
+       dimnames = list(KD.Sig = c("Sig", "Total"),
+                       mTSC.Sig = c("db/db", "mTSC")))
+
+kable(fisher.table.down, caption="Contingency table for comparason of db/db and mTSC, down-regulated genes")
+```
+
+Schiekofer et al identified `r length(unique(sig.hcr.genes))` significantly differentially expressed genes in their analysis out of a total of `r length(unique(fit2$genes$Gene.symbol))` genes assessed.  Of these differentially expressed genes. `r length(sig.overlap)` genes overlapped with our `r dim(sig.mtsc.data)[1]` significantly different genes from *Tsc1* knockout mice quadriceps.  This is a significant level of overlap (`r fisher.test(fisher.table)$estimate` fold enrichment; p=`r fisher.test(fisher.table)$p.value`).
+
+Focusing specifically on directionality, this is a significant level of overlap for up (`r fisher.test(fisher.table.up)$estimate` times more likely; p=`r fisher.test(fisher.table.up)$p.value`) and dowregulated genes (`r fisher.test(fisher.table.down)$estimate` times more likely; p=`r fisher.test(fisher.table.down)$p.value`)
+
+```{r db-db-mtsc-gene-overlap}
+combined.genes <-
+  mtsc.data %>%
+  select(external_gene_name,log2FoldChange,pvalue,padj) %>%
+  left_join(hcr.results, by=c('external_gene_name'='Gene.symbol')) %>%
+  rename("log2FC_TSC"="log2FoldChange",
+         "pval_TSC"='pvalue',
+         "padj_TSC"='padj',
+         "log2FC_KD"="logFC",
+         'pval_KD'="P.Value",
+         'padj_KD'='adj.P.Val')
+
+with(combined.genes, lm(log2FC_TSC~log2FC_KD))  %>% tidy %>% kable(caption="Linear model for association between db/db fold change and TSC fold change")
+
+
+library(ggplot2)
+combined.genes %>%
+  ggplot(aes(y=log2FC_TSC,x=log2FC_KD)) +
+  geom_point(size=0.1, alpha=0.1) +
+  labs(y="TSC Fold Change",x="KD Fold Change") +
+  geom_smooth(se=T)
+
+interesting.genes <- c('Sln','Gdf15') #
+combined.genes %>%
+  filter(external_gene_name %in% interesting.genes) %>%
+  kable(caption="Selected genes")
+
+combined.genes %>%
+  filter(external_gene_name %in% interesting.genes) %>%
+  select(external_gene_name, log2FC_KD, log2FC_TSC) %>%
+  group_by(external_gene_name) %>%
+  pivot_longer(names_to = 'Experiment', values_to = 'Log2FC', cols=log2FC_KD:log2FC_TSC) %>%
+  ggplot(aes(y=Log2FC,x=external_gene_name,
+             fill=Experiment)) +
+    geom_bar(stat='identity', position='dodge')
+```
+
+```{r db-db-mtsc-venn}
+require(venneuler)
+v.diseases <- venneuler(c("db/db"=length(sig.hcr.genes), 
+                 "Tsc1 Knockout Muscles"=length(sig.mtsc.genes),
+                 "db/db&Tsc1 Knockout Muscles"=length(intersect(sig.hcr.genes, sig.mtsc.genes))))
+
+v.diseases.up <- venneuler(c("db/db"=length(sig.hcr.genes.up), 
+                 "Tsc1 Knockout Muscles"=length(sig.mtsc.genes.up),
+                 "db/db&Tsc1 Knockout Muscles"=length(intersect(sig.hcr.genes.up, sig.mtsc.genes.up))))
+v.diseases.down <- venneuler(c("db/db"=length(sig.hcr.genes.down), 
+                 "Tsc1 Knockout Muscles"=length(sig.mtsc.genes.down),
+                 "db/db&Tsc1 Knockout Muscles"=length(intersect(sig.hcr.genes.down, sig.mtsc.genes.down))))
+
+plot(v.diseases, main="TSC-Dependent Transcriptional Changes")
+plot(v.diseases.up, main="TSC-Dependent and db/db Upregulation")
+plot(v.diseases, main="TSC-Dependent and db/db Downregulation")
+
+# library(Vennerable)
+# v.list <- list(`Tsc2 Knockout MEFs` = sig.duvel.genes, `Tsc1 Knockout Muscles` = sig.mtsc.genes)
+# v.data <- Venn(v.list)
+# plot(v.data)
+```
+
+# Pathway Analysis
+
+```{r db-db-pathway-analysis}
+library(clusterProfiler)
+library(org.Mm.eg.db)
+db.db.logfc <- 
+  tT2 %>% 
+  arrange(-logFC) %>%
+  dplyr::select(logFC, Gene.symbol) 
+
+db.db.list <- as.numeric(db.db.logfc$logFC)
+names(db.db.list) <- db.db.logfc$Gene.symbol
+gsea.bp <- gseGO(db.db.list, 
+             ont ="BP", 
+             keyType = "SYMBOL", 
+             OrgDb = org.Mm.eg.db)
+library(enrichplot)
+upsetplot(gsea.bp)
+dotplot(gsea.bp, orderBy="NES")
+gsea.bp <- pairwise_termsim(gsea.bp, method="JC")
+emapplot(gsea.bp,
+         cex_label_category=0.5,
+         showCategory = 50,
+         color="NES",
+         min_edge=0.1)
+
+gsea.bp %>% as.data.frame %>% dplyr::select(NES,pvalue,p.adjust,Description, core_enrichment) %>% arrange(-NES) %>% filter(p.adjust<0.05) %>% kable(caption="Significant GO-BP pathways")
+```
+
+```{r session-info}
+sessionInfo()
+```
