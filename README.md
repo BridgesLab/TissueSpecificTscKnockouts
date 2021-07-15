@@ -14,7 +14,7 @@ This repository contains raw data for studies done by the [Bridges Lab](http://b
 | Publication | Dataset | Tag |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
 | Stephenson EJ, Redd JR, Snyder DS, Tran QT, Lu B, Peloquin MJ, Mulcahy MC, Harvey I, Fisher K, Han JC, Qi N, Saltiel AR, Bridges D. Skeletal Muscle mTORC1 Activation Increases Energy Expenditure and Reduces Longevity in Mice. bioRxiv. [doi:10.1101/720540](https://doi.org/10.1101/720540). | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg)](http://dx.doi.org/10.5281/zenodo.3359627) | [muscleTSC-v1.0](https://github.com/BridgesLab/TissueSpecificTscKnockouts/releases/tag/muscleTSC-v1.0 ) |
-| El Habbal N, Hafner HJ, Redd JR, Mulcahy MC, Reynolds H, Bridges D and B Gregg.  A mouse model of adipocyte mTORC1 activation increases milk fat.  |  |  |
+| El Habbal N, Hafner HJ, Redd JR, Mulcahy MC, Reynolds H, Bridges D and B Gregg.  A mouse model of adipocyte mTORC1 activation increases milk fat. bioRxiv. [doi:10.1101/2021.07.01.450596](https://www.biorxiv.org/content/10.1101/2021.07.01.450596v1). |  |  |
 
 
 # Struture of this Repository
