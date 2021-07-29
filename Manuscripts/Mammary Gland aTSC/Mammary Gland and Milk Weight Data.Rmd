@@ -1,0 +1,272 @@
+---
+title: "Mammary Gland and Milk Weights"
+author: "Noura El Habbal"
+date: "2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+
+# Raw Data
+
+```{r data-files}
+library(readr) #loads the readr package
+MGweights.file <- 'Mammary Gland Weights First Parity PND16.csv'
+Milkoutput.file <- 'Milk Weights First Parity PND10.csv'
+```
+
+```{r data-input}
+library(readr) #loads the readr package
+#load sample mapping file
+MG.data <- read_csv(MGweights.file, na=c("N/A",NA))  %>% mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+Milk.data <- read_csv(Milkoutput.file, na=c("N/A",NA))  %>% mutate(MaternalGenotype = relevel(as.factor(MaternalGenotype), ref="WT"))
+```
+
+```{r mammarygland_weights}
+
+mgaverageweights <- MG.data %>%
+  group_by(Genotype) %>%
+  mutate(AverageRMGWeight = mean(RMGland, na.rm=T)) %>%
+  mutate(AverageLMGWeight = mean(LMGland,na.rm=T)) %>%
+mutate(Average.Weights= mean(Weight, na.rm=T))
+kable(mgaverageweights,caption = "Average Mammary Gland Weights across Genotypes")
+
+#Effect size: RMG= (0.607-0.503)/0.503 *100 = 20.68% less mass in KO
+#Effect size: LMG= (0.618-0.48)/0.48 *100 = 28.75% less mass in KO
+
+
+gland.mouse.weight <- gather(mgaverageweights, value= 'GlandWeight', key=Gland, -ID, -Genotype, -D16)
+
+library(ggplot2)
+p <- ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland', 'LMGland', "Weight'")),
+            aes(x=Gland, y=GlandWeight, color=Genotype))+ 
+  #labs(x="Right and Left Mammary Glands",
+       #y="Weight",
+       #title="Mammary Gland Weights") +
+  theme_classic() +
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() 
+
+  
+ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland', 'LMGland')),
+            aes(x=Gland, y=GlandWeight, col=Genotype, group=Genotype)) +
+  theme_classic()+
+  geom_point() +
+  geom_line()+
+    labs(x="Right and Left Mammary Glands",
+       y="Weight",
+       title="Mammary Gland Weights")
+
+
+ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland')) %>% mutate(GlandWeight=as.numeric(GlandWeight)),
+            aes(x=Genotype, y=GlandWeight, fill=Genotype)) +
+  theme_classic() +
+  geom_boxplot() +
+    labs(x="Right Mammary Glands",
+       y="Weight",
+       title="Mammary Gland Weights") + 
+  theme_classic() +
+  scale_fill_manual(values=color.scheme) +
+    theme(text = element_text(size=13))
+
+ggplot(gland.mouse.weight %>% filter(Gland %in% c('LMGland')) %>% mutate(GlandWeight=as.numeric(GlandWeight)),
+            aes(x=Genotype, y=GlandWeight,fill=Genotype)) +
+  theme_classic()+
+  geom_boxplot() +
+    labs(x="Left Mammary Glands",
+       y="Weight",
+       title="Mammary Gland Weights") +
+    theme_classic() +
+  scale_fill_manual(values=color.scheme) +
+    theme(text = element_text(size=13))
+
+ggplot(gland.mouse.weight %>% filter(Gland %in% c('RMGland','LMGland')) %>% mutate(GlandWeight=as.numeric(GlandWeight)),
+            aes(x=Genotype, y=GlandWeight,fill=Genotype)) +
+  theme_classic()+
+  geom_boxplot() +
+  facet_grid(~Gland) +
+    labs(x="",
+       y="Weight",
+       title="Mammary Gland Weights") +
+    theme_classic() +
+  scale_fill_manual(values=color.scheme) +
+    theme(text = element_text(size=13))
+
+library(forcats)
+gland.mouse.weight %>% 
+         filter(Gland %in% c('RMGland','LMGland')) %>%
+    mutate(Gland= fct_recode(as.factor(Gland), "Right Lower MG"= "RMGland", "Left Lower MG"= "LMGland")) %>%
+         mutate(GlandWeight=as.numeric(GlandWeight)) %>%
+  group_by(Genotype,Gland) %>%
+  summarize(mean = mean(GlandWeight),
+            se = se(GlandWeight)) %>%
+  ggplot(aes(x=Genotype, y=mean,
+             fill=Genotype)) +
+  theme_classic()+
+  geom_bar(stat='identity') + 
+  geom_errorbar(width=0.5, aes( ymin=mean-se,
+             ymax=mean+se)) +
+  facet_grid(~Gland) +
+    #labs(x="",
+       #y="Weight",
+       #title="Mammary Gland Weights") +
+    theme_classic() +
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Weight (g)",
+         x="Maternal Genotype")
+
+
+t.test(as.numeric(GlandWeight) ~ Genotype, data=gland.mouse.weight %>% filter(Gland=="RMGland")) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on right mammary gland weights")  
+t.test(as.numeric(GlandWeight) ~ Genotype, data=gland.mouse.weight %>% filter(Gland=="LMGland")) %>% tidy %>% kable(caption="Welch's t-test for effects of maternal on left mammary gland weights")  
+
+
+``` 
+
+```{r milk_samples_data}
+
+milk.weights <- Milk.data %>%
+  mutate(Pup.Gained.Weight= PupWeightNursing - PupWeightSeparated,
+         Dam.Lost.Weight = DamWeightSeparated - DamWeightNursing) %>%
+  mutate(Dam.Lost.Weight.Pup = Dam.Lost.Weight/LitterSize,
+         Pup.Gained.Weight.Pup = Pup.Gained.Weight/LitterSize) %>%
+  
+group_by(MaternalID, MaternalGenotype)%>%
+
+mutate(AverageDamWeightLoss = mean(Dam.Lost.Weight, na.rm=T),
+        SE.AverageDamWeightLoss = se(Dam.Lost.Weight)) %>%
+  
+ group_by(MaternalID, MaternalGenotype) %>%
+  
+mutate(AveragePupWeightGain = mean(Pup.Gained.Weight, na.rm=T),
+        SE.AveragePupWeightGain = se(Pup.Gained.Weight))
+
+ggplot(milk.weights, aes(x=MaternalGenotype, y=Pup.Gained.Weight, col=MaternalGenotype)) + geom_boxplot() + geom_jitter() +theme_classic()
+  
+ggplot(milk.weights, aes(x=MaternalGenotype, y=Dam.Lost.Weight, col=MaternalGenotype)) + geom_boxplot() + geom_jitter()+ theme_classic()
+
+  ggplot(milk.weights, aes(x=MaternalID, y=AverageDamWeightLoss, col=MaternalGenotype, ymax=AverageDamWeightLoss +SE.AverageDamWeightLoss, ymin=AverageDamWeightLoss- SE.AverageDamWeightLoss)) + geom_boxplot() + geom_jitter()+ theme_classic() #Averaged per dam/cage
+  
+  ggplot(milk.weights, aes(x=MaternalGenotype, y=AveragePupWeightGain, col=MaternalGenotype, ymax=AveragePupWeightGain +SE.AveragePupWeightGain, ymin=AveragePupWeightGain- AveragePupWeightGain)) + geom_boxplot() + geom_jitter()+ theme_classic() #Averaged Across all pups from all litters per dam/cage
+
+ggplot(milk.weights, aes(x=MaternalGenotype, y=Dam.Lost.Weight.Pup, col=MaternalGenotype)) + geom_boxplot() + geom_jitter()+ theme_classic()
+
+ggplot(milk.weights, aes(x=MaternalGenotype, y=Pup.Gained.Weight.Pup, col=MaternalGenotype, group)) + geom_boxplot() + geom_jitter()+ theme_classic()  
+
+
+ggplot(milk.weights, aes(y=Pup.Gained.Weight, x = LitterSize)) + geom_point(aes( col=MaternalGenotype)) + stat_smooth(method='lm',aes( col=MaternalGenotype))+ theme_classic()
+
+ggplot(milk.weights, aes(y=Dam.Lost.Weight, x = LitterSize)) + geom_point(aes( col=MaternalGenotype)) + stat_smooth(method='lm', aes( col=MaternalGenotype))+ theme_classic()
+
+ggplot(milk.weights, aes(y=Pup.Gained.Weight, x = Dam.Lost.Weight)) + geom_point(aes( col=LitterSize)) + stat_smooth(method='lm')+ theme_classic()
+
+
+
+summary(lm(Pup.Gained.Weight~LitterSize + MaternalGenotype, data = milk.weights))
+
+summary(lm(Dam.Lost.Weight~LitterSize + MaternalGenotype, data = milk.weights))
+  
+kable(milk.weights, caption= "Average Pup and Dam Weights at T=0, After 2h Separation, and After 1h Nursing")
+  
+aov(AveragePupWeightGain ~ MaternalGenotype,
+           data=filter(milk.weights)) %>% tidy() %>% kable()
+
+aov(AverageDamWeightLoss ~ MaternalGenotype,
+           data=filter(milk.weights)) %>% tidy() %>% kable()
+
+
+milk.weights %>%
+  group_by(MaternalID, MaternalGenotype) %>%
+  summarize(Cage.Mean = mean(Pup.Gained.Weight.Pup)) %>%
+  group_by(MaternalGenotype) %>%
+  summarize(Mean = mean(Cage.Mean),
+            Error = se(Cage.Mean)) %>%
+  ggplot(aes(y=Mean,
+         x=MaternalGenotype,
+         fill=MaternalGenotype)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes(ymin=Mean-Error,
+         ymax=Mean+Error))+
+ theme_classic()+
+    #labs(x="Maternal Genotype",
+      # y="Weight Gained by Pup (g)",
+       #title="Milk Production") +
+      theme_classic() +
+     scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Weight Gained by Pup (g)",
+         x="Maternal Genotype")
+
+
+t.test(Pup.Gained.Weight.Pup ~ MaternalGenotype, data=milk.weights) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on milk production")  
+
+t.test(Dam.Lost.Weight ~ MaternalGenotype, data=milk.weights) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on milk production")  
+
+milk.weights %>%
+  group_by(MaternalID, MaternalGenotype) %>%
+  summarize(Cage.Mean = mean(Dam.Lost.Weight.Pup)) %>%
+  group_by(MaternalGenotype) %>%
+  summarize(Mean = mean(Cage.Mean),
+            Error = se(Cage.Mean)) %>%
+  ggplot(aes(y=Mean,
+         x=MaternalGenotype,
+         fill=MaternalGenotype)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes( ymin=Mean-Error,
+         ymax=Mean+Error))+
+ theme_classic()+
+    #labs(x="Maternal Genotype",
+      # y="Dam Lost Weight (g)",
+       #title="Milk Production") +
+      theme_classic()  +
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Weight Lost by Dam (g)",
+         x="Maternal Genotype")
+
+```

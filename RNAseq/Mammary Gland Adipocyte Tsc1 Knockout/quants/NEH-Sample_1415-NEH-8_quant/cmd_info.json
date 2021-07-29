@@ -1,0 +1,12 @@
+{
+    "salmon_version": "1.3.0",
+    "index": "mouse_index",
+    "libType": "A",
+    "mates1": "1415-NEH/NovaA-284/1415-NEH/Sample_1415-NEH-8/1415-NEH-8_ATCTGACC-CTCGACTT_S218_R1_001.fastq.gz",
+    "mates2": "1415-NEH/NovaA-284/1415-NEH/Sample_1415-NEH-8/1415-NEH-8_ATCTGACC-CTCGACTT_S218_R2_001.fastq.gz",
+    "threads": "4",
+    "validateMappings": [],
+    "gcBias": [],
+    "output": "quants/NEH-Sample_1415-NEH-8_quant",
+    "auxDir": "aux_info"
+}

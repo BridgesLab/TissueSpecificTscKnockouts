@@ -26,11 +26,11 @@ This document indicates where the raw data for each Figure panel can be found, a
 | Figure 3C | Mouse Data⁩/Muscle Tsc1 Knockout⁩/HFD/Body Composition/body-weight-analysis.Rmd | lean-mass-scatterplot-3.pdf |
 | Figure 3D | Mouse Data⁩/Muscle Tsc1 Knockout⁩/HFD⁩/Sacrifice Analysis⁩m/TSC1-sac-data.Rmd | wat-weights-2.pdf |
 | Figure 3E | Mouse Data⁩/Muscle Tsc1 Knockout⁩/HFD⁩/ITT/itt-analysis_mTSC1-HFD.Rmd | wat-weights-2.pdf |
-| Figure 4A | ⁨RNAseq⁩/scripts⁩/barplots.Rmd | aa_transporters-barplot.pdf |
-| Figure 4B | RNAseq⁩/scripts⁩/barplots.Rmd | fabp_cd36-barplot.pdf |
-| Figure 4C | RNAseq⁩/scripts⁩/barplots.Rmd | fiber_markers-barplot.pdf | 
+| Figure 4A | ⁨RNAseq⁩/Muscle Tsc1 Knockout/scripts⁩/barplots.Rmd | aa_transporters-barplot.pdf |
+| Figure 4B | RNAseq⁩/Muscle Tsc1 Knockout/scripts⁩/barplots.Rmd | fabp_cd36-barplot.pdf |
+| Figure 4C | RNAseq⁩/Muscle Tsc1 Knockout/scripts⁩/barplots.Rmd | fiber_markers-barplot.pdf | 
 | Figure 4D | NA | Image | 
-| Figure 4E | RNAseq⁩/scripts⁩/barplots.Rmd | ca-cycling.pdf | 
+| Figure 4E | RNAseq⁩/Muscle Tsc1 Knockout/scripts⁩/barplots.Rmd | ca-cycling.pdf | 
 | Figure 4F | NA | Image | 
-| Figure 4C | RNAseq⁩/scripts⁩/barplots.Rmd | Sln-barplot.pdf | 
+| Figure 4C | RNAseq⁩/Muscle Tsc1 Knockout/scripts⁩/barplots.Rmd | Sln-barplot.pdf | 
 | Figure 5 | Mouse Data⁩/Muscle Tsc1 Knockout/mouse-aging-analysis.Rmd | fitting-mck-controls-combined-ggsurvplot-1.pdf | 

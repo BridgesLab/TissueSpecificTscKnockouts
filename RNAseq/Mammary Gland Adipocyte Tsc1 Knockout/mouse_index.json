@@ -1,0 +1,12 @@
+[
+  {
+    "index": "mouse_index",
+    "source": "Ensembl",
+    "organism": "Mus musculus",
+    "release": "101",
+    "genome": "GRCm38.101",
+    "fasta": ["Mus_musculus.GRCm38.cds.all.fa.gz"],
+    "gtf": "Mus_musculus.GRCm38.101.gtf.gz",
+    "sha256": "f3773083bc546bbbc0b5a6e3e917541679b631d4ce2ae79db1feddaaeaa0b647"
+  }
+]

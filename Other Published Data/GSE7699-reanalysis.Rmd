@@ -1,0 +1,176 @@
+---
+title: "Re-Analysis of GSE7699"
+author: "Dave Bridges"
+date: "May 14, 2020"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This is generated via GEO2R based on the Kennedy *et al.* paper which did microarrays on livers from NCD and KD fed mice.
+
+```{r geo2r, results='asis'}
+# Version info: R 3.2.3, Biobase 2.30.0, GEOquery 2.40.0, limma 3.26.8
+# R scripts generated  Thu May 14 13:42:34 EDT 2020
+
+################################################################
+#   Differential expression analysis with limma
+library(Biobase)
+library(GEOquery)
+library(limma)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE7699", GSEMatrix =TRUE, AnnotGPL=TRUE)
+if (length(gset) > 1) idx <- grep("GPL1261", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+# make proper column names to match toptable 
+fvarLabels(gset) <- make.names(fvarLabels(gset))
+
+# group names for all samples
+gsms <- "000111"
+sml <- c()
+for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
+
+# log2 transform
+ex <- exprs(gset)
+qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+LogC <- (qx[5] > 100) ||
+          (qx[6]-qx[1] > 50 && qx[2] > 0) ||
+          (qx[2] > 0 && qx[2] < 1 && qx[4] > 1 && qx[4] < 2)
+if (LogC) { ex[which(ex <= 0)] <- NaN
+  exprs(gset) <- log2(ex) }
+
+# set up the data and proceed with analysis
+sml <- paste("G", sml, sep="")    # set group names
+fl <- as.factor(sml)
+gset$description <- fl
+design <- model.matrix(~ description + 0, gset)
+colnames(design) <- levels(fl)
+fit <- lmFit(gset, design)
+cont.matrix <- makeContrasts(G1-G0, levels=design)
+fit2 <- contrasts.fit(fit, cont.matrix)
+fit2 <- eBayes(fit2, 0.01)
+tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
+
+tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title"))
+#write.table(tT, file=stdout(), row.names=F, sep="\t")
+
+
+################################################################
+#   Boxplot for selected GEO samples
+library(Biobase)
+library(GEOquery)
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE7699", GSEMatrix =TRUE, getGPL=FALSE)
+if (length(gset) > 1) idx <- grep("GPL1261", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+# group names for all samples in a series
+gsms <- "000111"
+sml <- c()
+for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
+sml <- paste("G", sml, sep="")  # set group names
+
+# order samples by group
+ex <- exprs(gset)[ , order(sml)]
+sml <- sml[order(sml)]
+fl <- as.factor(sml)
+labels <- c("Control","Ketogenic")
+
+# set parameters and draw the plot
+palette(c("#dfeaf4","#f4dfdf", "#AABBCC"))
+dev.new(width=4+dim(gset)[[2]]/5, height=6)
+par(mar=c(2+round(max(nchar(sampleNames(gset)))/2),4,2,1))
+title <- paste ("GSE17190", '/', annotation(gset), " selected samples", sep ='')
+boxplot(ex, boxwex=0.6, notch=T, main=title, outline=FALSE, las=2, col=fl)
+legend("topleft", labels, fill=palette(), bty="n")
+
+
+
+#write to output file
+output_file <- 'GSE7699 Analysis.csv'
+write.fit(fit2, file=output_file, adjust='BH')
+
+kd.results <- droplevels(topTable(fit2, n=Inf, adjust.method="BH")) %>%
+  select(Gene.symbol,logFC,P.Value,adj.P.Val) %>%
+  distinct(Gene.symbol, .keep_all=T)
+
+kd.results %>%
+  filter(adj.P.Val<0.05) %>%
+  arrange(-logFC) %>%
+  kable(caption="Significantly differentially expressed genes")
+
+library(readr)
+human_mouse_table_file <- 'http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt'
+human_mouse_table <- read_tsv(human_mouse_table_file)
+human.to.mouse <- 
+  human_mouse_table %>%
+  select(`Common Organism Name`, Symbol, `HomoloGene ID`) %>%
+  distinct(`HomoloGene ID`,`Common Organism Name`, .keep_all = T) %>%
+  spread(`Common Organism Name`, Symbol) %>%
+  rename("mouse"="mouse, laboratory")
+
+merged.data <- left_join(kd.results, human.to.mouse, by=c("Gene.symbol"="mouse")) %>% filter(!(is.na(human)))
+
+gsea.output <- 'GSE7699.rnk'
+merged.data %>%
+  arrange(-logFC) %>%
+  select(human, logFC) %>%
+  write_tsv(gsea.output)
+```
+
+Wrote out ranked gene list after converting to human using `r human_mouse_table_file` into the file `r gsea.output`.
+
+```{r volcano-plot}
+library(ggplot2)
+kd.results %>% 
+  ggplot(aes(y=-log10(P.Value),
+              x=logFC,
+              col=adj.P.Val<0.05)) +
+  geom_point()
+```
+
+
+```{r interesting-genes}
+
+interesting.genes <- c('Bdh1','Gdf15','Hmgcs2','Fas','Bhdh','Apob','Ldlr','Cyp7a1')
+kd.results %>%
+  filter(Gene.symbol %in% interesting.genes) %>%
+  mutate(FC=2^logFC) %>%
+  kable(caption="Selected genes")
+```
+
+
+
+```{r session-info}
+sessionInfo()
+```
