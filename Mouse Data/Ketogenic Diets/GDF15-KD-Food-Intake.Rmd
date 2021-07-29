@@ -1,0 +1,125 @@
+---
+title: "LCHF GDF15 Food Intake Measurements"
+author: "Claire Gleason, JeAnna Redd,Cody Cousineau, and Dave Bridges"
+date: "July 29, 2021"
+output:
+  html_document:
+    toc: yes
+    keep_md: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(readr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05','#d6bf91')
+```
+
+This script was most recently run on `r date()` and can be found in `r getwd()`.
+
+# Purpose
+
+To determine food intake levels of wild-type and GDF15 knockout mice.
+
+# Experimental Details
+
+Mice were kept on NCD to 10 weeks then transfered to KD for three weeks
+
+# Raw Data
+
+
+```{r data-entry}
+raw_data_file <- "GDF15-KO experiment - Food Intake.csv"
+
+library(readr) 
+library(lubridate)
+measurement.data <- read_csv(raw_data_file) %>%
+  separate(`date (start to end)`, into=c('Start.Date','End.Date'),
+           sep="-") 
+```
+
+The raw data can be found in `r raw_data_file` in the folder `r getwd()`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+```{r food-intake-analysis}
+food.data <- 
+  measurement.data %>%
+  select(cage,genotype,sex,Exp.Week,`food intake (total g)`,`number in cage`) %>%
+  mutate(Intake = `food intake (total g)`/`number in cage`) %>% #normalize to cage number
+  rename(Cage.Number = `number in cage`) %>%
+  mutate(Diet = case_when(Exp.Week<0~'NCD',
+                          Exp.Week>=0~'KD'))
+
+cumulative.food.data <-
+  food.data %>%
+  filter(Exp.Week>=-3&Exp.Week<=3) %>%
+  #filter(Cage.Number==1) %>%
+  group_by(cage,Diet,sex,genotype) %>%
+  summarize(Intake.Sum=sum(Intake))
+
+cumulative.food.summary <-
+  cumulative.food.data %>%
+  group_by(Diet,sex,genotype) %>%
+  summarize(Avg.Cumulative = mean(Intake.Sum),
+            SE.Cumulative=se(Intake.Sum),
+            n=length(Intake.Sum))
+
+
+library(ggplot2)
+cumulative.food.data %>%
+  ggplot(aes(y=Intake.Sum,x=Diet, col=genotype)) +
+  geom_jitter()+
+  geom_text(aes(label=cage)) +
+  facet_grid(~sex)
+
+cumulative.food.summary %>%
+  ggplot(aes(y=Avg.Cumulative,
+             ymin=Avg.Cumulative-SE.Cumulative,
+             ymax=Avg.Cumulative+SE.Cumulative,
+             x=Diet, fill=genotype)) +
+  geom_bar(stat='identity',position='dodge',width=0.75)+
+  geom_errorbar(position=position_dodge(width=0.75),
+                width=0.5)+
+  facet_grid(~sex)
+
+food.data %>%
+  filter(cage=='1340')
+```
+
+# Interpretation
+
+There was a sex-specific reduction in fasting blood glucose, but no significant difference in glucose levels during the insulin tolerance test
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```
