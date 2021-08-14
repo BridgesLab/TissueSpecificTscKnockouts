@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Thu Jul 29 12:48:29 2021 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
+This script was most recently run on Thu Jul 29 12:58:35 2021 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.
 
 # Purpose
 
@@ -30,7 +30,7 @@ Mice were kept on NCD to 10 weeks then transfered to KD for three weeks
 
 
 
-The raw data can be found in GDF15-KO experiment - Food Intake.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Thu Jul 29 12:48:30 2021.
+The raw data can be found in GDF15-KO experiment - Food Intake.csv in the folder /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Ketogenic Diets.  This script was most recently updated on Thu Jul 29 12:58:36 2021.
 
 # Analysis
 
@@ -49,6 +49,8 @@ The raw data can be found in GDF15-KO experiment - Food Intake.csv in the folder
 ## 7  1340 KO       M         3                       25.1           2  12.6  KD   
 ## 8  1340 KO       M         4                       25.7           2  12.8  KD
 ```
+
+![](figures/food-intake-analysis-3.png)<!-- -->
 
 # Interpretation
 

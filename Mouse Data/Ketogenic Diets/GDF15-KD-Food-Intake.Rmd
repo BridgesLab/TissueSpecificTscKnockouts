@@ -112,6 +112,13 @@ cumulative.food.summary %>%
 
 food.data %>%
   filter(cage=='1340')
+
+food.data %>%
+  filter(Exp.Week>=0) %>%
+  ggplot(aes(y=Intake,x=Exp.Week,col=genotype,group=cage)) +
+  geom_line()+
+  geom_text(aes(label=cage)) +
+  facet_grid(.~sex)
 ```
 
 # Interpretation
