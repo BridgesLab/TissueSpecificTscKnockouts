@@ -1,0 +1,180 @@
+Barplot Analysis of Results
+=======================================
+
+Used Analysed DESeq results.
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.path='figure/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+```
+
+```{r file-input, echo=FALSE, warning=FALSE}
+filename <- "../data/processed/RPKM_count.csv"
+deseq.filename <- "../data/processed/Binary DESeq Results.csv"
+#read in the file
+normalized.data <- read.csv(filename, row.names='X')
+deseq.data <- read.csv(deseq.filename, row.names='X')
+mapping <- read.csv("../data/raw/sample_mapping.csv")
+
+mapping$Genotype <- relevel(as.factor(mapping$Genotype), ref="Wild-Type")
+
+
+#change rownames to gene names
+rpkm.data <- merge(normalized.data, deseq.data[,c('Row.names','external_gene_name')], by.x='row.names', by.y='Row.names') 
+rpkm.data.unique <- rpkm.data[!duplicated(rpkm.data$external_gene_name),]
+
+rownames(rpkm.data.unique) <- rpkm.data.unique$external_gene_name
+rpkm.data.unique <- rpkm.data.unique[,-1]
+
+genes.of.interest <- c("Tsc1",'Tsc2','Ppp1r3c','Cd36','Fabp3','Ucp3','Map3k9','Ppp1r15a','Slc38a1','Fgf21','Sln','Pln','Gdf15','Inha',"Mat2a",'Atf4')
+
+
+genes.of.interest.data <- rpkm.data.unique[genes.of.interest,]
+#put the data in long format
+library(reshape2)  
+genes.of.interest.long <- melt(genes.of.interest.data, id.var='external_gene_name',variable.name='Sample',value.name='Expression')
+genes.of.interest.long <- reshape(genes.of.interest.data, direction="long", varying=list(names(genes.of.interest.data)[1:16]), v.names="Expression", idvar="Genes", timevar="Genotype", ids=rownames(genes.of.interest.data))
+
+rpkm.long <- reshape(rpkm.data.unique, direction="long", varying=list(names(rpkm.data.unique)[1:27]), v.names="Expression", idvar="external_gene_name", timevar="Genotype", ids=rownames(rpkm.data.unique))
+
+rpkm.long <- melt(rpkm.data.unique, id.var='external_gene_name',variable.name='Sample',value.name='Expression')
+mapping$Sample <- paste("X",mapping$File,sep="")
+mapping$Sample <- gsub('-','.',mapping$Sample, fixed=T)
+rpkm.long.genotyped <- merge(rpkm.long, mapping[,c('Sample','Genotype')], by='Sample')
+
+#calculate standard error
+library(plyr)
+library(doMC)
+registerDoMC()
+rpkm.long.cal <- ddply(rpkm.long.genotyped, .(external_gene_name,Genotype), summarise, se = sd(Expression, na.rm=T)/sqrt(length(Expression)), mean_Expression = mean(Expression, na.rm=T), .parallel=TRUE)
+
+rpkm.long.cal$Genotype <- factor(rpkm.long.cal$Genotype)
+
+#rpkm.long.cal <- rpkm.long.cal[order(rev(rpkm.long.cal$external_gene_name), rpkm.long.cal$Genotype, decreasing=T),]
+```
+
+```{r barplots, dev=c('png','pdf'), echo=FALSE, fig.show='asis', warning=FALSE}
+library(reshape2)
+library(ggplot2)
+for (gene in genes.of.interest) {
+  #pdf(sprintf('../figures/%s-barplot.pdf', gene))
+  gene.data <- rpkm.long.cal[rpkm.long.cal$external_gene_name==gene,]
+  #pdf(paste('../figures/',gene,'-barplot.pdf',sep=""))
+  ggplot(gene.data, aes(x=Genotype,y=mean_Expression)) + geom_bar(stat="identity") + geom_errorbar(aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.1) + xlab("") + ylab("mRNA Expression (RPKM)")+ theme_bw() + ggtitle(gene) + theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + theme(panel.border=element_blank()) + scale_x_discrete(labels=gene.data$Genotype) + theme(axis.line = element_line(color = 'black'))+scale_colour_grey(start = 0.5, end = .9)
+  ggsave(filename=paste('figure/',gene,'-barplot.pdf',sep=""))
+}
+
+```
+
+
+```{r grouped-plots, echo=FALSE, fig.show='asis' }
+tsc_isoforms <- c('Tsc1','Tsc2')
+glycogen_genes <- c('Gys1','Gys2','Pygm','Pygl','Pygb')
+pp1_regulatory_subunits <- c('Ppp1r3a','Ppp1r3b','Ppp1r3c','Ppp1r3d','Ppp1r3e','Ppp1r3f','Ppp1r3g')
+interleukins <- paste('Il',seq(1,36), sep="")
+srebp <- c('Srebf1','Srebf2','Fasn','Acaca1','Hmgcr','Ldlr','Gpam')
+linoleate_metabolism <- c('Pla2g2f','Akr1b10','Pla2g4a','Pla2g10','Pla2g12a','Pla2g12b','Pla2g2e','Cyp2e1','Pla2g4e','Pla2g6','Pla2g5','Alox15','Pla2g2d','Pla2g2c','Pla2g3')
+tg_synthesis <- c('Dgat1','Dgat2','Lpin1','Lpin2','Lpin3','Agpat1','Agpat2','Agpat3','Gpam','Gpat1','Gpat2','Gpat3','Gpat4','Fasn','Acaca1','Plin5','Fatp1')
+
+myokines <- c('Igf1','Il4','Il6','Il7','Il8','Il15','Fndc5','Fgf2','Fgf21','Serpine1','Bdnf','Lif','Fam132b','Angptl4','Fst','Fstl1','Cxcl1','Ccl2','Mstn','Gdf11','Serpinf1','Vegfa','Vegfb','Metrnl','Ostn','Apln','Epo','Sparc','Osm')
+
+lipolysis <- c('Lpl','Lipe','Pnpla2','Abhd5')
+oglnac_metabolisn <- c('Oga','Ogt','Uap1','Uap1l1','Pgm1','Pgm2','Pgm3','Gnpnat1','Amdhd2','Gfpt1','Gfpt2','Gnpda1','Gnpda2','Gpi1','Mpi','Hk1','Hk2','Hk3','Gck')
+ppar_isoforms <- c('Ppara','Ppard','Pparg','Ppargc1a','Ppargc1b')
+b_oxidation <- c('Acsl1','Acsl3','Acsl4','Acsl5','Acsl6','Cpt1a','Cpt1b','Cpt1c','Cpt2','Slc25a20','Crat','Acox1','Acox2','Acox3','Acadm','Acadl','Acadvl','Ehhadh','Hadh','Hadha','Hadhb','Echs1','Acaa1a','Acaa1b','Acaa2','Acaca','Acacb')
+ppard_targets <- c('Ppard','Ehhadh','Cyp4a10','Acaa1a','Acaa1b','Scp2','Acox1','Acox2','Acox3','Cpt1a','Cpt1b','Cpt2','Acadl','Acadm')
+#for fibre type
+myosin_heavy_chain <- c('Myh1','Myh2','Myh3','Myh4','Myh5','Myh6','Myh7','Myh7b','Myh8','Myh9','Myh10','Myh11','Myh12','Myh13','Myh14','Myh15','Myhn3','Myhn4','Myhs')
+myosin_heavy_chain_main <- c('Myh1','Myh2','Myh4','Myh7')
+
+slow_twitch_genes <- c('Mb','Tnni1','Ppp3ca','Ckmt2','Ppargc1a','Myh7','Atp2a2')
+oxidative_markers_rosenbaum <- c('Myh7','Atp2a2')
+oxidative_markers_rosenbaum_2 <- c('Myh1','Myh7','Atp2a2','Sln')
+fiber_markers <- c('Myh7','Atp2a2','Myh4','Atp2a1')
+fast_twitch_genes <- c('Pvalb','Tnni2','Ckm','Myh4','Myh1')
+myotubular_degradation <- c('Trim63','Fbxo32')
+muscle_differentiation <- c('Cdkn1a','Myog','Myod1','Myf4','Myf5','Myf6','Mef2c')
+autophagy <- c('Gabarap','Gabarapl1','Gabrapl2','Map1lc3a','Map1lc3b')
+fatty_acid_uptake <- c('Ldlr','Scarb1','Lpl','Abcc1','Cd36','Fatp1','Fabp3','Got2','Slc27a1')
+fatty_acid_uptake_no_FABP3 <- c('Ldlr','Scarb1','Lpl','Abcc1','Cd36','Fatp1','Got2','Slc27a1')
+cb_receptors <- c('Cnr1','Cnr2')
+fabp_cd36 <- c('Fabp3','Cd36')
+serca <- c('Atp2a1','Atp2a2','Atp2a3')
+
+mitochondrial_genes <- c('mt-Nd1','mt-Nd2','mt-Nd4','mt-Nd4l','mt-Nd5','mt-Co1','mt-Co2','mt-Co3','mt-Atp6','mt-Atp8','mt-Cytb','mt-Rnr1','mt-Rnr2')
+uncouplers <- c('Ucp1','Ucp2','Ucp3')
+Jnk_related_genes <- c('Slc25a13','Slc1a1','Slc3a1','Slc1a2','Slc1a4','Mdfi','Map3k9')
+aa_transporters <- c(paste('Slc1a',seq(1,7), sep=""), paste('Slc3a',seq(1,2), sep="") ,c('Slc6a14','Slc6a15','Slc6a17','Slc6a18','Slc6a19'), paste('Slc7a',seq(1,14), sep="") ,paste('Slc36a',seq(1,4), sep=""),paste('Slc38a',seq(1,11), sep=""),paste('Slc43a',seq(1,5), sep=""))
+aa_transporters_up <- c('Slc1a1','Slc1a2','Slc1a4','Slc3a1','Slc3a2','Slc7a1','Slc7a5','Slc7a6','Slc7a13','Slc6a17','Slc6a18','Slc6a19','Slc38a1','Slc38a10','Slc43a2')
+mitofusins <- c('Mfn1','Mfn2','Opa1')
+
+transporters_up <- c('Slc1a1','Slc1a2','Slc1a4','Slc3a1','Slc3a2','Slc7a1','Slc7a5','Slc7a6','Slc7a13','Slc6a17','Slc6a18','Slc6a19','Slc38a1','Slc38a10','Slc43a2','Cd36','Fabp3')
+jnk_activators <- c('Map3k1','Map3k4','Map3k9','Map3k10','Map3k11','Map3k5','Map2k4','Map2k7','Mapk8','Mapk9','Mapk10','Jun','Fos','Atf4')
+hippo <- c('Yap1','Taz','Tead1','Tead2','Tead3','Tead4','Lats1','Lats2')
+guridi_genes <- c('Ucp2','Ppargc1b','Pdk4','Fasn','Bdh1','Oxct1','Hmgcs2','Acat1','Klb','Fgf21','Ddit3','Hspa5','Xbp1','Trib3')
+guridi_genes_2 <- c('Ucp2','Ppargc1b','Fasn','Bdh1','Oxct1','Hmgcs2','Acat1','Klb','Fgf21','Ddit3','Hspa5','Xbp1','Trib3')
+sln <- c('Sln')
+FGF21_related <- c('Fgf21','Klb','Fgfr1','Fgfr2','Fgfr3','Frs2','Hmgcs2','Sirt1','Sirt3','Mapk1','Mapk3')
+ca_cycling <- c('Atp2a2','Atp2a3','Sln','Pln','Ryr1','Ryr2','Ryr3','Casq2','Calm1','Calm2','Calm3','Ora1','Stim1')
+ca_reuptake <- c('Stim1','Stim2')
+FGF21_related <- c('Fgf21','Klb','Fgfr1','Fgfr2','Fgfr3','Frs2','Hmgcs2','Sirt1','Sirt3','Mapk1','Mapk3')
+MitochondrialCalcium_genes <- c('Mcu','Micu1','Micu2','Micu3','Slc8a1','Scl8a2','Slc8a3','Letm1','Letm2','Ryr1','Ryr2','Ryr3')
+er_stress <- c('Xbp1','Atf4','Hspa5','Ddit3')
+er_stress_select <- c('Xbp1','Atf4','Atf6','Ern1','Hspa5','Ddit3','Trib3')
+irx_genes <- c('Irx3','Irx5')
+ketosis_muscle <- c('Oxct1','Bdh1','Slc16a1')
+ketosis_receptors <- c('Hcar2','Ffar3')
+ketone_body_generation <- c('Hmgcs2','Hmgcl','Bdh1','Slc16a1','Slc16a6','Slc16a7')
+pfk_2_isoforms <- c('Pfkfb1', 'Pfkfb2', 'Pfkfb3', 'Pfkfb4')
+gdf_isoforms <- paste('Gdf',seq(1,15), sep="")
+tgf_beta_superfamily_hs <- c('AMH', 'ARTN', 'BMP10', 'BMP15', 'BMP2', 'BMP3', 'BMP4', 'BMP5', 'BMP6', 'BMP7', 'BMP8A', 'BMP8B', 'GDF1', 'GDF10', 'GDF11', 'GDF15', 'GDF2', 'GDF3', 'GDF3A', 'GDF5', 'GDF6', 'GDF7', 'GDF8', 'GDF9', 'GDNF', 'INHA', 'INHBA', 'INHBB', 'INHBC', 'INHBE', 'LEFTY1', 'LEFTY2', 'MSTN', 'NODAL', 'NRTN', 'PSPN', 'TGFB1', 'TGFB2', 'TGFB3')
+library(Hmisc)
+tgf_beta_superfamily <- capitalize(tolower(tgf_beta_superfamily_hs))
+
+
+ribosomes <- c('RPL7','RPL13A','RPL34','RPS28','RPS24','RPS5','FAU','RPS6','RPS11','RPS15A','RPS17','RPL31','RPL19','RPS25','RPL39','RPL27','RPL38','RPL21','RPS12','RPL14','RPL27A','RPS18','RPL15','RPS10','RPL28','RPL7A','RPS26','RPS23','RPL35','RPL22','RPS7','RPL4','RPL5','RPLP2','RPL18A','RPL13','RPL30','RPL3L','RPL8','RPL26','RPS4X','RPL23A','RPS8','RPS27','RPL29')
+#convert to mouse gene format
+ribosomes <- capitalize(tolower(ribosomes))
+bcaa <- c('Bckdha','Bckdhb','Bcat1','Bcat2','Bckdk','Ppm1k')
+glo <- c('Glo1','Glo2')
+atf4_related <- c('Atf4','Eif2b1','Eif2b2','Cebpa','Cebpb','Cebpd','Cebpg','Maf','Gadd45a','Cdkn1a')
+atf4_muscle <- c('Gadd45a','Cdkn1a','Gdf15','Slc7a5','Slc38a2','Slc6a9', 'Aars', 'Iars', 'Nars', 'Lars', 'Sars', 'Mars', 'Cars', 'Yars', 'Tars','Trib3','Atf3','Atf5','Ddit3')
+atf4_muscle_metabolic <- c('Got1','Gpt2','Mthfd2','Aldh18a1','Aldh1l2','Gpx1','Mgstl1','Eifebp1', 'Eif2s2','Eif3c','Grb10', 'Nurp1','Herpudl', 'Igfbp7','Arhgef2','Vegfa','Cebpg','Atf5','Fgf21')
+
+gene.data.name <- c('tsc_isoforms','glycogen_genes','pp1_regulatory_subunits','interleukins','srebp','linoleate_metabolism','myokines','tg_synthesis','lipolysis','oglnac_metabolisn','ribosomes','ppar_isoforms','b_oxidation','ppard_targets','myosin_heavy_chain','myosin_heavy_chain_main','slow_twitch_genes','fast_twitch_genes','myotubular_degradation','muscle_differentiation','autophagy','mitochondrial_genes','fatty_acid_uptake','fatty_acid_uptake_no_FABP3','fabp_cd36','cb_receptors','oxidative_markers_rosenbaum','serca','uncouplers','Jnk_related_genes','aa_transporters','aa_transporters_up','jnk_activators','hippo','guridi_genes','guridi_genes_2','FGF21_related','MitochondrialCalcium_genes','mitofusins','ca_reuptake','er_stress','irx_genes','ketosis_muscle','ketone_body_generation','ketosis_receptors','pfk_2_isoforms','er_stress_select','gdf_isoforms','tgf_beta_superfamily','fiber_markers','sln','bcaa','glo','atf4_related','atf4_muscle','atf4_muscle_metabolic')
+
+for (name in gene.data.name){
+  #name <- as.name(name) #convert string to variable name
+  gene.data <- rpkm.long.cal[rpkm.long.cal$external_gene_name%in%eval(as.name(name)),]
+  gene.data$external_gene_name <- factor(gene.data$external_gene_name, levels=eval(as.name(name)))
+  
+  ggplot(gene.data, aes(x=external_gene_name, y=mean_Expression, fill=Genotype))+ 
+    #this line together with show_guide=F and the element_rect=black get rid of the slash in legend box
+    geom_bar(stat="identity", width=.8, position=position_dodge(width=.8)) +
+    geom_bar(stat="identity",width=.8, position=position_dodge(width=.8), col="black", show_guide=F) +
+    geom_errorbar(position=position_dodge(width=.8), aes(ymin=mean_Expression-se, ymax=mean_Expression+se), width=.2)+
+    theme_bw()+theme(axis.text.x=element_text(angle=90))+xlab("")+ ylab("mRNA Expression (RPKM)") +
+    theme(panel.grid.minor = element_blank()) + theme(panel.grid.major = element_blank()) + 
+    theme(panel.border=element_blank())+ 
+    theme(axis.line = element_line(color = 'black')) +
+    scale_fill_grey(start = 0.3, end = .9, guide=guide_legend()) +
+    #guides(fill = guide_legend(keywidth = .5, keyheight = .5)) +
+    theme(text = element_text(size=20), axis.text.x = element_text(angle=70,hjust=.5,vjust=.5)) +
+    theme(legend.position=c(.25,.90), legend.title=element_blank(), legend.key=element_rect(color="black"))   + ggtitle(name)
+    
+  ggsave(filename=paste('figure/', name, '-barplot.pdf',sep=""))
+}
+
+```
+
+
+The data used is in the file **`r filename`**.  This file was most recently processed on ```r date()```.
+
+
+Session Information
+---------------------
+
+```{r session-information}
+sessionInfo()
+```

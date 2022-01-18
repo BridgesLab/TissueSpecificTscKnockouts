@@ -1,0 +1,273 @@
+---
+title: "Milk Fat on PND16 from Virgin Mice First Parity and from Mice with Parity 6"
+author: "Noura El Habbal"
+date: "2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Raw Data
+
+The raw data file, atsc R Data, shows the cage number, maternal genotype, pup weight (g), pup eartag number, pup sex, birth date, number of deaths and the death date, pup genotype, and the parity number.
+
+```{r datafiles}
+milkfat.file <- 'Milk Fat Raw Data PND16 from First Parity and 6th Parity Mice.csv'
+```
+
+```{r data-input}
+library(readr) #loads the readr package
+#load sample mapping file
+milkfat.data <- read_csv(milkfat.file, na=c("N/A",NA))  %>% mutate(Genotype = relevel(as.factor(Genotype), ref="WT")) #manually defining NA values as N/A from input file
+```
+
+# Analysis
+
+Describe the analysis as you intersperse code chunks
+
+```{r milkfatcontent-persample_genotype_calculations_from_raw_dataforallrunsamples}
+
+#Raw data converted from inches to mm, dilution factor conversion, total volume and fat percentage calculated
+milk.fat.dataconvertedtomm <- 
+  milkfat.data %>%
+   mutate(Fat= `Fat(inhes)` * 25.4) %>%
+  mutate(Water= (`Aqueous_Main(inches)`+ `Aqueous(inches)`) *25.4) %>%
+  mutate(WaterConverted= Water / 4) %>% #since the samples were diluted 4X, this water fraction is divided by 4 to get the inital volume prior to dilution
+  mutate(TotalVolume= WaterConverted + Fat) %>%
+  mutate(FatPercentage= (Fat / TotalVolume) *100)
+
+
+#averaging milk fat per sample for Batch 1 only (mainly done by Gregg lab, some re-runs done by Noura)
+milk.fat.averagebatch1 <- milk.fat.dataconvertedtomm %>%
+   group_by(Genotype, ID, Batch) %>% # grouping by ID and genotype
+              filter(Batch == '1') %>%
+  mutate(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage)) %>%
+  summarize(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage))
+kable(milk.fat.averagebatch1,caption = "Average Milk Fat Content per Sample from Batch 1") #to generate the table here
+
+#averaging milk fat per genotype for Batch 1 only (mainly done by Gregg lab, some re-runs done by Noura)
+milk.fat.average_pergenotype_batch1 <- milk.fat.dataconvertedtomm %>%
+   group_by(Genotype, Batch) %>% # grouping by ID and genotype
+              filter(Batch == '1') %>%
+  mutate(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage)) %>%
+  summarize(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage))
+kable(milk.fat.average_pergenotype_batch1,caption = "Average Milk Fat Content per Sample from Batch 1") #to generate the table here
+#EFFECT SIZE for milk.fat.average_pergenotype_batch1 is (17.8-11.4)/11.4 *100 = 56% effect size (fat change in KO compared to WT)
+#p-value (using milk.fat.averagebatch1 dataset) is 0.048
+
+#averaging samples for Batch 2 only that was done by Noura
+milk.fat.averagebatch2 <- milk.fat.dataconvertedtomm %>%
+   group_by(Genotype, ID, Batch) %>% # grouping by ID and genotype
+              filter(Batch == '2') %>%
+  mutate(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage)) %>%
+  summarize(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage))
+kable(milk.fat.averagebatch2,caption = "Average Milk Fat Content per Sample from Batch 2") #to generate the table here
+
+#averaging per genotype for Batch 2 only that was done by Noura
+milk.fat.average_pergenotype_batch2 <- milk.fat.dataconvertedtomm %>%
+   group_by(Genotype, Batch) %>% # grouping by ID and genotype
+              filter(Batch == '2') %>%
+  mutate(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage)) %>%
+  summarize(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage))
+kable(milk.fat.average_pergenotype_batch2,caption = "Average Milk Fat Content per Sample from Batch 2") #to generate the table here
+#EFFECT SIZE for milk.fat.average_pergenotype_batch2 is (17.7-15.5)/15.5 * 100 = 14.19%
+#p-value (using milk.fat.averagebat2 dataset) is 0.271
+
+#averaging by sample from both batches
+milk.fat.averagepersample <- milk.fat.dataconvertedtomm %>%
+   group_by(Genotype, ID, Batch) %>% # grouping by ID and genotype
+  mutate(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage)) %>%
+  summarize(Average.Fat.Percent = mean(FatPercentage, na.rm=T),
+        SE.Average.Fat.Percent = se(FatPercentage))
+kable(milk.fat.averagepersample,caption = "Average Milk Fat Content per Sample from Batches 1 and 2") #to generate the table here
+
+#averaging by genotype from both batches
+milk.fat.average_pergenotype <- milk.fat.averagepersample %>%
+group_by (Genotype) %>%
+   mutate(Average.Fat = mean(Average.Fat.Percent, na.rm=T),
+        SE.Average.Fat= se(Average.Fat.Percent)) %>%
+   summarize(Average.Fat = mean(Average.Fat.Percent, na.rm=T),
+        SE.Average.Fat = se(Average.Fat.Percent))
+kable(milk.fat.average_pergenotype, caption= "Average Milk Fat Percentage per Genotype from Batches 1 and 2")
+#EFFECT SIZE for milk.fat.average_pergenotype is (18.1-13.5)/13.5 *100 = 34.07% 
+#p-value (using milk.fat.averagepersample dataset) is 0.024
+```
+
+```{r milkfat_graphsfromallsamples}
+
+#graph for milk fat percentage per sample from batch 1
+library(ggplot2)
+  pd <- position_dodge(1) # move them .05 to the left and right
+  ggplot(milk.fat.averagebatch1,
+       aes(x=as.factor(ID),
+           y= Average.Fat.Percent,
+           fill=Genotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
+  labs(x="Maternal ID",
+       y="Average Fat Percentage %",
+       title="Average Milk Fat Percentage per Maternal Sample from Batch 1 Only") +
+  expand_limits(y=0, x=0) +
+  theme_classic() 
+
+#graph per genotype for batch 1 
+    pd <- position_dodge(1) # move them .05 to the left and right
+  ggplot(milk.fat.average_pergenotype_batch1,
+       aes(x=Genotype,
+           y= Average.Fat.Percent,
+           fill=Genotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
+  labs(x="Genotype",
+       y="Average Fat Percentage %",
+       title="Average Milk Fat Percentage per Genotype from Batch 1 Only") +
+  expand_limits(y=0, x=0) +
+  theme_classic() 
+  
+#graph for milk fat percentage from batch 2
+    pd <- position_dodge(1) # move them .05 to the left and right
+  ggplot(milk.fat.averagebatch2,
+       aes(x=as.factor(ID),
+           y= Average.Fat.Percent,
+           fill=Genotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
+  labs(x="Maternal ID",
+       y="Average Fat Percentage %",
+       title="Average Milk Fat Percentage per Maternal Sample from Batch 2 Only") +
+  expand_limits(y=0, x=0) +
+  theme_classic() 
+  
+#graph per genotype for batch 2 
+    pd <- position_dodge(1) # move them .05 to the left and right
+  ggplot(milk.fat.average_pergenotype_batch2,
+       aes(x=Genotype,
+           y= Average.Fat.Percent,
+           fill=Genotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
+  labs(x="Genotype",
+       y="Average Fat Percentage %",
+       title="Average Milk Fat Percentage per Genotype") + #from Batch 2 Only
+  expand_limits(y=0, x=0) +
+  theme_classic() 
+
+#bar graph showing average milk fat % per sample 
+library(ggplot2)
+  pd <- position_dodge(1) # move them .05 to the left and right
+  ggplot(milk.fat.averagepersample,
+       aes(x=as.factor(ID),
+           y= Average.Fat.Percent,
+           fill=Genotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes(ymin = Average.Fat.Percent - SE.Average.Fat.Percent,
+           ymax = Average.Fat.Percent + SE.Average.Fat.Percent)) +
+  labs(x="Maternal ID",
+       y="Average Fat Percentage %",
+       title="Average Milk Fat Percentage per Maternal Sample") +
+  expand_limits(y=0, x=0) +
+  theme_classic()
+  
+#graph per genotype 
+    pd <- position_dodge(1) # move them .05 to the left and right
+  ggplot(milk.fat.average_pergenotype,
+       aes(x=Genotype,
+           y= Average.Fat,
+           fill=Genotype))   + 
+  geom_point() +
+      geom_bar(stat='identity') +
+  geom_errorbar(width=0.5, aes(    ymin = Average.Fat - SE.Average.Fat,
+           ymax = Average.Fat + SE.Average.Fat)) +
+  #labs(x="Genotype",
+       #y="Average Fat Percentage %",
+       #title="Average Milk Fat Percentage per Genotype") +
+  expand_limits(y=0) +
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Fat (%)",
+         x="Maternal Genotype")
+```
+
+```{r milkfatcontent-t-testforallsamples_includingthosewith_high_variability}
+  t.test(Average.Fat.Percent ~ Genotype, data=milk.fat.averagepersample) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on milk production from batches 1 and 2")
+
+  t.test(Average.Fat.Percent ~ Genotype, data=milk.fat.averagebatch1) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on milk production from batch 1 only")
+  
+  t.test(Average.Fat.Percent ~ Genotype, data=milk.fat.averagebatch2) %>% tidy %>% kable(caption="Welch's t-test for effects of genotype on milk production from batch 2 only")
+  
+lm(Average.Fat.Percent ~ Genotype + as.factor(Batch), data=milk.fat.averagepersample) %>% summary
+
+```
+
+# Interpretation
+
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
+
+# References
+
+If needed, using Rmarkdown citation tools (see this link for more information: http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)

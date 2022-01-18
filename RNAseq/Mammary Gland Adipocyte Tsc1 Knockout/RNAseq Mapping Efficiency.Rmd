@@ -1,0 +1,103 @@
+---
+title: "Calculation of Mapping for RNAseq samples"
+author: "Dave Bridges"
+date: "April 2, 2021"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures-noura/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To calculate amount of mapping for each sample
+
+# Experimental Details
+
+Ran samples through salmon, this script analyzes their log files
+
+```{r data-input}
+quant.directories <- 'quants'
+sample.directories <- list.dirs(quant.directories, 
+                                recursive=F) #identify directories that contain salmon output
+sample.directories <- sample.directories[grepl('NEH', sample.directories)] #only noura samples
+log.files <- file.path(sample.directories,"aux_info/meta_info.json") #locate meta_info files for each directory
+log.files <- log.files[file.exists(log.files)]
+
+file <- log.files[1]
+library(jsonlite)
+mapping.data <- data.frame()
+mapping.data <- setNames(data.frame(matrix(ncol = 4, nrow = 0)), c("file", "processed", "mapped", "percent.mapped")) %>%
+  mutate(file=as.character(),
+         processed=as.integer(),
+         mapped=as.integer(),
+         percent.mapped=as.numeric())
+
+for (file in log.files) {
+  data <- fromJSON(file)
+  mapping.data <- add_row(mapping.data, 
+                        file=file, 
+                        processed=data$num_processed, 
+                        mapped=data$num_mapped, 
+                        percent.mapped=data$percent_mapped)
+}
+```
+
+# Summary of Mapping
+
+```{r mapping-summary}
+mapping.data %>%
+  separate(file, into=c('Folder','Sample','Aux','Meta'), sep="/") %>%
+  select(-Folder,-Aux,-Meta) %>%
+  kable(caption="Sample level mapping results")
+
+mapping.data %>%
+  select(-file) %>%
+  summarize_all(.funs=list(Average=mean,Min=min,Max=max)) %>%
+  pivot_longer(everything(), names_sep="_", names_to=c('Measure','Stat')) %>%
+  pivot_wider(everything(), names_from='Stat', values_from='value') %>%
+  kable(caption="Summary statistics for salmon mapping.")
+```
+
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
