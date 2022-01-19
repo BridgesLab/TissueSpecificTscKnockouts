@@ -1,0 +1,237 @@
+---
+title: "Evaluation of Energy Intake from BXD Datasets"
+author: "Dave Bridges"
+date: "January 19, 2022"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+The goal is to identify genetic determinants of energy expenditure and of adaptive thermogenesis from BXD mice.  To start we searched gene network for energy expenditure data, ignoring those involved in exercise physiology.
+
+* **BXD_17621** Oxygen intake over 24h on NCD at 16 w age.  Also included light/dark.  Not adjusted for lean mass.  Has mean +/- SE in mL/kg/h.  From Prinen 2014 (https://doi.org/10.1016/j.cmet.2014.04.002)
+* **BXD_17618** Oxygen intake over 24h at 16 w age on HFD?, males.  Not adjusted for lean mass.  Has mean +/- SE in mL/kg/h.  From Williams (2016).  Body weight in BXD_17559, lean mass in BXD_17573
+* **BXD_17622** Oxygen intake over 24h at 16 w age on HFD?, males.  Not adjusted for lean mass.  Has mean +/- SE in mL/kg/h.  From Williams (2016).  Body weight in BXD_17560, lean mass in BXD_17574
+
+```{r data-input}
+library(readr)
+ncd.pirinen <- read_csv("BXD_17621.csv", skip=9) %>% 
+  mutate(Diet="NCD",Age=16,Dataset="Prinen")
+
+
+williams.ncd.ee <- read_csv("BXD_17622.csv", skip=9)%>% #may be mislabelled on genenetwork, assigned based on HFD reductions
+  mutate(Diet="NCD",Age=16,Dataset="Williams")
+williams.ncd.bw <- read_csv("BXD_17559.csv" , skip=9)%>% 
+  mutate(Diet="NCD",Age=16,Dataset="Williams")
+williams.ncd.lm <- read_csv("BXD_17573.csv" , skip=9)%>% 
+  mutate(Diet="NCD",Age=16,Dataset="Williams")
+
+williams.ncd <- full_join(williams.ncd.ee,williams.ncd.bw, suffix=c('_ee','_bw'), by=c("Name","Dataset","Diet")) %>%
+  full_join(williams.ncd.lm) %>%
+  mutate(Value_lm = Value,
+         SE_lm = SE)
+
+williams.hfd.ee <- read_csv("BXD_17618.csv" , skip=9)%>% #may be mislabelled on genenetwork
+  mutate(Diet="HFD",Age=16,Dataset="Williams")
+williams.hfd.bw <- read_csv("BXD_17560.csv", skip=9)%>% 
+  mutate(Diet="HFD",Age=16,Dataset="Williams")
+williams.hfd.lm <- read_csv("BXD_17574.csv", skip=9)%>% 
+  mutate(Diet="HFD",Age=16,Dataset="Williams")
+
+williams.hfd <- full_join(williams.hfd.ee,williams.hfd.bw, suffix=c('_ee','_bw'), by=c("Name","Dataset","Diet")) %>%
+  full_join(williams.hfd.lm) %>%
+  mutate(Value_lm = Value,
+         SE_lm = SE)
+
+data <- bind_rows(#ncd.pirinen,
+                  williams.ncd,
+                  williams.hfd) %>% # in mL/kg/h
+  mutate(VO2_g_min = Value_ee/1000) %>% #in mL/g/h
+  mutate(VO2_min = VO2_g_min*Value_bw/60) %>% # in mL/min #this seems reasonable
+  mutate(MR_KJ_d = VO2_min * 60 * 24 / 1000 * 4.84 * 4.184,
+         MR_KJ_d_SE = SE_ee/1000*Value_bw/60* 60 * 24 / 1000 * 4.84 * 4.184) %>% # 60min/h x 24h/day / 1000 mL/L x 4.84 kcal/L x 4.184 kJ/kcal
+  mutate(MR_W = MR_KJ_d * 0.0115740741,
+         MR_W_SE = MR_KJ_d_SE* 0.0115740741) %>% # in Watts 
+  mutate(Diet = relevel(factor(Diet), ref="NCD"))
+
+```
+
+These data can be found in `r getwd()`.  This script was most recently updated on `r date()`.
+
+# Analysis
+
+## Comparason of Datasets
+
+```{r dataset-comparason}
+library(ggplot2)
+data %>%
+  filter(!(is.na(MR_W))) %>% # complete cases only
+  ggplot(aes(y=MR_W,
+         x=Name,
+         ymin=MR_W-MR_W_SE,
+         ymax=MR_W-MR_W_SE,
+         fill=Diet)) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="Energy Expenditure (W)",
+       x="") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  
+#lm(Value~Name+Diet,data=data) %>% summary
+```
+
+## Adjusting for Lean Mass
+
+```{r lean-mass-adjusting}
+library(ggrepel)
+ggplot(data, aes(y=MR_W,
+           x=Value_lm)) +
+  geom_point(aes(col=Diet)) +
+  geom_smooth(method="lm") +
+  geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27),
+                   aes(label=Name,
+                       col=Diet)) +
+  labs(y="Energy Expenditure (W)",
+       x="Lean Mass (g)")
+
+
+ggplot(data, aes(y=MR_W,
+           x=Value_lm,
+           col=Diet)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  #geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27),aes(label=Name)) +
+  labs(y="Energy Expenditure (W)",
+       x="Lean Mass (g)")
+
+
+#chow only
+ggplot(data %>% filter(Diet=="NCD"), aes(y=MR_W,
+           x=Value_lm)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  geom_label_repel(data = subset(data %>% filter(Diet=="NCD"),
+                                 (MR_W < 0.48&Value_lm>24.5)|MR_W>0.60&Value_lm<27),
+                   aes(label=Name)) +
+  guides(fill = guide_legend(override.aes = aes(color = NA))) +
+  labs(y="Energy Expenditure (W)",
+       x="Lean Mass (g)")
+
+lm.model.1 <- lm(MR_W~Value_lm,data=data %>% filter(Diet=="NCD")) #model built on only NCD
+lm.model.2 <- lm(MR_W~Value_lm+Diet,data=data) #model built on NCD and AT
+library(broom)
+aov(lm.model.1) %>% tidy %>% kable(caption="Model 1 summary for adjusting for lean mass")
+summary(lm.model.1) %>% tidy %>% kable(caption="Model 1 coefficients for adjusting for lean mass")
+
+aov(lm.model.2) %>% tidy %>% kable(caption="Model 2 summary for adjusting for lean mass")
+summary(lm.model.2) %>% tidy %>% kable(caption="Model 2 coefficients for adjusting for lean mass")
+
+data <- data %>%
+  mutate(MR_predicted = predict(lm.model.1, newdata = list(Value_lm=Value_lm))) %>%
+  mutate(MR_resid = MR_W-MR_predicted) 
+
+data %>%
+  filter(!is.na(MR_W)) %>% # complete cases only
+  ggplot(aes(y=MR_resid,
+         x=reorder(Name,-MR_W),
+         ymin=MR_resid-MR_W_SE,
+         ymax=MR_resid-MR_W_SE,
+         fill=Diet)) +
+  #geom_label_repel(label=Name) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="EE Observed - EE Predicted (W)") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  
+```
+
+based on this modelling after adjusting for lean mass, HFD increases thermogenesis by `(coef(lm.model.2)["(Intercept)"]-coef(lm.model.2)["DietHFD"])/coef(lm.model.2)["(Intercept)"]*100`%.
+
+## Adaptive Thermogenesis
+
+Defined as lean mass adjusted VO2 from HFD - NCD
+
+```{r adaptive-thermogenesis}
+data.wide <-
+  data %>%
+  select(Value_lm,Value_bw, MR_W, MR_W_SE, Name,Diet) %>%
+  pivot_wider(names_from=Diet,id_cols=Name,values_from=c(Value_lm,Value_bw, MR_W,MR_W_SE)) %>%
+  mutate(AT = MR_W_HFD - MR_W_NCD,
+         AT_SE = sqrt((MR_W_SE_NCD/MR_W_NCD)^2+(MR_W_SE_HFD/MR_W_HFD)^2)*AT,
+         Wt.Gain = Value_bw_HFD-Value_bw_NCD)
+
+data.wide %>%
+  filter(!is.na(AT)) %>% # complete cases only
+  ggplot(aes(y=AT,
+         x=reorder(Name,-AT),
+         ymin=AT-AT_SE,
+         ymax=AT+AT_SE)) +
+  geom_bar(stat='identity',position='dodge') +
+    geom_errorbar() +
+  labs(y="HFD-Induced Adaptive Thermogenesis (W)",
+       x="") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  
+```
+
+### Thermogenesis on NCD as a Predictor of Weight Gain
+
+```{r thermogenesis-weight}
+data.wide %>%
+  ggplot(aes(y=Wt.Gain,
+             x=MR_W_NCD)) +
+  labs(y="Weight Gained on HFD",
+       x="Energy Expenditure on NCD (W)") +
+  geom_point() +
+  geom_smooth(method="lm")
+
+lm(Wt.Gain~MR_W_NCD, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain")
+```
+
+### Adaptive Thermogenesis vs Weight Gain
+
+```{r adaptive-thermogenesis-weight}
+data.wide %>%
+  ggplot(aes(y=Wt.Gain,
+             x=AT)) +
+  labs(y="Weight Gained on HFD",
+       x="Adaptive Thermogenesis (W)") +
+  geom_point() +
+  geom_smooth(method="lm")
+
+lm(Wt.Gain~AT, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain")
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```

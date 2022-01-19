@@ -1,0 +1,691 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={Evaluation of Energy Intake from BXD Datasets},
+            pdfauthor={Dave Bridges},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\title{Evaluation of Energy Intake from BXD Datasets}
+\author{Dave Bridges}
+\date{January 19, 2022}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+The goal is to identify genetic determinants of energy expenditure and
+of adaptive thermogenesis from BXD mice. To start we searched gene
+network for energy expenditure data, ignoring those involved in exercise
+physiology.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{BXD\_17621} Oxygen intake over 24h on NCD at 16 w age. Also
+  included light/dark. Not adjusted for lean mass. Has mean +/- SE in
+  mL/kg/h. From Prinen 2014
+  (\url{https://doi.org/10.1016/j.cmet.2014.04.002})
+\item
+  \textbf{BXD\_17618} Oxygen intake over 24h at 16 w age on HFD?, males.
+  Not adjusted for lean mass. Has mean +/- SE in mL/kg/h. From Williams
+  (2016). Body weight in BXD\_17559, lean mass in BXD\_17573
+\item
+  \textbf{BXD\_17622} Oxygen intake over 24h at 16 w age on HFD?, males.
+  Not adjusted for lean mass. Has mean +/- SE in mL/kg/h. From Williams
+  (2016). Body weight in BXD\_17560, lean mass in BXD\_17574
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(readr)}
+\NormalTok{ncd.pirinen <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17621.csv"}\NormalTok{, }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Prinen"}\NormalTok{)}
+
+
+\NormalTok{williams.ncd.ee <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17622.csv"}\NormalTok{, }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }\CommentTok{#may be mislabelled on genenetwork, assigned based on HFD reductions}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
+\NormalTok{williams.ncd.bw <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17559.csv"}\NormalTok{ , }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
+\NormalTok{williams.ncd.lm <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17573.csv"}\NormalTok{ , }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
+
+\NormalTok{williams.ncd <-}\StringTok{ }\KeywordTok{full_join}\NormalTok{(williams.ncd.ee,williams.ncd.bw, }\DataTypeTok{suffix=}\KeywordTok{c}\NormalTok{(}\StringTok{'_ee'}\NormalTok{,}\StringTok{'_bw'}\NormalTok{), }\DataTypeTok{by=}\KeywordTok{c}\NormalTok{(}\StringTok{"Name"}\NormalTok{,}\StringTok{"Dataset"}\NormalTok{,}\StringTok{"Diet"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{full_join}\NormalTok{(williams.ncd.lm) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Value_lm =}\NormalTok{ Value,}
+         \DataTypeTok{SE_lm =}\NormalTok{ SE)}
+
+\NormalTok{williams.hfd.ee <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17618.csv"}\NormalTok{ , }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }\CommentTok{#may be mislabelled on genenetwork}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"HFD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
+\NormalTok{williams.hfd.bw <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17560.csv"}\NormalTok{, }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"HFD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
+\NormalTok{williams.hfd.lm <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17574.csv"}\NormalTok{, }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"HFD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
+
+\NormalTok{williams.hfd <-}\StringTok{ }\KeywordTok{full_join}\NormalTok{(williams.hfd.ee,williams.hfd.bw, }\DataTypeTok{suffix=}\KeywordTok{c}\NormalTok{(}\StringTok{'_ee'}\NormalTok{,}\StringTok{'_bw'}\NormalTok{), }\DataTypeTok{by=}\KeywordTok{c}\NormalTok{(}\StringTok{"Name"}\NormalTok{,}\StringTok{"Dataset"}\NormalTok{,}\StringTok{"Diet"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{full_join}\NormalTok{(williams.hfd.lm) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Value_lm =}\NormalTok{ Value,}
+         \DataTypeTok{SE_lm =}\NormalTok{ SE)}
+
+\NormalTok{data <-}\StringTok{ }\KeywordTok{bind_rows}\NormalTok{(}\CommentTok{#ncd.pirinen,}
+\NormalTok{                  williams.ncd,}
+\NormalTok{                  williams.hfd) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# in mL/kg/h}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{VO2_g_min =}\NormalTok{ Value_ee}\OperatorTok{/}\DecValTok{1000}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{#in mL/g/h}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{VO2_min =}\NormalTok{ VO2_g_min}\OperatorTok{*}\NormalTok{Value_bw}\OperatorTok{/}\DecValTok{60}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# in mL/min #this seems reasonable}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_KJ_d =}\NormalTok{ VO2_min }\OperatorTok{*}\StringTok{ }\DecValTok{60} \OperatorTok{*}\StringTok{ }\DecValTok{24} \OperatorTok{/}\StringTok{ }\DecValTok{1000} \OperatorTok{*}\StringTok{ }\FloatTok{4.84} \OperatorTok{*}\StringTok{ }\FloatTok{4.184}\NormalTok{,}
+         \DataTypeTok{MR_KJ_d_SE =}\NormalTok{ SE_ee}\OperatorTok{/}\DecValTok{1000}\OperatorTok{*}\NormalTok{Value_bw}\OperatorTok{/}\DecValTok{60}\OperatorTok{*}\StringTok{ }\DecValTok{60} \OperatorTok{*}\StringTok{ }\DecValTok{24} \OperatorTok{/}\StringTok{ }\DecValTok{1000} \OperatorTok{*}\StringTok{ }\FloatTok{4.84} \OperatorTok{*}\StringTok{ }\FloatTok{4.184}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# 60min/h x 24h/day / 1000 mL/L x 4.84 kcal/L x 4.184 kJ/kcal}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_W =}\NormalTok{ MR_KJ_d }\OperatorTok{*}\StringTok{ }\FloatTok{0.0115740741}\NormalTok{,}
+         \DataTypeTok{MR_W_SE =}\NormalTok{ MR_KJ_d_SE}\OperatorTok{*}\StringTok{ }\FloatTok{0.0115740741}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# in Watts }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet =} \KeywordTok{relevel}\NormalTok{(}\KeywordTok{factor}\NormalTok{(Diet), }\DataTypeTok{ref=}\StringTok{"NCD"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+These data can be found in
+/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Other
+Published Data/Systems Biology. This script was most recently updated on
+Wed Jan 19 13:30:30 2022.
+
+\hypertarget{analysis}{%
+\section{Analysis}\label{analysis}}
+
+\hypertarget{comparason-of-datasets}{%
+\subsection{Comparason of Datasets}\label{comparason-of-datasets}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(MR_W))) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# complete cases only}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{MR_W,}
+         \DataTypeTok{x=}\NormalTok{Name,}
+         \DataTypeTok{ymin=}\NormalTok{MR_W}\OperatorTok{-}\NormalTok{MR_W_SE,}
+         \DataTypeTok{ymax=}\NormalTok{MR_W}\OperatorTok{-}\NormalTok{MR_W_SE,}
+         \DataTypeTok{fill=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{,}\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Energy Expenditure (W)"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{hjust=}\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/dataset-comparason-1.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#lm(Value~Name+Diet,data=data) %>% summary}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{adjusting-for-lean-mass}{%
+\subsection{Adjusting for Lean Mass}\label{adjusting-for-lean-mass}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggrepel)}
+\KeywordTok{ggplot}\NormalTok{(data, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{MR_W,}
+           \DataTypeTok{x=}\NormalTok{Value_lm)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{col=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_label_repel}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{subset}\NormalTok{(data, (MR_W }\OperatorTok{<}\StringTok{ }\FloatTok{0.45}\OperatorTok{&}\NormalTok{Value_lm}\OperatorTok{>}\FloatTok{25.5}\NormalTok{)}\OperatorTok{|}\NormalTok{MR_W}\OperatorTok{>}\FloatTok{0.65}\OperatorTok{&}\NormalTok{Value_lm}\OperatorTok{<}\DecValTok{27}\NormalTok{),}
+                   \KeywordTok{aes}\NormalTok{(}\DataTypeTok{label=}\NormalTok{Name,}
+                       \DataTypeTok{col=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Energy Expenditure (W)"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Lean Mass (g)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/lean-mass-adjusting-1.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(data, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{MR_W,}
+           \DataTypeTok{x=}\NormalTok{Value_lm,}
+           \DataTypeTok{col=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\CommentTok{#geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27),aes(label=Name)) +}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Energy Expenditure (W)"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Lean Mass (g)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/lean-mass-adjusting-2.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#chow only}
+\KeywordTok{ggplot}\NormalTok{(data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet}\OperatorTok{==}\StringTok{"NCD"}\NormalTok{), }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{MR_W,}
+           \DataTypeTok{x=}\NormalTok{Value_lm)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_label_repel}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{subset}\NormalTok{(data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet}\OperatorTok{==}\StringTok{"NCD"}\NormalTok{),}
+\NormalTok{                                 (MR_W }\OperatorTok{<}\StringTok{ }\FloatTok{0.48}\OperatorTok{&}\NormalTok{Value_lm}\OperatorTok{>}\FloatTok{24.5}\NormalTok{)}\OperatorTok{|}\NormalTok{MR_W}\OperatorTok{>}\FloatTok{0.60}\OperatorTok{&}\NormalTok{Value_lm}\OperatorTok{<}\DecValTok{27}\NormalTok{),}
+                   \KeywordTok{aes}\NormalTok{(}\DataTypeTok{label=}\NormalTok{Name)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{guides}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{guide_legend}\NormalTok{(}\DataTypeTok{override.aes =} \KeywordTok{aes}\NormalTok{(}\DataTypeTok{color =} \OtherTok{NA}\NormalTok{))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Energy Expenditure (W)"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Lean Mass (g)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/lean-mass-adjusting-3.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lm.model}\FloatTok{.1}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(MR_W}\OperatorTok{~}\NormalTok{Value_lm,}\DataTypeTok{data=}\NormalTok{data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet}\OperatorTok{==}\StringTok{"NCD"}\NormalTok{)) }\CommentTok{#model built on only NCD}
+\NormalTok{lm.model}\FloatTok{.2}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(MR_W}\OperatorTok{~}\NormalTok{Value_lm}\OperatorTok{+}\NormalTok{Diet,}\DataTypeTok{data=}\NormalTok{data) }\CommentTok{#model built on NCD and AT}
+\KeywordTok{library}\NormalTok{(broom)}
+\KeywordTok{aov}\NormalTok{(lm.model}\FloatTok{.1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Model 1 summary for adjusting for lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{Model 1 summary for adjusting for lean mass}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Value\_lm & 1 & 0.041 & 0.041 & 5.08 & 0.029\tabularnewline
+Residuals & 42 & 0.342 & 0.008 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(lm.model}\FloatTok{.1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Model 1 coefficients for adjusting for lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{Model 1 coefficients for adjusting for lean
+mass}\tabularnewline
+\toprule
+term & estimate & std.error & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & estimate & std.error & statistic & p.value\tabularnewline
+\midrule
+\endhead
+(Intercept) & 0.176 & 0.154 & 1.15 & 0.258\tabularnewline
+Value\_lm & 0.014 & 0.006 & 2.25 & 0.029\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{aov}\NormalTok{(lm.model}\FloatTok{.2}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Model 2 summary for adjusting for lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{Model 2 summary for adjusting for lean mass}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value\tabularnewline
+\midrule
+\endhead
+Value\_lm & 1 & 0.106 & 0.106 & 17.2 & 0\tabularnewline
+Diet & 1 & 0.095 & 0.095 & 15.5 & 0\tabularnewline
+Residuals & 84 & 0.519 & 0.006 & NA & NA\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(lm.model}\FloatTok{.2}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\NormalTok{tidy }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Model 2 coefficients for adjusting for lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{Model 2 coefficients for adjusting for lean
+mass}\tabularnewline
+\toprule
+term & estimate & std.error & statistic & p.value\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & estimate & std.error & statistic & p.value\tabularnewline
+\midrule
+\endhead
+(Intercept) & 0.194 & 0.096 & 2.02 & 0.047\tabularnewline
+Value\_lm & 0.013 & 0.004 & 3.43 & 0.001\tabularnewline
+DietHFD & 0.067 & 0.017 & 3.93 & 0.000\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_predicted =} \KeywordTok{predict}\NormalTok{(lm.model}\FloatTok{.1}\NormalTok{, }\DataTypeTok{newdata =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{Value_lm=}\NormalTok{Value_lm))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_resid =}\NormalTok{ MR_W}\OperatorTok{-}\NormalTok{MR_predicted) }
+
+\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(MR_W)) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# complete cases only}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{MR_resid,}
+         \DataTypeTok{x=}\KeywordTok{reorder}\NormalTok{(Name,}\OperatorTok{-}\NormalTok{MR_W),}
+         \DataTypeTok{ymin=}\NormalTok{MR_resid}\OperatorTok{-}\NormalTok{MR_W_SE,}
+         \DataTypeTok{ymax=}\NormalTok{MR_resid}\OperatorTok{-}\NormalTok{MR_W_SE,}
+         \DataTypeTok{fill=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\CommentTok{#geom_label_repel(label=Name) +}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{,}\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"EE Observed - EE Predicted (W)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{hjust=}\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/lean-mass-adjusting-4.png}
+
+based on this modelling after adjusting for lean mass, HFD increases
+thermogenesis by
+\texttt{(coef(lm.model.2){[}"(Intercept)"{]}-coef(lm.model.2){[}"DietHFD"{]})/coef(lm.model.2){[}"(Intercept)"{]}*100}\%.
+
+\hypertarget{adaptive-thermogenesis}{%
+\subsection{Adaptive Thermogenesis}\label{adaptive-thermogenesis}}
+
+Defined as lean mass adjusted VO2 from HFD - NCD
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.wide <-}
+\StringTok{  }\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Value_lm,Value_bw, MR_W, MR_W_SE, Name,Diet) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{pivot_wider}\NormalTok{(}\DataTypeTok{names_from=}\NormalTok{Diet,}\DataTypeTok{id_cols=}\NormalTok{Name,}\DataTypeTok{values_from=}\KeywordTok{c}\NormalTok{(Value_lm,Value_bw, MR_W,MR_W_SE)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{AT =}\NormalTok{ MR_W_HFD }\OperatorTok{-}\StringTok{ }\NormalTok{MR_W_NCD,}
+         \DataTypeTok{AT_SE =} \KeywordTok{sqrt}\NormalTok{((MR_W_SE_NCD}\OperatorTok{/}\NormalTok{MR_W_NCD)}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\NormalTok{(MR_W_SE_HFD}\OperatorTok{/}\NormalTok{MR_W_HFD)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{*}\NormalTok{AT,}
+         \DataTypeTok{Wt.Gain =}\NormalTok{ Value_bw_HFD}\OperatorTok{-}\NormalTok{Value_bw_NCD)}
+
+\NormalTok{data.wide }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(AT)) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# complete cases only}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{AT,}
+         \DataTypeTok{x=}\KeywordTok{reorder}\NormalTok{(Name,}\OperatorTok{-}\NormalTok{AT),}
+         \DataTypeTok{ymin=}\NormalTok{AT}\OperatorTok{-}\NormalTok{AT_SE,}
+         \DataTypeTok{ymax=}\NormalTok{AT}\OperatorTok{+}\NormalTok{AT_SE)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{,}\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_errorbar}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"HFD-Induced Adaptive Thermogenesis (W)"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{hjust=}\DecValTok{1}\NormalTok{))  }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/adaptive-thermogenesis-1.png}
+
+\hypertarget{thermogenesis-on-ncd-as-a-predictor-of-weight-gain}{%
+\subsubsection{Thermogenesis on NCD as a Predictor of Weight
+Gain}\label{thermogenesis-on-ncd-as-a-predictor-of-weight-gain}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.wide }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{Wt.Gain,}
+             \DataTypeTok{x=}\NormalTok{MR_W_NCD)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Energy Expenditure on NCD (W)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/thermogenesis-weight-1.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lm}\NormalTok{(Wt.Gain}\OperatorTok{~}\NormalTok{MR_W_NCD, }\DataTypeTok{data=}\NormalTok{data.wide) }\OperatorTok{%>%}\StringTok{ }\NormalTok{glance }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Summary of relationship between energy expenditure and diet-induced weight gain"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrrrrrrr@{}}
+\caption{Summary of relationship between energy expenditure and
+diet-induced weight gain}\tabularnewline
+\toprule
+\begin{minipage}[b]{0.08\columnwidth}\raggedleft
+r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedleft
+adj.r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+sigma\strut
+\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\raggedleft
+statistic\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedleft
+p.value\strut
+\end{minipage} & \begin{minipage}[b]{0.02\columnwidth}\raggedleft
+df\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+logLik\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+AIC\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+BIC\strut
+\end{minipage} & \begin{minipage}[b]{0.07\columnwidth}\raggedleft
+deviance\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedleft
+df.residual\strut
+\end{minipage} & \begin{minipage}[b]{0.04\columnwidth}\raggedleft
+nobs\strut
+\end{minipage}\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+\begin{minipage}[b]{0.08\columnwidth}\raggedleft
+r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedleft
+adj.r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+sigma\strut
+\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\raggedleft
+statistic\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedleft
+p.value\strut
+\end{minipage} & \begin{minipage}[b]{0.02\columnwidth}\raggedleft
+df\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+logLik\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+AIC\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+BIC\strut
+\end{minipage} & \begin{minipage}[b]{0.07\columnwidth}\raggedleft
+deviance\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedleft
+df.residual\strut
+\end{minipage} & \begin{minipage}[b]{0.04\columnwidth}\raggedleft
+nobs\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.08\columnwidth}\raggedleft
+0.509\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedleft
+0.498\strut
+\end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
+3.65\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedleft
+43.6\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedleft
+0\strut
+\end{minipage} & \begin{minipage}[t]{0.02\columnwidth}\raggedleft
+1\strut
+\end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
+-118\strut
+\end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
+243\strut
+\end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
+248\strut
+\end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\raggedleft
+558\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+42\strut
+\end{minipage} & \begin{minipage}[t]{0.04\columnwidth}\raggedleft
+44\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{adaptive-thermogenesis-vs-weight-gain}{%
+\subsubsection{Adaptive Thermogenesis vs Weight
+Gain}\label{adaptive-thermogenesis-vs-weight-gain}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data.wide }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{Wt.Gain,}
+             \DataTypeTok{x=}\NormalTok{AT)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Adaptive Thermogenesis (W)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/adaptive-thermogenesis-weight-1.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lm}\NormalTok{(Wt.Gain}\OperatorTok{~}\NormalTok{AT, }\DataTypeTok{data=}\NormalTok{data.wide) }\OperatorTok{%>%}\StringTok{ }\NormalTok{glance }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Summary of relationship between energy expenditure and diet-induced weight gain"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrrrrrrr@{}}
+\caption{Summary of relationship between energy expenditure and
+diet-induced weight gain}\tabularnewline
+\toprule
+\begin{minipage}[b]{0.08\columnwidth}\raggedleft
+r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedleft
+adj.r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+sigma\strut
+\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\raggedleft
+statistic\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedleft
+p.value\strut
+\end{minipage} & \begin{minipage}[b]{0.02\columnwidth}\raggedleft
+df\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+logLik\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+AIC\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+BIC\strut
+\end{minipage} & \begin{minipage}[b]{0.07\columnwidth}\raggedleft
+deviance\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedleft
+df.residual\strut
+\end{minipage} & \begin{minipage}[b]{0.04\columnwidth}\raggedleft
+nobs\strut
+\end{minipage}\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+\begin{minipage}[b]{0.08\columnwidth}\raggedleft
+r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedleft
+adj.r.squared\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+sigma\strut
+\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\raggedleft
+statistic\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedleft
+p.value\strut
+\end{minipage} & \begin{minipage}[b]{0.02\columnwidth}\raggedleft
+df\strut
+\end{minipage} & \begin{minipage}[b]{0.05\columnwidth}\raggedleft
+logLik\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+AIC\strut
+\end{minipage} & \begin{minipage}[b]{0.03\columnwidth}\raggedleft
+BIC\strut
+\end{minipage} & \begin{minipage}[b]{0.07\columnwidth}\raggedleft
+deviance\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedleft
+df.residual\strut
+\end{minipage} & \begin{minipage}[b]{0.04\columnwidth}\raggedleft
+nobs\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.08\columnwidth}\raggedleft
+0.908\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedleft
+0.906\strut
+\end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
+1.58\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedleft
+414\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedleft
+0\strut
+\end{minipage} & \begin{minipage}[t]{0.02\columnwidth}\raggedleft
+1\strut
+\end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
+-81.5\strut
+\end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
+169\strut
+\end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
+174\strut
+\end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\raggedleft
+105\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
+42\strut
+\end{minipage} & \begin{minipage}[t]{0.04\columnwidth}\raggedleft
+44\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{session-information}{%
+\section{Session Information}\label{session-information}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{sessionInfo}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## R version 4.0.2 (2020-06-22)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS  10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] broom_0.7.11  ggrepel_0.9.1 ggplot2_3.3.5 readr_2.1.1   dplyr_1.0.7  
+## [6] tidyr_1.1.4   knitr_1.37   
+## 
+## loaded via a namespace (and not attached):
+##  [1] tidyselect_1.1.1 xfun_0.29        purrr_0.3.4      splines_4.0.2   
+##  [5] lattice_0.20-45  colorspace_2.0-2 vctrs_0.3.8      generics_0.1.1  
+##  [9] htmltools_0.5.2  yaml_2.2.1       mgcv_1.8-38      utf8_1.2.2      
+## [13] rlang_0.4.12     pillar_1.6.4     glue_1.6.0       withr_2.4.3     
+## [17] DBI_1.1.2        bit64_4.0.5      lifecycle_1.0.1  stringr_1.4.0   
+## [21] munsell_0.5.0    gtable_0.3.0     evaluate_0.14    labeling_0.4.2  
+## [25] tzdb_0.2.0       fastmap_1.1.0    parallel_4.0.2   fansi_1.0.0     
+## [29] highr_0.9        Rcpp_1.0.7       backports_1.4.1  scales_1.1.1    
+## [33] vroom_1.5.7      magick_2.7.3     farver_2.1.0     bit_4.0.4       
+## [37] hms_1.1.1        digest_0.6.29    stringi_1.7.6    grid_4.0.2      
+## [41] cli_3.1.0        tools_4.0.2      magrittr_2.0.1   tibble_3.1.6    
+## [45] crayon_1.4.2     pkgconfig_2.0.3  ellipsis_0.3.2   Matrix_1.4-0    
+## [49] assertthat_0.2.1 rmarkdown_2.11   rstudioapi_0.13  R6_2.5.1        
+## [53] nlme_3.1-153     compiler_4.0.2
+\end{verbatim}
+
+\end{document}
