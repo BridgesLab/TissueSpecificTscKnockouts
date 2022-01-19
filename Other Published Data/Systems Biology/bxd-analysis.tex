@@ -147,7 +147,7 @@ physiology.
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Prinen"}\NormalTok{)}
 
 
-\NormalTok{williams.ncd.ee <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17622.csv"}\NormalTok{, }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }\CommentTok{#may be mislabelled on genenetwork, assigned based on HFD reductions}
+\NormalTok{williams.ncd.ee <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17618.csv"}\NormalTok{, }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }\CommentTok{#may be mislabelled on genenetwork, assigned based on HFD reductions}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
 \NormalTok{williams.ncd.bw <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17559.csv"}\NormalTok{ , }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
@@ -159,7 +159,7 @@ physiology.
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Value_lm =}\NormalTok{ Value,}
          \DataTypeTok{SE_lm =}\NormalTok{ SE)}
 
-\NormalTok{williams.hfd.ee <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17618.csv"}\NormalTok{ , }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }\CommentTok{#may be mislabelled on genenetwork}
+\NormalTok{williams.hfd.ee <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17622.csv"}\NormalTok{ , }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }\CommentTok{#may be mislabelled on genenetwork}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"HFD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
 \NormalTok{williams.hfd.bw <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"BXD_17560.csv"}\NormalTok{, }\DataTypeTok{skip=}\DecValTok{9}\NormalTok{)}\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"HFD"}\NormalTok{,}\DataTypeTok{Age=}\DecValTok{16}\NormalTok{,}\DataTypeTok{Dataset=}\StringTok{"Williams"}\NormalTok{)}
@@ -187,7 +187,7 @@ physiology.
 These data can be found in
 /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Other
 Published Data/Systems Biology. This script was most recently updated on
-Wed Jan 19 13:30:30 2022.
+Wed Jan 19 13:49:33 2022.
 
 \hypertarget{analysis}{%
 \section{Analysis}\label{analysis}}
@@ -292,8 +292,8 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Value\_lm & 1 & 0.041 & 0.041 & 5.08 & 0.029\tabularnewline
-Residuals & 42 & 0.342 & 0.008 & NA & NA\tabularnewline
+Value\_lm & 1 & 0.040 & 0.040 & 5.96 & 0.019\tabularnewline
+Residuals & 42 & 0.279 & 0.007 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -314,8 +314,8 @@ term & estimate & std.error & statistic & p.value\tabularnewline
 term & estimate & std.error & statistic & p.value\tabularnewline
 \midrule
 \endhead
-(Intercept) & 0.176 & 0.154 & 1.15 & 0.258\tabularnewline
-Value\_lm & 0.014 & 0.006 & 2.25 & 0.029\tabularnewline
+(Intercept) & 0.136 & 0.139 & 0.981 & 0.332\tabularnewline
+Value\_lm & 0.013 & 0.006 & 2.442 & 0.019\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -335,9 +335,9 @@ term & df & sumsq & meansq & statistic & p.value\tabularnewline
 term & df & sumsq & meansq & statistic & p.value\tabularnewline
 \midrule
 \endhead
-Value\_lm & 1 & 0.106 & 0.106 & 17.2 & 0\tabularnewline
-Diet & 1 & 0.095 & 0.095 & 15.5 & 0\tabularnewline
-Residuals & 84 & 0.519 & 0.006 & NA & NA\tabularnewline
+Value\_lm & 1 & 0.159 & 0.159 & 27.2 & 0\tabularnewline
+Diet & 1 & 0.639 & 0.639 & 109.5 & 0\tabularnewline
+Residuals & 84 & 0.490 & 0.006 & NA & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -358,9 +358,9 @@ term & estimate & std.error & statistic & p.value\tabularnewline
 term & estimate & std.error & statistic & p.value\tabularnewline
 \midrule
 \endhead
-(Intercept) & 0.194 & 0.096 & 2.02 & 0.047\tabularnewline
-Value\_lm & 0.013 & 0.004 & 3.43 & 0.001\tabularnewline
-DietHFD & 0.067 & 0.017 & 3.93 & 0.000\tabularnewline
+(Intercept) & 0.160 & 0.094 & 1.71 & 0.091\tabularnewline
+Value\_lm & 0.012 & 0.004 & 3.38 & 0.001\tabularnewline
+DietHFD & 0.174 & 0.017 & 10.47 & 0.000\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -505,25 +505,25 @@ nobs\strut
 \midrule
 \endhead
 \begin{minipage}[t]{0.08\columnwidth}\raggedleft
-0.509\strut
+0.474\strut
 \end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedleft
-0.498\strut
+0.462\strut
 \end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
-3.65\strut
+3.77\strut
 \end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedleft
-43.6\strut
+37.9\strut
 \end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedleft
 0\strut
 \end{minipage} & \begin{minipage}[t]{0.02\columnwidth}\raggedleft
 1\strut
 \end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
--118\strut
+-120\strut
 \end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
-243\strut
+246\strut
 \end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
-248\strut
+251\strut
 \end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\raggedleft
-558\strut
+598\strut
 \end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
 42\strut
 \end{minipage} & \begin{minipage}[t]{0.04\columnwidth}\raggedleft
@@ -616,25 +616,25 @@ nobs\strut
 \midrule
 \endhead
 \begin{minipage}[t]{0.08\columnwidth}\raggedleft
-0.908\strut
+0.801\strut
 \end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedleft
-0.906\strut
+0.796\strut
 \end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
-1.58\strut
+2.32\strut
 \end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedleft
-414\strut
+169\strut
 \end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedleft
 0\strut
 \end{minipage} & \begin{minipage}[t]{0.02\columnwidth}\raggedleft
 1\strut
 \end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
--81.5\strut
+-98.5\strut
 \end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
-169\strut
+203\strut
 \end{minipage} & \begin{minipage}[t]{0.03\columnwidth}\raggedleft
-174\strut
+208\strut
 \end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\raggedleft
-105\strut
+226\strut
 \end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedleft
 42\strut
 \end{minipage} & \begin{minipage}[t]{0.04\columnwidth}\raggedleft

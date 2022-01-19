@@ -50,7 +50,7 @@ ncd.pirinen <- read_csv("BXD_17621.csv", skip=9) %>%
   mutate(Diet="NCD",Age=16,Dataset="Prinen")
 
 
-williams.ncd.ee <- read_csv("BXD_17622.csv", skip=9)%>% #may be mislabelled on genenetwork, assigned based on HFD reductions
+williams.ncd.ee <- read_csv("BXD_17618.csv", skip=9)%>% #may be mislabelled on genenetwork, assigned based on HFD reductions
   mutate(Diet="NCD",Age=16,Dataset="Williams")
 williams.ncd.bw <- read_csv("BXD_17559.csv" , skip=9)%>% 
   mutate(Diet="NCD",Age=16,Dataset="Williams")
@@ -62,7 +62,7 @@ williams.ncd <- full_join(williams.ncd.ee,williams.ncd.bw, suffix=c('_ee','_bw')
   mutate(Value_lm = Value,
          SE_lm = SE)
 
-williams.hfd.ee <- read_csv("BXD_17618.csv" , skip=9)%>% #may be mislabelled on genenetwork
+williams.hfd.ee <- read_csv("BXD_17622.csv" , skip=9)%>% #may be mislabelled on genenetwork
   mutate(Diet="HFD",Age=16,Dataset="Williams")
 williams.hfd.bw <- read_csv("BXD_17560.csv", skip=9)%>% 
   mutate(Diet="HFD",Age=16,Dataset="Williams")
