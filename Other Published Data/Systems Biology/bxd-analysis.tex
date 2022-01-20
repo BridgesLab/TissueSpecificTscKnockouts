@@ -187,7 +187,7 @@ physiology.
 These data can be found in
 /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Other
 Published Data/Systems Biology. This script was most recently updated on
-Wed Jan 19 13:49:33 2022.
+Thu Jan 20 15:21:02 2022.
 
 \hypertarget{analysis}{%
 \section{Analysis}\label{analysis}}
@@ -433,7 +433,9 @@ Gain}\label{thermogenesis-on-ncd-as-a-predictor-of-weight-gain}}
 \StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD"}\NormalTok{,}
        \DataTypeTok{x=}\StringTok{"Energy Expenditure on NCD (W)"}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{)}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{18}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -441,7 +443,7 @@ Gain}\label{thermogenesis-on-ncd-as-a-predictor-of-weight-gain}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{lm}\NormalTok{(Wt.Gain}\OperatorTok{~}\NormalTok{MR_W_NCD, }\DataTypeTok{data=}\NormalTok{data.wide) }\OperatorTok{%>%}\StringTok{ }\NormalTok{glance }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Summary of relationship between energy expenditure and diet-induced weight gain"}\NormalTok{)}
+\KeywordTok{lm}\NormalTok{(Wt.Gain}\OperatorTok{~}\NormalTok{MR_W_NCD, }\DataTypeTok{data=}\NormalTok{data.wide) }\OperatorTok{%>%}\StringTok{ }\NormalTok{glance }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Summary of relationship between energy expenditure and diet-induced weight gain"}\NormalTok{, }\DataTypeTok{digits =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -513,7 +515,7 @@ nobs\strut
 \end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedleft
 37.9\strut
 \end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedleft
-0\strut
+2.4e-07\strut
 \end{minipage} & \begin{minipage}[t]{0.02\columnwidth}\raggedleft
 1\strut
 \end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\raggedleft
@@ -531,6 +533,217 @@ nobs\strut
 \end{minipage}\tabularnewline
 \bottomrule
 \end{longtable}
+
+\hypertarget{heritability-of-ncd-thermogenesis}{%
+\paragraph{Heritability of NCD
+Thermogenesis}\label{heritability-of-ncd-thermogenesis}}
+
+Since we dont have individual mouse data we will make fake data based on
+the mean and se of MR
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{new.sim.data <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Name=}\OtherTok{NA}\NormalTok{, }\DataTypeTok{Diet=}\OtherTok{NA}\NormalTok{,}\DataTypeTok{EE=}\OtherTok{NA}\NormalTok{)}
+
+\ControlFlowTok{for}\NormalTok{ (row }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{dim}\NormalTok{(data)[}\DecValTok{1}\NormalTok{]) \{}
+\NormalTok{  strain.data <-}\StringTok{ }\NormalTok{data[row,]}
+  \ControlFlowTok{if}\NormalTok{(}\OperatorTok{!}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(strain.data}\OperatorTok{$}\NormalTok{MR_W)))\{}
+\NormalTok{  sim.data <-}\StringTok{ }\KeywordTok{with}\NormalTok{(strain.data, }
+                   \KeywordTok{rnorm}\NormalTok{(}\DataTypeTok{mean=}\NormalTok{MR_W,}
+                         \DataTypeTok{sd=}\NormalTok{MR_W_SE }\OperatorTok{*}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(N),}
+                         \DataTypeTok{n=}\NormalTok{N_ee}
+\NormalTok{                    ))}
+\NormalTok{  sim.lean.data <-}\StringTok{ }\KeywordTok{with}\NormalTok{(strain.data, }
+                   \KeywordTok{rnorm}\NormalTok{(}\DataTypeTok{mean=}\NormalTok{Value_lm,}
+                         \DataTypeTok{sd=}\NormalTok{SE_lm }\OperatorTok{*}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(N),}
+                         \DataTypeTok{n=}\NormalTok{N_ee}
+\NormalTok{                    ))}
+\NormalTok{  sim.dataset <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Name=}\NormalTok{strain.data}\OperatorTok{$}\NormalTok{Name, }
+                            \DataTypeTok{Diet=}\NormalTok{strain.data}\OperatorTok{$}\NormalTok{Diet,}
+                            \DataTypeTok{EE=}\NormalTok{sim.data,}
+                            \DataTypeTok{Lean=}\NormalTok{sim.lean.data)}
+\NormalTok{  new.sim.data <-}\StringTok{ }\KeywordTok{bind_rows}\NormalTok{(new.sim.data,sim.dataset)}
+\NormalTok{  \}}
+\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    sim.dataset <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{Name=}\NormalTok{strain.data}\OperatorTok{$}\NormalTok{Name, }
+                            \DataTypeTok{Diet=}\NormalTok{strain.data}\OperatorTok{$}\NormalTok{Diet,}
+                            \DataTypeTok{EE=}\OtherTok{NA}\NormalTok{,}
+                            \DataTypeTok{Lean=}\OtherTok{NA}\NormalTok{)}
+\NormalTok{    new.sim.data <-}\StringTok{ }\KeywordTok{bind_rows}\NormalTok{(new.sim.data,sim.dataset)}
+\NormalTok{\}}
+
+\NormalTok{  \}}
+
+
+\KeywordTok{aov}\NormalTok{(EE }\OperatorTok{~}\StringTok{  }\NormalTok{Name, }\DataTypeTok{data=}\NormalTok{new.sim.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet}\OperatorTok{==}\StringTok{'NCD'}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Total.Var=}\KeywordTok{sum}\NormalTok{(meansq),}
+         \DataTypeTok{Pct.Var =}\NormalTok{ meansq}\OperatorTok{/}\NormalTok{Total.Var}\OperatorTok{*}\DecValTok{100}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Overall heritability of energy expenditure on NCD mice"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\caption{Overall heritability of energy expenditure on NCD
+mice}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endhead
+Name & 43 & 1.547 & 0.036 & 22 & 0 & 0.038 & 95.66\tabularnewline
+Residuals & 148 & 0.242 & 0.002 & NA & NA & 0.038 & 4.34\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{aov}\NormalTok{(EE }\OperatorTok{~}\StringTok{ }\NormalTok{Lean }\OperatorTok{+}\StringTok{ }\NormalTok{Name, }\DataTypeTok{data=}\NormalTok{new.sim.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet}\OperatorTok{==}\StringTok{'NCD'}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Total.Var=}\KeywordTok{sum}\NormalTok{(meansq),}
+         \DataTypeTok{Pct.Var =}\NormalTok{ meansq}\OperatorTok{/}\NormalTok{Total.Var}\OperatorTok{*}\DecValTok{100}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Overall heritability of energy expenditure on NCD including lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\caption{Overall heritability of energy expenditure on NCD including
+lean mass}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endhead
+Lean & 1 & 0.207 & 0.207 & 127.8 & 0 & 0.24 & 86.303\tabularnewline
+Name & 43 & 1.343 & 0.031 & 19.3 & 0 & 0.24 & 13.021\tabularnewline
+Residuals & 147 & 0.238 & 0.002 & NA & NA & 0.24 & 0.676\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{aov}\NormalTok{(EE }\OperatorTok{~}\StringTok{ }\NormalTok{Lean }\OperatorTok{+}\StringTok{ }\NormalTok{Name, }\DataTypeTok{data=}\NormalTok{new.sim.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Diet}\OperatorTok{==}\StringTok{'NCD'}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Total.Var=}\KeywordTok{sum}\NormalTok{(meansq[}\DecValTok{2}\OperatorTok{:}\DecValTok{3}\NormalTok{]),}
+         \DataTypeTok{Pct.Var =}\NormalTok{ meansq}\OperatorTok{/}\NormalTok{Total.Var}\OperatorTok{*}\DecValTok{100}\NormalTok{) ->}\StringTok{ }\NormalTok{lean.adj.ee}
+  
+\NormalTok{lean.adj.ee }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Overall heritability of energy expenditure on NCD adjusting for lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\caption{Overall heritability of energy expenditure on NCD adjusting for
+lean mass}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endhead
+Lean & 1 & 0.207 & 0.207 & 127.8 & 0 & 0.033 & 630.08\tabularnewline
+Name & 43 & 1.343 & 0.031 & 19.3 & 0 & 0.033 & 95.07\tabularnewline
+Residuals & 147 & 0.238 & 0.002 & NA & NA & 0.033 & 4.93\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{aov}\NormalTok{(EE }\OperatorTok{~}\StringTok{ }\NormalTok{Lean }\OperatorTok{+}\StringTok{ }\NormalTok{Name }\OperatorTok{+}\StringTok{ }\NormalTok{Diet }\OperatorTok{+}\StringTok{ }\NormalTok{Name}\OperatorTok{:}\NormalTok{Diet, }\DataTypeTok{data=}\NormalTok{new.sim.data) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Total.Var=}\KeywordTok{sum}\NormalTok{(meansq),}
+         \DataTypeTok{Pct.Var =}\NormalTok{ meansq}\OperatorTok{/}\NormalTok{Total.Var}\OperatorTok{*}\DecValTok{100}\NormalTok{) ->}\StringTok{ }\NormalTok{hfd.incl.ee}
+
+\NormalTok{hfd.incl.ee  }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Overall heritability of energy expenditure including diet and lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\caption{Overall heritability of energy expenditure including diet and
+lean mass}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endhead
+Lean & 1 & 0.697 & 0.697 & 260.67 & 0 & 3.39 & 20.577\tabularnewline
+Name & 43 & 2.296 & 0.053 & 19.98 & 0 & 3.39 & 1.577\tabularnewline
+Diet & 1 & 2.624 & 2.624 & 981.81 & 0 & 3.39 & 77.503\tabularnewline
+Name:Diet & 42 & 0.375 & 0.009 & 3.34 & 0 & 3.39 & 0.264\tabularnewline
+Residuals & 291 & 0.778 & 0.003 & NA & NA & 3.39 & 0.079\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{aov}\NormalTok{(EE }\OperatorTok{~}\StringTok{ }\NormalTok{Lean }\OperatorTok{+}\StringTok{ }\NormalTok{Name }\OperatorTok{+}\StringTok{ }\NormalTok{Diet }\OperatorTok{+}\StringTok{ }\NormalTok{Name}\OperatorTok{:}\NormalTok{Diet, }\DataTypeTok{data=}\NormalTok{new.sim.data) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{tidy }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Total.Var=}\KeywordTok{sum}\NormalTok{(meansq[}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{)]),}
+         \DataTypeTok{Pct.Var =}\NormalTok{ meansq}\OperatorTok{/}\NormalTok{Total.Var}\OperatorTok{*}\DecValTok{100}\NormalTok{) ->}\StringTok{ }\NormalTok{hfd.adj.ee}
+
+\NormalTok{hfd.adj.ee }\OperatorTok{%>%}\StringTok{ }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Overall heritability of energy expenditure adjusted for diet and lean mass"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\caption{Overall heritability of energy expenditure adjusted for diet
+and lean mass}\tabularnewline
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+term & df & sumsq & meansq & statistic & p.value & Total.Var &
+Pct.Var\tabularnewline
+\midrule
+\endhead
+Lean & 1 & 0.697 & 0.697 & 260.67 & 0 & 0.065 & 1071.68\tabularnewline
+Name & 43 & 2.296 & 0.053 & 19.98 & 0 & 0.065 & 82.14\tabularnewline
+Diet & 1 & 2.624 & 2.624 & 981.81 & 0 & 0.065 & 4036.53\tabularnewline
+Name:Diet & 42 & 0.375 & 0.009 & 3.34 & 0 & 0.065 & 13.74\tabularnewline
+Residuals & 291 & 0.778 & 0.003 & NA & NA & 0.065 & 4.11\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ee.var.data <-}\StringTok{ }\KeywordTok{bind_rows}\NormalTok{(lean.adj.ee }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"NCD"}\NormalTok{),hfd.adj.ee }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Diet=}\StringTok{"HFD"}\NormalTok{)) }
+
+\KeywordTok{ggplot}\NormalTok{(ee.var.data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(term }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Name'}\NormalTok{,}\StringTok{'Name:Diet'}\NormalTok{,}\StringTok{'Residuals'}\NormalTok{)),}
+        \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\KeywordTok{reorder}\NormalTok{(Diet,}\OperatorTok{-}\NormalTok{Pct.Var),}
+            \DataTypeTok{y=}\NormalTok{Pct.Var,}
+            \DataTypeTok{fill=}\NormalTok{term)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{position=}\StringTok{"stack"}\NormalTok{,}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Gene"}\NormalTok{, }\StringTok{"Gene x Diet"}\NormalTok{, }\StringTok{"Other"}\NormalTok{), }\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"pink"}\NormalTok{,}\StringTok{"blue"}\NormalTok{),}
+                     \DataTypeTok{name=}\StringTok{"Factor"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Percent of Variance"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position=}\StringTok{"top"}\NormalTok{)}\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{18}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/sim-data-1.png}
 
 \hypertarget{adaptive-thermogenesis-vs-weight-gain}{%
 \subsubsection{Adaptive Thermogenesis vs Weight

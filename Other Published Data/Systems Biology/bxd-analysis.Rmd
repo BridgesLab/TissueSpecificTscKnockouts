@@ -211,9 +211,97 @@ data.wide %>%
   labs(y="Weight Gained on HFD",
        x="Energy Expenditure on NCD (W)") +
   geom_point() +
-  geom_smooth(method="lm")
+  geom_smooth(method="lm") +
+  theme_classic() +
+  theme(text=element_text(size=18))
 
-lm(Wt.Gain~MR_W_NCD, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain")
+lm(Wt.Gain~MR_W_NCD, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain", digits = c(3,3,3,1,8,0,0,0,0,0,0,0))
+```
+
+#### Heritability of NCD Thermogenesis
+
+Since we dont have individual mouse data we will make fake data based on the mean and se of MR
+
+```{r sim-data}
+new.sim.data <- data.frame(Name=NA, Diet=NA,EE=NA)
+
+for (row in 1:dim(data)[1]) {
+  strain.data <- data[row,]
+  if(!(is.na(strain.data$MR_W))){
+  sim.data <- with(strain.data, 
+                   rnorm(mean=MR_W,
+                         sd=MR_W_SE * sqrt(N),
+                         n=N_ee
+                    ))
+  sim.lean.data <- with(strain.data, 
+                   rnorm(mean=Value_lm,
+                         sd=SE_lm * sqrt(N),
+                         n=N_ee
+                    ))
+  sim.dataset <- data.frame(Name=strain.data$Name, 
+                            Diet=strain.data$Diet,
+                            EE=sim.data,
+                            Lean=sim.lean.data)
+  new.sim.data <- bind_rows(new.sim.data,sim.dataset)
+  }
+else{
+    sim.dataset <- data.frame(Name=strain.data$Name, 
+                            Diet=strain.data$Diet,
+                            EE=NA,
+                            Lean=NA)
+    new.sim.data <- bind_rows(new.sim.data,sim.dataset)
+}
+
+  }
+
+
+aov(EE ~  Name, data=new.sim.data %>% filter(Diet=='NCD')) %>% 
+  tidy %>%
+  mutate(Total.Var=sum(meansq),
+         Pct.Var = meansq/Total.Var*100) %>%
+  kable(caption="Overall heritability of energy expenditure on NCD mice")
+
+aov(EE ~ Lean + Name, data=new.sim.data %>% filter(Diet=='NCD')) %>% 
+  tidy %>%
+  mutate(Total.Var=sum(meansq),
+         Pct.Var = meansq/Total.Var*100) %>%
+  kable(caption="Overall heritability of energy expenditure on NCD including lean mass")
+
+aov(EE ~ Lean + Name, data=new.sim.data %>% filter(Diet=='NCD')) %>% 
+  tidy %>%
+  mutate(Total.Var=sum(meansq[2:3]),
+         Pct.Var = meansq/Total.Var*100) -> lean.adj.ee
+  
+lean.adj.ee %>% kable(caption="Overall heritability of energy expenditure on NCD adjusting for lean mass")
+
+aov(EE ~ Lean + Name + Diet + Name:Diet, data=new.sim.data) %>% 
+  tidy %>%
+  mutate(Total.Var=sum(meansq),
+         Pct.Var = meansq/Total.Var*100) -> hfd.incl.ee
+
+hfd.incl.ee  %>% kable(caption="Overall heritability of energy expenditure including diet and lean mass")
+
+aov(EE ~ Lean + Name + Diet + Name:Diet, data=new.sim.data) %>% 
+  tidy %>%
+  mutate(Total.Var=sum(meansq[c(2,4,5)]),
+         Pct.Var = meansq/Total.Var*100) -> hfd.adj.ee
+
+hfd.adj.ee %>% kable(caption="Overall heritability of energy expenditure adjusted for diet and lean mass")
+
+ee.var.data <- bind_rows(lean.adj.ee %>% mutate(Diet="NCD"),hfd.adj.ee %>% mutate(Diet="HFD")) 
+
+ggplot(ee.var.data %>% filter(term %in% c('Name','Name:Diet','Residuals')),
+        aes(x=reorder(Diet,-Pct.Var),
+            y=Pct.Var,
+            fill=term)) +
+  geom_bar(position="stack",stat='identity') +
+  scale_fill_manual(labels = c("Gene", "Gene x Diet", "Other"), values = c("red", "pink","blue"),
+                     name="Factor") +
+  labs(y="Percent of Variance",
+       x="") +
+  theme_classic() +
+  theme(legend.position="top")+
+  theme(text=element_text(size=18))
 ```
 
 ### Adaptive Thermogenesis vs Weight Gain
