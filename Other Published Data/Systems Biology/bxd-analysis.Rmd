@@ -158,7 +158,8 @@ summary(lm.model.2) %>% tidy %>% kable(caption="Model 2 coefficients for adjusti
 
 data <- data %>%
   mutate(MR_predicted = predict(lm.model.1, newdata = list(Value_lm=Value_lm))) %>%
-  mutate(MR_resid = MR_W-MR_predicted) 
+  mutate(MR_resid = MR_W-MR_predicted) %>%
+  mutate(MR_adj = MR_resid + coef(lm.model.1)['(Intercept)'] + coef(lm.model.1)['Value_lm']*mean(data$Value_lm,na.rm=T))
 
 data %>%
   filter(!is.na(MR_W)) %>% # complete cases only
@@ -170,6 +171,18 @@ data %>%
   #geom_label_repel(label=Name) +
   geom_bar(stat='identity',position='dodge') +
   labs(y="EE Observed - EE Predicted (W)") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+data %>%
+  filter(!is.na(MR_W)) %>% # complete cases only
+  ggplot(aes(y=MR_adj,
+         x=reorder(Name,-MR_adj),
+         ymin=MR_adj-MR_W_SE,
+         ymax=MR_adj-MR_W_SE,
+         fill=Diet)) +
+  #geom_label_repel(label=Name) +
+  geom_bar(stat='identity',position='dodge') +
+  labs(y="LM Adjusted EE (W)") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
   
 ```
@@ -217,6 +230,16 @@ data.wide %>%
 
 lm(Wt.Gain~MR_W_NCD, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain", digits = c(3,3,3,1,8,0,0,0,0,0,0,0))
 ```
+
+```{r ncd-data-export}
+gemma.phenotype.export <- 'Strain Level Energy Expenditure Data.csv'
+data %>%
+  filter(Diet=="NCD") %>%
+  select(Name, MR_W, MR_adj) %>%
+  write_csv(gemma.phenotype.export)
+```
+
+The data on lean mass adjusted thermogenesis was exported to `r gemma.phenotype.export`
 
 #### Heritability of NCD Thermogenesis
 
@@ -295,7 +318,7 @@ ggplot(ee.var.data %>% filter(term %in% c('Name','Name:Diet','Residuals')),
             y=Pct.Var,
             fill=term)) +
   geom_bar(position="stack",stat='identity') +
-  scale_fill_manual(labels = c("Gene", "Gene x Diet", "Other"), values = c("red", "pink","blue"),
+  scale_fill_manual(labels = c("Strain", "Strain x Diet", "Other"), values = c("red", "pink","blue"),
                      name="Factor") +
   labs(y="Percent of Variance",
        x="") +

@@ -187,7 +187,7 @@ physiology.
 These data can be found in
 /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Other
 Published Data/Systems Biology. This script was most recently updated on
-Thu Jan 20 15:21:02 2022.
+Fri Feb 11 12:44:43 2022.
 
 \hypertarget{analysis}{%
 \section{Analysis}\label{analysis}}
@@ -368,7 +368,8 @@ DietHFD & 0.174 & 0.017 & 10.47 & 0.000\tabularnewline
 \begin{Highlighting}[]
 \NormalTok{data <-}\StringTok{ }\NormalTok{data }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_predicted =} \KeywordTok{predict}\NormalTok{(lm.model}\FloatTok{.1}\NormalTok{, }\DataTypeTok{newdata =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{Value_lm=}\NormalTok{Value_lm))) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_resid =}\NormalTok{ MR_W}\OperatorTok{-}\NormalTok{MR_predicted) }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_resid =}\NormalTok{ MR_W}\OperatorTok{-}\NormalTok{MR_predicted) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{MR_adj =}\NormalTok{ MR_resid }\OperatorTok{+}\StringTok{ }\KeywordTok{coef}\NormalTok{(lm.model}\FloatTok{.1}\NormalTok{)[}\StringTok{'(Intercept)'}\NormalTok{] }\OperatorTok{+}\StringTok{ }\KeywordTok{coef}\NormalTok{(lm.model}\FloatTok{.1}\NormalTok{)[}\StringTok{'Value_lm'}\NormalTok{]}\OperatorTok{*}\KeywordTok{mean}\NormalTok{(data}\OperatorTok{$}\NormalTok{Value_lm,}\DataTypeTok{na.rm=}\NormalTok{T))}
 
 \NormalTok{data }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(MR_W)) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# complete cases only}
@@ -385,6 +386,24 @@ DietHFD & 0.174 & 0.017 & 10.47 & 0.000\tabularnewline
 \end{Shaded}
 
 \includegraphics{figures/lean-mass-adjusting-4.png}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(MR_W)) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# complete cases only}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{MR_adj,}
+         \DataTypeTok{x=}\KeywordTok{reorder}\NormalTok{(Name,}\OperatorTok{-}\NormalTok{MR_adj),}
+         \DataTypeTok{ymin=}\NormalTok{MR_adj}\OperatorTok{-}\NormalTok{MR_W_SE,}
+         \DataTypeTok{ymax=}\NormalTok{MR_adj}\OperatorTok{-}\NormalTok{MR_W_SE,}
+         \DataTypeTok{fill=}\NormalTok{Diet)) }\OperatorTok{+}
+\StringTok{  }\CommentTok{#geom_label_repel(label=Name) +}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{,}\DataTypeTok{position=}\StringTok{'dodge'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"LM Adjusted EE (W)"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{hjust=}\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{figures/lean-mass-adjusting-5.png}
 
 based on this modelling after adjusting for lean mass, HFD increases
 thermogenesis by
@@ -534,6 +553,19 @@ nobs\strut
 \bottomrule
 \end{longtable}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gemma.phenotype.export <-}\StringTok{ 'Strain Level Energy Expenditure Data.csv'}
+\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Diet}\OperatorTok{==}\StringTok{"NCD"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Name, MR_W, MR_adj) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{write_csv}\NormalTok{(gemma.phenotype.export)}
+\end{Highlighting}
+\end{Shaded}
+
+The data on lean mass adjusted thermogenesis was exported to Strain
+Level Energy Expenditure Data.csv
+
 \hypertarget{heritability-of-ncd-thermogenesis}{%
 \paragraph{Heritability of NCD
 Thermogenesis}\label{heritability-of-ncd-thermogenesis}}
@@ -596,8 +628,8 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Name & 43 & 1.547 & 0.036 & 22 & 0 & 0.038 & 95.66\tabularnewline
-Residuals & 148 & 0.242 & 0.002 & NA & NA & 0.038 & 4.34\tabularnewline
+Name & 43 & 1.535 & 0.036 & 21.9 & 0 & 0.037 & 95.63\tabularnewline
+Residuals & 148 & 0.241 & 0.002 & NA & NA & 0.037 & 4.37\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -624,9 +656,9 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.207 & 0.207 & 127.8 & 0 & 0.24 & 86.303\tabularnewline
-Name & 43 & 1.343 & 0.031 & 19.3 & 0 & 0.24 & 13.021\tabularnewline
-Residuals & 147 & 0.238 & 0.002 & NA & NA & 0.24 & 0.676\tabularnewline
+Lean & 1 & 0.080 & 0.080 & 48.9 & 0 & 0.116 & 69.33\tabularnewline
+Name & 43 & 1.455 & 0.034 & 20.6 & 0 & 0.116 & 29.25\tabularnewline
+Residuals & 147 & 0.241 & 0.002 & NA & NA & 0.116 & 1.42\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -654,9 +686,9 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.207 & 0.207 & 127.8 & 0 & 0.033 & 630.08\tabularnewline
-Name & 43 & 1.343 & 0.031 & 19.3 & 0 & 0.033 & 95.07\tabularnewline
-Residuals & 147 & 0.238 & 0.002 & NA & NA & 0.033 & 4.93\tabularnewline
+Lean & 1 & 0.080 & 0.080 & 48.9 & 0 & 0.035 & 226.08\tabularnewline
+Name & 43 & 1.455 & 0.034 & 20.6 & 0 & 0.035 & 95.37\tabularnewline
+Residuals & 147 & 0.241 & 0.002 & NA & NA & 0.035 & 4.63\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -684,11 +716,11 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.697 & 0.697 & 260.67 & 0 & 3.39 & 20.577\tabularnewline
-Name & 43 & 2.296 & 0.053 & 19.98 & 0 & 3.39 & 1.577\tabularnewline
-Diet & 1 & 2.624 & 2.624 & 981.81 & 0 & 3.39 & 77.503\tabularnewline
-Name:Diet & 42 & 0.375 & 0.009 & 3.34 & 0 & 3.39 & 0.264\tabularnewline
-Residuals & 291 & 0.778 & 0.003 & NA & NA & 3.39 & 0.079\tabularnewline
+Lean & 1 & 0.445 & 0.445 & 195.53 & 0 & 3.42 & 13.010\tabularnewline
+Name & 43 & 2.178 & 0.051 & 22.26 & 0 & 3.42 & 1.481\tabularnewline
+Diet & 1 & 2.911 & 2.911 & 1279.39 & 0 & 3.42 & 85.125\tabularnewline
+Name:Diet & 42 & 0.456 & 0.011 & 4.77 & 0 & 3.42 & 0.318\tabularnewline
+Residuals & 291 & 0.662 & 0.002 & NA & NA & 3.42 & 0.067\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -716,11 +748,11 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.697 & 0.697 & 260.67 & 0 & 0.065 & 1071.68\tabularnewline
-Name & 43 & 2.296 & 0.053 & 19.98 & 0 & 0.065 & 82.14\tabularnewline
-Diet & 1 & 2.624 & 2.624 & 981.81 & 0 & 0.065 & 4036.53\tabularnewline
-Name:Diet & 42 & 0.375 & 0.009 & 3.34 & 0 & 0.065 & 13.74\tabularnewline
-Residuals & 291 & 0.778 & 0.003 & NA & NA & 0.065 & 4.11\tabularnewline
+Lean & 1 & 0.445 & 0.445 & 195.53 & 0 & 0.064 & 697.56\tabularnewline
+Name & 43 & 2.178 & 0.051 & 22.26 & 0 & 0.064 & 79.40\tabularnewline
+Diet & 1 & 2.911 & 2.911 & 1279.39 & 0 & 0.064 & 4564.25\tabularnewline
+Name:Diet & 42 & 0.456 & 0.011 & 4.77 & 0 & 0.064 & 17.03\tabularnewline
+Residuals & 291 & 0.662 & 0.002 & NA & NA & 0.064 & 3.57\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -733,7 +765,7 @@ Residuals & 291 & 0.778 & 0.003 & NA & NA & 0.065 & 4.11\tabularnewline
             \DataTypeTok{y=}\NormalTok{Pct.Var,}
             \DataTypeTok{fill=}\NormalTok{term)) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{position=}\StringTok{"stack"}\NormalTok{,}\DataTypeTok{stat=}\StringTok{'identity'}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Gene"}\NormalTok{, }\StringTok{"Gene x Diet"}\NormalTok{, }\StringTok{"Other"}\NormalTok{), }\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"pink"}\NormalTok{,}\StringTok{"blue"}\NormalTok{),}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Strain"}\NormalTok{, }\StringTok{"Strain x Diet"}\NormalTok{, }\StringTok{"Other"}\NormalTok{), }\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"pink"}\NormalTok{,}\StringTok{"blue"}\NormalTok{),}
                      \DataTypeTok{name=}\StringTok{"Factor"}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Percent of Variance"}\NormalTok{,}
        \DataTypeTok{x=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
