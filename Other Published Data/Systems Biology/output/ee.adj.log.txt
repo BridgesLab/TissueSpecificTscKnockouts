@@ -10,7 +10,7 @@
 ##
 ## Command Line Input = gemma -g bxd-ee-genotype.bimbam -p ee_adj_phenotype.csv -a snp-annotation.bimbam -k output/ee.adj.cXX.txt -lmm 1 -o ee.adj 
 ##
-## Date = Fri Feb 11 13:56:53 2022
+## Date = Sun Feb 13 11:19:09 2022
 ##
 ## Summary Statistics:
 ## number of total individuals = 44
@@ -25,13 +25,13 @@
 ## se(pve) in the null model = 0.23959
 ## vg estimate in the null model = 0.00246003
 ## ve estimate in the null model = 0.00390827
-## beta estimate in the null model =   0.481352
+## beta estimate in the null model =   0.457014
 ## se(beta) =   0.00942466
 ##
 ## Computation Time:
-## total computation time = 0.0133152 min 
+## total computation time = 0.0132242 min 
 ## computation time break down: 
-##      time on eigen-decomposition = 7.93e-05 min 
-##      time on calculating UtX = 0.000186933 min 
-##      time on optimization = 0.0110496 min 
+##      time on eigen-decomposition = 6.27667e-05 min 
+##      time on calculating UtX = 0.000185117 min 
+##      time on optimization = 0.0110157 min 
 ##

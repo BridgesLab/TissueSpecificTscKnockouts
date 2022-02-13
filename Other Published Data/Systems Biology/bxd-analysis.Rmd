@@ -93,7 +93,7 @@ These data can be found in `r getwd()`.  This script was most recently updated o
 
 ## Comparason of Datasets
 
-```{r dataset-comparason}
+```{r baseline-thermogenesis}
 library(ggplot2)
 data %>%
   filter(!(is.na(MR_W))) %>% # complete cases only
@@ -108,6 +108,26 @@ data %>%
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
   
 #lm(Value~Name+Diet,data=data) %>% summary
+
+mr.order <- 
+  data %>% 
+  filter(Diet == "NCD") %>% 
+  arrange(desc(MR_W)) %>% 
+  mutate(Name = factor(Name))
+
+
+data %>%
+  filter(!is.na(MR_W)) %>% # complete cases only
+  mutate(Name = factor(Name, levels = mr.order$Name, ordered = TRUE)) %>%
+  ggplot(aes(y=MR_W,
+         x=Name,
+         ymin=MR_W-MR_W_SE,
+         ymax=MR_W+MR_W_SE,
+         fill=Diet)) +
+  geom_bar(stat='identity',position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y="Energy Expenditure (W)",x="") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
 ## Adjusting for Lean Mass
@@ -118,9 +138,7 @@ ggplot(data, aes(y=MR_W,
            x=Value_lm)) +
   geom_point(aes(col=Diet)) +
   geom_smooth(method="lm") +
-  geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27),
-                   aes(label=Name,
-                       col=Diet)) +
+  #geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27), aes(label=Name,col=Diet)) +
   labs(y="Energy Expenditure (W)",
        x="Lean Mass (g)")
 
@@ -130,9 +148,14 @@ ggplot(data, aes(y=MR_W,
            col=Diet)) +
   geom_point() +
   geom_smooth(method="lm") +
+  geom_errorbar(aes(ymin=MR_W-MR_W_SE,
+                ymax=MR_W+MR_W_SE)) +
+  geom_errorbarh(aes(xmin=Value_lm-SE_lm,
+                xmax=Value_lm+SE_lm))+
   #geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27),aes(label=Name)) +
   labs(y="Energy Expenditure (W)",
-       x="Lean Mass (g)")
+       x="Lean Mass (g)") +
+  theme(legend.position = c(0.1,0.85))
 
 
 #chow only
@@ -141,7 +164,7 @@ ggplot(data %>% filter(Diet=="NCD"), aes(y=MR_W,
   geom_point() +
   geom_smooth(method="lm") +
   geom_label_repel(data = subset(data %>% filter(Diet=="NCD"),
-                                 (MR_W < 0.48&Value_lm>24.5)|MR_W>0.60&Value_lm<27),
+                                 (MR_W < 0.43&Value_lm>24.5)|MR_W>0.60&Value_lm<27),
                    aes(label=Name)) +
   guides(fill = guide_legend(override.aes = aes(color = NA))) +
   labs(y="Energy Expenditure (W)",
@@ -159,7 +182,7 @@ summary(lm.model.2) %>% tidy %>% kable(caption="Model 2 coefficients for adjusti
 data <- data %>%
   mutate(MR_predicted = predict(lm.model.1, newdata = list(Value_lm=Value_lm))) %>%
   mutate(MR_resid = MR_W-MR_predicted) %>%
-  mutate(MR_adj = MR_resid + coef(lm.model.1)['(Intercept)'] + coef(lm.model.1)['Value_lm']*mean(data$Value_lm,na.rm=T))
+  mutate(MR_adj = MR_resid + coef(lm.model.1)['(Intercept)'] + coef(lm.model.2)['Value_lm']*mean(data$Value_lm,na.rm=T))
 
 data %>%
   filter(!is.na(MR_W)) %>% # complete cases only
@@ -173,16 +196,25 @@ data %>%
   labs(y="EE Observed - EE Predicted (W)") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
+
+mr.adj.order <- 
+  data %>% 
+  filter(Diet == "NCD") %>% 
+  arrange(desc(MR_adj)) %>% 
+  mutate(Name = factor(Name))
+
+
 data %>%
   filter(!is.na(MR_W)) %>% # complete cases only
+  mutate(Name = factor(Name, levels = mr.adj.order$Name, ordered = TRUE)) %>%
   ggplot(aes(y=MR_adj,
-         x=reorder(Name,-MR_adj),
+         x=Name,
          ymin=MR_adj-MR_W_SE,
-         ymax=MR_adj-MR_W_SE,
+         ymax=MR_adj+MR_W_SE,
          fill=Diet)) +
-  #geom_label_repel(label=Name) +
-  geom_bar(stat='identity',position='dodge') +
-  labs(y="LM Adjusted EE (W)") +
+  geom_bar(stat='identity',position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y="Lean Mass Adjusted Energy Expenditure (W)",x="") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
   
 ```
@@ -196,8 +228,8 @@ Defined as lean mass adjusted VO2 from HFD - NCD
 ```{r adaptive-thermogenesis}
 data.wide <-
   data %>%
-  select(Value_lm,Value_bw, MR_W, MR_W_SE, Name,Diet) %>%
-  pivot_wider(names_from=Diet,id_cols=Name,values_from=c(Value_lm,Value_bw, MR_W,MR_W_SE)) %>%
+  select(Value_lm,Value_bw, MR_W, MR_W_SE, MR_adj,Name,Diet) %>%
+  pivot_wider(names_from=Diet,id_cols=Name,values_from=c(Value_lm,Value_bw, MR_W,MR_W_SE,MR_adj)) %>%
   mutate(AT = MR_W_HFD - MR_W_NCD,
          AT_SE = sqrt((MR_W_SE_NCD/MR_W_NCD)^2+(MR_W_SE_HFD/MR_W_HFD)^2)*AT,
          Wt.Gain = Value_bw_HFD-Value_bw_NCD)
@@ -227,8 +259,20 @@ data.wide %>%
   geom_smooth(method="lm") +
   theme_classic() +
   theme(text=element_text(size=18))
-
 lm(Wt.Gain~MR_W_NCD, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain", digits = c(3,3,3,1,8,0,0,0,0,0,0,0))
+
+
+data.wide %>%
+  ggplot(aes(y=Wt.Gain,
+             x=MR_adj_NCD)) +
+  labs(y="Weight Gained on HFD",
+       x="Adjusted Energy Expenditure on NCD (W)") +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic() +
+  theme(text=element_text(size=18))
+
+lm(Wt.Gain~MR_adj_NCD, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between lean mass adjusted energy expenditure and diet-induced weight gain", digits = c(3,3,3,1,8,0,0,0,0,0,0,0))
 ```
 
 ```{r ncd-data-export}
@@ -245,7 +289,7 @@ The data on lean mass adjusted thermogenesis was exported to `r gemma.phenotype.
 
 Since we dont have individual mouse data we will make fake data based on the mean and se of MR
 
-```{r sim-data}
+```{r anova-barplots}
 new.sim.data <- data.frame(Name=NA, Diet=NA,EE=NA)
 
 for (row in 1:dim(data)[1]) {
@@ -293,9 +337,14 @@ aov(EE ~ Lean + Name, data=new.sim.data %>% filter(Diet=='NCD')) %>%
 aov(EE ~ Lean + Name, data=new.sim.data %>% filter(Diet=='NCD')) %>% 
   tidy %>%
   mutate(Total.Var=sum(meansq[2:3]),
-         Pct.Var = meansq/Total.Var*100) -> lean.adj.ee
+         Pct.Var = meansq/Total.Var*100) -> lean.adj.ee.lean 
+
+aov(EE ~ Lean + Name, data=new.sim.data %>% filter(Diet=='NCD')) %>% 
+  tidy %>%
+  mutate(Total.Var=sum(meansq),
+         Pct.Var = meansq/Total.Var*100) -> lean.adj.ee.all 
   
-lean.adj.ee %>% kable(caption="Overall heritability of energy expenditure on NCD adjusting for lean mass")
+lean.adj.ee.lean %>% kable(caption="Overall heritability of energy expenditure on NCD adjusting for lean mass")
 
 aov(EE ~ Lean + Name + Diet + Name:Diet, data=new.sim.data) %>% 
   tidy %>%
@@ -307,11 +356,16 @@ hfd.incl.ee  %>% kable(caption="Overall heritability of energy expenditure inclu
 aov(EE ~ Lean + Name + Diet + Name:Diet, data=new.sim.data) %>% 
   tidy %>%
   mutate(Total.Var=sum(meansq[c(2,4,5)]),
-         Pct.Var = meansq/Total.Var*100) -> hfd.adj.ee
+         Pct.Var = meansq/Total.Var*100) -> hfd.adj.ee.adj
 
-hfd.adj.ee %>% kable(caption="Overall heritability of energy expenditure adjusted for diet and lean mass")
+aov(EE ~ Lean + Name + Diet + Name:Diet, data=new.sim.data) %>% 
+  tidy %>%
+  mutate(Total.Var=sum(meansq[c(2,3,4,5)]),
+         Pct.Var = meansq/Total.Var*100) -> hfd.adj.ee.all
 
-ee.var.data <- bind_rows(lean.adj.ee %>% mutate(Diet="NCD"),hfd.adj.ee %>% mutate(Diet="HFD")) 
+hfd.adj.ee.adj %>% kable(caption="Overall heritability of energy expenditure adjusted for diet and lean mass")
+
+ee.var.data <- bind_rows(lean.adj.ee.lean %>% mutate(Diet="NCD"),hfd.adj.ee.adj %>% mutate(Diet="HFD")) 
 
 ggplot(ee.var.data %>% filter(term %in% c('Name','Name:Diet','Residuals')),
         aes(x=reorder(Diet,-Pct.Var),
@@ -325,6 +379,31 @@ ggplot(ee.var.data %>% filter(term %in% c('Name','Name:Diet','Residuals')),
   theme_classic() +
   theme(legend.position="top")+
   theme(text=element_text(size=18))
+
+
+ee.var.all.data <- bind_rows(lean.adj.ee.all %>% mutate(Diet="NCD",Corr="None"),
+                             lean.adj.ee.lean %>% mutate(Diet="NCD", Corr="Lean Mass"),
+                             hfd.adj.ee.all %>% mutate(Diet="HFD", Corr="Lean Mass"),
+                             hfd.adj.ee.adj %>% mutate(Diet="HFD", Corr="Lean Mass,Diet")) %>%
+  mutate(Group=paste(Diet,Corr,sep="-"))
+
+library(RColorBrewer)
+ee.var.all.data %>% 
+         filter(term %in% c('Lean','Name','Name:Diet','Diet','Residuals')) %>%
+         filter(!(term=='Lean'&Corr=='Lean Mass')) %>%
+         filter(!(term=='Lean'&Corr=="Lean Mass,Diet")) %>%
+         filter(!(term=='Diet'&Corr=="Lean Mass,Diet")) %>%
+ggplot(aes(x=ordered(Group, levels=c("NCD-None","NCD-Lean Mass", "HFD-Lean Mass", "HFD-Lean Mass,Diet")),
+            y=Pct.Var,
+            fill=term)) +
+  geom_bar(position="stack",stat='identity') +
+  scale_fill_manual(name="Factor",
+                    labels = c("Diet", "Lean Mass", "Strain", "Strain x Diet", "Residuals"),
+                    values=brewer.pal(5, "Set1")) +
+  labs(y="Percent of Variance",
+       x="Group - Adjustments") +
+  theme_classic() +
+  theme(text=element_text(size=12))
 ```
 
 ### Adaptive Thermogenesis vs Weight Gain
@@ -336,7 +415,8 @@ data.wide %>%
   labs(y="Weight Gained on HFD",
        x="Adaptive Thermogenesis (W)") +
   geom_point() +
-  geom_smooth(method="lm")
+  geom_smooth(method="lm") +  theme_classic() +
+  theme(text=element_text(size=18))
 
 lm(Wt.Gain~AT, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain")
 ```
