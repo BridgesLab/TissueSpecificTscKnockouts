@@ -29,7 +29,7 @@
 }
 \usepackage{hyperref}
 \hypersetup{
-            pdftitle={Evaluation of Energy Intake from BXD Datasets},
+            pdftitle={Evaluation of Energy Expenditure from BXD Datasets},
             pdfauthor={Dave Bridges},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -107,7 +107,7 @@
 \makeatother
 
 
-\title{Evaluation of Energy Intake from BXD Datasets}
+\title{Evaluation of Energy Expenditure from BXD Datasets}
 \author{Dave Bridges}
 \date{January 19, 2022}
 
@@ -187,7 +187,7 @@ physiology.
 These data can be found in
 /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Other
 Published Data/Systems Biology. This script was most recently updated on
-Sun Feb 13 10:20:35 2022.
+Wed Feb 16 11:11:15 2022.
 
 \hypertarget{analysis}{%
 \section{Analysis}\label{analysis}}
@@ -242,6 +242,70 @@ Sun Feb 13 10:20:35 2022.
 
 \includegraphics{figures/baseline-thermogenesis-2.png}
 
+\hypertarget{estimating-effect-sizes}{%
+\subsection{Estimating Effect Sizes}\label{estimating-effect-sizes}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Diet) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{Max =} \KeywordTok{max}\NormalTok{(MR_W, }\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{Min =} \KeywordTok{min}\NormalTok{(MR_W,}\DataTypeTok{na.rm=}\NormalTok{T), }
+            \DataTypeTok{Mean =} \KeywordTok{mean}\NormalTok{(MR_W, }\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{SE =} \KeywordTok{mean}\NormalTok{(MR_W_SE,}\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{N =} \KeywordTok{mean}\NormalTok{(N,}\DataTypeTok{na.rm=}\NormalTok{T)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{SD =}\NormalTok{ SE}\OperatorTok{*}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{mean}\NormalTok{(N,}\DataTypeTok{na.rm=}\NormalTok{T))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Rel.SD =}\NormalTok{ SD}\OperatorTok{/}\NormalTok{Mean}\OperatorTok{*}\DecValTok{100}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Summary statistics for thermogenesis from BXD mice"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\caption{Summary statistics for thermogenesis from BXD
+mice}\tabularnewline
+\toprule
+Diet & Max & Min & Mean & SE & N & SD & Rel.SD\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Diet & Max & Min & Mean & SE & N & SD & Rel.SD\tabularnewline
+\midrule
+\endhead
+NCD & 0.669 & 0.340 & 0.475 & 0.018 & 4.44 & 0.038 & 7.95\tabularnewline
+HFD & 0.791 & 0.488 & 0.659 & 0.025 & 4.47 & 0.052 & 7.96\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Diet) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{Max =} \KeywordTok{max}\NormalTok{(Value_lm, }\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{Min =} \KeywordTok{min}\NormalTok{(Value_lm,}\DataTypeTok{na.rm=}\NormalTok{T), }
+            \DataTypeTok{Mean =} \KeywordTok{mean}\NormalTok{(Value_lm, }\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{SE =} \KeywordTok{mean}\NormalTok{(SE_lm,}\DataTypeTok{na.rm=}\NormalTok{T),}
+            \DataTypeTok{N =} \KeywordTok{mean}\NormalTok{(N,}\DataTypeTok{na.rm=}\NormalTok{T)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{SD =}\NormalTok{ SE}\OperatorTok{*}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{mean}\NormalTok{(N,}\DataTypeTok{na.rm=}\NormalTok{T))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Rel.SD =}\NormalTok{ SD}\OperatorTok{/}\NormalTok{Mean}\OperatorTok{*}\DecValTok{100}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{caption=}\StringTok{"Summary statistics for lean mass from BXD mice"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\caption{Summary statistics for lean mass from BXD mice}\tabularnewline
+\toprule
+Diet & Max & Min & Mean & SE & N & SD & Rel.SD\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Diet & Max & Min & Mean & SE & N & SD & Rel.SD\tabularnewline
+\midrule
+\endhead
+NCD & 30.7 & 19.7 & 25.4 & 0.623 & 4.44 & 1.31 & 5.19\tabularnewline
+HFD & 30.2 & 20.0 & 26.0 & 0.612 & 4.47 & 1.29 & 4.97\tabularnewline
+\bottomrule
+\end{longtable}
+
 \hypertarget{adjusting-for-lean-mass}{%
 \subsection{Adjusting for Lean Mass}\label{adjusting-for-lean-mass}}
 
@@ -274,7 +338,9 @@ Sun Feb 13 10:20:35 2022.
 \StringTok{  }\CommentTok{#geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27),aes(label=Name)) +}
 \StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Energy Expenditure (W)"}\NormalTok{,}
        \DataTypeTok{x=}\StringTok{"Lean Mass (g)"}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{,}\FloatTok{0.85}\NormalTok{))}
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{,}\FloatTok{0.85}\NormalTok{),}
+        \DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{18}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -451,10 +517,11 @@ Defined as lean mass adjusted VO2 from HFD - NCD
 \begin{Highlighting}[]
 \NormalTok{data.wide <-}
 \StringTok{  }\NormalTok{data }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{select}\NormalTok{(Value_lm,Value_bw, MR_W, MR_W_SE, MR_adj,Name,Diet) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{pivot_wider}\NormalTok{(}\DataTypeTok{names_from=}\NormalTok{Diet,}\DataTypeTok{id_cols=}\NormalTok{Name,}\DataTypeTok{values_from=}\KeywordTok{c}\NormalTok{(Value_lm,Value_bw, MR_W,MR_W_SE,MR_adj)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Value_lm,SE,Value_bw, MR_W, MR_W_SE, MR_adj,Name,Diet) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{pivot_wider}\NormalTok{(}\DataTypeTok{names_from=}\NormalTok{Diet,}\DataTypeTok{id_cols=}\NormalTok{Name,}\DataTypeTok{values_from=}\KeywordTok{c}\NormalTok{(Value_lm,Value_bw, MR_W,MR_W_SE,MR_adj,SE)) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{AT =}\NormalTok{ MR_W_HFD }\OperatorTok{-}\StringTok{ }\NormalTok{MR_W_NCD,}
          \DataTypeTok{AT_SE =} \KeywordTok{sqrt}\NormalTok{((MR_W_SE_NCD}\OperatorTok{/}\NormalTok{MR_W_NCD)}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\NormalTok{(MR_W_SE_HFD}\OperatorTok{/}\NormalTok{MR_W_HFD)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{*}\NormalTok{AT,}
+         \DataTypeTok{Wt_SE =} \KeywordTok{sqrt}\NormalTok{((SE_NCD}\OperatorTok{/}\NormalTok{Value_bw_NCD)}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\NormalTok{(SE_HFD}\OperatorTok{/}\NormalTok{Value_bw_NCD)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{*}\NormalTok{Value_bw_NCD,}
          \DataTypeTok{Wt.Gain =}\NormalTok{ Value_bw_HFD}\OperatorTok{-}\NormalTok{Value_bw_NCD)}
 
 \NormalTok{data.wide }\OperatorTok{%>%}
@@ -482,7 +549,7 @@ Gain}\label{thermogenesis-on-ncd-as-a-predictor-of-weight-gain}}
 \NormalTok{data.wide }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{Wt.Gain,}
              \DataTypeTok{x=}\NormalTok{MR_W_NCD)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD"}\NormalTok{,}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD (g)"}\NormalTok{,}
        \DataTypeTok{x=}\StringTok{"Energy Expenditure on NCD (W)"}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
@@ -591,10 +658,14 @@ nobs\strut
 \NormalTok{data.wide }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{Wt.Gain,}
              \DataTypeTok{x=}\NormalTok{MR_adj_NCD)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD"}\NormalTok{,}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD (g)"}\NormalTok{,}
        \DataTypeTok{x=}\StringTok{"Adjusted Energy Expenditure on NCD (W)"}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_errorbarh}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xmin=}\NormalTok{MR_adj_NCD}\OperatorTok{-}\NormalTok{MR_W_SE_NCD,}
+                    \DataTypeTok{xmax=}\NormalTok{MR_adj_NCD}\OperatorTok{+}\NormalTok{MR_W_SE_NCD))}\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_errorbar}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin=}\NormalTok{Wt.Gain}\OperatorTok{-}\NormalTok{Wt_SE,}
+                     \DataTypeTok{ymax=}\NormalTok{Wt.Gain}\OperatorTok{+}\NormalTok{Wt_SE)) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}
 \StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{18}\NormalTok{))}
 \end{Highlighting}
@@ -770,8 +841,8 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Name & 43 & 1.431 & 0.033 & 16.9 & 0 & 0.035 & 94.43\tabularnewline
-Residuals & 148 & 0.291 & 0.002 & NA & NA & 0.035 & 5.57\tabularnewline
+Name & 43 & 1.46 & 0.034 & 21.9 & 0 & 0.036 & 95.62\tabularnewline
+Residuals & 148 & 0.23 & 0.002 & NA & NA & 0.036 & 4.38\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -798,9 +869,9 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.102 & 0.102 & 53.1 & 0 & 0.135 & 75.64\tabularnewline
-Name & 43 & 1.335 & 0.031 & 16.1 & 0 & 0.135 & 22.93\tabularnewline
-Residuals & 147 & 0.283 & 0.002 & NA & NA & 0.135 & 1.42\tabularnewline
+Lean & 1 & 0.050 & 0.050 & 32.4 & 0 & 0.084 & 59.18\tabularnewline
+Name & 43 & 1.415 & 0.033 & 21.4 & 0 & 0.084 & 39.00\tabularnewline
+Residuals & 147 & 0.226 & 0.002 & NA & NA & 0.084 & 1.83\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -833,9 +904,9 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.102 & 0.102 & 53.1 & 0 & 0.033 & 310.59\tabularnewline
-Name & 43 & 1.335 & 0.031 & 16.1 & 0 & 0.033 & 94.16\tabularnewline
-Residuals & 147 & 0.283 & 0.002 & NA & NA & 0.033 & 5.84\tabularnewline
+Lean & 1 & 0.050 & 0.050 & 32.4 & 0 & 0.034 & 144.96\tabularnewline
+Name & 43 & 1.415 & 0.033 & 21.4 & 0 & 0.034 & 95.53\tabularnewline
+Residuals & 147 & 0.226 & 0.002 & NA & NA & 0.034 & 4.47\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -863,11 +934,11 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.718 & 0.718 & 236.47 & 0 & 3.48 & 20.620\tabularnewline
-Name & 43 & 2.201 & 0.051 & 16.87 & 0 & 3.48 & 1.471\tabularnewline
-Diet & 1 & 2.700 & 2.700 & 889.77 & 0 & 3.48 & 77.589\tabularnewline
-Name:Diet & 42 & 0.341 & 0.008 & 2.68 & 0 & 3.48 & 0.234\tabularnewline
-Residuals & 291 & 0.883 & 0.003 & NA & NA & 3.48 & 0.087\tabularnewline
+Lean & 1 & 0.371 & 0.371 & 157.62 & 0 & 3.4 & 10.887\tabularnewline
+Name & 43 & 2.307 & 0.054 & 22.82 & 0 & 3.4 & 1.576\tabularnewline
+Diet & 1 & 2.969 & 2.969 & 1263.00 & 0 & 3.4 & 87.237\tabularnewline
+Name:Diet & 42 & 0.330 & 0.008 & 3.34 & 0 & 3.4 & 0.231\tabularnewline
+Residuals & 291 & 0.684 & 0.002 & NA & NA & 3.4 & 0.069\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -900,11 +971,11 @@ term & df & sumsq & meansq & statistic & p.value & Total.Var &
 Pct.Var\tabularnewline
 \midrule
 \endhead
-Lean & 1 & 0.718 & 0.718 & 236.47 & 0 & 0.062 & 1150.91\tabularnewline
-Name & 43 & 2.201 & 0.051 & 16.87 & 0 & 0.062 & 82.09\tabularnewline
-Diet & 1 & 2.700 & 2.700 & 889.77 & 0 & 0.062 & 4330.66\tabularnewline
-Name:Diet & 42 & 0.341 & 0.008 & 2.68 & 0 & 0.062 & 13.04\tabularnewline
-Residuals & 291 & 0.883 & 0.003 & NA & NA & 0.062 & 4.87\tabularnewline
+Lean & 1 & 0.371 & 0.371 & 157.62 & 0 & 0.064 & 580.33\tabularnewline
+Name & 43 & 2.307 & 0.054 & 22.82 & 0 & 0.064 & 84.02\tabularnewline
+Diet & 1 & 2.969 & 2.969 & 1263.00 & 0 & 0.064 & 4650.28\tabularnewline
+Name:Diet & 42 & 0.330 & 0.008 & 3.34 & 0 & 0.064 & 12.30\tabularnewline
+Residuals & 291 & 0.684 & 0.002 & NA & NA & 0.064 & 3.68\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -950,10 +1021,11 @@ Residuals & 291 & 0.883 & 0.003 & NA & NA & 0.062 & 4.87\tabularnewline
 \StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{name=}\StringTok{"Factor"}\NormalTok{,}
                     \DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"Diet"}\NormalTok{, }\StringTok{"Lean Mass"}\NormalTok{, }\StringTok{"Strain"}\NormalTok{, }\StringTok{"Strain x Diet"}\NormalTok{, }\StringTok{"Residuals"}\NormalTok{),}
                     \DataTypeTok{values=}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{5}\NormalTok{, }\StringTok{"Set1"}\NormalTok{)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Percent of Variance"}\NormalTok{,}
-       \DataTypeTok{x=}\StringTok{"Group - Adjustments"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Variance Contribution (%)"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Diet and Adjustments"}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}
-\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{12}\NormalTok{))}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{18}\NormalTok{),}
+        \DataTypeTok{axis.text=}\KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{8}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -968,7 +1040,7 @@ Gain}\label{adaptive-thermogenesis-vs-weight-gain}}
 \NormalTok{data.wide }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{Wt.Gain,}
              \DataTypeTok{x=}\NormalTok{AT)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD"}\NormalTok{,}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Weight Gained on HFD (g)"}\NormalTok{,}
        \DataTypeTok{x=}\StringTok{"Adaptive Thermogenesis (W)"}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
 \StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{method=}\StringTok{"lm"}\NormalTok{) }\OperatorTok{+}\StringTok{  }\KeywordTok{theme_classic}\NormalTok{() }\OperatorTok{+}

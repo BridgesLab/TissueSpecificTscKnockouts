@@ -1,5 +1,5 @@
 ---
-title: "Evaluation of Energy Intake from BXD Datasets"
+title: "Evaluation of Energy Expenditure from BXD Datasets"
 author: "Dave Bridges"
 date: "January 19, 2022"
 output:
@@ -130,6 +130,32 @@ data %>%
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
+## Estimating Effect Sizes
+
+```{r effect-sizes}
+data %>%
+  group_by(Diet) %>%
+  summarize(Max = max(MR_W, na.rm=T),
+            Min = min(MR_W,na.rm=T), 
+            Mean = mean(MR_W, na.rm=T),
+            SE = mean(MR_W_SE,na.rm=T),
+            N = mean(N,na.rm=T)) %>%
+  mutate(SD = SE*sqrt(mean(N,na.rm=T))) %>%
+  mutate(Rel.SD = SD/Mean*100) %>%
+  kable(caption="Summary statistics for thermogenesis from BXD mice")
+
+data %>%
+  group_by(Diet) %>%
+  summarize(Max = max(Value_lm, na.rm=T),
+            Min = min(Value_lm,na.rm=T), 
+            Mean = mean(Value_lm, na.rm=T),
+            SE = mean(SE_lm,na.rm=T),
+            N = mean(N,na.rm=T)) %>%
+  mutate(SD = SE*sqrt(mean(N,na.rm=T))) %>%
+  mutate(Rel.SD = SD/Mean*100) %>%
+  kable(caption="Summary statistics for lean mass from BXD mice")
+```
+
 ## Adjusting for Lean Mass
 
 ```{r lean-mass-adjusting}
@@ -155,7 +181,9 @@ ggplot(data, aes(y=MR_W,
   #geom_label_repel(data = subset(data, (MR_W < 0.45&Value_lm>25.5)|MR_W>0.65&Value_lm<27),aes(label=Name)) +
   labs(y="Energy Expenditure (W)",
        x="Lean Mass (g)") +
-  theme(legend.position = c(0.1,0.85))
+  theme_classic() +
+  theme(legend.position = c(0.1,0.85),
+        text=element_text(size=18))
 
 
 #chow only
@@ -228,10 +256,11 @@ Defined as lean mass adjusted VO2 from HFD - NCD
 ```{r adaptive-thermogenesis}
 data.wide <-
   data %>%
-  select(Value_lm,Value_bw, MR_W, MR_W_SE, MR_adj,Name,Diet) %>%
-  pivot_wider(names_from=Diet,id_cols=Name,values_from=c(Value_lm,Value_bw, MR_W,MR_W_SE,MR_adj)) %>%
+  select(Value_lm,SE,Value_bw, MR_W, MR_W_SE, MR_adj,Name,Diet) %>%
+  pivot_wider(names_from=Diet,id_cols=Name,values_from=c(Value_lm,Value_bw, MR_W,MR_W_SE,MR_adj,SE)) %>%
   mutate(AT = MR_W_HFD - MR_W_NCD,
          AT_SE = sqrt((MR_W_SE_NCD/MR_W_NCD)^2+(MR_W_SE_HFD/MR_W_HFD)^2)*AT,
+         Wt_SE = sqrt((SE_NCD/Value_bw_NCD)^2+(SE_HFD/Value_bw_NCD)^2)*Value_bw_NCD,
          Wt.Gain = Value_bw_HFD-Value_bw_NCD)
 
 data.wide %>%
@@ -253,7 +282,7 @@ data.wide %>%
 data.wide %>%
   ggplot(aes(y=Wt.Gain,
              x=MR_W_NCD)) +
-  labs(y="Weight Gained on HFD",
+  labs(y="Weight Gained on HFD (g)",
        x="Energy Expenditure on NCD (W)") +
   geom_point() +
   geom_smooth(method="lm") +
@@ -265,10 +294,14 @@ lm(Wt.Gain~MR_W_NCD, data=data.wide) %>% glance %>% kable(caption="Summary of re
 data.wide %>%
   ggplot(aes(y=Wt.Gain,
              x=MR_adj_NCD)) +
-  labs(y="Weight Gained on HFD",
+  labs(y="Weight Gained on HFD (g)",
        x="Adjusted Energy Expenditure on NCD (W)") +
   geom_point() +
   geom_smooth(method="lm") +
+  geom_errorbarh(aes(xmin=MR_adj_NCD-MR_W_SE_NCD,
+                    xmax=MR_adj_NCD+MR_W_SE_NCD))+
+  geom_errorbar(aes(ymin=Wt.Gain-Wt_SE,
+                     ymax=Wt.Gain+Wt_SE)) +
   theme_classic() +
   theme(text=element_text(size=18))
 
@@ -400,10 +433,11 @@ ggplot(aes(x=ordered(Group, levels=c("NCD-None","NCD-Lean Mass", "HFD-Lean Mass"
   scale_fill_manual(name="Factor",
                     labels = c("Diet", "Lean Mass", "Strain", "Strain x Diet", "Residuals"),
                     values=brewer.pal(5, "Set1")) +
-  labs(y="Percent of Variance",
-       x="Group - Adjustments") +
+  labs(y="Variance Contribution (%)",
+       x="Diet and Adjustments") +
   theme_classic() +
-  theme(text=element_text(size=12))
+  theme(text=element_text(size=18),
+        axis.text=element_text(size=8))
 ```
 
 ### Adaptive Thermogenesis vs Weight Gain
@@ -412,7 +446,7 @@ ggplot(aes(x=ordered(Group, levels=c("NCD-None","NCD-Lean Mass", "HFD-Lean Mass"
 data.wide %>%
   ggplot(aes(y=Wt.Gain,
              x=AT)) +
-  labs(y="Weight Gained on HFD",
+  labs(y="Weight Gained on HFD (g)",
        x="Adaptive Thermogenesis (W)") +
   geom_point() +
   geom_smooth(method="lm") +  theme_classic() +

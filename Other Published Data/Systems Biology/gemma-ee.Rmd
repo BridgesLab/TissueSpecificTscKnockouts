@@ -180,7 +180,7 @@ ee.adj.lmm.results %>%
     arrange(p_wald) %>% 
     filter(p_wald<0.05) %>%
     head(10) %>%
-    kable(caption="Top 10 nominal associations from mixed linear models for adjusted energy expenditure") 
+    kable(caption="Top 10 nominal associations from mixed linear models for adjusted energy expenditure", digits=c(0,0,0,0,0,0,3,3,3,1,3,8)) 
  
  ee.adj.lmm.results %>%
    arrange(p_wald) %>% 
@@ -197,8 +197,7 @@ ee.adj.lmm.results %>%
   kable(caption="Top loci assocated with unadjusted energy expenditure")
 
 library(qqman)
- 
-
+library(ggplot2) 
 
 ee.adj.lmm.results %>%
   mutate(chr=as.numeric(as.character(chr))) %>%
@@ -206,7 +205,8 @@ ee.adj.lmm.results %>%
 # Make the Manhattan plot on the gwasResults dataset
   manhattan(chr="chr", bp="ps", snp="rs", p="p_wald",col = color.scheme, 
             suggestiveline =-log10(suggestive.pval),
-            genomewideline = -log10(gw.pval))
+            genomewideline = -log10(gw.pval),
+            cex.text=5) 
 ```
 
 ### Unadjusted Energy Expenditure

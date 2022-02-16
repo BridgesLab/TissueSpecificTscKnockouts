@@ -46,7 +46,7 @@ ee.phenotype.data <-
   filter(!is.na(MR_W))
 ```
 
-These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Other Published Data/Systems Biology**.  This script was most recently updated on **Sun Feb 13 11:19:07 2022**.
+These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Other Published Data/Systems Biology**.  This script was most recently updated on **Mon Feb 14 10:59:02 2022**.
 
 This analysis uses the BXD genotyping file at BXD-geno_8-9-17.txt which had 7320 markers for 205 strains of mice.
 
@@ -281,25 +281,25 @@ Table: Suggestive associations from mixed linear models for lean mass adjusted e
     arrange(p_wald) %>% 
     filter(p_wald<0.05) %>%
     head(10) %>%
-    kable(caption="Top 10 nominal associations from mixed linear models for adjusted energy expenditure") 
+    kable(caption="Top 10 nominal associations from mixed linear models for adjusted energy expenditure", digits=c(0,0,0,0,0,0,3,3,3,1,3,8)) 
 ```
 
 
 
 Table: Top 10 nominal associations from mixed linear models for adjusted energy expenditure
 
-|chr |rs          |        ps| n_miss|allele1 |allele0 |    af|   beta|    se| logl_H1| l_remle| p_wald|
-|:---|:-----------|---------:|------:|:-------|:-------|-----:|------:|-----:|-------:|-------:|------:|
-|17  |rs3701810   |  53671659|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046|      0|
-|17  |rs33298619  |  53841887|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046|      0|
-|17  |rs33350436  |  54042816|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046|      0|
-|17  |rs29662941  |  55231419|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046|      0|
-|17  |rs29658587  |  55264473|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046|      0|
-|17  |rs3714226   |  55270112|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046|      0|
-|17  |rs48234356  |  55293006|      0|B       |D       | 0.523| -0.043| 0.011|    53.2|   0.074|      0|
-|17  |rs49531041  |  55346551|      0|B       |D       | 0.523| -0.043| 0.011|    53.2|   0.074|      0|
-|4   |UNC8365581  | 140924595|      1|B       |D       | 0.488| -0.042| 0.011|    52.3|   0.019|      0|
-|4   |UNCHS013113 | 140951973|      1|B       |D       | 0.488| -0.042| 0.011|    52.3|   0.019|      0|
+|chr |rs          |        ps| n_miss|allele1 |allele0 |    af|   beta|    se| logl_H1| l_remle|   p_wald|
+|:---|:-----------|---------:|------:|:-------|:-------|-----:|------:|-----:|-------:|-------:|--------:|
+|17  |rs3701810   |  53671659|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046| 0.000144|
+|17  |rs33298619  |  53841887|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046| 0.000144|
+|17  |rs33350436  |  54042816|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046| 0.000144|
+|17  |rs29662941  |  55231419|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046| 0.000144|
+|17  |rs29658587  |  55264473|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046| 0.000144|
+|17  |rs3714226   |  55270112|      0|B       |D       | 0.500| -0.044| 0.010|    53.5|   0.046| 0.000144|
+|17  |rs48234356  |  55293006|      0|B       |D       | 0.523| -0.043| 0.011|    53.2|   0.074| 0.000247|
+|17  |rs49531041  |  55346551|      0|B       |D       | 0.523| -0.043| 0.011|    53.2|   0.074| 0.000247|
+|4   |UNC8365581  | 140924595|      1|B       |D       | 0.488| -0.042| 0.011|    52.3|   0.019| 0.000372|
+|4   |UNCHS013113 | 140951973|      1|B       |D       | 0.488| -0.042| 0.011|    52.3|   0.019| 0.000372|
 
 ```r
  ee.adj.lmm.results %>%
@@ -330,8 +330,7 @@ Table: Top loci assocated with unadjusted energy expenditure
 
 ```r
 library(qqman)
- 
-
+library(ggplot2) 
 
 ee.adj.lmm.results %>%
   mutate(chr=as.numeric(as.character(chr))) %>%
@@ -339,7 +338,8 @@ ee.adj.lmm.results %>%
 # Make the Manhattan plot on the gwasResults dataset
   manhattan(chr="chr", bp="ps", snp="rs", p="p_wald",col = color.scheme, 
             suggestiveline =-log10(suggestive.pval),
-            genomewideline = -log10(gw.pval))
+            genomewideline = -log10(gw.pval),
+            cex.text=5) 
 ```
 
 ![](figures/ee-adj-analysis-1.png)<!-- -->
@@ -659,18 +659,21 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] qqman_0.1.8 readr_2.1.1 dplyr_1.0.7 tidyr_1.1.4 knitr_1.37 
+## [1] ggplot2_3.3.5 qqman_0.1.8   readr_2.1.1   dplyr_1.0.7   tidyr_1.1.4  
+## [6] knitr_1.37   
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] highr_0.9        pillar_1.6.4     bslib_0.3.1      compiler_4.0.2  
 ##  [5] jquerylib_0.1.4  tools_4.0.2      bit_4.0.4        digest_0.6.29   
-##  [9] jsonlite_1.7.2   evaluate_0.14    lifecycle_1.0.1  tibble_3.1.6    
-## [13] pkgconfig_2.0.3  rlang_0.4.12     rstudioapi_0.13  cli_3.1.0       
-## [17] DBI_1.1.2        parallel_4.0.2   yaml_2.2.1       xfun_0.29       
-## [21] fastmap_1.1.0    stringr_1.4.0    generics_0.1.1   vctrs_0.3.8     
-## [25] sass_0.4.0       hms_1.1.1        bit64_4.0.5      tidyselect_1.1.1
-## [29] calibrate_1.7.7  glue_1.6.0       R6_2.5.1         fansi_1.0.0     
-## [33] vroom_1.5.7      rmarkdown_2.11   purrr_0.3.4      tzdb_0.2.0      
-## [37] magrittr_2.0.1   MASS_7.3-54      ellipsis_0.3.2   htmltools_0.5.2 
-## [41] assertthat_0.2.1 utf8_1.2.2       stringi_1.7.6    crayon_1.4.2
+##  [9] gtable_0.3.0     jsonlite_1.7.2   evaluate_0.14    lifecycle_1.0.1 
+## [13] tibble_3.1.6     pkgconfig_2.0.3  rlang_0.4.12     rstudioapi_0.13 
+## [17] cli_3.1.0        DBI_1.1.2        parallel_4.0.2   yaml_2.2.1      
+## [21] xfun_0.29        fastmap_1.1.0    withr_2.4.3      stringr_1.4.0   
+## [25] generics_0.1.1   vctrs_0.3.8      sass_0.4.0       hms_1.1.1       
+## [29] grid_4.0.2       bit64_4.0.5      tidyselect_1.1.1 calibrate_1.7.7 
+## [33] glue_1.6.0       R6_2.5.1         fansi_1.0.0      vroom_1.5.7     
+## [37] rmarkdown_2.11   purrr_0.3.4      tzdb_0.2.0       magrittr_2.0.1  
+## [41] scales_1.1.1     MASS_7.3-54      ellipsis_0.3.2   htmltools_0.5.2 
+## [45] assertthat_0.2.1 colorspace_2.0-2 utf8_1.2.2       stringi_1.7.6   
+## [49] munsell_0.5.0    crayon_1.4.2
 ```
