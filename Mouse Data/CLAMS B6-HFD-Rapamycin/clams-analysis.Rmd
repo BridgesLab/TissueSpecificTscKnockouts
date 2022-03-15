@@ -1,5 +1,5 @@
 ---
-title: "Effects of Rapamycin on the Early Stages of HFD Increased Energy Expenditure - Dont trust the statistics in this version"
+title: "Effects of Rapamycin on the Early Stages of HFD Increased Energy Expenditure"
 author: "Erin Stephenson and Dave Bridges"
 date: "September 18, 2015"
 output:
@@ -13,8 +13,10 @@ output:
 ```{r global_options, include=FALSE}
 library(knitr)
 opts_chunk$set(fig.path='figures/',
-               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
 options(scipen=5,digits =3)
+
+se <- function(x) sd(x)/sqrt(length(x))
 ```
 
 ```{r data-entry}
@@ -92,13 +94,13 @@ The input files were `r mri_data_file` for the echoMRI data and `r clams_data_fi
 mri_table <- 
   mri_data %>%
   distinct(Label, .keep_all = T) %>%
-  select(Label,Treatment) %>%
+  dplyr::select(Label,Treatment) %>%
   group_by(Treatment) %>%
   summarise(Males = length(Treatment))
 
 summary_table <- 
   merged_data %>%
-  select(Subject,Treatment) %>%
+  dplyr::select(Subject,Treatment) %>%
   distinct(Subject, .keep_all = T) %>%
   group_by(Treatment) %>%
   summarise(Males = length(Treatment))
@@ -118,6 +120,7 @@ animal.time.course <-
   summarize(VO2 = mean(VO2),
             RER = mean(RER),
             HEAT = mean(Heat),
+            HEAT.SE = se(Heat),
             Total.Activity = mean(Total.Activity),
             Lean.Mass = mean(Lean),
             Fat.Mass = mean(Fat),
@@ -198,6 +201,23 @@ We first checked whether normality was maintained in the residuals from the ANCO
 with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[1]), plot(Time.Elapsed,VO2, type="l", ylab="VO2 (mL/h)", xlab="Time (hours)", las=1, ylim=c(min(animal.time.course$VO2), max(animal.time.course$VO2))))
 with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[2]), lines(Time.Elapsed,VO2, col=palette()[2]))
 legend("topleft", levels(animal.time.course$Treatment), bty="n", lty=1, col=palette()[1:2])
+
+library(ggplot2)
+animal.time.course %>%
+  mutate(Time.HFD = Time.Elapsed-diet_start) %>%
+  filter(Time.HFD>-48,Time.HFD<72) %>%
+  ggplot(aes(y=HEAT,x=Time.HFD, col=Treatment)) +
+  #geom_point() +
+  geom_line() +
+  # geom_errorbar(aes(ymin=HEAT-HEAT.SE,
+  #                   ymax=HEAT+HEAT.SE)) +
+  labs(y="Energy Expenditure (W)",
+       x="Time From HFD (h)") +
+  theme_classic() +
+  scale_color_manual(name="",values=c("black","red")) +
+  theme(text=element_text(size=18),
+        legend.position=c(0.8,0.18))
+  
 ```
 
 This data was averaged for the VO2 before the HFD switch and after the HFD switch
@@ -209,8 +229,8 @@ superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
 
 ylimits <- c(min(grouped.summary$VO2) - max(grouped.summary.se$VO2), max(grouped.summary$VO2) + max(grouped.summary.se$VO2))
 
-plot.data <- grouped.summary %>% filter(HFD==T) %>% select(Treatment, Light.Dark, VO2) %>% spread(Light.Dark,VO2)
-plot.data.se <- grouped.summary.se %>% filter(HFD==T) %>% select(Treatment, Light.Dark, VO2) %>% spread(Light.Dark,VO2)
+plot.data <- grouped.summary %>% filter(HFD==T) %>% dplyr::select(Treatment, Light.Dark, VO2) %>% spread(Light.Dark,VO2)
+plot.data.se <- grouped.summary.se %>% filter(HFD==T) %>% dplyr::select(Treatment, Light.Dark, VO2) %>% spread(Light.Dark,VO2)
 
 ncd.data <- 
   animal.summary %>%
@@ -284,12 +304,32 @@ plotted.data.se$Light <- as.numeric(plotted.data.se$Light)
 
 plot <- barplot(as.matrix(plotted.data), 
                 beside=T, ylim=ylimits, 
-                ylab="Heat Production (W)",
+                ylab="Energy Expenditure (W)",
                 col=c("grey", palette()[1:2]), xpd=F, las=1)
 superpose.eb(plot,
              as.matrix(plotted.data),
              as.matrix(plotted.data.se))
 legend("topright", c("NCD", "HFD-Vehicle", "HFD-Rapamycin"), bty="n", fill=c("grey",palette()[1:2]))
+
+means <- plotted.data %>% 
+  mutate(Treatment=c("NCD","HFD-Vehicle","HFD-Rapamycin")) %>%
+  pivot_longer(-Treatment, names_to="Cycle",values_to="Mean")
+
+se <- plotted.data.se %>% 
+  mutate(Treatment=c("NCD","HFD-Vehicle","HFD-Rapamycin")) %>%
+  pivot_longer(-Treatment, names_to="Cycle",values_to="SE")
+
+full_join(means,se,by=c("Cycle","Treatment")) %>%
+  ggplot(aes(y=Mean,ymin=Mean-SE,ymax=Mean+SE,fill=Treatment,x=Cycle)) +
+  geom_bar(stat='identity',position='dodge',width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  coord_cartesian(ylim=c(0.47,0.62)) +
+  labs(y="Energy Expenditure (W)",
+       x="") +
+  scale_fill_manual(values=c('grey','black','red')) +
+    theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position = c(0.8,0.8))
 ```
 
 ```{r heat-diagnostic-plots, fig.cap="Diagnostic model plots for effects of drug treatment on thermogenesis  This analysis only includes HFD fed animals."}
@@ -338,6 +378,17 @@ with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[1]), pl
 with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[2]), lines(Time.Elapsed,RER, col=palette()[2]))
 with(subset(animal.time.course, Treatment==levels(merged_data$Treatment)[3]), lines(Time.Elapsed,RER, col=palette()[3]))
 legend("topright", levels(merged_data$Treatment), bty="n", lty=1, col=palette()[1:2])
+
+animal.time.course %>%
+  mutate(Time.HFD = Time.Elapsed-diet_start) %>%
+  filter(Time.HFD>-24,Time.HFD<48) %>%
+  ggplot(aes(y=RER,x=Time.HFD, col=Treatment)) +
+  geom_point() +
+  geom_line() +
+  # geom_errorbar(aes(ymin=HEAT-HEAT.SE,
+  #                   ymax=HEAT+HEAT.SE)) +
+  labs(y="Respiratory Exchange Ratio",
+       x="Time From HFD")
 ```
 
 ```{r rer-statistics-untreated, fig.cap="Diagnostic model plots for mixed linear model analysis of RER."}
@@ -389,11 +440,13 @@ legend("topright", levels(merged_data$Treatment), bty="n", lty=1, col=palette()[
 
 
 ```{r activity-barplot, fig.cap="Physical Activity Before and After High Fat Diet Treatment"}
+
+se <- function(x) sd(x)/sqrt(length(x))
 ylimits <- c(min(grouped.summary$Total.Activity) - max(grouped.summary.se$Total.Activity), max(grouped.summary$Total.Activity) + max(grouped.summary.se$Total.Activity))
 
 select <- dplyr::select
-plot.data <- grouped.summary %>% filter(HFD==T) %>% select(Treatment, Light.Dark, Total.Activity) %>% spread(Light.Dark,Total.Activity)
-plot.data.se <- grouped.summary.se %>% filter(HFD==T) %>% select(Treatment, Light.Dark, Total.Activity) %>% spread(Light.Dark,Total.Activity)
+plot.data <- grouped.summary %>% filter(HFD==T) %>% dplyr::select(Treatment, Light.Dark, Total.Activity) %>% spread(Light.Dark,Total.Activity)
+plot.data.se <- grouped.summary.se %>% filter(HFD==T) %>% dplyr::select(Treatment, Light.Dark, Total.Activity) %>% spread(Light.Dark,Total.Activity)
 ncd.data <- 
   animal.summary %>%
   group_by(Light.Dark) %>%
@@ -418,6 +471,26 @@ superpose.eb(plot,
              as.matrix(plotted.data),
              as.matrix(plotted.data.se))
 legend("topright", c("NCD", "HFD-Vehicle", "HFD-Rapamycin"), bty="n", fill=c("grey",palette()[1:2]))
+
+means <- plotted.data %>% 
+  mutate(Treatment=c("NCD","HFD-Vehicle","HFD-Rapamycin")) %>%
+  pivot_longer(-Treatment, names_to="Cycle",values_to="Mean")
+
+se <- plotted.data.se %>% 
+  mutate(Treatment=c("NCD","HFD-Vehicle","HFD-Rapamycin")) %>%
+  pivot_longer(-Treatment, names_to="Cycle",values_to="SE")
+
+full_join(means,se,by=c("Cycle","Treatment")) %>%
+  ggplot(aes(y=Mean,ymin=Mean-SE,ymax=Mean+SE,fill=Treatment,x=Cycle)) +
+  geom_bar(stat='identity',position='dodge',width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  #coord_cartesian(ylim=c(0.47,0.62)) +
+  labs(y="Ambulatory Activity",
+       x="") +
+  scale_fill_manual(values=c('grey','black','red')) +
+    theme_classic() +
+  theme(text=element_text(size=18),
+        legend.position = c(0.8,0.8))
 ```
 
 # Substrate Use

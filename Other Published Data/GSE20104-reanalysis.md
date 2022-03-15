@@ -477,6 +477,50 @@ Table: Significant GO-BP pathways
 |GO:0035456 | -2.33|      0|    0.001|response to interferon-beta                                                          |Plscr1/Irf1/Ifi204/Ifi205/Stat1/Gbp3/Gbp6/Gbp2/Irgm1/Igtp                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 |GO:0035458 | -2.36|      0|    0.000|cellular response to interferon-beta                                                 |Irf1/Ifi204/Ifi205/Stat1/Gbp3/Gbp6/Gbp2/Irgm1/Igtp                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
+## Empirical Muscle ATF4 Gene Set
+
+
+```r
+list(ATF4q0.25 = tT2 %>% filter(adj.P.Val <0.25) %>% pull(Gene.symbol),
+     ATF4p0.001 = tT2 %>% filter(P.Value <0.001) %>% pull(Gene.symbol),
+     ATF4p0.01 = tT2 %>% filter(P.Value <0.01) %>% pull(Gene.symbol),
+     ATF4p0.05 = tT2 %>% filter(P.Value <0.05) %>% pull(Gene.symbol)) -> atf4.gene.lists
+library(fgsea)
+
+mtsc.ranks <- pull(mtsc.data, log2FoldChange)
+names(mtsc.ranks) <- mtsc.data$external_gene_name
+
+mtsc.atf4.pathways <- fgsea(pathways = atf4.gene.lists, 
+                  stats    = sort(mtsc.ranks,decreasing=T),
+                  minSize  = 1,
+                  maxSize  = 500)
+
+mtsc.atf4.pathways %>% 
+  arrange(-NES) %>%
+  kable(caption="GSEA results for mTSC differential expression results compared to empirically determined ATF4 dependent changes in muscle")
+```
+
+
+
+Table: GSEA results for mTSC differential expression results compared to empirically determined ATF4 dependent changes in muscle
+
+|pathway    |  pval|  padj| log2err|    ES|  NES| size|leadingEdge                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+|:----------|-----:|-----:|-------:|-----:|----:|----:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|ATF4p0.001 | 0.000| 0.000|   0.593| 0.855| 2.06|   15|Uchl1 , Sln   , Krt18 , Ankrd1, Myl4  , Tnnt2 , Slc7a5, Tnni1 , Asns  , Igf2  , Chrna1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|ATF4p0.01  | 0.000| 0.000|   0.675| 0.612| 2.06|   86|Uchl1  , Sln    , Krt18  , Ankrd1 , Myl4   , Tnnt2  , Zfp697 , Casq2  , Slc7a5 , Ncam1  , Tnni1  , Tnnc1  , Asns   , Chrnd  , Ptpn5  , Cyb5r3 , Maged2 , Nes    , Epor   , Slc7a3 , Olfr550, Hspb7  , Slpi   , Kcnn3  , Tmem37 , Slc7a11, Igf2   , Csrp3  , Gadd45a, Chrna1 , Dhrs9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|ATF4q0.25  | 0.001| 0.001|   0.477| 0.862| 1.82|    8|Uchl1 , Ankrd1, Myl4  , Tnnt2 , Tnni1 , Igf2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|ATF4p0.05  | 0.000| 0.000|   0.557| 0.401| 1.53|  410|Uchl1        , Sln          , Nefm         , Psat1        , Krt18        , Ankrd1       , Pcbd1        , Grin3a       , Myl4         , Tnnt2        , Mustn1       , Txndc2       , Fam171b      , Zfp697       , Casq2        , C1qtnf3      , Slc7a5       , Tubb3        , Skint7       , Rab15        , Olfr1368     , Ncam1        , Tnni1        , Gck          , Nt5c2        , Gpr3         , Tnnc1        , Asns         , Chrnd        , Hspa2        , Carhsp1      , Ptpn5        , Cyb5r3       , Cd160        , Grb10        , Tal2         , Bbox1        , Kcnv2        , Maged2       , Nes          , Dclk1        , Fgf17        , Myo1h        , Uchl4        , Epor         , Slc7a3       , Nr2e3        , Olfr550      , Hspb7        , Slpi         , Pln          , 6430548M08Rik, Htatip2      , Kcnn3        , Tmem159      , Tmem37       , Slc7a11      , Lrrn1        , Cib1         , Igf2         , Xirp1        , Csrp3        , Iah1         , Gamt         , Ch25h        , Rassf3       , Gadd45a      , Lypd1        , Pomc         , Chrna1       , Dhrs9        , Rnf113a2     , Apol9b       , Slc16a12     , Rnd2         , Cdkn1a       , Myog         , Rassf5       , Dcun1d3      , Rgs9bp       , Zcchc3       , Napepld      , Cth          , Fetub        , Pdia6        , Cpxm2        , Hspa4l       , Ift122       , Igtp         , Usp11        , Slitrk6      , Peg12        , Mgst3        , Lyzl6        , Trem3        , Gars         , Meox1        , Tubb6        , Snap47       , Crybb3       , Ormdl2       , Ttf2         , Ahcy         , 2310002L09Rik, Apoe         , Zdhhc23      , Dusp6        , Cebpa        , Uck2         , Bin3         , Aven         , Dennd2d      , Rcan3        , Tceal5       , Angpt1       , Cdca4        , Saa3         , Col12a1      , Fgd2         , Pnmt         , Lysmd3       , Hmgb3 |
+
+```r
+plotEnrichment(atf4.gene.lists[["ATF4p0.001"]],
+               !(is.na(sort(mtsc.ranks, decreasing=T))))
+
+plotGseaTable(atf4.gene.lists, !(is.na(sort(mtsc.ranks,decreasing=T))), mtsc.atf4.pathways, 
+              gseaParam=0.5)
+```
+
+![](figures/gene-set-atf4-1.png)<!-- -->
+
 ## Pathway Analysis of Dual TSC/ATF4 Genes
 
 The co-regulated genes in TSC and ATF4 muscles were:
@@ -597,6 +641,79 @@ Table: Significant GO-BP pathways for co-regulated genes
 |GO:0043502 |4/121     |  0.002|    0.048|regulation of muscle adaptation                                                         |
 |GO:0062014 |4/121     |  0.002|    0.048|negative regulation of small molecule metabolic process                                 |
 
+# Specific Genes
+
+## Sarcolipin
+
+
+```r
+sln.id <- tT2 %>% filter(Gene.symbol=='Sln') %>% rownames()
+sln.exprs <- exprs(gset)[sln.id,]
+
+sln.data <- data.frame(sln.exprs, gs)
+
+library(forcats)
+sln.data %>%
+  group_by(gs) %>%
+  summarize(avg=mean(2^sln.exprs),
+            error=se(2^sln.exprs)) %>%
+  mutate(norm.mean = avg/avg[1],
+         norm.error = error/avg[1]) %>%
+  ggplot(aes(x=gs,
+             y=norm.mean, 
+             ymin=norm.mean-norm.error,
+             ymax=norm.mean+norm.error)) +
+  geom_bar(stat='identity', position='dodge') +
+  geom_errorbar(width=0.5) +
+  scale_x_discrete(labels=c("Control" = "Empty Vector", "ATF4.OE" = "ATF4")) +
+  theme_classic() +
+  theme(text=element_text(size=20)) +
+  labs(y='Relative mRNA Expression',
+       x='',
+       title='Effects ATF4 Overexpression on Sarcolipin')
+```
+
+![](figures/atf4-sln-barplot-1.png)<!-- -->
+
+## Ketolytic Genes
+
+```{atf4-ketolytic-barplot}
+genes.to.test <- c('Slc16a1','Bdh1','Hmgcs2')
+kt.id <- tT2 %>% filter(Gene.symbol%in%genes.to.test) %>% rownames()
+kt.exprs <- exprs(gset)[kt.id,] 
+rownames(kt.exprs) <- genes.to.test
+
+library(tibble)
+kt.data <- as.data.frame(kt.exprs) %>%
+  rownames_to_column(var="Gene") %>%
+  pivot_longer(-Gene, names_to='Sample') %>%
+  mutate(Treatment=rep(as.character(gs),3))
+
+
+library(forcats)
+kt.data %>%
+  group_by(Gene,Treatment) %>%
+  summarize(avg=mean(2^sln.exprs),
+            error=se(2^sln.exprs),
+            .groups='keep') %>% #not working here
+  mutate(norm.mean = avg/avg[Treatment=='Control'],
+         norm.error = error/avg[Treatment=='Control']) %>%
+  ggplot(aes(x=Treatment,
+             y=avg
+             ymin=norm.mean-norm.error,
+             ymax=norm.mean+norm.error)) +
+  geom_bar(stat='identity', position='dodge') +
+  geom_errorbar(width=0.5) +
+  scale_x_discrete(labels=c("Control" = "Empty Vector", "ATF4.OE" = "ATF4")) +
+  theme_classic() +
+  theme(text=element_text(size=16)) +
+  labs(y='Relative mRNA Expression',
+       x='',
+       title='Effects ATF4 Overexpression on Ketolysis Genes')
+```
+
+# Session Information
+
 
 ```r
 sessionInfo()
@@ -619,47 +736,48 @@ sessionInfo()
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] enrichplot_1.10.2      org.Mm.eg.db_3.12.0    AnnotationDbi_1.52.0  
-##  [4] IRanges_2.24.1         S4Vectors_0.28.1       clusterProfiler_3.18.1
-##  [7] venneuler_1.1-0        rJava_1.0-6            ggplot2_3.3.5         
-## [10] maptools_1.1-2         sp_1.4-6               umap_0.2.7.0          
-## [13] limma_3.46.0           GEOquery_2.58.0        Biobase_2.50.0        
-## [16] BiocGenerics_0.36.1    broom_0.7.11           dplyr_1.0.7           
-## [19] tidyr_1.1.4            knitr_1.37            
+##  [1] forcats_0.5.1          fgsea_1.16.0           enrichplot_1.10.2     
+##  [4] org.Mm.eg.db_3.12.0    AnnotationDbi_1.52.0   IRanges_2.24.1        
+##  [7] S4Vectors_0.28.1       clusterProfiler_3.18.1 venneuler_1.1-0       
+## [10] rJava_1.0-6            ggplot2_3.3.5          maptools_1.1-2        
+## [13] sp_1.4-6               umap_0.2.7.0           limma_3.46.0          
+## [16] GEOquery_2.58.0        Biobase_2.50.0         BiocGenerics_0.36.1   
+## [19] broom_0.7.11           dplyr_1.0.7            tidyr_1.1.4           
+## [22] knitr_1.37            
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] fgsea_1.16.0        colorspace_2.0-2    ellipsis_0.3.2     
-##   [4] qvalue_2.22.0       rstudioapi_0.13     farver_2.1.0       
-##   [7] graphlayouts_0.8.0  ggrepel_0.9.1       bit64_4.0.5        
-##  [10] RSpectra_0.16-0     fansi_1.0.0         scatterpie_0.1.7   
-##  [13] xml2_1.3.3          splines_4.0.2       cachem_1.0.6       
-##  [16] GOSemSim_2.16.1     polyclip_1.10-0     jsonlite_1.7.2     
-##  [19] GO.db_3.12.1        png_0.1-7           ggforce_0.3.3      
-##  [22] BiocManager_1.30.16 readr_2.1.1         compiler_4.0.2     
-##  [25] rvcheck_0.2.1       backports_1.4.1     assertthat_0.2.1   
-##  [28] Matrix_1.4-0        fastmap_1.1.0       cli_3.1.0          
-##  [31] tweenr_1.0.2        htmltools_0.5.2     tools_4.0.2        
-##  [34] igraph_1.2.6        gtable_0.3.0        glue_1.6.0         
-##  [37] reshape2_1.4.4      DO.db_2.9           fastmatch_1.1-3    
-##  [40] Rcpp_1.0.7          jquerylib_0.1.4     vctrs_0.3.8        
-##  [43] nlme_3.1-153        ggraph_2.0.5        xfun_0.29          
-##  [46] stringr_1.4.0       lifecycle_1.0.1     DOSE_3.16.0        
-##  [49] MASS_7.3-54         scales_1.1.1        tidygraph_1.2.0    
-##  [52] vroom_1.5.7         hms_1.1.1           ggupset_0.3.0      
-##  [55] RColorBrewer_1.1-2  yaml_2.2.1          curl_4.3.2         
-##  [58] memoise_2.0.1       reticulate_1.22     gridExtra_2.3      
-##  [61] downloader_0.4      ggfun_0.0.4         yulab.utils_0.0.4  
-##  [64] sass_0.4.0          stringi_1.7.6       RSQLite_2.2.9      
-##  [67] highr_0.9           BiocParallel_1.24.1 rlang_0.4.12       
-##  [70] pkgconfig_2.0.3     evaluate_0.14       lattice_0.20-45    
-##  [73] purrr_0.3.4         labeling_0.4.2      cowplot_1.1.1      
-##  [76] shadowtext_0.1.1    bit_4.0.4           tidyselect_1.1.1   
-##  [79] plyr_1.8.6          magrittr_2.0.1      R6_2.5.1           
-##  [82] generics_0.1.1      DBI_1.1.2           pillar_1.6.4       
-##  [85] foreign_0.8-81      withr_2.4.3         mgcv_1.8-38        
-##  [88] tibble_3.1.6        crayon_1.4.2        utf8_1.2.2         
-##  [91] tzdb_0.2.0          rmarkdown_2.11      viridis_0.6.2      
-##  [94] grid_4.0.2          data.table_1.14.2   blob_1.2.2         
-##  [97] digest_0.6.29       openssl_1.4.6       munsell_0.5.0      
-## [100] viridisLite_0.4.0   bslib_0.3.1         askpass_1.1
+##   [1] colorspace_2.0-2    ellipsis_0.3.2      qvalue_2.22.0      
+##   [4] rstudioapi_0.13     farver_2.1.0        graphlayouts_0.8.0 
+##   [7] ggrepel_0.9.1       bit64_4.0.5         RSpectra_0.16-0    
+##  [10] fansi_1.0.0         scatterpie_0.1.7    xml2_1.3.3         
+##  [13] splines_4.0.2       cachem_1.0.6        GOSemSim_2.16.1    
+##  [16] polyclip_1.10-0     jsonlite_1.7.2      GO.db_3.12.1       
+##  [19] png_0.1-7           ggforce_0.3.3       BiocManager_1.30.16
+##  [22] readr_2.1.1         compiler_4.0.2      rvcheck_0.2.1      
+##  [25] backports_1.4.1     assertthat_0.2.1    Matrix_1.4-0       
+##  [28] fastmap_1.1.0       cli_3.1.0           tweenr_1.0.2       
+##  [31] htmltools_0.5.2     tools_4.0.2         igraph_1.2.6       
+##  [34] gtable_0.3.0        glue_1.6.0          reshape2_1.4.4     
+##  [37] DO.db_2.9           fastmatch_1.1-3     Rcpp_1.0.7         
+##  [40] jquerylib_0.1.4     vctrs_0.3.8         nlme_3.1-153       
+##  [43] ggraph_2.0.5        xfun_0.29           stringr_1.4.0      
+##  [46] lifecycle_1.0.1     DOSE_3.16.0         MASS_7.3-54        
+##  [49] scales_1.1.1        tidygraph_1.2.0     vroom_1.5.7        
+##  [52] hms_1.1.1           ggupset_0.3.0       RColorBrewer_1.1-2 
+##  [55] yaml_2.2.1          curl_4.3.2          memoise_2.0.1      
+##  [58] reticulate_1.22     gridExtra_2.3       downloader_0.4     
+##  [61] ggfun_0.0.4         yulab.utils_0.0.4   sass_0.4.0         
+##  [64] stringi_1.7.6       RSQLite_2.2.9       highr_0.9          
+##  [67] BiocParallel_1.24.1 rlang_0.4.12        pkgconfig_2.0.3    
+##  [70] evaluate_0.14       lattice_0.20-45     purrr_0.3.4        
+##  [73] labeling_0.4.2      cowplot_1.1.1       shadowtext_0.1.1   
+##  [76] bit_4.0.4           tidyselect_1.1.1    plyr_1.8.6         
+##  [79] magrittr_2.0.1      R6_2.5.1            generics_0.1.1     
+##  [82] DBI_1.1.2           pillar_1.6.4        foreign_0.8-81     
+##  [85] withr_2.4.3         mgcv_1.8-38         tibble_3.1.6       
+##  [88] crayon_1.4.2        utf8_1.2.2          tzdb_0.2.0         
+##  [91] rmarkdown_2.11      viridis_0.6.2       grid_4.0.2         
+##  [94] data.table_1.14.2   blob_1.2.2          digest_0.6.29      
+##  [97] openssl_1.4.6       munsell_0.5.0       viridisLite_0.4.0  
+## [100] bslib_0.3.1         askpass_1.1
 ```

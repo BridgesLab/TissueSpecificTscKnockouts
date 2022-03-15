@@ -321,6 +321,33 @@ emapplot(gsea.bp,
 gsea.bp %>% as.data.frame %>% dplyr::select(NES,pvalue,p.adjust,Description, core_enrichment) %>% arrange(-NES) %>% filter(p.adjust<0.05) %>% kable(caption="Significant GO-BP pathways")
 ```
 
+## Empirical Muscle ATF4 Gene Set
+
+```{r gene-set-atf4}
+list(ATF4q0.25 = tT2 %>% filter(adj.P.Val <0.25) %>% pull(Gene.symbol),
+     ATF4p0.001 = tT2 %>% filter(P.Value <0.001) %>% pull(Gene.symbol),
+     ATF4p0.01 = tT2 %>% filter(P.Value <0.01) %>% pull(Gene.symbol),
+     ATF4p0.05 = tT2 %>% filter(P.Value <0.05) %>% pull(Gene.symbol)) -> atf4.gene.lists
+library(fgsea)
+
+mtsc.ranks <- pull(mtsc.data, log2FoldChange)
+names(mtsc.ranks) <- mtsc.data$external_gene_name
+
+mtsc.atf4.pathways <- fgsea(pathways = atf4.gene.lists, 
+                  stats    = sort(mtsc.ranks,decreasing=T),
+                  minSize  = 1,
+                  maxSize  = 500)
+
+mtsc.atf4.pathways %>% 
+  arrange(-NES) %>%
+  kable(caption="GSEA results for mTSC differential expression results compared to empirically determined ATF4 dependent changes in muscle")
+plotEnrichment(atf4.gene.lists[["ATF4p0.001"]],
+               !(is.na(sort(mtsc.ranks, decreasing=T))))
+
+plotGseaTable(atf4.gene.lists, !(is.na(sort(mtsc.ranks,decreasing=T))), mtsc.atf4.pathways, 
+              gseaParam=0.5)
+```
+
 ## Pathway Analysis of Dual TSC/ATF4 Genes
 
 The co-regulated genes in TSC and ATF4 muscles were:
@@ -348,6 +375,77 @@ library(enrichplot)
 
 enrich.bp %>% as.data.frame %>% dplyr::select(GeneRatio,pvalue,p.adjust,Description) %>%  filter(p.adjust<0.05) %>% kable(caption="Significant GO-BP pathways for co-regulated genes")
 ```
+
+# Specific Genes
+
+## Sarcolipin
+
+```{r atf4-sln-barplot}
+
+sln.id <- tT2 %>% filter(Gene.symbol=='Sln') %>% rownames()
+sln.exprs <- exprs(gset)[sln.id,]
+
+sln.data <- data.frame(sln.exprs, gs)
+
+library(forcats)
+sln.data %>%
+  group_by(gs) %>%
+  summarize(avg=mean(2^sln.exprs),
+            error=se(2^sln.exprs)) %>%
+  mutate(norm.mean = avg/avg[1],
+         norm.error = error/avg[1]) %>%
+  ggplot(aes(x=gs,
+             y=norm.mean, 
+             ymin=norm.mean-norm.error,
+             ymax=norm.mean+norm.error)) +
+  geom_bar(stat='identity', position='dodge') +
+  geom_errorbar(width=0.5) +
+  scale_x_discrete(labels=c("Control" = "Empty Vector", "ATF4.OE" = "ATF4")) +
+  theme_classic() +
+  theme(text=element_text(size=20)) +
+  labs(y='Relative mRNA Expression',
+       x='',
+       title='Effects ATF4 Overexpression on Sarcolipin')
+```
+
+## Ketolytic Genes
+
+```{atf4-ketolytic-barplot}
+genes.to.test <- c('Slc16a1','Bdh1','Hmgcs2')
+kt.id <- tT2 %>% filter(Gene.symbol%in%genes.to.test) %>% rownames()
+kt.exprs <- exprs(gset)[kt.id,] 
+rownames(kt.exprs) <- genes.to.test
+
+library(tibble)
+kt.data <- as.data.frame(kt.exprs) %>%
+  rownames_to_column(var="Gene") %>%
+  pivot_longer(-Gene, names_to='Sample') %>%
+  mutate(Treatment=rep(as.character(gs),3))
+
+
+library(forcats)
+kt.data %>%
+  group_by(Gene,Treatment) %>%
+  summarize(avg=mean(2^sln.exprs),
+            error=se(2^sln.exprs),
+            .groups='keep') %>% #not working here
+  mutate(norm.mean = avg/avg[Treatment=='Control'],
+         norm.error = error/avg[Treatment=='Control']) %>%
+  ggplot(aes(x=Treatment,
+             y=avg
+             ymin=norm.mean-norm.error,
+             ymax=norm.mean+norm.error)) +
+  geom_bar(stat='identity', position='dodge') +
+  geom_errorbar(width=0.5) +
+  scale_x_discrete(labels=c("Control" = "Empty Vector", "ATF4.OE" = "ATF4")) +
+  theme_classic() +
+  theme(text=element_text(size=16)) +
+  labs(y='Relative mRNA Expression',
+       x='',
+       title='Effects ATF4 Overexpression on Ketolysis Genes')
+```
+
+# Session Information
 
 ```{r session-info}
 sessionInfo()
