@@ -59,7 +59,8 @@ Mice were run in the CLAMS in several batches, and combined.
 library(readxl) #loads the readr package
 key.filename <- 'mTSC-HFD_CLAMS_Experiment_Key.xlsx' #make this a separate line, you can use any variable you want
 key.data <- read_excel(key.filename, sheet = 'Sheet1') %>%
-  mutate(Knockout = if_else(Genotype=='fl/fl; Tg/+', 'Knockout','Control'))
+  mutate(Knockout = if_else(Genotype=='fl/fl; Tg/+', 'Knockout','Control')) %>%
+  mutate(Mouse = as.factor(Mouse))
 ```
 
 ## Oxymax Input
@@ -90,8 +91,13 @@ mri.data.unique <-
   distinct(Label, .keep_all = T) %>%
   dplyr::select(Label,Fat,Lean,Weight)
 
+read_csv_quiet <-
+  function(x) {read_csv(x, show_col_types = F,
+                        col_types = cols(Subject=col_factor(levels = NULL)))}
+
 baseline.data <-  
-  lapply(baseline.files, read_csv) %>% 
+  lapply(baseline.files, read_csv_quiet) %>% 
+  #mutate(Subject = as.factor(as.character(Subject))) %>%
   bind_rows() %>%
   dplyr::select(Subject, Interval, `Date/Time`, `Light/Dark`, `Volume O2`, RER, `X Ambulatory`, `Y Ambulatory`,`Volume CO2`,Heat) %>%
   right_join(key.data, by=c('Subject'='Mouse'))  %>% #merged with annotation file %>%
@@ -418,23 +424,23 @@ ggplot(summary.data,
 
 ```{r heat-stats}
 library(lme4)
-# bascic model
-heat.lme.base <- lmer(Heat ~ as.factor(Zeitgeber.Time) + (1|Subject), data=animal.data, REML=F)
+# basic model
+heat.lme.base <- lmer(Heat ~ as.factor(Zeitgeber.Time) + (1|Subject), data=animal.data %>% filter(!is.na(Lean)), REML=F)
 
 # added lean mass as a covariate
-heat.lme.lean <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + (1|Subject), data=animal.data, REML=F)
+heat.lme.lean <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + (1|Subject), data=animal.data %>% filter(!is.na(Lean)), REML=F)
 
 # added light/dark cycle
-heat.lme.ld <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + `Light/Dark` + (1|Subject), data=animal.data, REML=F)
+heat.lme.ld <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + `Light/Dark` + (1|Subject), data=animal.data%>% filter(!is.na(Lean)), REML=F)
 
 # is there a additive effect of sex
-heat.lme.sex <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex  + (1|Subject), data=animal.data, REML=F)
-heat.lme.ko <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + Knockout + (1|Subject), data=animal.data, REML=F)
+heat.lme.sex <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex  + (1|Subject), data=animal.data%>% filter(!is.na(Lean)), REML=F)
+heat.lme.ko <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + Knockout + (1|Subject), data=animal.data%>% filter(!is.na(Lean)), REML=F)
 
-heat.lme.ko.sex.int <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + Knockout + Knockout:Sex + (1|Subject), data=animal.data, REML=F)
+heat.lme.ko.sex.int <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + Knockout + Knockout:Sex + (1|Subject), data=animal.data%>% filter(!is.na(Lean)), REML=F)
 
-heat.lme.ko.lc <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + `Light/Dark` + Knockout + Knockout:`Light/Dark` + (1|Subject), data=animal.data, REML=F)
-heat.lme.ko.lc.null <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + `Light/Dark` + (1|Subject), data=animal.data, REML=F)
+heat.lme.ko.lc <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + `Light/Dark` + Knockout + Knockout:`Light/Dark` + (1|Subject), data=animal.data%>% filter(!is.na(Lean)), REML=F)
+heat.lme.ko.lc.null <- lmer(Heat ~ as.factor(Zeitgeber.Time) + Lean + Sex + `Light/Dark` + (1|Subject), data=animal.data%>% filter(!is.na(Lean)), REML=F)
 
 heat.lme <- heat.lme.ko.lc
 heat.lme.null <- heat.lme.ko.lc.null
@@ -451,7 +457,7 @@ To test whether these groups are different we constructed a linear model with th
 
 Heat ~ `r as.character(formula(heat.lme))[3]`.  
 
-We used this model because the base model was that Heat production changes over the day.  We asked if lean mass modified the time dependent effect, and it did (p=`r anova(heat.lme.base,heat.lme.lean)$"Pr(>Chisq)"[2]`).  After adjusting for lean mass, we asked if there was any additional benefit to including the light/dark cycle in addition to the time of day, and found that there was no significant effect, so that was not included in the model (p=`r anova(heat.lme.ld,heat.lme.lean)$"Pr(>Chisq)"[2]`).  we added sex as a covariate which had no significant effect `r anova(heat.lme.sex,heat.lme.lean)$"Pr(>Chisq)"[2]`. We chose to keep sex in the model though as it was borderline significant.  We next added knockout to the model and found no significant effect `r anova(heat.lme.sex,heat.lme.ko)$"Pr(>Chisq)"[2]`.  Finally we asked if Sex modified the effect of the knockout and found no significant effect `r anova(heat.lme.ko,heat.lme.ko.sex.int)$"Pr(>Chisq)"[2]`.
+We used this model because the base model was that Heat production changes over the day.  We asked if lean mass modified the time dependent effect, and it did (p=` anova(heat.lme.base,heat.lme.lean)$"Pr(>Chisq)"[2]`).  After adjusting for lean mass, we asked if there was any additional benefit to including the light/dark cycle in addition to the time of day, and found that there was no significant effect, so that was not included in the model (p=`r anova(heat.lme.ld,heat.lme.lean)$"Pr(>Chisq)"[2]`).  we added sex as a covariate which had no significant effect `r anova(heat.lme.sex,heat.lme.lean)$"Pr(>Chisq)"[2]`. We chose to keep sex in the model though as it was borderline significant.  We next added knockout to the model and found no significant effect `r anova(heat.lme.sex,heat.lme.ko)$"Pr(>Chisq)"[2]`.  Finally we asked if Sex modified the effect of the knockout and found no significant effect `r anova(heat.lme.ko,heat.lme.ko.sex.int)$"Pr(>Chisq)"[2]`.
 
 Since it appears from the figures that the elevation in energy expenditure is restricted to the awake cycle, we next asked if there was an *interaction* between genotype and the Light/Dark cycle.  Adding this interaction was highly significant `r anova(heat.lme.ko.lc,heat.lme.ko.lc.null)$"Pr(>Chisq)"[2]`.  
 
