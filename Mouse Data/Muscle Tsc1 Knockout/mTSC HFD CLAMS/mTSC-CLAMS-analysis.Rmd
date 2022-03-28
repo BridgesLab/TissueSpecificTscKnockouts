@@ -19,7 +19,7 @@ output:
 library(knitr)
 #figures makde will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
-               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
 options(scipen = 2, digits = 3)
 # set echo and message to TRUE if you want to display code blocks and code output respectively
 
@@ -282,7 +282,8 @@ animal.data.ld <-
             Activity = mean(Activity, na.rm=T),
             CHO.Oxidation = mean(CHO.Ox, na.rm=T),
             Lipid.Oxidation = mean(Lipid.Ox, na.rm=T),
-            Heat = mean(Heat,na.rm=T)) 
+            Heat = mean(Heat,na.rm=T),
+            Lean = mean(Lean,na.rm=T)) 
 
 animal.data.ld.summary <-
   animal.data.ld %>%
@@ -420,6 +421,24 @@ ggplot(summary.data,
         legend.title=element_blank())
 ```
 
+```{r heat-lbm}
+heat.lm.ko <- lm(Heat ~ Lean + Sex + `Light/Dark` + Knockout + Knockout:`Light/Dark`, data=animal.data.ld) 
+heat.lm.ko.null <- lm(Heat ~ Lean + Sex + `Light/Dark`, data=animal.data.ld) 
+
+library(broom)
+heat.lm.ko %>% tidy %>% kable(caption="Model including sex and lean mass as covariates testing for the interaction betwteen knockout and light cycle")
+
+animal.data.ld %>%
+  ggplot(aes(y=Heat,
+             x=Lean,
+             col=Knockout)) +
+  geom_point() +
+  geom_smooth(method='lm', mapping=aes(y=predict(heat.lm.ko,animal.data.ld))) +
+  facet_grid(`Light/Dark`~Sex)
+```
+
+At the level of light vs dark there is no sigificant difference of genotype `r anova(heat.lm.ko,heat.lm.ko.null)$"Pr(>Chisq)"[2]`.
+
 ## Heat Statistics
 
 ```{r heat-stats}
@@ -457,7 +476,7 @@ To test whether these groups are different we constructed a linear model with th
 
 Heat ~ `r as.character(formula(heat.lme))[3]`.  
 
-We used this model because the base model was that Heat production changes over the day.  We asked if lean mass modified the time dependent effect, and it did (p=` anova(heat.lme.base,heat.lme.lean)$"Pr(>Chisq)"[2]`).  After adjusting for lean mass, we asked if there was any additional benefit to including the light/dark cycle in addition to the time of day, and found that there was no significant effect, so that was not included in the model (p=`r anova(heat.lme.ld,heat.lme.lean)$"Pr(>Chisq)"[2]`).  we added sex as a covariate which had no significant effect `r anova(heat.lme.sex,heat.lme.lean)$"Pr(>Chisq)"[2]`. We chose to keep sex in the model though as it was borderline significant.  We next added knockout to the model and found no significant effect `r anova(heat.lme.sex,heat.lme.ko)$"Pr(>Chisq)"[2]`.  Finally we asked if Sex modified the effect of the knockout and found no significant effect `r anova(heat.lme.ko,heat.lme.ko.sex.int)$"Pr(>Chisq)"[2]`.
+We used this model because the base model was that Heat production changes over the day.  We asked if lean mass modified the time dependent effect, and it did (p=`r anova(heat.lme.base,heat.lme.lean)$"Pr(>Chisq)"[2]`).  After adjusting for lean mass, we asked if there was any additional benefit to including the light/dark cycle in addition to the time of day, and found that there was no significant effect, so that was not included in the model (p=`r anova(heat.lme.ld,heat.lme.lean)$"Pr(>Chisq)"[2]`).  we added sex as a covariate which had no significant effect `r anova(heat.lme.sex,heat.lme.lean)$"Pr(>Chisq)"[2]`. We chose to keep sex in the model though as it was borderline significant.  We next added knockout to the model and found no significant effect `r anova(heat.lme.sex,heat.lme.ko)$"Pr(>Chisq)"[2]`.  Finally we asked if Sex modified the effect of the knockout and found no significant effect `r anova(heat.lme.ko,heat.lme.ko.sex.int)$"Pr(>Chisq)"[2]`.
 
 Since it appears from the figures that the elevation in energy expenditure is restricted to the awake cycle, we next asked if there was an *interaction* between genotype and the Light/Dark cycle.  Adding this interaction was highly significant `r anova(heat.lme.ko.lc,heat.lme.ko.lc.null)$"Pr(>Chisq)"[2]`.  
 
@@ -487,7 +506,9 @@ kable(heat.summary, caption="Average changes in heat production comparing wt to 
 daily.kcal.increase <- heat.summary$Change %>% mean * 60 * 60 * 24 * 0.000239006
 ```
 
-Based on these calculations, we detected a `r heat.summary$Change %>% mean * 1000`mW increase in energy expenditure.  This corresponds to `r daily.kcal.increase`kcal increase in calories consumed per day.  Over the course of 30 weeks (the NCD study) this accumulates to `r daily.kcal.increase *  7 * 30`kcal which converts to `r daily.kcal.increase *  7 * 30/9`g of fat mass if there are no other adaptations.  For the HFD studies, this corresponds to a decrease over 11 weeks of `r daily.kcal.increase *  7 * 11`kcal which converts to `r daily.kcal.increase *  7 * 11/9`g of fat mass.
+Based on these calculations, we detected a `r heat.summary$Change %>% mean * 1000`mW increase in energy expenditure.  This corresponds to `r daily.kcal.increase`kcal increase in calories consumed per day.  Over the course of 30 weeks (the NCD study) this accumulates to `r daily.kcal.increase *  7 * 30`kcal which converts to `r daily.kcal.increase *  7 * 30/9`g of fat mass if there are no other adaptations.  We observed a `r 4.73-2.75` difference in fat mass at endpoint, much less than predicted by energy expenditure alone, suggesting other adaptations to increased energy expenditure (*e.g.* increased appetite,  decreased absorption or increased energy expenditure as wild-type mice gain more fat mass).
+
+For the HFD studies, this corresponds to a decrease over 11 weeks of `r daily.kcal.increase *  7 * 11`kcal which converts to `r daily.kcal.increase *  7 * 11/9`g of fat mass.  Given the well established adaptations to weight gain, we did not model this effect.
 
 # RER Analysis
 
