@@ -88,3 +88,6 @@ ES: Ok. Sure, this could go here. Otherwise we could report end-point weights in
  ES: Actually, this would probably be a good place to include the clamp data. Or as a separate figure between current Fig's 2 and 3. 
 * Rewrite section describing Figure 4 or the figure, so that panels are described in the same order that they appear (see QT comments).
 ES: I have re-arranged some of this stuff, including in the figure (made and alternate figure 4 in case it doesn't work for others).
+
+## For Resubmission
+* Add Katsu's paper https://doi.org/10.1002/oby.21123
