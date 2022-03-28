@@ -455,6 +455,46 @@ data.wide %>%
 lm(Wt.Gain~AT, data=data.wide) %>% glance %>% kable(caption="Summary of relationship between energy expenditure and diet-induced weight gain")
 ```
 
+# Integration with Lifespan
+
+To ask whether BMR is related to experimental livespan we used the data from Roy et al 2021.  This determined lifespan of **female** mice in days
+
+```{r aging-data}
+aging.datafile <- 'BXD_18441.csv'
+
+aging.data <- read_csv(aging.datafile, skip=8) %>%
+  rename(Age = Value,
+         Age.SE = SE,
+         Age.N = N)
+
+combined.age.mr.data <-
+  full_join(aging.data, data.wide)
+
+combined.age.mr.data %>%
+  ggplot(aes(y=Age,
+             x=MR_adj_NCD)) +
+  geom_point() +
+  geom_errorbar(aes(ymin=Age-Age.SE,
+                    ymax=Age+Age.SE),
+                alpha=0.25) +
+  geom_errorbarh(aes(xmin=MR_adj_NCD-MR_W_SE_NCD,
+                    xmax=MR_adj_NCD+MR_W_SE_NCD),
+                alpha=0.25) +
+  geom_smooth(method="lm") +
+  theme_classic() +
+  theme(text=element_text(size=18))
+
+
+combined.age.mr.data %>%
+  mutate_at(vars(Age,MR_adj_NCD), .funs=as.numeric) %>%
+  summarize_at(vars(Age,MR_adj_NCD), .funs=function(x) shapiro.test(x)$p.value) %>%
+  kable(caption="Shapiro-Wilk tests for normality")
+ 
+with(combined.age.mr.data, cor.test(Age, MR_adj_NCD)) %>% 
+  tidy %>%
+  kable(caption="Relationship between age (of female BXD mice) and adjusted metabolic rate")
+```
+
 # Session Information
 
 ```{r session-information, echo=T}
