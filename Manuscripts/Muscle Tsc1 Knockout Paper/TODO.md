@@ -90,4 +90,5 @@ ES: Ok. Sure, this could go here. Otherwise we could report end-point weights in
 ES: I have re-arranged some of this stuff, including in the figure (made and alternate figure 4 in case it doesn't work for others).
 
 ## For Resubmission
-* Add Katsu's paper https://doi.org/10.1002/oby.21123
+
+* Add relationship between TDEE and Ageing
