@@ -346,6 +346,13 @@ plotEnrichment(atf4.gene.lists[["ATF4p0.001"]],
 
 plotGseaTable(atf4.gene.lists, !(is.na(sort(mtsc.ranks,decreasing=T))), mtsc.atf4.pathways, 
               gseaParam=0.5)
+
+plotEnrichment(atf4.gene.lists[["ATF4p0.01"]],
+               !(is.na(sort(mtsc.ranks, decreasing=T)))) +
+  labs(title="ATF4 Targets in Muscle Tsc1 Knockouts") +
+  theme_classic() +
+  theme(text=element_text(size=16))
+  
 ```
 
 ## Pathway Analysis of Dual TSC/ATF4 Genes
