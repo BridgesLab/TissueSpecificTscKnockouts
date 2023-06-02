@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Jun  2 10:13:06 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance.
+This script was most recently run on Fri Jun  2 12:34:29 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance.
 
 # Purpose
 
@@ -605,7 +605,6 @@ Table: Comparason of mixed linear models with or without a genotype term for all
 |lme.geno |    8| 66.0| 87.8|  -25.0|     50.0|      8.45|  1|   0.004|
 
 ```r
-#anova(lme.geno) %>% tidy %>% kable(caption="Model terms for mixed linear model, female mice only")
 fixef(lme.geno) %>% tidy %>% kable(caption="Effect sizes for mixed linear model, female mice only")
 ```
 
