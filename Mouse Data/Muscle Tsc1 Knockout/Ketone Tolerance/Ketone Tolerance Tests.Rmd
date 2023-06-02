@@ -5,6 +5,7 @@ date: "August 8, 2019"
 output:
   html_document:
     toc: yes
+    keep_md: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
@@ -16,7 +17,7 @@ output:
 library(knitr)
 #figures makde will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
-               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
 options(scipen = 2, digits = 3)
 # set echo and message to TRUE if you want to display code blocks and code output respectively
 
@@ -75,7 +76,7 @@ ketone.data <-
 
 ketone.data <- 
   ketone.data %>% 
-  mutate(AUC = rowSums(ketone.data[3:8]))
+  mutate(AUC = rowSums(ketone.data[3:7]))
 
 ketone.data.norm <-
   ketone.data %>%
@@ -282,6 +283,25 @@ ggplot(aes(y=Average,
         text=element_text(size=18))
 ```
 
+### Calculated based on AUC
+
+```{r ketone-tolerance-auc}
+ggplot(ketone.summary.auc,
+       aes(y=AUC.mean,
+           ymin=AUC.mean-AUC.se,
+           ymax=AUC.mean+AUC.se,
+           x=Genotype)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  facet_grid(~Sex) +
+  labs(y='Area Under Curve')
+
+lm(AUC~Sex+Genotype,data=ketone.data) %>% tidy %>%
+  kable(caption="2x2 ANOVA for sex and genotype for AUC")
+
+lm(AUC~Sex+Genotype+Sex:Genotype,data=ketone.data) %>% tidy %>%
+  kable(caption="2x2 ANOVA for sex and genotype for AUC, including interaction")
+```
 
 ## KTT Statistics
 
@@ -384,8 +404,7 @@ ktt.summary.all %>%
 
 The mice had lower ketone levels during the Ketone tolerance test (p=`r anova(lme.geno, lme.null)$"Pr(>Chisq)"[2]`).  On average ketone levels were `r ktt.summary.all$Pct.Difference[2:4] %>% mean(., na.rm=T)`% lower in the knockout mice.  There was no signficant moderating (p=`r anova(lme.geno, lme.sex)$"Pr(>Chisq)"[2]`) effect of sex on the ketone levels during the KTT, but even including sex as a covariate the effects of muscle *Tsc1* knockout was still significant (p=`r anova(lme.sex, lme.null.sex)$"Pr(>Chisq)"[2]`).
 
-
-# Interpretation
+Calculated the area under the curve for each mouse otget a summed example
 
 # Session Information
 
