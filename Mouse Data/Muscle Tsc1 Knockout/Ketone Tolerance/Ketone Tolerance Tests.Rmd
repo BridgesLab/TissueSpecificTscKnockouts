@@ -72,7 +72,10 @@ ketone.data <-
   select(age,Genotype,t0:t120,Genotype,animal.id,MouseID,Sex) %>%
   mutate(ITT = if_else(is.na(t15), "No","Yes")) %>%
   mutate(FK = as.numeric(t0)/10) %>%
-  mutate_at(.vars=3:11, .funs=funs(as.numeric(.)/10))
+  mutate_at(.vars=3:11, .funs=funs(as.numeric(.)/10)) %>%
+  mutate(Genotype.ko = case_when(Genotype=='fl/fl; Tg/+'~"Muscle Tsc1 Knockout",
+                                 TRUE~"Wild-Type")) %>%
+  mutate(Genotype.ko = relevel(as.factor(Genotype.ko), ref="Wild-Type"))
 
 ketone.data <- 
   ketone.data %>% 
@@ -113,7 +116,7 @@ ketone.data %>%
 ```{r ketone.summary}
 ketone.summary <-
   ketone.data %>%
-  group_by(Genotype, Sex) %>%
+  group_by(Genotype.ko, Sex) %>%
   summarize(FK.mean = mean(FK, na.rm=T),
             FK.se = se(FK),
             FK.sd = sd(FK,na.rm=T),
@@ -123,7 +126,7 @@ kable(ketone.summary, caption="Summary statistics for analysis of fasting ketone
 
 ketone.summary.auc <-
   ketone.data %>%
-  group_by(Genotype, Sex) %>%
+  group_by(Genotype.ko, Sex) %>%
   summarize(AUC.mean = mean(AUC, na.rm=T),
             AUC.se = se(AUC),
             AUC.sd = sd(AUC,na.rm=T),
@@ -137,7 +140,7 @@ kable(ketone.summary.auc, caption="Summary statistics for analysis of ketone lev
 ```{r fasting-ketone-boxplot-itt, fig.cap="Fed ketones, by treatment"}
 library(ggplot2)
 ggplot(filter(ketone.data, ITT=="Yes"),
-            aes(y=FK, x=Sex, fill=Genotype)) +
+            aes(y=FK, x=Sex, fill=Genotype.ko)) +
   geom_boxplot() +
   labs(title="Fed Ketones",
        y="Ketones (mg/dL)",
@@ -151,7 +154,7 @@ ggplot(ketone.summary,
            ymin = FK.mean - FK.se,
            ymax = FK.mean + FK.se,
            x = Sex,
-           fill= Genotype)) +
+           fill= Genotype.ko)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
   geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
   labs(y='Fed Blood Ketones (mg/dL)',
@@ -211,19 +214,40 @@ ggplot(ktt.data.long.norm,
 
 ```{r ktt-lineplot}
 ktt.data.long %>%
-  group_by(Time,Genotype, Sex) %>%
-  summarize(Average = mean(ketone),
+  group_by(Time,Genotype.ko, Sex) %>%
+  summarize(Average = mean(ketone, na.rm=T),
             Error = se(ketone)) %>%
 ggplot(aes(y=Average,
            ymax=Average+Error,
            ymin=Average-Error,
-           x=Time, col=Genotype)) +
+           x=Time, col=Genotype.ko)) +
   geom_point() +
   geom_line() +
-    facet_grid(.~Sex) +
+  facet_grid(.~Sex) +
   geom_errorbar() +
   labs(title="Ketone Tolerance Test",
        y="Blood Ketones (mg/dL)") 
+
+ktt.data.long %>%
+  filter(Time<=60) %>%
+  group_by(Time,Genotype.ko, Sex) %>%
+  summarize(Average = mean(ketone, na.rm=T),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, lty=Genotype.ko)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(.~Sex) +
+  geom_errorbar() +
+  labs(title="BHB Tolerance Test",
+       y="Blood Ketones (mg/dL)",
+       x="Time (min)") +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.4,0.85),
+        legend.title=element_blank())
 
 ktt.data.long.norm %>%
   group_by(Time,Genotype,Sex) %>%
@@ -286,20 +310,24 @@ ggplot(aes(y=Average,
 ### Calculated based on AUC
 
 ```{r ketone-tolerance-auc}
+
 ggplot(ketone.summary.auc,
        aes(y=AUC.mean,
            ymin=AUC.mean-AUC.se,
            ymax=AUC.mean+AUC.se,
-           x=Genotype)) +
+           x=Genotype.ko)) +
   geom_bar(stat='identity') +
   geom_errorbar(width=0.5) +
   facet_grid(~Sex) +
-  labs(y='Area Under Curve')
+  labs(y='Area Under Curve',
+       x="") +
+  theme_classic() +
+  theme(text=element_text(size=16))
 
-lm(AUC~Sex+Genotype,data=ketone.data) %>% tidy %>%
+lm(AUC~Sex+Genotype.ko,data=ketone.data) %>% tidy %>%
   kable(caption="2x2 ANOVA for sex and genotype for AUC")
 
-lm(AUC~Sex+Genotype+Sex:Genotype,data=ketone.data) %>% tidy %>%
+lm(AUC~Sex+Genotype.ko+Sex:Genotype.ko,data=ketone.data) %>% tidy %>%
   kable(caption="2x2 ANOVA for sex and genotype for AUC, including interaction")
 ```
 
@@ -310,7 +338,7 @@ lm(AUC~Sex+Genotype+Sex:Genotype,data=ketone.data) %>% tidy %>%
 ```{r male-stats}
 library(lme4)
 library(lmerTest)
-lme.geno <- lmer(ketone ~ as.factor(Time) + Genotype + (1|animal.id), data= ktt.data.long %>% 
+lme.geno <- lmer(ketone ~ as.factor(Time) + Genotype.ko + (1|animal.id), data= ktt.data.long %>% 
        filter(Sex=="M"))
 lme.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id), data= ktt.data.long %>% 
        filter(Sex=="M"))

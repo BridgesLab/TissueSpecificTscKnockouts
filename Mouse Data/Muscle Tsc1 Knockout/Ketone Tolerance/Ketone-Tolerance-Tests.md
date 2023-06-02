@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Jun  2 09:49:52 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance.
+This script was most recently run on Fri Jun  2 10:13:06 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance.
 
 # Purpose
 
@@ -46,7 +46,10 @@ ketone.data <-
   select(age,Genotype,t0:t120,Genotype,animal.id,MouseID,Sex) %>%
   mutate(ITT = if_else(is.na(t15), "No","Yes")) %>%
   mutate(FK = as.numeric(t0)/10) %>%
-  mutate_at(.vars=3:11, .funs=funs(as.numeric(.)/10))
+  mutate_at(.vars=3:11, .funs=funs(as.numeric(.)/10)) %>%
+  mutate(Genotype.ko = case_when(Genotype=='fl/fl; Tg/+'~"Muscle Tsc1 Knockout",
+                                 TRUE~"Wild-Type")) %>%
+  mutate(Genotype.ko = relevel(as.factor(Genotype.ko), ref="Wild-Type"))
 
 ketone.data <- 
   ketone.data %>% 
@@ -131,7 +134,7 @@ Table: Animals evaluated by KTT in each group
 ```r
 ketone.summary <-
   ketone.data %>%
-  group_by(Genotype, Sex) %>%
+  group_by(Genotype.ko, Sex) %>%
   summarize(FK.mean = mean(FK, na.rm=T),
             FK.se = se(FK),
             FK.sd = sd(FK,na.rm=T),
@@ -144,17 +147,17 @@ kable(ketone.summary, caption="Summary statistics for analysis of fasting ketone
 
 Table: Summary statistics for analysis of fasting ketone levels
 
-|Genotype    |Sex | FK.mean| FK.se| FK.sd|  N|
-|:-----------|:---|-------:|-----:|-----:|--:|
-|fl/fl; +/+  |F   |   0.475| 0.085| 0.171|  4|
-|fl/fl; +/+  |M   |   0.450| 0.029| 0.058|  4|
-|fl/fl; Tg/+ |F   |   0.500| 0.063| 0.141|  5|
-|fl/fl; Tg/+ |M   |   0.450| 0.050| 0.158| 10|
+|Genotype.ko          |Sex | FK.mean| FK.se| FK.sd|  N|
+|:--------------------|:---|-------:|-----:|-----:|--:|
+|Wild-Type            |F   |   0.475| 0.085| 0.171|  4|
+|Wild-Type            |M   |   0.450| 0.029| 0.058|  4|
+|Muscle Tsc1 Knockout |F   |   0.500| 0.063| 0.141|  5|
+|Muscle Tsc1 Knockout |M   |   0.450| 0.050| 0.158| 10|
 
 ```r
 ketone.summary.auc <-
   ketone.data %>%
-  group_by(Genotype, Sex) %>%
+  group_by(Genotype.ko, Sex) %>%
   summarize(AUC.mean = mean(AUC, na.rm=T),
             AUC.se = se(AUC),
             AUC.sd = sd(AUC,na.rm=T),
@@ -167,12 +170,12 @@ kable(ketone.summary.auc, caption="Summary statistics for analysis of ketone lev
 
 Table: Summary statistics for analysis of ketone levels (area under the curve)
 
-|Genotype    |Sex | AUC.mean| AUC.se| AUC.sd|  N|
-|:-----------|:---|--------:|------:|------:|--:|
-|fl/fl; +/+  |F   |     4.83|  0.506|  1.012|  4|
-|fl/fl; +/+  |M   |     6.33|  0.368|  0.737|  4|
-|fl/fl; Tg/+ |F   |     4.33|  0.257|  0.574|  5|
-|fl/fl; Tg/+ |M   |     4.48|  0.401|  1.269| 10|
+|Genotype.ko          |Sex | AUC.mean| AUC.se| AUC.sd|  N|
+|:--------------------|:---|--------:|------:|------:|--:|
+|Wild-Type            |F   |     4.83|  0.506|  1.012|  4|
+|Wild-Type            |M   |     6.33|  0.368|  0.737|  4|
+|Muscle Tsc1 Knockout |F   |     4.33|  0.257|  0.574|  5|
+|Muscle Tsc1 Knockout |M   |     4.48|  0.401|  1.269| 10|
 
 ## Fed Ketone Levels
 
@@ -180,7 +183,7 @@ Table: Summary statistics for analysis of ketone levels (area under the curve)
 ```r
 library(ggplot2)
 ggplot(filter(ketone.data, ITT=="Yes"),
-            aes(y=FK, x=Sex, fill=Genotype)) +
+            aes(y=FK, x=Sex, fill=Genotype.ko)) +
   geom_boxplot() +
   labs(title="Fed Ketones",
        y="Ketones (mg/dL)",
@@ -197,7 +200,7 @@ ggplot(ketone.summary,
            ymin = FK.mean - FK.se,
            ymax = FK.mean + FK.se,
            x = Sex,
-           fill= Genotype)) +
+           fill= Genotype.ko)) +
   geom_bar(stat='identity', position='dodge', width=0.75) +
   geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
   labs(y='Fed Blood Ketones (mg/dL)',
@@ -278,22 +281,47 @@ ggplot(ktt.data.long.norm,
 
 ```r
 ktt.data.long %>%
-  group_by(Time,Genotype, Sex) %>%
-  summarize(Average = mean(ketone),
+  group_by(Time,Genotype.ko, Sex) %>%
+  summarize(Average = mean(ketone, na.rm=T),
             Error = se(ketone)) %>%
 ggplot(aes(y=Average,
            ymax=Average+Error,
            ymin=Average-Error,
-           x=Time, col=Genotype)) +
+           x=Time, col=Genotype.ko)) +
   geom_point() +
   geom_line() +
-    facet_grid(.~Sex) +
+  facet_grid(.~Sex) +
   geom_errorbar() +
   labs(title="Ketone Tolerance Test",
        y="Blood Ketones (mg/dL)") 
 ```
 
 ![](figures/ktt-lineplot-1.png)<!-- -->
+
+```r
+ktt.data.long %>%
+  filter(Time<=60) %>%
+  group_by(Time,Genotype.ko, Sex) %>%
+  summarize(Average = mean(ketone, na.rm=T),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, lty=Genotype.ko)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(.~Sex) +
+  geom_errorbar() +
+  labs(title="BHB Tolerance Test",
+       y="Blood Ketones (mg/dL)",
+       x="Time (min)") +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.4,0.85),
+        legend.title=element_blank())
+```
+
+![](figures/ktt-lineplot-2.png)<!-- -->
 
 ```r
 ktt.data.long.norm %>%
@@ -312,7 +340,7 @@ ggplot(aes(y=Average,
        y="Blood Ketones (% of initial)") 
 ```
 
-![](figures/ktt-lineplot-2.png)<!-- -->
+![](figures/ktt-lineplot-3.png)<!-- -->
 
 
 ```r
@@ -369,17 +397,20 @@ ggplot(ketone.summary.auc,
        aes(y=AUC.mean,
            ymin=AUC.mean-AUC.se,
            ymax=AUC.mean+AUC.se,
-           x=Genotype)) +
+           x=Genotype.ko)) +
   geom_bar(stat='identity') +
   geom_errorbar(width=0.5) +
   facet_grid(~Sex) +
-  labs(y='Area Under Curve')
+  labs(y='Area Under Curve',
+       x="") +
+  theme_classic() +
+  theme(text=element_text(size=16))
 ```
 
 ![](figures/ketone-tolerance-auc-1.png)<!-- -->
 
 ```r
-lm(AUC~Sex+Genotype,data=ketone.data) %>% tidy %>%
+lm(AUC~Sex+Genotype.ko,data=ketone.data) %>% tidy %>%
   kable(caption="2x2 ANOVA for sex and genotype for AUC")
 ```
 
@@ -387,14 +418,14 @@ lm(AUC~Sex+Genotype,data=ketone.data) %>% tidy %>%
 
 Table: 2x2 ANOVA for sex and genotype for AUC
 
-|term                | estimate| std.error| statistic| p.value|
-|:-------------------|--------:|---------:|---------:|-------:|
-|(Intercept)         |    5.311|     0.501|     10.60|   0.000|
-|SexM                |    0.656|     0.506|      1.30|   0.211|
-|Genotypefl/fl; Tg/+ |   -1.344|     0.506|     -2.65|   0.016|
+|term                            | estimate| std.error| statistic| p.value|
+|:-------------------------------|--------:|---------:|---------:|-------:|
+|(Intercept)                     |    5.311|     0.501|     10.60|   0.000|
+|SexM                            |    0.656|     0.506|      1.30|   0.211|
+|Genotype.koMuscle Tsc1 Knockout |   -1.344|     0.506|     -2.65|   0.016|
 
 ```r
-lm(AUC~Sex+Genotype+Sex:Genotype,data=ketone.data) %>% tidy %>%
+lm(AUC~Sex+Genotype.ko+Sex:Genotype.ko,data=ketone.data) %>% tidy %>%
   kable(caption="2x2 ANOVA for sex and genotype for AUC, including interaction")
 ```
 
@@ -402,12 +433,12 @@ lm(AUC~Sex+Genotype+Sex:Genotype,data=ketone.data) %>% tidy %>%
 
 Table: 2x2 ANOVA for sex and genotype for AUC, including interaction
 
-|term                     | estimate| std.error| statistic| p.value|
-|:------------------------|--------:|---------:|---------:|-------:|
-|(Intercept)              |    4.833|     0.613|     7.886|   0.000|
-|SexM                     |    1.492|     0.811|     1.840|   0.083|
-|Genotypefl/fl; Tg/+      |   -0.508|     0.811|    -0.627|   0.539|
-|SexM:Genotypefl/fl; Tg/+ |   -1.337|     1.026|    -1.303|   0.210|
+|term                                 | estimate| std.error| statistic| p.value|
+|:------------------------------------|--------:|---------:|---------:|-------:|
+|(Intercept)                          |    4.833|     0.613|     7.886|   0.000|
+|SexM                                 |    1.492|     0.811|     1.840|   0.083|
+|Genotype.koMuscle Tsc1 Knockout      |   -0.508|     0.811|    -0.627|   0.539|
+|SexM:Genotype.koMuscle Tsc1 Knockout |   -1.337|     1.026|    -1.303|   0.210|
 
 ## KTT Statistics
 
@@ -417,7 +448,7 @@ Table: 2x2 ANOVA for sex and genotype for AUC, including interaction
 ```r
 library(lme4)
 library(lmerTest)
-lme.geno <- lmer(ketone ~ as.factor(Time) + Genotype + (1|animal.id), data= ktt.data.long %>% 
+lme.geno <- lmer(ketone ~ as.factor(Time) + Genotype.ko + (1|animal.id), data= ktt.data.long %>% 
        filter(Sex=="M"))
 lme.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id), data= ktt.data.long %>% 
        filter(Sex=="M"))
@@ -443,16 +474,16 @@ fixef(lme.geno) %>% tidy %>% kable(caption="Effect sizes for mixed linear model,
 
 Table: Effect sizes for mixed linear model, female mice only
 
-|names               |      x|
-|:-------------------|------:|
-|(Intercept)         |  0.680|
-|as.factor(Time)15   |  1.500|
-|as.factor(Time)30   |  0.807|
-|as.factor(Time)45   |  0.279|
-|as.factor(Time)60   |  0.171|
-|as.factor(Time)75   | -0.066|
-|as.factor(Time)90   | -0.155|
-|Genotypefl/fl; Tg/+ | -0.323|
+|names                           |      x|
+|:-------------------------------|------:|
+|(Intercept)                     |  0.680|
+|as.factor(Time)15               |  1.500|
+|as.factor(Time)30               |  0.807|
+|as.factor(Time)45               |  0.279|
+|as.factor(Time)60               |  0.171|
+|as.factor(Time)75               | -0.066|
+|as.factor(Time)90               | -0.155|
+|Genotype.koMuscle Tsc1 Knockout | -0.323|
 
 ```r
 ktt.summary.male <-
