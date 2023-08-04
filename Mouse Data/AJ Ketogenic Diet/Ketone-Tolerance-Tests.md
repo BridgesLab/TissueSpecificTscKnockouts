@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Aug  4 10:18:13 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
+This script was most recently run on Fri Aug  4 10:34:38 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
 
 # Purpose
 
@@ -478,6 +478,81 @@ ktt.auc.summary %>%
 
 ![](figures/ktt-auc-norm-2.png)<!-- -->
 
+### Stats for Normalized Area Under the Curve
+
+
+```r
+ketone.data %>% 
+  filter(age=='92') %>%
+  group_by(Diet) %>%
+  summarize_at(.vars='AOC',.funs=list(mean=~mean(.),
+                             se=~se(.),
+                             sd=~sd(.),
+                             n=~length(.),
+                             shapiro=~shapiro.test(.)$p.value)) %>%
+  mutate(Pct.change=(mean-mean[Diet=='Control Diet'])/mean[Diet=='Control Diet']*100) -> fed.ketone.summary
+  
+kable(fed.ketone.summary, caption="Summary statistics for fed ketone levels")
+```
+
+
+
+Table: Summary statistics for fed ketone levels
+
+|Diet           | mean|    se|   sd|  n| shapiro| Pct.change|
+|:--------------|----:|-----:|----:|--:|-------:|----------:|
+|Control Diet   |  7.6| 0.586| 1.01|  3|   0.672|        0.0|
+|Ketogenic Diet | 10.7| 1.817| 5.14|  8|   0.083|       41.3|
+
+```r
+library(car)
+leveneTest(AOC~Diet,data=ketone.data %>% 
+  filter(age=='92')) %>% 
+  tidy %>%
+  kable(caption="Levene's test for modifying effects of effects of diet on the baseline subtracted area over the curve")
+```
+
+
+
+Table: Levene's test for modifying effects of effects of diet on the baseline subtracted area over the curve
+
+| statistic| p.value| df| df.residual|
+|---------:|-------:|--:|-----------:|
+|      1.74|    0.22|  1|           9|
+
+```r
+t.test(AOC~Diet,data=ketone.data %>% 
+  filter(age=='92'),
+  var.equal=T) %>% 
+  tidy %>%
+  kable(caption="Student's t test for modifying effects of effects of diet on the baseline subtracted area over the curve")
+```
+
+
+
+Table: Student's t test for modifying effects of effects of diet on the baseline subtracted area over the curve
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method            |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------|:-----------|
+|    -3.14|       7.6|      10.7|     -1.02|   0.336|         9|    -10.1|      3.84|Two Sample t-test |two.sided   |
+
+```r
+t.test(AOC~Diet,data=ketone.data %>% 
+  filter(age=='92'),
+  var.equal=T,
+  alternative="less") %>% 
+  tidy %>%
+  kable(caption="Student's t test for modifying effects of effects of diet on the baseline subtracted area over the curve")
+```
+
+
+
+Table: Student's t test for modifying effects of effects of diet on the baseline subtracted area over the curve
+
+| estimate| estimate1| estimate2| statistic| p.value| parameter| conf.low| conf.high|method            |alternative |
+|--------:|---------:|---------:|---------:|-------:|---------:|--------:|---------:|:-----------------|:-----------|
+|    -3.14|       7.6|      10.7|     -1.02|   0.168|         9|     -Inf|      2.52|Two Sample t-test |less        |
+
 
 ## Normalized to fasting ketone levels (percent change)
 
@@ -617,34 +692,18 @@ library(lmerTest)
 ktt.lme <- lmer(ketone ~ as.factor(Time) + as.factor(age) + Diet + age:Diet + (1|animal.id),
                 data=ktt.data.long)
 
-ktt.lme.92d <- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
-                data=ktt.data.long.norm %>% filter (age==92))
+ktt.lme.92d.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id),
+                data=ktt.data.long %>% filter (age==92))
 
-ktt.lme.92d.fil <- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
-                data=ktt.data.long.norm %>% filter (age==92) %>%
-                  filter(!(animal.id %in% c('23224','23225'))))
+ktt.lme.92d <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
+                data=ktt.data.long %>% filter (age==92))
 
-ktt.lme.92d.fil.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id),
-                data=ktt.data.long.norm %>% filter (age==92) %>%
-                  filter(!(animal.id %in% c('23224','23225'))))
-                
-                
+ktt.lme.92d.norm <- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
+                data=ktt.data.long.norm.abs %>% filter (age==92))
 
-anova(ktt.lme) %>% tidy %>% kable(caption="Mixed linear model for KTT")
-```
+ktt.lme.92d.norm.null <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
+                data=ktt.data.long.norm.abs %>% filter (age==92))
 
-
-
-Table: Mixed linear model for KTT
-
-|term            |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
-|:---------------|------:|------:|-----:|-----:|---------:|-------:|
-|as.factor(Time) | 69.398| 11.566|     6|   141|    30.300|   0.000|
-|as.factor(age)  |  1.744|  1.744|     1|   141|     4.568|   0.034|
-|Diet            |  0.038|  0.038|     1|    46|     0.098|   0.755|
-|Diet:age        |  0.217|  0.217|     1|   141|     0.567|   0.453|
-
-```r
 anova(ktt.lme.92d) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")
 ```
 
@@ -652,51 +711,202 @@ anova(ktt.lme.92d) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 w
 
 Table: Mixed linear model for KTT at 3 weeks
 
+|term            |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
+|:---------------|------:|------:|-----:|-----:|---------:|-------:|
+|as.factor(Time) | 42.058|  7.010|     6|    60|     32.36|   0.000|
+|Diet            |  0.597|  0.597|     1|     9|      2.76|   0.131|
+
+```r
+summary(ktt.lme.92d)
+```
+
+```
+## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+## lmerModLmerTest]
+## Formula: ketone ~ as.factor(Time) + Diet + (1 | animal.id)
+##    Data: ktt.data.long %>% filter(age == 92)
+## 
+## REML criterion at convergence: 134
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -2.422 -0.505 -0.146  0.636  2.403 
+## 
+## Random effects:
+##  Groups    Name        Variance Std.Dev.
+##  animal.id (Intercept) 0.432    0.657   
+##  Residual              0.217    0.465   
+## Number of obs: 77, groups:  animal.id, 11
+## 
+## Fixed effects:
+##                    Estimate Std. Error     df t value Pr(>|t|)    
+## (Intercept)           0.107      0.414 11.056    0.26     0.80    
+## as.factor(Time)15     2.418      0.198 60.000   12.19  < 2e-16 ***
+## as.factor(Time)30     2.127      0.198 60.000   10.72  1.4e-15 ***
+## as.factor(Time)45     1.755      0.198 60.000    8.84  1.8e-12 ***
+## as.factor(Time)60     1.355      0.198 60.000    6.83  5.0e-09 ***
+## as.factor(Time)75     1.173      0.198 60.000    5.91  1.7e-07 ***
+## as.factor(Time)90     1.055      0.198 60.000    5.31  1.7e-06 ***
+## DietKetogenic Diet    0.765      0.461  9.000    1.66     0.13    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) a.(T)1 a.(T)3 a.(T)4 a.(T)6 a.(T)7 a.(T)9
+## as.fct(T)15 -0.240                                          
+## as.fct(T)30 -0.240  0.500                                   
+## as.fct(T)45 -0.240  0.500  0.500                            
+## as.fct(T)60 -0.240  0.500  0.500  0.500                     
+## as.fct(T)75 -0.240  0.500  0.500  0.500  0.500              
+## as.fct(T)90 -0.240  0.500  0.500  0.500  0.500  0.500       
+## DietKtgncDt -0.810  0.000  0.000  0.000  0.000  0.000  0.000
+```
+
+```r
+anova(ktt.lme.92d,ktt.lme.92d.null) %>% tidy %>% kable(caption="Chi squared test for non-adjusted KTT")
+```
+
+
+
+Table: Chi squared test for non-adjusted KTT
+
+|term             | npar| AIC| BIC| logLik| deviance| statistic| df| p.value|
+|:----------------|----:|---:|---:|------:|--------:|---------:|--:|-------:|
+|ktt.lme.92d.null |    9| 143| 164|  -62.5|      125|        NA| NA|      NA|
+|ktt.lme.92d      |   10| 142| 165|  -61.0|      122|      2.94|  1|   0.086|
+
+```r
+anova(ktt.lme.92d.norm) %>% tidy %>% kable(caption="Mixed linear model for baseline adjusted KTT at 3 weeks")
+```
+
+
+
+Table: Mixed linear model for baseline adjusted KTT at 3 weeks
+
 |term                 |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
 |:--------------------|------:|------:|-----:|-----:|---------:|-------:|
-|as.factor(Time)      | 808831| 134805|     6|    54|    36.164|   0.000|
-|Diet                 |   2525|   2525|     1|     9|     0.677|   0.432|
-|as.factor(Time):Diet |  15014|   2502|     6|    54|     0.671|   0.673|
+|as.factor(Time)      | 27.289|  4.548|     6|    54|     22.07|   0.000|
+|Diet                 |  0.213|  0.213|     1|     9|      1.04|   0.335|
+|as.factor(Time):Diet |  1.871|  0.312|     6|    54|      1.51|   0.191|
 
 ```r
-anova(ktt.lme.92d.fil,ktt.lme.92d.fil.null) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")
+summary(ktt.lme.92d.norm)
+```
+
+```
+## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+## lmerModLmerTest]
+## Formula: ketone ~ as.factor(Time) * Diet + (1 | animal.id)
+##    Data: ktt.data.long.norm.abs %>% filter(age == 92)
+## 
+## REML criterion at convergence: 126
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.2149 -0.4410 -0.0284  0.4122  2.3565 
+## 
+## Random effects:
+##  Groups    Name        Variance Std.Dev.
+##  animal.id (Intercept) 0.395    0.628   
+##  Residual              0.206    0.454   
+## Number of obs: 77, groups:  animal.id, 11
+## 
+## Fixed effects:
+##                                       Estimate Std. Error        df t value
+## (Intercept)                          -8.45e-15   4.47e-01  1.75e+01    0.00
+## as.factor(Time)15                     1.73e+00   3.71e-01  5.40e+01    4.68
+## as.factor(Time)30                     1.57e+00   3.71e-01  5.40e+01    4.23
+## as.factor(Time)45                     1.30e+00   3.71e-01  5.40e+01    3.51
+## as.factor(Time)60                     9.33e-01   3.71e-01  5.40e+01    2.52
+## as.factor(Time)75                     1.00e+00   3.71e-01  5.40e+01    2.70
+## as.factor(Time)90                     1.07e+00   3.71e-01  5.40e+01    2.88
+## DietKetogenic Diet                    2.48e-15   5.25e-01  1.75e+01    0.00
+## as.factor(Time)15:DietKetogenic Diet  9.42e-01   4.35e-01  5.40e+01    2.17
+## as.factor(Time)30:DietKetogenic Diet  7.71e-01   4.35e-01  5.40e+01    1.77
+## as.factor(Time)45:DietKetogenic Diet  6.25e-01   4.35e-01  5.40e+01    1.44
+## as.factor(Time)60:DietKetogenic Diet  5.79e-01   4.35e-01  5.40e+01    1.33
+## as.factor(Time)75:DietKetogenic Diet  2.38e-01   4.35e-01  5.40e+01    0.55
+## as.factor(Time)90:DietKetogenic Diet -1.67e-02   4.35e-01  5.40e+01   -0.04
+##                                      Pr(>|t|)    
+## (Intercept)                           1.00000    
+## as.factor(Time)15                    0.000020 ***
+## as.factor(Time)30                    0.000092 ***
+## as.factor(Time)45                     0.00092 ***
+## as.factor(Time)60                     0.01479 *  
+## as.factor(Time)75                     0.00928 ** 
+## as.factor(Time)90                     0.00572 ** 
+## DietKetogenic Diet                    1.00000    
+## as.factor(Time)15:DietKetogenic Diet  0.03468 *  
+## as.factor(Time)30:DietKetogenic Diet  0.08175 .  
+## as.factor(Time)45:DietKetogenic Diet  0.15616    
+## as.factor(Time)60:DietKetogenic Diet  0.18823    
+## as.factor(Time)75:DietKetogenic Diet  0.58698    
+## as.factor(Time)90:DietKetogenic Diet  0.96955    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+```r
+anova(ktt.lme.92d.norm,ktt.lme.92d.norm.null) %>% tidy %>% kable(caption="Chi squared test for baseline adjusted KTT")
 ```
 
 
 
-Table: Mixed linear model for KTT at 3 weeks
+Table: Chi squared test for baseline adjusted KTT
 
-|term                 | npar| AIC| BIC| logLik| deviance| statistic| df| p.value|
-|:--------------------|----:|---:|---:|------:|--------:|---------:|--:|-------:|
-|ktt.lme.92d.fil.null |    9| 689| 708|   -335|      671|        NA| NA|      NA|
-|ktt.lme.92d.fil      |   16| 674| 708|   -321|      642|      28.6|  7|       0|
+|term                  | npar| AIC| BIC| logLik| deviance| statistic| df| p.value|
+|:---------------------|----:|---:|---:|------:|--------:|---------:|--:|-------:|
+|ktt.lme.92d.norm.null |   10| 141| 164|  -60.5|      121|        NA| NA|      NA|
+|ktt.lme.92d.norm      |   16| 143| 180|  -55.4|      111|      10.3|  6|   0.114|
+
+# Session Information
+
 
 ```r
-fixef(ktt.lme.92d) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")
+sessionInfo()
 ```
 
-
-
-Table: Mixed linear model for KTT at 3 weeks
-
-|names                                |      x|
-|:------------------------------------|------:|
-|(Intercept)                          |  100.0|
-|as.factor(Time)15                    |  403.3|
-|as.factor(Time)30                    |  363.3|
-|as.factor(Time)45                    |  301.7|
-|as.factor(Time)60                    |  215.0|
-|as.factor(Time)75                    |  228.3|
-|as.factor(Time)90                    |  243.3|
-|DietKetogenic Diet                   |    0.0|
-|as.factor(Time)15:DietKetogenic Diet |  -45.6|
-|as.factor(Time)30:DietKetogenic Diet |  -50.7|
-|as.factor(Time)45:DietKetogenic Diet |  -47.2|
-|as.factor(Time)60:DietKetogenic Diet |  -15.5|
-|as.factor(Time)75:DietKetogenic Diet |  -64.3|
-|as.factor(Time)90:DietKetogenic Diet | -105.0|
-
-# Interpretation
-
-# References
+```
+## R version 4.2.2 (2022-10-31)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur ... 10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] lmerTest_3.1-3  lme4_1.1-33     Matrix_1.5-4.1  car_3.1-2      
+##  [5] carData_3.0-5   broom_1.0.4     ggplot2_3.4.2   lubridate_1.9.2
+##  [9] readr_2.1.4     dplyr_1.1.2     tidyr_1.3.0     knitr_1.43     
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.10         lattice_0.21-8      digest_0.6.31      
+##  [4] utf8_1.2.3          R6_2.5.1            backports_1.4.1    
+##  [7] evaluate_0.21       highr_0.10          pillar_1.9.0       
+## [10] rlang_1.1.1         rstudioapi_0.14     minqa_1.2.5        
+## [13] jquerylib_0.1.4     nloptr_2.0.3        rmarkdown_2.22     
+## [16] labeling_0.4.2      splines_4.2.2       stringr_1.5.0      
+## [19] bit_4.0.5           munsell_0.5.0       numDeriv_2016.8-1.1
+## [22] compiler_4.2.2      xfun_0.39           pkgconfig_2.0.3    
+## [25] mgcv_1.8-42         htmltools_0.5.5     tidyselect_1.2.0   
+## [28] tibble_3.2.1        fansi_1.0.4         crayon_1.5.2       
+## [31] tzdb_0.4.0          withr_2.5.0         MASS_7.3-60        
+## [34] grid_4.2.2          nlme_3.1-162        jsonlite_1.8.5     
+## [37] gtable_0.3.3        lifecycle_1.0.3     magrittr_2.0.3     
+## [40] scales_1.2.1        cli_3.6.1           stringi_1.7.12     
+## [43] vroom_1.6.3         cachem_1.0.8        farver_2.1.1       
+## [46] bslib_0.4.2         generics_0.1.3      vctrs_0.6.2        
+## [49] boot_1.3-28.1       tools_4.2.2         bit64_4.0.5        
+## [52] glue_1.6.2          purrr_1.0.1         hms_1.1.3          
+## [55] abind_1.4-5         parallel_4.2.2      fastmap_1.1.1      
+## [58] yaml_2.3.7          timechange_0.2.0    colorspace_2.1-0   
+## [61] sass_0.4.6
+```
 
