@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Aug  4 09:18:09 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
+This script was most recently run on Fri Aug  4 09:23:02 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
 
 # Purpose
 
@@ -110,6 +110,12 @@ Table: ANOVA for effects of fasting ketone
 ## Normalized to fasting ketone levels (percent change)
 
 ![](figures/normalized-ktt-1.png)<!-- -->![](figures/normalized-ktt-2.png)<!-- -->
+
+
+## Normalized to fasting ketone levels (absolute change)
+
+![](figures/normalized-ktt-abs-1.png)<!-- -->![](figures/normalized-ktt-abs-2.png)<!-- -->
+
 
 ## Normlized to the Peak of Ketone levels
 

@@ -94,6 +94,20 @@ ketone.data.norm <-
          t120=t120/t0*100,
          t0=t0/t0*100) 
 
+ketone.data.norm.abs <-
+  ketone.data %>%
+  filter(ITT=="Yes") %>%
+  filter(!(MouseID %in% genotype.problems)) %>% #removed animals with incorrect genotype
+  mutate(t15=t15-t0,
+         t30=t30-t0,
+         t45=t45-t0,
+         t60=t60-t0,
+         t75=t75-t0,
+         t90=t90-t0,
+         t105=t105-t0,
+         t120=t120-t0,
+         t0=t0-t0) 
+
 ketone.data.norm.pk <-
   ketone.data %>%
   filter(ITT=="Yes") %>%
@@ -194,6 +208,15 @@ ktt.data.long.norm <-
 
 ktt.data.long.norm.pk <- 
   ketone.data.norm.pk %>%
+  filter(ITT=="Yes") %>%
+  group_by(animal.id,Diet) %>%
+  gather(`t0`:`t120`,key='TimeStamp', value="ketone") %>%
+  separate(TimeStamp, sep="t", into=c("Letter","Time")) %>%
+  mutate(ketone = as.numeric(ketone)) %>%
+  mutate(Time = as.numeric(Time))
+
+ktt.data.long.norm.abs <- 
+  ketone.data.norm.abs %>%
   filter(ITT=="Yes") %>%
   group_by(animal.id,Diet) %>%
   gather(`t0`:`t120`,key='TimeStamp', value="ketone") %>%
@@ -329,6 +352,52 @@ ggplot(aes(y=Average,
         legend.position = c(0.75,0.75))
   
 ```
+
+
+## Normalized to fasting ketone levels (absolute change)
+
+```{r normalized-ktt-abs}
+ktt.data.long.norm.abs %>%
+  filter(!(animal.id %in% c('23224','23225'))) %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, col=Diet)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(.~age) +
+  geom_errorbar() +
+  labs(title="Ketone Tolerance Test",
+       subtitle="4 Days of KD",
+       y="Blood Ketones (% of initial)") 
+
+ktt.data.long.norm.abs %>%
+  filter(!(animal.id %in% c('23224','23225'))) %>%
+  filter(age == '92') %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, col=Diet)) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar() +
+  scale_color_manual(values=color.scheme, labels=c('Control Diet','LCHF Diet'), name="") +
+  labs(title="Ketone Tolerance Test",
+       subtitle="3 Weeks of LCHF",
+       y="Blood Ketones (Above Basal)") +
+  xlim(0,95) +
+  theme_classic() +
+  theme(text = element_text(size=18),
+        legend.position = c(0.75,0.75))
+  
+```
+
 
 ## Normlized to the Peak of Ketone levels
 
