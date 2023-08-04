@@ -226,7 +226,7 @@ ggplot(aes(y=Average,
   facet_grid(.~Sex) +
   geom_errorbar() +
   labs(title="Ketone Tolerance Test",
-       y="Blood Ketones (mg/dL)") 
+       y="Blood Ketone Bodies (mg/dL)") 
 
 ktt.data.long %>%
   filter(Time<=60) %>%
@@ -242,7 +242,7 @@ ggplot(aes(y=Average,
   facet_grid(.~Sex) +
   geom_errorbar() +
   labs(title="BHB Tolerance Test",
-       y="Blood Ketones (mg/dL)",
+       y="Blood Ketone Bodies (mg/dL)",
        x="Time (min)") +
   theme_classic() +
   theme(text=element_text(size=16),
@@ -262,7 +262,7 @@ ggplot(aes(y=Average,
   geom_line() +
   geom_errorbar() +
   labs(title="Ketone Tolerance Test",
-       y="Blood Ketones (% of initial)") 
+       y="Blood Ketone Bodies (% of initial)") 
 ```
 
 ```{r ktt-lineplot-ms}

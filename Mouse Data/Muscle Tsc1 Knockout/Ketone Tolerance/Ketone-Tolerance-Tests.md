@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Jun  2 12:34:29 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance.
+This script was most recently run on Fri Aug  4 10:11:21 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance.
 
 # Purpose
 
@@ -293,7 +293,7 @@ ggplot(aes(y=Average,
   facet_grid(.~Sex) +
   geom_errorbar() +
   labs(title="Ketone Tolerance Test",
-       y="Blood Ketones (mg/dL)") 
+       y="Blood Ketone Bodies (mg/dL)") 
 ```
 
 ![](figures/ktt-lineplot-1.png)<!-- -->
@@ -313,7 +313,7 @@ ggplot(aes(y=Average,
   facet_grid(.~Sex) +
   geom_errorbar() +
   labs(title="BHB Tolerance Test",
-       y="Blood Ketones (mg/dL)",
+       y="Blood Ketone Bodies (mg/dL)",
        x="Time (min)") +
   theme_classic() +
   theme(text=element_text(size=16),
@@ -336,8 +336,8 @@ ggplot(aes(y=Average,
   geom_point() +
   geom_line() +
   geom_errorbar() +
-  labs(title="Ketone Tolerance Test",
-       y="Blood Ketones (% of initial)") 
+  labs(title="Ketone Tolerance Test - Baseline Subtracted",
+       y="Blood Ketone Bodies (mg/dL)") 
 ```
 
 ![](figures/ktt-lineplot-3.png)<!-- -->
@@ -726,30 +726,30 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] lmerTest_3.1-3   lme4_1.1-31      Matrix_1.5-3     broom_1.0.2     
-##  [5] ggplot2_3.4.2    lubridate_1.9.0  timechange_0.1.1 readr_2.1.3     
-##  [9] dplyr_1.1.2      tidyr_1.3.0      knitr_1.43      
+##  [1] lmerTest_3.1-3  lme4_1.1-33     Matrix_1.5-4.1  broom_1.0.4    
+##  [5] ggplot2_3.4.2   lubridate_1.9.2 readr_2.1.4     dplyr_1.1.2    
+##  [9] tidyr_1.3.0     knitr_1.43     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.10         lattice_0.20-45     digest_0.6.31      
-##  [4] utf8_1.2.3          R6_2.5.1            backports_1.4.1    
-##  [7] evaluate_0.21       highr_0.10          pillar_1.9.0       
-## [10] rlang_1.1.1         rstudioapi_0.14     minqa_1.2.5        
-## [13] jquerylib_0.1.4     nloptr_2.0.3        rmarkdown_2.21     
-## [16] labeling_0.4.2      splines_4.2.2       stringr_1.5.0      
-## [19] bit_4.0.5           munsell_0.5.0       numDeriv_2016.8-1.1
-## [22] compiler_4.2.2      xfun_0.39           pkgconfig_2.0.3    
-## [25] mgcv_1.8-41         htmltools_0.5.5     tidyselect_1.2.0   
-## [28] tibble_3.2.1        fansi_1.0.4         crayon_1.5.2       
-## [31] tzdb_0.3.0          withr_2.5.0         MASS_7.3-58.1      
-## [34] grid_4.2.2          nlme_3.1-161        jsonlite_1.8.4     
-## [37] gtable_0.3.3        lifecycle_1.0.3     magrittr_2.0.3     
-## [40] scales_1.2.1        cli_3.6.1           stringi_1.7.12     
-## [43] vroom_1.6.0         cachem_1.0.8        farver_2.1.1       
-## [46] bslib_0.4.2         ellipsis_0.3.2      generics_0.1.3     
-## [49] vctrs_0.6.2         boot_1.3-28.1       tools_4.2.2        
-## [52] bit64_4.0.5         glue_1.6.2          purrr_1.0.1        
-## [55] hms_1.1.2           parallel_4.2.2      fastmap_1.1.1      
-## [58] yaml_2.3.7          colorspace_2.1-0    sass_0.4.6
+##  [1] tidyselect_1.2.0    xfun_0.39           bslib_0.4.2        
+##  [4] purrr_1.0.1         lattice_0.21-8      splines_4.2.2      
+##  [7] colorspace_2.1-0    vctrs_0.6.2         generics_0.1.3     
+## [10] htmltools_0.5.5     yaml_2.3.7          mgcv_1.8-42        
+## [13] utf8_1.2.3          rlang_1.1.1         nloptr_2.0.3       
+## [16] jquerylib_0.1.4     pillar_1.9.0        glue_1.6.2         
+## [19] withr_2.5.0         bit64_4.0.5         lifecycle_1.0.3    
+## [22] stringr_1.5.0       munsell_0.5.0       gtable_0.3.3       
+## [25] evaluate_0.21       labeling_0.4.2      tzdb_0.4.0         
+## [28] fastmap_1.1.1       parallel_4.2.2      fansi_1.0.4        
+## [31] highr_0.10          Rcpp_1.0.10         scales_1.2.1       
+## [34] backports_1.4.1     cachem_1.0.8        vroom_1.6.3        
+## [37] jsonlite_1.8.5      farver_2.1.1        bit_4.0.5          
+## [40] hms_1.1.3           digest_0.6.31       stringi_1.7.12     
+## [43] numDeriv_2016.8-1.1 grid_4.2.2          cli_3.6.1          
+## [46] tools_4.2.2         magrittr_2.0.3      sass_0.4.6         
+## [49] tibble_3.2.1        crayon_1.5.2        pkgconfig_2.0.3    
+## [52] MASS_7.3-60         timechange_0.2.0    minqa_1.2.5        
+## [55] rmarkdown_2.22      rstudioapi_0.14     boot_1.3-28.1      
+## [58] R6_2.5.1            nlme_3.1-162        compiler_4.2.2
 ```
 

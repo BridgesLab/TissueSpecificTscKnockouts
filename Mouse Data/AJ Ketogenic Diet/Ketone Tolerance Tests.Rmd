@@ -17,7 +17,7 @@ output:
 library(knitr)
 #figures makde will go to directory called figures, will make them as both png and pdf files 
 opts_chunk$set(fig.path='figures/',
-               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
 options(scipen = 2, digits = 3)
 # set echo and message to TRUE if you want to display code blocks and code output respectively
 
@@ -176,12 +176,30 @@ ggplot(ketone.summary,
        x='')
 ```
 
-### Fasting ketone Statistics
+### Fed ketone Statistics
 
 ```{r fk-stats}
 library(broom)
+
+ketone.data %>% 
+  filter(age=='92') %>%
+  group_by(Diet) %>%
+  summarize_at(.vars='t0',.funs=list(mean=~mean(.),
+                             se=~se(.),
+                             sd=~sd(.),
+                             n=~length(.),
+                             shapiro=~shapiro.test(.)$p.value)) %>%
+  mutate(Pct.change=(mean-mean[Diet=='Control Diet'])/mean[Diet=='Control Diet']*100) -> fed.ketone.summary
+  
+kable(fed.ketone.summary, caption="Summary statistics for fed ketone levels")
+
+wilcox.test(t0~Diet,data=ketone.data %>% 
+  filter(age=='92')) %>% 
+  tidy %>%
+  kable(caption="Mann Whitney test for modifying effects of effects of diet on fed ketones at 3 weeks")
+
 fk.aov <- aov(FK~Diet*age, data=ketone.data)
-tidy(fk.aov) %>% kable(caption="ANOVA for effects of fasting ketone")
+tidy(fk.aov) %>% kable(caption="ANOVA for modifying effects of effects of fed ketones")
 ```
 
 ## Ketone Tolerance Test
@@ -233,6 +251,13 @@ ggplot(ktt.data.long,
        subtitle="4 Days of KD",
        y="Blood Ketones (mg/dL)") 
 
+ggplot(ktt.data.long,
+            aes(y=ketone, x=Time, col=Diet)) +
+  geom_point() +
+  geom_smooth(method="loess") +
+  labs(title="BHB Tolerance Test",
+       y="Blood Ketones (mg/dL)") 
+
 ggplot(ktt.data.long.norm,
             aes(y=ketone, x=Time, col=Diet)) +
   geom_point() +
@@ -268,6 +293,42 @@ ggplot(aes(y=Average,
   labs(title="Ketone Tolerance Test",
        subtitle="4 Days of KD",
        y="Blood Ketones (mg/dL)") 
+
+ktt.data.long %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+  filter(age=='92'&Time<100) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, lty=Diet)) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar() +
+  labs(title="Ketone Tolerance Test",
+       y="Blood Ketone Bodies (mg/dL)") +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.9,0.8))
+
+ktt.data.long.norm.abs %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+  filter(age=='92'&Time<100) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, lty=Diet)) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar() +
+  labs(title="Ketone Tolerance Test - Baseline Subtracted",
+       y="Blood Ketone Bodies (mg/dL)") +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        legend.position=c(0.9,0.8))
 ```
 
 ## Area Under the Curve
