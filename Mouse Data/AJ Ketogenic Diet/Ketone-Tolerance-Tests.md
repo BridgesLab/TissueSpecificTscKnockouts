@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Aug  4 10:12:09 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
+This script was most recently run on Fri Aug  4 10:18:13 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
 
 # Purpose
 
@@ -364,7 +364,7 @@ ggplot(aes(y=Average,
   geom_line() +
   facet_grid(.~age) +
   geom_errorbar() +
-  labs(title="Ketone Tolerance Test",
+  labs(title="BHB Tolerance Test",
        subtitle="4 Days of KD",
        y="Blood Ketones (mg/dL)") 
 ```
@@ -384,7 +384,7 @@ ggplot(aes(y=Average,
   geom_point() +
   geom_line() +
   geom_errorbar() +
-  labs(title="Ketone Tolerance Test",
+  labs(title="BHB Tolerance Test",
        y="Blood Ketone Bodies (mg/dL)") +
   theme_classic() +
   theme(text=element_text(size=16),
@@ -406,7 +406,7 @@ ggplot(aes(y=Average,
   geom_point() +
   geom_line() +
   geom_errorbar() +
-  labs(title="Ketone Tolerance Test - Baseline Subtracted",
+  labs(title="BHB Tolerance Test - Baseline Subtracted",
        y="Blood Ketone Bodies (mg/dL)") +
   theme_classic() +
   theme(text=element_text(size=16),
@@ -458,6 +458,25 @@ ktt.auc.summary %>%
 ```
 
 ![](figures/ktt-auc-norm-1.png)<!-- -->
+
+```r
+ktt.auc.summary %>%
+  filter(age=='92') %>%
+  ggplot(aes(y=mean,
+             ymin=mean-se,
+             ymax=mean+se,
+             x=Diet)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(title="BHB Tolerance Test", 
+       subtitle="Baseline Subtracted",
+       x="",
+       y="Area Under the Curve") +
+  theme_classic()+
+  theme(text=element_text(size=16))
+```
+
+![](figures/ktt-auc-norm-2.png)<!-- -->
 
 
 ## Normalized to fasting ketone levels (percent change)
@@ -586,6 +605,10 @@ ggplot(aes(y=Average,
 ![](figures/ktt-peak-1.png)<!-- -->
 
 ## KTT Statistics
+
+
+
+### Linear Models
 
 
 ```r
