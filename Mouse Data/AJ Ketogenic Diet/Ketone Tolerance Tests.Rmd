@@ -1,0 +1,358 @@
+---
+title: "Ketone Tolerance in CD/KD A/J Mice"
+author: "Cody Cousineau, Detrick Snyder and Dave Bridges"
+date: "August 8, 2019"
+output:
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This script was most recently run on `r date()` and can be found in `r getwd()`.
+
+# Purpose
+
+
+# Experimental Details
+
+Beta hydroxybutyrate was injected at 1g/kg into fed mice around 14:00 PM, ketone levels were assessed via tail vein injection using strips.
+
+# Raw Data
+
+
+```{r data-entry}
+library(rjson)
+library(RCurl)
+library(readr)
+
+
+devtools::source_gist('24ff2b5b57ac09f05d87ac932b59c081', filename='mousedb_access.R')
+
+raw_data_file <- "AJ Cohort 3 Ketone Tolerance Data.csv"
+cohort_id <- 50 #update with your cohort number
+api_key <- 'username=davebridges&api_key=fce3fde2a9a2e5dc9e04c20aad90120a621c50b3'
+update.data(cohort_id=cohort_id, datafile=raw_data_file,api_key=api_key)
+
+treatment.kd <- 'Ketogenic Diet'
+kd.url <- paste('http://bridgeslab.sph.umich.edu/mousedb/api/v1/treatment/?format=json&',api_key,'&limit=0&treatment=', URLencode(treatment.kd), sep="")
+kd.json <- rjson::fromJSON(getURL(kd.url))
+kd.mouseids <- as.integer(unlist(kd.json[[2]][[1]]['animals'])[names(unlist(kd.json[[2]][[1]]['animals'])) == 'animals.id'])
+
+
+library(readr) 
+measurement.data <- read_csv(raw_data_file)
+
+library(lubridate)
+measurement.data$parsed.experiment.date <- ymd(measurement.data$experiment.date)
+
+genotype.problems <- c() #animals where we are unsure about the genotype/treatment
+
+ketone.data <- 
+  filter(measurement.data, assay=='Plasma Glucose') %>%
+  mutate(Diet = as.factor(if_else(animal.id %in% kd.mouseids, "Ketogenic Diet", "Control Diet"))) %>% 
+  separate(values, sep=',', into=paste0("t",seq(0,120, by=15))) %>%
+  select(age,Genotype,t0:t120,Diet,animal.id,MouseID) %>%
+  mutate(ITT = if_else(is.na(t15), "No","Yes")) %>%
+  mutate(FK = as.numeric(t0)/10) %>%
+  mutate_at(.vars=3:11, .funs=funs(as.numeric(.)/10))
+
+ketone.data <- 
+  ketone.data %>% 
+  mutate(AUC = t0+t15+t30+t45+t60+t75+t90+t120)
+
+ketone.data.norm <-
+  ketone.data %>%
+  filter(ITT=="Yes") %>%
+  filter(!(MouseID %in% genotype.problems)) %>% #removed animals with incorrect genotype
+  mutate(t15=t15/t0*100,
+         t30=t30/t0*100,
+         t45=t45/t0*100,
+         t60=t60/t0*100,
+         t75=t75/t0*100,
+         t90=t90/t0*100,
+         t105=t105/t0*100,
+         t120=t120/t0*100,
+         t0=t0/t0*100) 
+
+ketone.data.norm.pk <-
+  ketone.data %>%
+  filter(ITT=="Yes") %>%
+  filter(!(MouseID %in% genotype.problems)) %>% #removed animals with incorrect genotype
+  mutate(t0=t0/t15*100,
+         t30=t30/t15*100,
+         t45=t45/t15*100,
+         t60=t60/t15*100,
+         t75=t75/t15*100,
+         t90=t90/t15*100,
+         t105=t105/t15*100,
+         t120=t120/t15*100,
+         t15=t15/t15*100) 
+
+
+
+kable(ketone.data %>% 
+        filter(ITT=="Yes") %>% 
+        select(MouseID, Diet, FK,age) %>%
+        arrange(age,MouseID, Diet),caption="Animals who underwent an KTT")
+
+ketone.data %>%
+  filter(ITT=="Yes") %>% 
+  group_by(Diet,age) %>%
+  count %>%
+  kable(caption="Animals evaluated by KTT in each group")
+```
+
+
+
+# Analysis
+
+```{r ketone.summary}
+ketone.summary <-
+  ketone.data %>%
+  group_by(Diet,age) %>%
+  summarize(FK.mean = mean(FK, na.rm=T),
+            FK.se = se(FK),
+            N = length(FK))
+```
+
+## Fed Ketone Levels
+
+```{r fasting-ketone-boxplot-itt, fig.cap="Fed ketones, by treatment"}
+library(ggplot2)
+ggplot(filter(ketone.data, ITT=="Yes"),
+            aes(y=FK, x=Diet)) +
+  geom_boxplot() +
+  facet_grid(.~age) +
+  labs(title="Fed Ketones",
+       y="Ketones (mg/dL)",
+       x="Diet")
+```
+
+
+```{r fasting-ketone-barplot-itt-ko, fig.cap="Fed ketones"}
+ggplot(ketone.summary,
+       aes(y=FK.mean,
+           ymin = FK.mean - FK.se,
+           ymax = FK.mean + FK.se,
+           x = Diet)) +
+  facet_grid(.~age) +
+  geom_bar(stat='identity', position='dodge', width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75), width=0.5) +
+  labs(y='Fed Blood Ketones (mg/dL)',
+       x='')
+```
+
+### Fasting ketone Statistics
+
+```{r fk-stats}
+library(broom)
+fk.aov <- aov(FK~Diet*age, data=ketone.data)
+tidy(fk.aov) %>% kable(caption="ANOVA for effects of fasting ketone")
+```
+
+## Ketone Tolerance Test
+
+```{r ktt-dotplot, fig.cap="Ketone tolerance tests by treatments"}
+time <- seq(0,120,by=15)
+ktt.data.long <- 
+  ketone.data %>%
+  filter(ITT=="Yes") %>%
+  group_by(Diet,animal.id) %>%
+  gather(`t0`:`t120`,key='TimeStamp', value="ketone") %>%
+  separate(TimeStamp, sep="t", into=c("Letter","Time")) %>%
+  mutate(ketone = as.numeric(ketone)) %>%
+  mutate(Time = as.numeric(Time))
+
+ktt.data.long.norm <- 
+  ketone.data.norm %>%
+  filter(ITT=="Yes") %>%
+  group_by(animal.id,Diet) %>%
+  gather(`t0`:`t120`,key='TimeStamp', value="ketone") %>%
+  separate(TimeStamp, sep="t", into=c("Letter","Time")) %>%
+  mutate(ketone = as.numeric(ketone)) %>%
+  mutate(Time = as.numeric(Time))
+
+ktt.data.long.norm.pk <- 
+  ketone.data.norm.pk %>%
+  filter(ITT=="Yes") %>%
+  group_by(animal.id,Diet) %>%
+  gather(`t0`:`t120`,key='TimeStamp', value="ketone") %>%
+  separate(TimeStamp, sep="t", into=c("Letter","Time")) %>%
+  mutate(ketone = as.numeric(ketone)) %>%
+  mutate(Time = as.numeric(Time))
+
+ggplot(ktt.data.long,
+            aes(y=ketone, x=Time, col=Diet)) +
+  geom_point() +
+  facet_grid(.~age) +
+  geom_smooth(method="loess") +
+  labs(title="Ketone Tolerance Test",
+       subtitle="4 Days of KD",
+       y="Blood Ketones (mg/dL)") 
+
+ggplot(ktt.data.long.norm,
+            aes(y=ketone, x=Time, col=Diet)) +
+  geom_point() +
+  facet_grid(.~age) +
+  geom_smooth(method="loess") +
+  labs(title="Ketone Tolerance Test",
+       subtitle="4 Days of KD",
+       y="Blood Ketones (% of Initial)") 
+
+ggplot(ktt.data.long.norm.pk,
+            aes(y=ketone, x=Time, col=Diet)) +
+  geom_point() +
+  facet_grid(.~age) +
+  geom_smooth(method="loess") +
+  labs(title="Ketone Tolerance Test",
+       subtitle="4 Days of KD",
+       y="Blood Ketones (% of Peak)") 
+```
+
+```{r ktt-lineplot}
+ktt.data.long %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, col=Diet)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(.~age) +
+  geom_errorbar() +
+  labs(title="Ketone Tolerance Test",
+       subtitle="4 Days of KD",
+       y="Blood Ketones (mg/dL)") 
+```
+
+## Normalized to fasting ketone levels
+
+```{r normalized-ktt}
+ktt.data.long.norm %>%
+  filter(!(animal.id %in% c('23224','23225'))) %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, col=Diet)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(.~age) +
+  geom_errorbar() +
+  labs(title="Ketone Tolerance Test",
+       subtitle="4 Days of KD",
+       y="Blood Ketones (% of initial)") 
+
+ktt.data.long.norm %>%
+  filter(!(animal.id %in% c('23224','23225'))) %>%
+  filter(age == '92') %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, col=Diet)) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar() +
+  scale_color_manual(values=color.scheme, labels=c('Control Diet','LCHF Diet'), name="") +
+  labs(title="Ketone Tolerance Test",
+       subtitle="3 Weeks of LCHF",
+       y="Blood Ketones (% of Basal)") +
+  xlim(0,95) +
+  theme_classic() +
+  theme(text = element_text(size=18),
+        legend.position = c(0.75,0.75))
+  
+```
+
+## Normlized to the Peak of Ketone levels
+
+```{r ktt-peak}
+ktt.data.long.norm.pk %>%
+  group_by(Time,Diet,age) %>%
+  summarize(Average = mean(ketone),
+            Error = se(ketone)) %>%
+ggplot(aes(y=Average,
+           ymax=Average+Error,
+           ymin=Average-Error,
+           x=Time, col=Diet)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(.~age) +
+  geom_errorbar() +
+  labs(title="Ketone Tolerance Test",
+       subtitle="4 Days and 3 Weeks of KD",
+       y="Blood Ketones (% of Peak)") 
+```
+
+## KTT Statistics
+
+```{r ktt-stats}
+
+library(lme4)
+library(lmerTest)
+ktt.lme <- lmer(ketone ~ as.factor(Time) + as.factor(age) + Diet + age:Diet + (1|animal.id),
+                data=ktt.data.long)
+
+ktt.lme.92d <- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
+                data=ktt.data.long.norm %>% filter (age==92))
+
+ktt.lme.92d.fil <- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
+                data=ktt.data.long.norm %>% filter (age==92) %>%
+                  filter(!(animal.id %in% c('23224','23225'))))
+
+ktt.lme.92d.fil.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id),
+                data=ktt.data.long.norm %>% filter (age==92) %>%
+                  filter(!(animal.id %in% c('23224','23225'))))
+                
+                
+
+anova(ktt.lme) %>% tidy %>% kable(caption="Mixed linear model for KTT")
+
+anova(ktt.lme.92d) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")
+anova(ktt.lme.92d.fil,ktt.lme.92d.fil.null) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")
+fixef(ktt.lme.92d) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")
+```
+
+# Interpretation
+
+# References
+
