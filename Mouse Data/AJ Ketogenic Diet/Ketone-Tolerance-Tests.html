@@ -395,7 +395,7 @@ Information</a></li>
 </ul>
 </div>
 
-<p>This script was most recently run on Fri Aug 4 10:34:38 2023 and can
+<p>This script was most recently run on Fri Aug 4 10:41:12 2023 and can
 be found in
 /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse
 Data/AJ Ketogenic Diet.</p>
@@ -1318,10 +1318,10 @@ ktt.lme.92d.null &lt;- lmer(ketone ~ as.factor(Time) + (1|animal.id),
 ktt.lme.92d &lt;- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
                 data=ktt.data.long %&gt;% filter (age==92))
 
-ktt.lme.92d.norm &lt;- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
+ktt.lme.92d.norm &lt;- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
                 data=ktt.data.long.norm.abs %&gt;% filter (age==92))
 
-ktt.lme.92d.norm.null &lt;- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
+ktt.lme.92d.norm.null &lt;- lmer(ketone ~ as.factor(Time) + (1|animal.id),
                 data=ktt.data.long.norm.abs %&gt;% filter (age==92))
 
 anova(ktt.lme.92d) %&gt;% tidy %&gt;% kable(caption=&quot;Mixed linear model for KTT at 3 weeks&quot;)</code></pre>
@@ -1455,15 +1455,6 @@ anova(ktt.lme.92d) %&gt;% tidy %&gt;% kable(caption=&quot;Mixed linear model for
 <table>
 <caption>Mixed linear model for baseline adjusted KTT at 3
 weeks</caption>
-<colgroup>
-<col width="32%" />
-<col width="10%" />
-<col width="10%" />
-<col width="9%" />
-<col width="9%" />
-<col width="15%" />
-<col width="12%" />
-</colgroup>
 <thead>
 <tr class="header">
 <th align="left">term</th>
@@ -1478,84 +1469,64 @@ weeks</caption>
 <tbody>
 <tr class="odd">
 <td align="left">as.factor(Time)</td>
-<td align="right">27.289</td>
-<td align="right">4.548</td>
+<td align="right">42.058</td>
+<td align="right">7.010</td>
 <td align="right">6</td>
-<td align="right">54</td>
-<td align="right">22.07</td>
+<td align="right">60</td>
+<td align="right">32.36</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">Diet</td>
-<td align="right">0.213</td>
-<td align="right">0.213</td>
+<td align="right">0.224</td>
+<td align="right">0.224</td>
 <td align="right">1</td>
 <td align="right">9</td>
-<td align="right">1.04</td>
-<td align="right">0.335</td>
-</tr>
-<tr class="odd">
-<td align="left">as.factor(Time):Diet</td>
-<td align="right">1.871</td>
-<td align="right">0.312</td>
-<td align="right">6</td>
-<td align="right">54</td>
-<td align="right">1.51</td>
-<td align="right">0.191</td>
+<td align="right">1.03</td>
+<td align="right">0.336</td>
 </tr>
 </tbody>
 </table>
 <pre class="r"><code>summary(ktt.lme.92d.norm)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
 ## lmerModLmerTest]
-## Formula: ketone ~ as.factor(Time) * Diet + (1 | animal.id)
+## Formula: ketone ~ as.factor(Time) + Diet + (1 | animal.id)
 ##    Data: ktt.data.long.norm.abs %&gt;% filter(age == 92)
 ## 
-## REML criterion at convergence: 126
+## REML criterion at convergence: 133
 ## 
 ## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.2149 -0.4410 -0.0284  0.4122  2.3565 
+##    Min     1Q Median     3Q    Max 
+## -2.414 -0.517 -0.141  0.635  2.410 
 ## 
 ## Random effects:
 ##  Groups    Name        Variance Std.Dev.
-##  animal.id (Intercept) 0.395    0.628   
-##  Residual              0.206    0.454   
+##  animal.id (Intercept) 0.393    0.627   
+##  Residual              0.217    0.465   
 ## Number of obs: 77, groups:  animal.id, 11
 ## 
 ## Fixed effects:
-##                                       Estimate Std. Error        df t value
-## (Intercept)                          -8.45e-15   4.47e-01  1.75e+01    0.00
-## as.factor(Time)15                     1.73e+00   3.71e-01  5.40e+01    4.68
-## as.factor(Time)30                     1.57e+00   3.71e-01  5.40e+01    4.23
-## as.factor(Time)45                     1.30e+00   3.71e-01  5.40e+01    3.51
-## as.factor(Time)60                     9.33e-01   3.71e-01  5.40e+01    2.52
-## as.factor(Time)75                     1.00e+00   3.71e-01  5.40e+01    2.70
-## as.factor(Time)90                     1.07e+00   3.71e-01  5.40e+01    2.88
-## DietKetogenic Diet                    2.48e-15   5.25e-01  1.75e+01    0.00
-## as.factor(Time)15:DietKetogenic Diet  9.42e-01   4.35e-01  5.40e+01    2.17
-## as.factor(Time)30:DietKetogenic Diet  7.71e-01   4.35e-01  5.40e+01    1.77
-## as.factor(Time)45:DietKetogenic Diet  6.25e-01   4.35e-01  5.40e+01    1.44
-## as.factor(Time)60:DietKetogenic Diet  5.79e-01   4.35e-01  5.40e+01    1.33
-## as.factor(Time)75:DietKetogenic Diet  2.38e-01   4.35e-01  5.40e+01    0.55
-## as.factor(Time)90:DietKetogenic Diet -1.67e-02   4.35e-01  5.40e+01   -0.04
-##                                      Pr(&gt;|t|)    
-## (Intercept)                           1.00000    
-## as.factor(Time)15                    0.000020 ***
-## as.factor(Time)30                    0.000092 ***
-## as.factor(Time)45                     0.00092 ***
-## as.factor(Time)60                     0.01479 *  
-## as.factor(Time)75                     0.00928 ** 
-## as.factor(Time)90                     0.00572 ** 
-## DietKetogenic Diet                    1.00000    
-## as.factor(Time)15:DietKetogenic Diet  0.03468 *  
-## as.factor(Time)30:DietKetogenic Diet  0.08175 .  
-## as.factor(Time)45:DietKetogenic Diet  0.15616    
-## as.factor(Time)60:DietKetogenic Diet  0.18823    
-## as.factor(Time)75:DietKetogenic Diet  0.58698    
-## as.factor(Time)90:DietKetogenic Diet  0.96955    
+##                    Estimate Std. Error     df t value Pr(&gt;|t|)    
+## (Intercept)          -0.326      0.398 11.253   -0.82     0.43    
+## as.factor(Time)15     2.418      0.198 60.000   12.19  &lt; 2e-16 ***
+## as.factor(Time)30     2.127      0.198 60.000   10.72  1.4e-15 ***
+## as.factor(Time)45     1.755      0.198 60.000    8.84  1.8e-12 ***
+## as.factor(Time)60     1.355      0.198 60.000    6.83  5.0e-09 ***
+## as.factor(Time)75     1.173      0.198 60.000    5.91  1.7e-07 ***
+## as.factor(Time)90     1.055      0.198 60.000    5.31  1.7e-06 ***
+## DietKetogenic Diet    0.448      0.441  9.000    1.02     0.34    
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) a.(T)1 a.(T)3 a.(T)4 a.(T)6 a.(T)7 a.(T)9
+## as.fct(T)15 -0.249                                          
+## as.fct(T)30 -0.249  0.500                                   
+## as.fct(T)45 -0.249  0.500  0.500                            
+## as.fct(T)60 -0.249  0.500  0.500  0.500                     
+## as.fct(T)75 -0.249  0.500  0.500  0.500  0.500              
+## as.fct(T)90 -0.249  0.500  0.500  0.500  0.500  0.500       
+## DietKtgncDt -0.806  0.000  0.000  0.000  0.000  0.000  0.000</code></pre>
 <pre class="r"><code>anova(ktt.lme.92d.norm,ktt.lme.92d.norm.null) %&gt;% tidy %&gt;% kable(caption=&quot;Chi squared test for baseline adjusted KTT&quot;)</code></pre>
 <table>
 <caption>Chi squared test for baseline adjusted KTT</caption>
@@ -1586,25 +1557,25 @@ weeks</caption>
 <tbody>
 <tr class="odd">
 <td align="left">ktt.lme.92d.norm.null</td>
-<td align="right">10</td>
-<td align="right">141</td>
-<td align="right">164</td>
-<td align="right">-60.5</td>
-<td align="right">121</td>
+<td align="right">9</td>
+<td align="right">140</td>
+<td align="right">161</td>
+<td align="right">-61.1</td>
+<td align="right">122</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">ktt.lme.92d.norm</td>
-<td align="right">16</td>
-<td align="right">143</td>
-<td align="right">180</td>
-<td align="right">-55.4</td>
-<td align="right">111</td>
-<td align="right">10.3</td>
-<td align="right">6</td>
-<td align="right">0.114</td>
+<td align="right">10</td>
+<td align="right">141</td>
+<td align="right">164</td>
+<td align="right">-60.5</td>
+<td align="right">121</td>
+<td align="right">1.2</td>
+<td align="right">1</td>
+<td align="right">0.274</td>
 </tr>
 </tbody>
 </table>

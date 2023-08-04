@@ -549,10 +549,10 @@ ktt.lme.92d.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id),
 ktt.lme.92d <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
                 data=ktt.data.long %>% filter (age==92))
 
-ktt.lme.92d.norm <- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
+ktt.lme.92d.norm <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
                 data=ktt.data.long.norm.abs %>% filter (age==92))
 
-ktt.lme.92d.norm.null <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
+ktt.lme.92d.norm.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id),
                 data=ktt.data.long.norm.abs %>% filter (age==92))
 
 anova(ktt.lme.92d) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")

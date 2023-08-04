@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Aug  4 10:34:38 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
+This script was most recently run on Fri Aug  4 10:41:12 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
 
 # Purpose
 
@@ -698,10 +698,10 @@ ktt.lme.92d.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id),
 ktt.lme.92d <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
                 data=ktt.data.long %>% filter (age==92))
 
-ktt.lme.92d.norm <- lmer(ketone ~ as.factor(Time) * Diet + (1|animal.id),
+ktt.lme.92d.norm <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
                 data=ktt.data.long.norm.abs %>% filter (age==92))
 
-ktt.lme.92d.norm.null <- lmer(ketone ~ as.factor(Time) + Diet + (1|animal.id),
+ktt.lme.92d.norm.null <- lmer(ketone ~ as.factor(Time) + (1|animal.id),
                 data=ktt.data.long.norm.abs %>% filter (age==92))
 
 anova(ktt.lme.92d) %>% tidy %>% kable(caption="Mixed linear model for KTT at 3 weeks")
@@ -783,11 +783,10 @@ anova(ktt.lme.92d.norm) %>% tidy %>% kable(caption="Mixed linear model for basel
 
 Table: Mixed linear model for baseline adjusted KTT at 3 weeks
 
-|term                 |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
-|:--------------------|------:|------:|-----:|-----:|---------:|-------:|
-|as.factor(Time)      | 27.289|  4.548|     6|    54|     22.07|   0.000|
-|Diet                 |  0.213|  0.213|     1|     9|      1.04|   0.335|
-|as.factor(Time):Diet |  1.871|  0.312|     6|    54|      1.51|   0.191|
+|term            |  sumsq| meansq| NumDF| DenDF| statistic| p.value|
+|:---------------|------:|------:|-----:|-----:|---------:|-------:|
+|as.factor(Time) | 42.058|  7.010|     6|    60|     32.36|   0.000|
+|Diet            |  0.224|  0.224|     1|     9|      1.03|   0.336|
 
 ```r
 summary(ktt.lme.92d.norm)
@@ -796,54 +795,43 @@ summary(ktt.lme.92d.norm)
 ```
 ## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
 ## lmerModLmerTest]
-## Formula: ketone ~ as.factor(Time) * Diet + (1 | animal.id)
+## Formula: ketone ~ as.factor(Time) + Diet + (1 | animal.id)
 ##    Data: ktt.data.long.norm.abs %>% filter(age == 92)
 ## 
-## REML criterion at convergence: 126
+## REML criterion at convergence: 133
 ## 
 ## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.2149 -0.4410 -0.0284  0.4122  2.3565 
+##    Min     1Q Median     3Q    Max 
+## -2.414 -0.517 -0.141  0.635  2.410 
 ## 
 ## Random effects:
 ##  Groups    Name        Variance Std.Dev.
-##  animal.id (Intercept) 0.395    0.628   
-##  Residual              0.206    0.454   
+##  animal.id (Intercept) 0.393    0.627   
+##  Residual              0.217    0.465   
 ## Number of obs: 77, groups:  animal.id, 11
 ## 
 ## Fixed effects:
-##                                       Estimate Std. Error        df t value
-## (Intercept)                          -8.45e-15   4.47e-01  1.75e+01    0.00
-## as.factor(Time)15                     1.73e+00   3.71e-01  5.40e+01    4.68
-## as.factor(Time)30                     1.57e+00   3.71e-01  5.40e+01    4.23
-## as.factor(Time)45                     1.30e+00   3.71e-01  5.40e+01    3.51
-## as.factor(Time)60                     9.33e-01   3.71e-01  5.40e+01    2.52
-## as.factor(Time)75                     1.00e+00   3.71e-01  5.40e+01    2.70
-## as.factor(Time)90                     1.07e+00   3.71e-01  5.40e+01    2.88
-## DietKetogenic Diet                    2.48e-15   5.25e-01  1.75e+01    0.00
-## as.factor(Time)15:DietKetogenic Diet  9.42e-01   4.35e-01  5.40e+01    2.17
-## as.factor(Time)30:DietKetogenic Diet  7.71e-01   4.35e-01  5.40e+01    1.77
-## as.factor(Time)45:DietKetogenic Diet  6.25e-01   4.35e-01  5.40e+01    1.44
-## as.factor(Time)60:DietKetogenic Diet  5.79e-01   4.35e-01  5.40e+01    1.33
-## as.factor(Time)75:DietKetogenic Diet  2.38e-01   4.35e-01  5.40e+01    0.55
-## as.factor(Time)90:DietKetogenic Diet -1.67e-02   4.35e-01  5.40e+01   -0.04
-##                                      Pr(>|t|)    
-## (Intercept)                           1.00000    
-## as.factor(Time)15                    0.000020 ***
-## as.factor(Time)30                    0.000092 ***
-## as.factor(Time)45                     0.00092 ***
-## as.factor(Time)60                     0.01479 *  
-## as.factor(Time)75                     0.00928 ** 
-## as.factor(Time)90                     0.00572 ** 
-## DietKetogenic Diet                    1.00000    
-## as.factor(Time)15:DietKetogenic Diet  0.03468 *  
-## as.factor(Time)30:DietKetogenic Diet  0.08175 .  
-## as.factor(Time)45:DietKetogenic Diet  0.15616    
-## as.factor(Time)60:DietKetogenic Diet  0.18823    
-## as.factor(Time)75:DietKetogenic Diet  0.58698    
-## as.factor(Time)90:DietKetogenic Diet  0.96955    
+##                    Estimate Std. Error     df t value Pr(>|t|)    
+## (Intercept)          -0.326      0.398 11.253   -0.82     0.43    
+## as.factor(Time)15     2.418      0.198 60.000   12.19  < 2e-16 ***
+## as.factor(Time)30     2.127      0.198 60.000   10.72  1.4e-15 ***
+## as.factor(Time)45     1.755      0.198 60.000    8.84  1.8e-12 ***
+## as.factor(Time)60     1.355      0.198 60.000    6.83  5.0e-09 ***
+## as.factor(Time)75     1.173      0.198 60.000    5.91  1.7e-07 ***
+## as.factor(Time)90     1.055      0.198 60.000    5.31  1.7e-06 ***
+## DietKetogenic Diet    0.448      0.441  9.000    1.02     0.34    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) a.(T)1 a.(T)3 a.(T)4 a.(T)6 a.(T)7 a.(T)9
+## as.fct(T)15 -0.249                                          
+## as.fct(T)30 -0.249  0.500                                   
+## as.fct(T)45 -0.249  0.500  0.500                            
+## as.fct(T)60 -0.249  0.500  0.500  0.500                     
+## as.fct(T)75 -0.249  0.500  0.500  0.500  0.500              
+## as.fct(T)90 -0.249  0.500  0.500  0.500  0.500  0.500       
+## DietKtgncDt -0.806  0.000  0.000  0.000  0.000  0.000  0.000
 ```
 
 ```r
@@ -856,8 +844,8 @@ Table: Chi squared test for baseline adjusted KTT
 
 |term                  | npar| AIC| BIC| logLik| deviance| statistic| df| p.value|
 |:---------------------|----:|---:|---:|------:|--------:|---------:|--:|-------:|
-|ktt.lme.92d.norm.null |   10| 141| 164|  -60.5|      121|        NA| NA|      NA|
-|ktt.lme.92d.norm      |   16| 143| 180|  -55.4|      111|      10.3|  6|   0.114|
+|ktt.lme.92d.norm.null |    9| 140| 161|  -61.1|      122|        NA| NA|      NA|
+|ktt.lme.92d.norm      |   10| 141| 164|  -60.5|      121|       1.2|  1|   0.274|
 
 # Session Information
 
