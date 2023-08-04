@@ -3,12 +3,13 @@ title: "Ketone Tolerance in CD/KD A/J Mice"
 author: "Cody Cousineau, Detrick Snyder and Dave Bridges"
 date: "August 8, 2019"
 output:
+  html_document:
+    toc: yes
+    keep_md: yes
   pdf_document:
     highlight: tango
     keep_tex: yes
     number_sections: no
-    toc: yes
-  html_document:
     toc: yes
 ---
 
@@ -53,24 +54,10 @@ Beta hydroxybutyrate was injected at 1g/kg into fed mice around 14:00 PM, ketone
 
 
 ```{r data-entry}
-library(rjson)
-library(RCurl)
 library(readr)
 
-
-devtools::source_gist('24ff2b5b57ac09f05d87ac932b59c081', filename='mousedb_access.R')
-
-raw_data_file <- "AJ Cohort 3 Ketone Tolerance Data.csv"
-cohort_id <- 50 #update with your cohort number
-api_key <- 'username=davebridges&api_key=fce3fde2a9a2e5dc9e04c20aad90120a621c50b3'
-update.data(cohort_id=cohort_id, datafile=raw_data_file,api_key=api_key)
-
-treatment.kd <- 'Ketogenic Diet'
-kd.url <- paste('http://bridgeslab.sph.umich.edu/mousedb/api/v1/treatment/?format=json&',api_key,'&limit=0&treatment=', URLencode(treatment.kd), sep="")
-kd.json <- rjson::fromJSON(getURL(kd.url))
-kd.mouseids <- as.integer(unlist(kd.json[[2]][[1]]['animals'])[names(unlist(kd.json[[2]][[1]]['animals'])) == 'animals.id'])
-
-
+raw_data_file <- "AJ Ketone Tolerance Data.csv"
+kd.mouseids <- scan('KD Mouse IDs.txt')
 library(readr) 
 measurement.data <- read_csv(raw_data_file)
 
@@ -90,7 +77,8 @@ ketone.data <-
 
 ketone.data <- 
   ketone.data %>% 
-  mutate(AUC = t0+t15+t30+t45+t60+t75+t90+t120)
+  mutate(AUC = rowSums(across(t0:t90)),
+         AOC = rowSums(across(t0:t90))-(t0*7))
 
 ketone.data.norm <-
   ketone.data %>%
@@ -259,7 +247,46 @@ ggplot(aes(y=Average,
        y="Blood Ketones (mg/dL)") 
 ```
 
-## Normalized to fasting ketone levels
+## Area Under the Curve
+
+```{r ktt-auc}
+ketone.data %>%
+  group_by(Diet,age) %>%
+  summarize(mean=mean(AUC),
+            se=se(AUC)) -> ktt.auc.summary
+
+ktt.auc.summary %>%
+  ggplot(aes(y=mean,
+             ymin=mean-se,
+             ymax=mean+se,
+             x=Diet)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  facet_grid(~age) +
+  labs(y="Area Under the Curve")
+```
+
+## Normalized Area Under the Curve
+
+```{r ktt-auc-norm}
+ketone.data %>%
+  group_by(Diet,age) %>%
+  summarize(mean=mean(AOC),
+            se=se(AOC)) -> ktt.auc.summary
+
+ktt.auc.summary %>%
+  ggplot(aes(y=mean,
+             ymin=mean-se,
+             ymax=mean+se,
+             x=Diet)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  facet_grid(~age) +
+  labs(y="Area Under the Curve (Baseline Subtracted)")
+```
+
+
+## Normalized to fasting ketone levels (percent change)
 
 ```{r normalized-ktt}
 ktt.data.long.norm %>%
