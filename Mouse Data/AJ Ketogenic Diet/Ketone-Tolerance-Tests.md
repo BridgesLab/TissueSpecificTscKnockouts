@@ -15,7 +15,7 @@ output:
 
 
 
-This script was most recently run on Fri Aug  4 10:41:12 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
+This script was most recently run on Mon Aug  7 09:59:35 2023 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.
 
 # Purpose
 
@@ -846,6 +846,83 @@ Table: Chi squared test for baseline adjusted KTT
 |:---------------------|----:|---:|---:|------:|--------:|---------:|--:|-------:|
 |ktt.lme.92d.norm.null |    9| 140| 161|  -61.1|      122|        NA| NA|      NA|
 |ktt.lme.92d.norm      |   10| 141| 164|  -60.5|      121|       1.2|  1|   0.274|
+
+## Pairwise Testing
+
+Four weeks only
+
+
+```r
+ktt.data.long %>% 
+  group_by(age,Time) %>%
+  filter(Time<100) %>%
+  summarize(shapiro=shapiro.test(residuals(aov(ketone~Diet)))$p.value,
+            Mann.Whitney=wilcox.test(ketone~Diet)$p.value,
+            Levene=leveneTest(ketone~Diet)$"Pr(>F)"[1],
+            Student=t.test(ketone~Diet,var.equal=T)$p.value,
+            Welch=t.test(ketone~Diet,var.equal=F)$p.value)%>%
+  mutate(Test=case_when(shapiro<0.05~"Mann Whitney",
+                        shapiro>=0.05&Levene<0.05~"Student's",
+                        shapiro>=0.05&Levene>=0.05~"Welch's",
+                        .default="Other")) %>%
+  kable(caption="Time point wise pairwise statistics for absolute values")
+```
+
+
+
+Table: Time point wise pairwise statistics for absolute values
+
+| age| Time| shapiro| Mann.Whitney| Levene| Student| Welch|Test         |
+|---:|----:|-------:|------------:|------:|-------:|-----:|:------------|
+|  72|    0|   0.000|        0.208|  0.477|   0.460| 0.208|Mann Whitney |
+|  72|   15|   0.017|        0.458|  0.281|   0.354| 0.127|Mann Whitney |
+|  72|   30|   0.079|        0.078|  0.489|   0.083| 0.038|Welch's      |
+|  72|   45|   0.009|        0.229|  0.486|   0.267| 0.098|Mann Whitney |
+|  72|   60|   0.070|        0.354|  0.429|   0.255| 0.134|Welch's      |
+|  72|   75|   0.006|        0.354|  0.397|   0.365| 0.164|Mann Whitney |
+|  72|   90|   0.004|        0.209|  0.393|   0.320| 0.114|Mann Whitney |
+|  92|    0|   0.444|        0.017|  0.241|   0.000| 0.000|Welch's      |
+|  92|   15|   0.572|        0.012|  0.257|   0.022| 0.004|Welch's      |
+|  92|   30|   0.767|        0.040|  0.060|   0.067| 0.010|Welch's      |
+|  92|   45|   0.587|        0.259|  0.163|   0.244| 0.074|Welch's      |
+|  92|   60|   0.497|        0.151|  0.217|   0.203| 0.056|Welch's      |
+|  92|   75|   0.573|        0.474|  0.161|   0.305| 0.147|Welch's      |
+|  92|   90|   0.212|        0.918|  0.292|   0.604| 0.456|Welch's      |
+
+```r
+ktt.data.long.norm.abs %>% 
+  group_by(age,Time) %>%
+  filter(Time<100&Time>0) %>%
+  summarize(shapiro=shapiro.test(residuals(aov(ketone~Diet)))$p.value,
+            Mann.Whitney=wilcox.test(ketone~Diet)$p.value,
+            Levene=leveneTest(ketone~Diet)$"Pr(>F)"[1],
+            Student=t.test(ketone~Diet,var.equal=T)$p.value,
+            Welch=t.test(ketone~Diet,var.equal=F)$p.value)%>%
+  mutate(Test=case_when(shapiro<0.05~"Mann Whitney",
+                        shapiro>=0.05&Levene<0.05~"Student's",
+                        shapiro>=0.05&Levene>=0.05~"Welch's",
+                        .default="Other")) %>%
+  kable(caption="Time point wise pairwise statistics for baseline subtracted values")
+```
+
+
+
+Table: Time point wise pairwise statistics for baseline subtracted values
+
+| age| Time| shapiro| Mann.Whitney| Levene| Student| Welch|Test         |
+|---:|----:|-------:|------------:|------:|-------:|-----:|:------------|
+|  72|   15|   0.019|        0.517|  0.281|   0.459| 0.222|Mann Whitney |
+|  72|   30|   0.191|        0.138|  0.772|   0.119| 0.133|Welch's      |
+|  72|   45|   0.139|        0.354|  0.566|   0.224| 0.161|Welch's      |
+|  72|   60|   0.194|        0.373|  0.709|   0.262| 0.297|Welch's      |
+|  72|   75|   0.170|        0.352|  0.337|   0.346| 0.246|Welch's      |
+|  72|   90|   0.265|        0.282|  0.342|   0.277| 0.138|Welch's      |
+|  92|   15|   0.205|        0.031|  0.335|   0.058| 0.014|Welch's      |
+|  92|   30|   0.526|        0.125|  0.092|   0.162| 0.037|Welch's      |
+|  92|   45|   0.350|        0.776|  0.170|   0.419| 0.198|Welch's      |
+|  92|   60|   0.286|        0.838|  0.225|   0.385| 0.172|Welch's      |
+|  92|   75|   0.442|        0.921|  0.148|   0.641| 0.484|Welch's      |
+|  92|   90|   0.100|        0.759|  0.278|   0.976| 0.964|Welch's      |
 
 # Session Information
 

@@ -389,13 +389,15 @@ Ketone levels</a></li>
 <li><a href="#linear-models" id="toc-linear-models">Linear
 Models</a></li>
 </ul></li>
+<li><a href="#pairwise-testing" id="toc-pairwise-testing">Pairwise
+Testing</a></li>
 </ul></li>
 <li><a href="#session-information" id="toc-session-information">Session
 Information</a></li>
 </ul>
 </div>
 
-<p>This script was most recently run on Fri Aug 4 10:41:12 2023 and can
+<p>This script was most recently run on Mon Aug 7 09:59:35 2023 and can
 be found in
 /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse
 Data/AJ Ketogenic Diet.</p>
@@ -1580,6 +1582,352 @@ weeks</caption>
 </tbody>
 </table>
 </div>
+</div>
+<div id="pairwise-testing" class="section level2">
+<h2>Pairwise Testing</h2>
+<p>Four weeks only</p>
+<pre class="r"><code>ktt.data.long %&gt;% 
+  group_by(age,Time) %&gt;%
+  filter(Time&lt;100) %&gt;%
+  summarize(shapiro=shapiro.test(residuals(aov(ketone~Diet)))$p.value,
+            Mann.Whitney=wilcox.test(ketone~Diet)$p.value,
+            Levene=leveneTest(ketone~Diet)$&quot;Pr(&gt;F)&quot;[1],
+            Student=t.test(ketone~Diet,var.equal=T)$p.value,
+            Welch=t.test(ketone~Diet,var.equal=F)$p.value)%&gt;%
+  mutate(Test=case_when(shapiro&lt;0.05~&quot;Mann Whitney&quot;,
+                        shapiro&gt;=0.05&amp;Levene&lt;0.05~&quot;Student&#39;s&quot;,
+                        shapiro&gt;=0.05&amp;Levene&gt;=0.05~&quot;Welch&#39;s&quot;,
+                        .default=&quot;Other&quot;)) %&gt;%
+  kable(caption=&quot;Time point wise pairwise statistics for absolute values&quot;)</code></pre>
+<table>
+<caption>Time point wise pairwise statistics for absolute
+values</caption>
+<colgroup>
+<col width="6%" />
+<col width="7%" />
+<col width="12%" />
+<col width="20%" />
+<col width="10%" />
+<col width="12%" />
+<col width="9%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">age</th>
+<th align="right">Time</th>
+<th align="right">shapiro</th>
+<th align="right">Mann.Whitney</th>
+<th align="right">Levene</th>
+<th align="right">Student</th>
+<th align="right">Welch</th>
+<th align="left">Test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">72</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.208</td>
+<td align="right">0.477</td>
+<td align="right">0.460</td>
+<td align="right">0.208</td>
+<td align="left">Mann Whitney</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">15</td>
+<td align="right">0.017</td>
+<td align="right">0.458</td>
+<td align="right">0.281</td>
+<td align="right">0.354</td>
+<td align="right">0.127</td>
+<td align="left">Mann Whitney</td>
+</tr>
+<tr class="odd">
+<td align="right">72</td>
+<td align="right">30</td>
+<td align="right">0.079</td>
+<td align="right">0.078</td>
+<td align="right">0.489</td>
+<td align="right">0.083</td>
+<td align="right">0.038</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">45</td>
+<td align="right">0.009</td>
+<td align="right">0.229</td>
+<td align="right">0.486</td>
+<td align="right">0.267</td>
+<td align="right">0.098</td>
+<td align="left">Mann Whitney</td>
+</tr>
+<tr class="odd">
+<td align="right">72</td>
+<td align="right">60</td>
+<td align="right">0.070</td>
+<td align="right">0.354</td>
+<td align="right">0.429</td>
+<td align="right">0.255</td>
+<td align="right">0.134</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">75</td>
+<td align="right">0.006</td>
+<td align="right">0.354</td>
+<td align="right">0.397</td>
+<td align="right">0.365</td>
+<td align="right">0.164</td>
+<td align="left">Mann Whitney</td>
+</tr>
+<tr class="odd">
+<td align="right">72</td>
+<td align="right">90</td>
+<td align="right">0.004</td>
+<td align="right">0.209</td>
+<td align="right">0.393</td>
+<td align="right">0.320</td>
+<td align="right">0.114</td>
+<td align="left">Mann Whitney</td>
+</tr>
+<tr class="even">
+<td align="right">92</td>
+<td align="right">0</td>
+<td align="right">0.444</td>
+<td align="right">0.017</td>
+<td align="right">0.241</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">92</td>
+<td align="right">15</td>
+<td align="right">0.572</td>
+<td align="right">0.012</td>
+<td align="right">0.257</td>
+<td align="right">0.022</td>
+<td align="right">0.004</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">92</td>
+<td align="right">30</td>
+<td align="right">0.767</td>
+<td align="right">0.040</td>
+<td align="right">0.060</td>
+<td align="right">0.067</td>
+<td align="right">0.010</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">92</td>
+<td align="right">45</td>
+<td align="right">0.587</td>
+<td align="right">0.259</td>
+<td align="right">0.163</td>
+<td align="right">0.244</td>
+<td align="right">0.074</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">92</td>
+<td align="right">60</td>
+<td align="right">0.497</td>
+<td align="right">0.151</td>
+<td align="right">0.217</td>
+<td align="right">0.203</td>
+<td align="right">0.056</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">92</td>
+<td align="right">75</td>
+<td align="right">0.573</td>
+<td align="right">0.474</td>
+<td align="right">0.161</td>
+<td align="right">0.305</td>
+<td align="right">0.147</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">92</td>
+<td align="right">90</td>
+<td align="right">0.212</td>
+<td align="right">0.918</td>
+<td align="right">0.292</td>
+<td align="right">0.604</td>
+<td align="right">0.456</td>
+<td align="left">Welch’s</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>ktt.data.long.norm.abs %&gt;% 
+  group_by(age,Time) %&gt;%
+  filter(Time&lt;100&amp;Time&gt;0) %&gt;%
+  summarize(shapiro=shapiro.test(residuals(aov(ketone~Diet)))$p.value,
+            Mann.Whitney=wilcox.test(ketone~Diet)$p.value,
+            Levene=leveneTest(ketone~Diet)$&quot;Pr(&gt;F)&quot;[1],
+            Student=t.test(ketone~Diet,var.equal=T)$p.value,
+            Welch=t.test(ketone~Diet,var.equal=F)$p.value)%&gt;%
+  mutate(Test=case_when(shapiro&lt;0.05~&quot;Mann Whitney&quot;,
+                        shapiro&gt;=0.05&amp;Levene&lt;0.05~&quot;Student&#39;s&quot;,
+                        shapiro&gt;=0.05&amp;Levene&gt;=0.05~&quot;Welch&#39;s&quot;,
+                        .default=&quot;Other&quot;)) %&gt;%
+  kable(caption=&quot;Time point wise pairwise statistics for baseline subtracted values&quot;)</code></pre>
+<table>
+<caption>Time point wise pairwise statistics for baseline subtracted
+values</caption>
+<colgroup>
+<col width="6%" />
+<col width="7%" />
+<col width="12%" />
+<col width="20%" />
+<col width="10%" />
+<col width="12%" />
+<col width="9%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">age</th>
+<th align="right">Time</th>
+<th align="right">shapiro</th>
+<th align="right">Mann.Whitney</th>
+<th align="right">Levene</th>
+<th align="right">Student</th>
+<th align="right">Welch</th>
+<th align="left">Test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">72</td>
+<td align="right">15</td>
+<td align="right">0.019</td>
+<td align="right">0.517</td>
+<td align="right">0.281</td>
+<td align="right">0.459</td>
+<td align="right">0.222</td>
+<td align="left">Mann Whitney</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">30</td>
+<td align="right">0.191</td>
+<td align="right">0.138</td>
+<td align="right">0.772</td>
+<td align="right">0.119</td>
+<td align="right">0.133</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">72</td>
+<td align="right">45</td>
+<td align="right">0.139</td>
+<td align="right">0.354</td>
+<td align="right">0.566</td>
+<td align="right">0.224</td>
+<td align="right">0.161</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">60</td>
+<td align="right">0.194</td>
+<td align="right">0.373</td>
+<td align="right">0.709</td>
+<td align="right">0.262</td>
+<td align="right">0.297</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">72</td>
+<td align="right">75</td>
+<td align="right">0.170</td>
+<td align="right">0.352</td>
+<td align="right">0.337</td>
+<td align="right">0.346</td>
+<td align="right">0.246</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">90</td>
+<td align="right">0.265</td>
+<td align="right">0.282</td>
+<td align="right">0.342</td>
+<td align="right">0.277</td>
+<td align="right">0.138</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">92</td>
+<td align="right">15</td>
+<td align="right">0.205</td>
+<td align="right">0.031</td>
+<td align="right">0.335</td>
+<td align="right">0.058</td>
+<td align="right">0.014</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">92</td>
+<td align="right">30</td>
+<td align="right">0.526</td>
+<td align="right">0.125</td>
+<td align="right">0.092</td>
+<td align="right">0.162</td>
+<td align="right">0.037</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">92</td>
+<td align="right">45</td>
+<td align="right">0.350</td>
+<td align="right">0.776</td>
+<td align="right">0.170</td>
+<td align="right">0.419</td>
+<td align="right">0.198</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">92</td>
+<td align="right">60</td>
+<td align="right">0.286</td>
+<td align="right">0.838</td>
+<td align="right">0.225</td>
+<td align="right">0.385</td>
+<td align="right">0.172</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="odd">
+<td align="right">92</td>
+<td align="right">75</td>
+<td align="right">0.442</td>
+<td align="right">0.921</td>
+<td align="right">0.148</td>
+<td align="right">0.641</td>
+<td align="right">0.484</td>
+<td align="left">Welch’s</td>
+</tr>
+<tr class="even">
+<td align="right">92</td>
+<td align="right">90</td>
+<td align="right">0.100</td>
+<td align="right">0.759</td>
+<td align="right">0.278</td>
+<td align="right">0.976</td>
+<td align="right">0.964</td>
+<td align="left">Welch’s</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="session-information" class="section level1">

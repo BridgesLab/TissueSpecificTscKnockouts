@@ -565,6 +565,41 @@ anova(ktt.lme.92d.norm,ktt.lme.92d.norm.null) %>% tidy %>% kable(caption="Chi sq
 
 ```
 
+## Pairwise Testing
+
+Four weeks only
+
+```{r pairwise-testing}
+ktt.data.long %>% 
+  group_by(age,Time) %>%
+  filter(Time<100) %>%
+  summarize(shapiro=shapiro.test(residuals(aov(ketone~Diet)))$p.value,
+            Mann.Whitney=wilcox.test(ketone~Diet)$p.value,
+            Levene=leveneTest(ketone~Diet)$"Pr(>F)"[1],
+            Student=t.test(ketone~Diet,var.equal=T)$p.value,
+            Welch=t.test(ketone~Diet,var.equal=F)$p.value)%>%
+  mutate(Test=case_when(shapiro<0.05~"Mann Whitney",
+                        shapiro>=0.05&Levene<0.05~"Student's",
+                        shapiro>=0.05&Levene>=0.05~"Welch's",
+                        .default="Other")) %>%
+  kable(caption="Time point wise pairwise statistics for absolute values")
+
+ktt.data.long.norm.abs %>% 
+  group_by(age,Time) %>%
+  filter(Time<100&Time>0) %>%
+  summarize(shapiro=shapiro.test(residuals(aov(ketone~Diet)))$p.value,
+            Mann.Whitney=wilcox.test(ketone~Diet)$p.value,
+            Levene=leveneTest(ketone~Diet)$"Pr(>F)"[1],
+            Student=t.test(ketone~Diet,var.equal=T)$p.value,
+            Welch=t.test(ketone~Diet,var.equal=F)$p.value)%>%
+  mutate(Test=case_when(shapiro<0.05~"Mann Whitney",
+                        shapiro>=0.05&Levene<0.05~"Student's",
+                        shapiro>=0.05&Levene>=0.05~"Welch's",
+                        .default="Other")) %>%
+  kable(caption="Time point wise pairwise statistics for baseline subtracted values")
+  
+```
+
 # Session Information
 
 ```{r session-info}
