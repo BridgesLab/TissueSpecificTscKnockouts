@@ -32,7 +32,7 @@ This document indicates where the raw data for each Figure panel can be found, a
 | Figure 4D | NA | Image | 
 | Figure 4E | RNAseq/Muscle Tsc1 Knockout/scripts/barplots.Rmd | ca-cycling.pdf | 
 | Figure 4F | NA | Image | 
-| Figure 4C | RNAseq/Muscle Tsc1 Knockout/scripts/barplots.Rmd | Sln-barplot.pdf | 
+| Figure 5A | RNAseq/Muscle Tsc1 Knockout/scripts/barplots.Rmd | atf4_targets-barplot.pdf
 | Figure 5 | Mouse Data/Muscle Tsc1 Knockout/mouse-aging-analysis.Rmd | fitting-mck-controls-combined-ggsurvplot-1.pdf | 
 
 | Supplementary Figure 1 | NA | Image | 
