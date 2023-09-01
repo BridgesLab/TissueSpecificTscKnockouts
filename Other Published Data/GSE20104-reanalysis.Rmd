@@ -156,7 +156,7 @@ plotSA(fit2, main="Mean variance trend, GSE20104")
 
 
 #write to output file
-output_file <- 'GSE20104 Analysis.csv'
+output_file <- 'GSE20104 Analysis.tsv'
 write.fit(fit2, file=output_file, adjust='BH')
 
 atf4.oe.results <- droplevels(topTable(fit2, n=Inf, adjust.method="BH")) %>%
@@ -415,37 +415,79 @@ sln.data %>%
        title='Effects ATF4 Overexpression on Sarcolipin')
 ```
 
-## Ketolytic Genes
+## TSC Induced Genes
 
-```{atf4-ketolytic-barplot}
-genes.to.test <- c('Slc16a1','Bdh1','Hmgcs2')
+```{r atf4-tsc-barplot}
+genes.to.test <- c('Sln','Gdf15','Atp2a2', 'Tnni1')
+kt.id <- tT2 %>% filter(Gene.symbol%in%genes.to.test) %>% rownames()
+kt.exprs <- exprs(gset)[kt.id,] 
+rownames(kt.exprs) <- tT2[kt.id,'Gene.symbol']
+
+library(tibble)
+kt.data <- as.data.frame(kt.exprs) %>%
+  rownames_to_column(var="Gene") %>%
+  pivot_longer(-Gene, names_to='Sample') %>%
+  mutate(Treatment=rep(as.character(gs),dim(kt.exprs)[1]))
+
+
+library(forcats)
+kt.data %>%
+  group_by(Gene,Treatment) %>%
+  summarize(avg=mean(2^value),
+            error=se(2^value)) %>% 
+  mutate(norm.mean = avg/avg[Treatment=='Control'],
+         norm.error = error/avg[Treatment=='Control']) %>%
+  mutate(Treatment=fct_recode(as.factor(relevel(as.factor(Treatment),ref="Control")),
+                              "Empty Vector"="Control",
+                              "ATF4 Overexpression"="ATF4.OE")) %>%
+  ggplot(aes(x=Gene,
+             fill=Treatment,
+             y=norm.mean,
+             ymin=norm.mean-norm.error,
+             ymax=norm.mean+norm.error)) +
+  geom_bar(stat='identity', position='dodge',width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5) +
+  #scale_x_discrete(labels=c("Control" = "Empty Vector", "ATF4 Overexpression" = "ATF4")) +
+  theme_classic() +
+  theme(text=element_text(size=18),
+               legend.position=c(0.25,0.75)) +
+  scale_fill_grey() +
+  labs(y='Relative mRNA Expression',
+       x='',
+       title='Effects ATF4 Overexpression on \nTsc1-Knockout Induced Genes')
+```
+
+```{r atf4-ketolytic-barplot}
+genes.to.test <- c('Slc16a1','Oxct1','Hmgcs2')
 kt.id <- tT2 %>% filter(Gene.symbol%in%genes.to.test) %>% rownames()
 kt.exprs <- exprs(gset)[kt.id,] 
 rownames(kt.exprs) <- genes.to.test
 
-library(tibble)
 kt.data <- as.data.frame(kt.exprs) %>%
   rownames_to_column(var="Gene") %>%
   pivot_longer(-Gene, names_to='Sample') %>%
   mutate(Treatment=rep(as.character(gs),3))
 
 
-library(forcats)
 kt.data %>%
   group_by(Gene,Treatment) %>%
-  summarize(avg=mean(2^sln.exprs),
-            error=se(2^sln.exprs),
-            .groups='keep') %>% #not working here
+  summarize(avg=mean(2^value),
+            error=se(2^value)) %>% 
   mutate(norm.mean = avg/avg[Treatment=='Control'],
          norm.error = error/avg[Treatment=='Control']) %>%
-  ggplot(aes(x=Treatment,
-             y=avg
+  mutate(Treatment=fct_recode(as.factor(relevel(as.factor(Treatment),ref="Control")),
+                              "Empty Vector"="Control",
+                              "ATF4 Overexpression"="ATF4.OE")) %>%
+  ggplot(aes(x=Gene,
+             fill=Treatment,
+             y=norm.mean,
              ymin=norm.mean-norm.error,
              ymax=norm.mean+norm.error)) +
-  geom_bar(stat='identity', position='dodge') +
-  geom_errorbar(width=0.5) +
-  scale_x_discrete(labels=c("Control" = "Empty Vector", "ATF4.OE" = "ATF4")) +
+  geom_bar(stat='identity', position='dodge',width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5) +
+  #scale_x_discrete(labels=c("Control" = "Empty Vector", "ATF4 Overexpression" = "ATF4")) +
   theme_classic() +
+  scale_fill_grey() +
   theme(text=element_text(size=16)) +
   labs(y='Relative mRNA Expression',
        x='',
