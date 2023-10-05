@@ -27,7 +27,7 @@ rpkm.data.unique <- rpkm.data[!duplicated(rpkm.data$external_gene_name),]
 rownames(rpkm.data.unique) <- rpkm.data.unique$external_gene_name
 rpkm.data.unique <- rpkm.data.unique[,-1]
 
-genes.of.interest <- c("Tsc1",'Tsc2','Ppp1r3c','Cd36','Fabp3','Ucp3','Map3k9','Ppp1r15a','Slc38a1','Fgf21','Sln','Pln','Gdf15','Inha',"Mat2a",'Atf4')
+genes.of.interest <- c("Tsc1",'Tsc2','Ppp1r3c','Cd36','Fabp3','Ucp3','Map3k9','Ppp1r15a','Slc38a1','Fgf21','Sln','Pln','Gdf15','Inha',"Mat2a",'Atf4','Trit1')
 
 
 genes.of.interest.data <- rpkm.data.unique[genes.of.interest,]
