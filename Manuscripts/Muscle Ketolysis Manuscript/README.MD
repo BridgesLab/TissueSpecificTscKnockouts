@@ -13,3 +13,4 @@ This document indicates where the raw data for each Figure panel can be found, a
 | Figure 2A | Mouse Data/AJ Ketogenic Diet/Ketone Tolerance Tests.Rmd | ktt-lineplot-2.pdf |
 | Figure 2B | Mouse Data/AJ Ketogenic Diet/Ketone Tolerance Tests.Rmd | ktt-lineplot-3.pdf |
 | Figure 2C | Mouse Data/AJ Ketogenic Diet/Ketone Tolerance Tests.Rmd | ktt-auc-norm-2.pdf |
+| Figure 2D | Mouse Data/AJ Ketogenic Diet/Muscle qPCR.Qmd | ketolytic-muscle-expression-1.pdf | 
