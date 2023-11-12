@@ -1,6 +1,6 @@
 ---
 title: "Ketone Tolerance in CD/KD A/J Mice"
-author: "Cody Cousineau, Detrick Snyder and Dave Bridges"
+author: "Cody Cousineau, Trey Carr, and Dave Bridges"
 date: "August 8, 2019"
 output:
   html_document:
@@ -51,18 +51,190 @@ qPCR for several ketolytic genes, done on two separate days
 
 ```{r data-entry}
 library(readr)
-aj.mapping.file <- 'AJ Mappnig Data.csv'
+aj.mapping.file <- 'AJ Mapping Data.csv'
 run.1.file  <- 'Muscle qPCR Run 1.csv'
 run.2.file <- 'Muscle qPCR Run 2.csv'
 
 mapping.data <- read_csv(aj.mapping.file)
-run.1.data <- read_csv(run.1.file) %>% mutate(Plate="First")
-run.2.data <- read_csv(run.2.file) %>% mutate(Plate="Second")
+run.1.data <- read_csv(run.1.file,na="Undetermined") %>% mutate(Plate="First")
+run.2.data <- read_csv(run.2.file,na="Undetermined") %>% mutate(Plate="Second")
 
-run.data <- bind_rows(run.1.data,run.2.data)
+run.data <- bind_rows(run.1.data,run.2.data) %>%
+  left_join(mapping.data,by=c("Sample"="Mouse"))
 ```
 
 The mapping file is in `r aj.mapping.file` and the two qPCR runs are in `r run.1.file` and `r run.2.file`
+
+# Analysis
+
+# Quality Check
+
+Rearranged data so that replicates arer in long format
+
+```{r quality-check}
+qpcr.data.unclean <- 
+  run.data %>%
+  select(Diet,Cohort,Sex,Sample,Target,Cq) %>%
+  group_by(Diet,Cohort,Sex,Sample,Target) %>%
+  summarize(Ct.mean = mean(Cq,na.rm=T),
+            Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T))
+
+# tech.outliers <- arrange(qpcr.data.unclean,-Ct.range)
+# tech.outliers %>% kable(caption="Technical Outliers")
+
+# run.data %>%
+#   filter(Target=="OXCT1",Sample=="4102") %>%
+#   select(Cq,Well,Plate)
+
+
+run.data.clean <- filter(run.data,!(Well=="H9"&Plate=="First"),
+                         !(Well=="E3"&Plate=="Second"))
+
+qpcr.data <-
+  run.data.clean %>%
+  select(Diet,Cohort,Sex,Sample,Target,Cq) %>%
+  group_by(Diet,Cohort,Sex,Sample,Target) %>%
+  summarize(Ct.mean = mean(Cq,na.rm=T),
+            Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T))
+
+tech.outliers <- arrange(qpcr.data,-Ct.range)
+tech.outliers %>% 
+  filter(Ct.range>2) %>%
+  kable(caption="Technical Outliers")
+```
+
+# Normalization
+
+```{r norm}
+
+
+analysed.data <-
+  qpcr.data %>%
+  filter(!(Sample %in% c('4100','4105','4106','4107','4109','4112','4113','4086','4092','4099','8063','8064','8065','8066','8067','8068','8069','8070','8071','8072','8073','8074'))) %>%
+  ungroup %>%
+  group_by(Diet,Cohort,Sex,Sample) %>%
+  mutate(Ct.norm = Ct.mean-Ct.mean[Target=="Rplp0"]) %>%
+  group_by(Diet,Sex,Target,Sample) %>%
+  mutate(Ct.quant = 2^-Ct.norm) 
+
+summarized.data <-
+  analysed.data %>%
+  group_by(Diet,Sex,Target) %>%
+  summarise(Mean.exp = mean(Ct.quant),
+            Mean.se = se(Ct.quant)) %>%
+  group_by(Target) %>%
+  mutate(Mean.rel = Mean.exp/Mean.exp[Diet=="Control"&Sex=="F"],
+         Mean.rel.se = Mean.se/Mean.exp[Diet=="Control"&Sex=="F"]) 
+```
+
+# BDH1
+
+```{r bdh1-muscle-expression}
+library(ggplot2)
+ggplot(summarized.data %>% filter(Target=="BDH1"),
+       aes(y=Mean.rel,
+           ymin=Mean.rel-Mean.rel.se,
+           ymax=Mean.rel+Mean.rel.se,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(width = .5, position = position_dodge(0.75)) +
+  labs(title="Bdh1",
+       y="Relative Expression",
+       x="")
+```
+
+# OXCT1
+
+```{r oxct1-muscle-expression}
+ggplot(summarized.data %>% filter(Target=="OXCT1"),
+       aes(y=Mean.rel,
+           ymin=Mean.rel-Mean.rel.se,
+           ymax=Mean.rel+Mean.rel.se,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(width = .5, position = position_dodge(0.75)) +
+  labs(title="Oxct1",
+       y="Relative Expression",
+       x="") -> oxct.plot
+
+oxct.plot
+```
+
+# SLC16A1
+
+```{r slc16a1-muscle-expression}
+ggplot(summarized.data %>% filter(Target=="Slc16a1"),
+       aes(y=Mean.rel,
+           ymin=Mean.rel-Mean.rel.se,
+           ymax=Mean.rel+Mean.rel.se,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(width = .5, position = position_dodge(0.75)) +
+  labs(title="Slc16a1",
+       y="Relative Expression",
+       x="") -> slc16a1.plot
+
+slc16a1.plot
+```
+
+# SLC16A6
+
+```{r slc16a6-muscle-expression}
+ggplot(summarized.data %>% filter(Target=="Slc16a6"),
+       aes(y=Mean.rel,
+           ymin=Mean.rel-Mean.rel.se,
+           ymax=Mean.rel+Mean.rel.se,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(width = .5, position = position_dodge(0.75)) +
+  labs(title="Slc16a6",
+       y="Relative Expression",
+       x="") -> slc16a6.plot
+
+slc16a6.plot
+```
+
+# Statistics
+
+Did 2x2 ANOVA analyses
+
+```{r anova}
+library(broom)
+
+interaction.results <- data.frame()
+for (gene in c("BDH1","OXCT1","Slc16a1","Slc16a6")) {
+temp.result <- lm(Ct.quant ~ Diet*Sex,data=filter(analysed.data, Target==gene)) %>% 
+  tidy %>% 
+  mutate(Gene=gene) %>% 
+  filter(term=="DietKetogenic:SexM")
+interaction.results <- bind_rows(interaction.results,temp.result)
+}
+
+kable(interaction.results,caption="Test for Diet-Sex Interactions")
+
+main.results <- data.frame()
+for (gene in c("BDH1","OXCT1","Slc16a1","Slc16a6")) {
+temp.result <- lm(Ct.quant ~ Diet+Sex,data=filter(analysed.data, Target==gene)) %>% 
+  tidy %>% 
+  mutate(Gene=gene) 
+main.results <- bind_rows(main.results,temp.result)
+}
+
+main.results.formatted <- 
+  main.results %>% 
+  relocate(Gene,.before=term) %>%
+  select(-statistic) %>%
+  group_by(Gene) %>%
+  mutate(Pct.Change = estimate/estimate[term=="(Intercept)"]*100) %>%
+  mutate(Sig=case_when(p.value<0.05&term!="(Intercept)"~"*",
+                       .default=""))
+
+kable(main.results.formatted,caption="Test for Diet and Sex Effects on Expression")
+```
 
 # Session Information
 
