@@ -198,7 +198,40 @@ ggplot(summarized.data %>% filter(Target=="Slc16a6"),
 slc16a6.plot
 ```
 
+# Summary Plots
+
+```{r ketolytic-muscle-expression}
+ggplot(summarized.data %>% filter(Target!="Rplp0"),
+       aes(y=Mean.rel,
+           ymin=Mean.rel-Mean.rel.se,
+           ymax=Mean.rel+Mean.rel.se,
+           x=Sex,
+           fill=Diet)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(width = .5, position = position_dodge(0.75)) +
+  facet_grid(.~Target) +
+  labs(title="Ketolytic Gene Expression",
+       y="Relative Expression",
+       x="") +
+  scale_fill_grey() +
+  theme_classic(base_size = 16) 
+
+```
+
 # Statistics
+
+## Sample Size
+
+```{r sample-size}
+analysed.data %>%
+  ungroup() %>%
+  group_by(Sex,Diet,Target) %>%
+  count %>%
+  pivot_wider(names_from="Target",values_from = "n") %>%
+  kable(caption="Group sizes for analyzed data")
+```
+
+## Multivariate Analysis
 
 Did 2x2 ANOVA analyses
 
@@ -234,6 +267,63 @@ main.results.formatted <-
                        .default=""))
 
 kable(main.results.formatted,caption="Test for Diet and Sex Effects on Expression")
+```
+
+```{r pairwise-analyses}
+library(car)
+analysed.data %>%
+  group_by(Target,Sex) %>%
+  filter(Target!="Rplp0") %>%
+  summarize(Pct.Decrease = (mean(Ct.quant[Diet=="Control"],na.rm=T)-mean(Ct.quant[Diet=="Ketogenic"],na.rm=T))/mean(Ct.quant[Diet=="Control"],na.rm=T)*100,
+            Shapiro=min(shapiro.test(Ct.quant[Diet=="Ketogenic"])$p.value,
+                        shapiro.test(Ct.quant[Diet=="Control"])$p.value),
+            Levene=leveneTest(Ct.quant~Diet)$"Pr(>F)"[1],
+            Mann.Whitney=wilcox.test(Ct.quant~Diet)$p.value,
+            Welch=t.test(Ct.quant~Diet,var.equal = F)$p.value,
+            Student=t.test(Ct.quant~Diet,var.equal = T)$p.value) %>%
+  mutate(Test=case_when(Shapiro<0.05~"Mann Whitney",
+                        Levene<0.05~"Welch's",
+                        .default="Student's")) %>%
+  kable(caption="Pairwise tests for effects of diet")
+  
+
+```
+
+```{r outlier-samples}
+analysed.data %>%
+  filter(Target=="Slc16a1") %>%
+  filter(Sex=="F") %>%
+  kable(caption="Visually inspected outliers")
+
+#Slc16a1 :: 4108 seems variable, not due to technical variation
+```
+
+# Comparing SLC16 Expression
+
+```{r slc16a1-slc16a6-comparason}
+analysed.data %>%
+  ungroup %>%
+  group_by(Target) %>%
+  summarize(Avg=mean(Ct.quant,na.rm=T),
+            SE = se(Ct.quant)) %>%
+  filter(Target %in% c("Slc16a1","Slc16a6")) %>%
+  mutate(Rel.Avg = Avg/min(Avg),
+         Rel.SE = SE/min(Avg)) -> Slc16.summary
+  
+kable(Slc16.summary, caption="Relative expression of MCT isoforms")
+
+ggplot(Slc16.summary,
+       aes(y=Rel.Avg,
+           ymin=Rel.Avg-Rel.SE,
+           ymax=Rel.Avg+Rel.SE,
+           x=Target)) +
+  geom_bar(stat="identity") +
+  geom_errorbar(width=0.5) +
+  labs(y="Relative Expression",
+       x="",
+       title="MCT1 Isoforms in Quadriceps") +
+  theme_classic(base_size = 16)
+
 ```
 
 # Session Information
