@@ -44,7 +44,7 @@ Analyse mRNA expression from AJ Muscles
 
 # Experimental Details
 
-qPCR for several ketolytic genes, done on two separate days
+qPCR for several ketolytic genes, done on three separate days
 
 # Raw Data
 
@@ -54,22 +54,26 @@ library(readr)
 aj.mapping.file <- 'AJ Mapping Data.csv'
 run.1.file  <- 'Muscle qPCR Run 1.csv'
 run.2.file <- 'Muscle qPCR Run 2.csv'
+run.3.file <- 'Muscle qPCR Run 3.csv'
 
 mapping.data <- read_csv(aj.mapping.file)
-run.1.data <- read_csv(run.1.file,na="Undetermined") %>% mutate(Plate="First")
-run.2.data <- read_csv(run.2.file,na="Undetermined") %>% mutate(Plate="Second")
+run.1.data <- read_csv(run.1.file,na="Undetermined") %>% mutate(Plate="First") %>% filter(Target !="Rplp0")
+run.2.data <- read_csv(run.2.file,na="Undetermined") %>% mutate(Plate="Second") %>% filter(!(Well %in% c("B1","A12")))
+run.3.data <- read_csv(run.3.file,na="Undetermined") %>% mutate(Plate="Third")
 
-run.data <- bind_rows(run.1.data,run.2.data) %>%
+run.data <- bind_rows(run.1.data,run.2.data,run.3.data) %>%
   left_join(mapping.data,by=c("Sample"="Mouse"))
 ```
 
 The mapping file is in `r aj.mapping.file` and the two qPCR runs are in `r run.1.file` and `r run.2.file`
 
+Why is there six replicates of some samples, like 4102
+
 # Analysis
 
 # Quality Check
 
-Rearranged data so that replicates arer in long format
+Rearranged data so that replicates are in long format
 
 ```{r quality-check}
 qpcr.data.unclean <- 
@@ -97,21 +101,15 @@ qpcr.data <-
   summarize(Ct.mean = mean(Cq,na.rm=T),
             Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T))
 
-tech.outliers <- arrange(qpcr.data,-Ct.range)
-tech.outliers %>% 
-  filter(Ct.range>2) %>%
-  kable(caption="Technical Outliers")
 ```
 
 # Normalization
 
 ```{r norm}
-
-
 analysed.data <-
   qpcr.data %>%
-  filter(!(Sample %in% c('4100','4105','4106','4107','4109','4112','4113','4086','4092','4099','8063','8064','8065','8066','8067','8068','8069','8070','8071','8072','8073','8074'))) %>%
   ungroup %>%
+  filter(!(Sample %in% c('4106','4108'))) %>%
   group_by(Diet,Cohort,Sex,Sample) %>%
   mutate(Ct.norm = Ct.mean-Ct.mean[Target=="Rplp0"]) %>%
   group_by(Diet,Sex,Target,Sample) %>%
@@ -125,6 +123,25 @@ summarized.data <-
   group_by(Target) %>%
   mutate(Mean.rel = Mean.exp/Mean.exp[Diet=="Control"&Sex=="F"],
          Mean.rel.se = Mean.se/Mean.exp[Diet=="Control"&Sex=="F"]) 
+```
+
+## Quality Check
+
+```{r quality check}
+tech.outliers <- arrange(qpcr.data,-Ct.range)
+tech.outliers %>% 
+  filter(Ct.range>2,Ct.mean<30) %>%
+  kable(caption="Technical Outliers")
+
+#biological outliers
+analysed.data %>% 
+  group_by(Diet,Sex,Target) %>%
+  mutate(Group.mean=mean(Ct.quant),
+         Diff.from.mean = Ct.quant-mean(Ct.quant)) %>%
+  arrange(-abs(Diff.from.mean)) %>% 
+  head %>% 
+  kable
+  
 ```
 
 # BDH1
