@@ -35,11 +35,11 @@ library(biomaRt)
 ensembl = useMart("ensembl",
                   dataset="mmusculus_gene_ensembl")
 gene.mapping <- getBM(attributes=c('mgi_symbol','ensembl_gene_id'),
-                      values=counts.table$X1,
+                      values=counts.table$`...1`,
                       filters='ensembl_gene_id',
                       mart=ensembl)
 
-annotated.counts.table <- full_join(counts.table,gene.mapping, by=c('X1'='ensembl_gene_id'))
+annotated.counts.table <- full_join(counts.table,gene.mapping, by=c(`...1`='ensembl_gene_id'))
 
 long.counts.table <- pivot_longer(annotated.counts.table,
                                   cols=starts_with('14'),
@@ -66,18 +66,19 @@ These data can be found in **/Users/davebrid/Documents/GitHub/TissueSpecificTscK
 
 human.mouse.mapping.table <- 'http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt'
 mapping.table <- read_tsv(human.mouse.mapping.table) %>%
-  dplyr::select(`Common Organism Name`,Symbol,`HomoloGene ID`) 
+  dplyr::select(`Common Organism Name`,Symbol,`DB Class Key`) 
   
 wide.mapping.table <- pivot_wider(mapping.table,
                                   names_from=`Common Organism Name`,
-                                  values_from = Symbol,
-                                  id_cols=`HomoloGene ID`) %>%
+                                  values_from=Symbol,
+                                  id_cols = `DB Class Key`,
+                                  values_fn=first) %>%
   rename("Mouse"='mouse, laboratory') %>%
   mutate(Mouse=as.factor(as.character(Mouse))) %>%
-    mutate(human=as.factor(as.character(human)))
+  mutate(human=as.factor(as.character(human)))
 
 
-genes.of.interest <- c('Cxcl13','Cxcr5','Ccr6','Ccr7', 'Il12a', 'Fut7', 'Tnfsf14', 'Cr2', 'Azgp1','Aicda', 'Lef1', 'Cd19', 'Cd22', 'Siglecg','Foxp3', 'Cxcr5', 'Ntrk1', 'Sstr4', 'Pla2g2d', 'Pla2g5', 'Pla2g3','Pla2g4f','Pla2g6', 'Cyp4f18', 'Agtr2', 'Fabp3', 'Zan', 'Cntnap2', 'Foxp3', 'Pax5','Il10', 'Pcdha10','Cnr2', 'Kcna1', 'Azgp1', 'Lef1', 'Cd79a','Cd3d', 'Cd247', 'Cd4', 'Cd3g', 'Cd28', 'Cd3e', 'Ccr7', 'Lck', 'Blk', 'Itk', 'Syk', 'Myoz2', 'Mypn', 'Mybph', 'Myom2', 'Myh8', 'Myh7', 'Myh4', 'Myh1', 'Myl2','Myl1', 'MYPF', 'Acta1','Ryr1','Csrp3','Prkag3', 'Tnnt2','Tnnt3', 'Acaca', 'Srebf1', 'Acly', 'Fasn', 'Rps6kb1', 'Eif4ebp1', 'Acat1','Akt1', 'Rps14', 'Plin1', 'Plin2',  'Fabp4', 'Dgat1', 'Dgat2', 'Lpl', 'Pnpla2', 'Gpat3', 'Acsl1', 'Acsl3', 'Acsl4', 'Acsl5', 'Acsl6', 'Elovl1', 'Elovl2', 'Elovl3', 'Elovl4', 'Elovl5', 'Elovl6', 'Elovl7', 'Scd1', 'Scd2', 'Scd3', 'Scd4', 'Fads1', 'Fads2','Fads2b','Fads3','Fads6', 'Mfsd2a', 'Mfsd6', 'Mfsd8', 'Mfs10', 'Mfsd14a', 'Mfsd14b', 'Cyp2d34', 'Cyp4f18', 'Cyp1a2', 'Cyp2c50', 'Cyp4a12a', 'Cyp4a12b', 'Cyp2c50') #you can choose any gene name  but by default it show the sig genes , previously this code had c('Fasn','Wap','Csn2','Insr') UNCERTAIN about CNR3 to find homologous if it is pcdha10 or not, used Pcdha10 for mouse which has different homologene ID number that that of humans; MYPF does not exist as a gene (possible typo? when indeed it is MYLF?); 
+genes.of.interest <- c('Cxcl13','Cxcr5','Ccr6','Ccr7', 'Il12a', 'Fut7', 'Tnfsf14', 'Cr2', 'Azgp1','Aicda', 'Lef1', 'Cd19', 'Cd22', 'Siglecg','Foxp3', 'Cxcr5', 'Ntrk1', 'Sstr4', 'Pla2g2d', 'Pla2g5', 'Pla2g3','Pla2g4f','Pla2g6', 'Cyp4f18', 'Agtr2', 'Fabp3', 'Zan', 'Cntnap2', 'Foxp3', 'Pax5','Il10', 'Pcdha10','Cnr2', 'Kcna1', 'Azgp1', 'Lef1', 'Cd79a','Cd3d', 'Cd247', 'Cd4', 'Cd3g', 'Cd28', 'Cd3e', 'Ccr7', 'Lck', 'Blk', 'Itk', 'Syk', 'Myoz2', 'Mypn', 'Mybph', 'Myom2', 'Myh8', 'Myh7', 'Myh4', 'Myh1', 'Myl2','Myl1', 'MYPF', 'Acta1','Ryr1','Csrp3','Prkag3', 'Tnnt2','Tnnt3', 'Acaca', 'Srebf1', 'Acly', 'Fasn', 'Rps6kb1', 'Eif4ebp1', 'Acat1','Akt1', 'Rps14', 'Plin1', 'Plin2',  'Fabp4', 'Dgat1', 'Dgat2', 'Lpl', 'Pnpla2', 'Gpat3', 'Acsl1', 'Acsl3', 'Acsl4', 'Acsl5', 'Acsl6', 'Elovl1', 'Elovl2', 'Elovl3', 'Elovl4', 'Elovl5', 'Elovl6', 'Elovl7', 'Scd1', 'Scd2', 'Scd3', 'Scd4', 'Fads1', 'Fads2','Fads2b','Fads3','Fads6', 'Mfsd2a', 'Mfsd6', 'Mfsd8', 'Mfs10', 'Mfsd14a', 'Mfsd14b', 'Cyp2d34', 'Cyp4f18', 'Cyp1a2', 'Cyp2c50', 'Cyp4a12a', 'Cyp4a12b', 'Cyp2c50','Adipoq') #you can choose any gene name  but by default it show the sig genes , previously this code had c('Fasn','Wap','Csn2','Insr') UNCERTAIN about CNR3 to find homologous if it is pcdha10 or not, used Pcdha10 for mouse which has different homologene ID number that that of humans; MYPF does not exist as a gene (possible typo? when indeed it is MYLF?); 
 #from the DESEQ model
 deseq.results.file <-  'DESeq2 Results.csv'
 deseq.results <- read_csv(deseq.results.file)
@@ -181,6 +182,8 @@ gene.sets <-
           genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Elovl1','Elovl5', 'Fads1','Fads2')) %>%
         add_row(name="Thermogenesis Genes",
           genes=list('Ucp1','Ucp2','Ucp3','Sln','Prdm16')) %>%
+          add_row(name="D Series Resolvin Signaling",
+          genes=list('Pld1','Fpr2','Gpr32','Gpr18','Cmklr1','Ltb4r')) %>%
       add_row(name="Protectin Metabolism",
           genes=list('Ptgs1','Ptgs2','Ptgds','Cyp1a1','Cyp1a2','Lta4h','Alox12','Alox12b','Alox12e','Alox15','Alox5','Alox8','Aloxe3','Gpx3','Gpx4','Cyp2e1','Cyp3a4','Cyp2c8','Cyp2d6','Cyp2c9','Hpgd','Ephx1','Ephx2','Ephx3','Ephx4','Gstm4','Ltc4s')) # from https://reactome.org/PathwayBrowser/#/R-HSA-9018677&PATH=R-HSA-1430728,R-HSA-556833,R-HSA-9018678&DTAB=MT
   
@@ -231,13 +234,13 @@ sessionInfo()
 ```
 
 ```
-## R version 4.0.2 (2020-06-22)
+## R version 4.2.2 (2022-10-31)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS  10.16
+## Running under: macOS Big Sur ... 10.16
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -246,31 +249,35 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] stringr_1.4.0  ggplot2_3.3.3  biomaRt_2.46.3 readr_1.4.0    dplyr_1.0.5   
-## [6] tidyr_1.1.3    knitr_1.31    
+## [1] stringr_1.5.0  ggplot2_3.4.4  biomaRt_2.52.0 readr_2.1.4    dplyr_1.1.3   
+## [6] tidyr_1.3.0    knitr_1.44    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.6           prettyunits_1.1.1    assertthat_0.2.1    
-##  [4] digest_0.6.27        utf8_1.2.1           BiocFileCache_1.14.0
-##  [7] R6_2.5.0             stats4_4.0.2         RSQLite_2.2.5       
-## [10] evaluate_0.14        httr_1.4.2           pillar_1.5.1        
-## [13] rlang_0.4.10         progress_1.2.2       curl_4.3            
-## [16] rstudioapi_0.13      jquerylib_0.1.3      blob_1.2.1          
-## [19] S4Vectors_0.28.1     rmarkdown_2.7        labeling_0.4.2      
-## [22] bit_4.0.4            munsell_0.5.0        compiler_4.0.2      
-## [25] xfun_0.22            pkgconfig_2.0.3      askpass_1.1         
-## [28] BiocGenerics_0.36.0  htmltools_0.5.1.1    openssl_1.4.3       
-## [31] tidyselect_1.1.0     tibble_3.1.0         IRanges_2.24.1      
-## [34] XML_3.99-0.6         fansi_0.4.2          crayon_1.4.1        
-## [37] dbplyr_2.1.0         withr_2.4.1          rappdirs_0.3.3      
-## [40] grid_4.0.2           jsonlite_1.7.2       gtable_0.3.0        
-## [43] lifecycle_1.0.0      DBI_1.1.1            magrittr_2.0.1      
-## [46] scales_1.1.1         cli_2.3.1            stringi_1.5.3       
-## [49] cachem_1.0.4         farver_2.1.0         xml2_1.3.2          
-## [52] bslib_0.2.4          ellipsis_0.3.1       generics_0.1.0      
-## [55] vctrs_0.3.7          tools_4.0.2          bit64_4.0.5         
-## [58] Biobase_2.50.0       glue_1.4.2           purrr_0.3.4         
-## [61] hms_1.0.0            parallel_4.0.2       fastmap_1.1.0       
-## [64] yaml_2.2.1           AnnotationDbi_1.52.0 colorspace_2.0-0    
-## [67] memoise_2.0.0        sass_0.3.1
+##  [1] Rcpp_1.0.11            prettyunits_1.2.0      png_0.1-8             
+##  [4] Biostrings_2.66.0      digest_0.6.33          utf8_1.2.4            
+##  [7] BiocFileCache_2.4.0    R6_2.5.1               GenomeInfoDb_1.34.9   
+## [10] stats4_4.2.2           RSQLite_2.3.1          evaluate_0.22         
+## [13] httr_1.4.7             pillar_1.9.0           zlibbioc_1.44.0       
+## [16] rlang_1.1.1            progress_1.2.2         curl_5.1.0            
+## [19] rstudioapi_0.15.0      jquerylib_0.1.4        blob_1.2.4            
+## [22] S4Vectors_0.36.2       rmarkdown_2.25         labeling_0.4.3        
+## [25] textshaping_0.3.6      munsell_0.5.0          RCurl_1.98-1.12       
+## [28] bit_4.0.5              compiler_4.2.2         xfun_0.40             
+## [31] systemfonts_1.0.4      pkgconfig_2.0.3        BiocGenerics_0.44.0   
+## [34] htmltools_0.5.6.1      tidyselect_1.2.0       KEGGREST_1.38.0       
+## [37] tibble_3.2.1           GenomeInfoDbData_1.2.9 IRanges_2.32.0        
+## [40] XML_3.99-0.14          fansi_1.0.5            withr_2.5.2           
+## [43] crayon_1.5.2           tzdb_0.4.0             dbplyr_2.3.4          
+## [46] bitops_1.0-7           rappdirs_0.3.3         grid_4.2.2            
+## [49] gtable_0.3.4           jsonlite_1.8.7         lifecycle_1.0.3       
+## [52] DBI_1.1.3              magrittr_2.0.3         scales_1.2.1          
+## [55] cli_3.6.1              stringi_1.7.12         vroom_1.6.4           
+## [58] cachem_1.0.8           farver_2.1.1           XVector_0.38.0        
+## [61] xml2_1.3.5             bslib_0.5.1            ragg_1.2.5            
+## [64] filelock_1.0.2         generics_0.1.3         vctrs_0.6.4           
+## [67] tools_4.2.2            bit64_4.0.5            Biobase_2.58.0        
+## [70] glue_1.6.2             purrr_1.0.2            hms_1.1.3             
+## [73] parallel_4.2.2         fastmap_1.1.1          yaml_2.3.7            
+## [76] colorspace_2.1-0       AnnotationDbi_1.60.2   memoise_2.0.1         
+## [79] sass_0.4.7
 ```

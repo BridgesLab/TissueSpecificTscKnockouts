@@ -60,11 +60,11 @@ library(biomaRt)
 ensembl = useMart("ensembl",
                   dataset="mmusculus_gene_ensembl")
 gene.mapping <- getBM(attributes=c('mgi_symbol','ensembl_gene_id'),
-                      values=counts.table$X1,
+                      values=counts.table$`...1`,
                       filters='ensembl_gene_id',
                       mart=ensembl)
 
-annotated.counts.table <- full_join(counts.table,gene.mapping, by=c('X1'='ensembl_gene_id'))
+annotated.counts.table <- full_join(counts.table,gene.mapping, by=c(`...1`='ensembl_gene_id'))
 
 long.counts.table <- pivot_longer(annotated.counts.table,
                                   cols=starts_with('14'),
@@ -90,18 +90,19 @@ These data can be found in **`r getwd()`**.  The counts file is `r counts.file` 
 
 human.mouse.mapping.table <- 'http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt'
 mapping.table <- read_tsv(human.mouse.mapping.table) %>%
-  dplyr::select(`Common Organism Name`,Symbol,`HomoloGene ID`) 
+  dplyr::select(`Common Organism Name`,Symbol,`DB Class Key`) 
   
 wide.mapping.table <- pivot_wider(mapping.table,
                                   names_from=`Common Organism Name`,
-                                  values_from = Symbol,
-                                  id_cols=`HomoloGene ID`) %>%
+                                  values_from=Symbol,
+                                  id_cols = `DB Class Key`,
+                                  values_fn=first) %>%
   rename("Mouse"='mouse, laboratory') %>%
   mutate(Mouse=as.factor(as.character(Mouse))) %>%
-    mutate(human=as.factor(as.character(human)))
+  mutate(human=as.factor(as.character(human)))
 
 
-genes.of.interest <- c('Cxcl13','Cxcr5','Ccr6','Ccr7', 'Il12a', 'Fut7', 'Tnfsf14', 'Cr2', 'Azgp1','Aicda', 'Lef1', 'Cd19', 'Cd22', 'Siglecg','Foxp3', 'Cxcr5', 'Ntrk1', 'Sstr4', 'Pla2g2d', 'Pla2g5', 'Pla2g3','Pla2g4f','Pla2g6', 'Cyp4f18', 'Agtr2', 'Fabp3', 'Zan', 'Cntnap2', 'Foxp3', 'Pax5','Il10', 'Pcdha10','Cnr2', 'Kcna1', 'Azgp1', 'Lef1', 'Cd79a','Cd3d', 'Cd247', 'Cd4', 'Cd3g', 'Cd28', 'Cd3e', 'Ccr7', 'Lck', 'Blk', 'Itk', 'Syk', 'Myoz2', 'Mypn', 'Mybph', 'Myom2', 'Myh8', 'Myh7', 'Myh4', 'Myh1', 'Myl2','Myl1', 'MYPF', 'Acta1','Ryr1','Csrp3','Prkag3', 'Tnnt2','Tnnt3', 'Acaca', 'Srebf1', 'Acly', 'Fasn', 'Rps6kb1', 'Eif4ebp1', 'Acat1','Akt1', 'Rps14', 'Plin1', 'Plin2',  'Fabp4', 'Dgat1', 'Dgat2', 'Lpl', 'Pnpla2', 'Gpat3', 'Acsl1', 'Acsl3', 'Acsl4', 'Acsl5', 'Acsl6', 'Elovl1', 'Elovl2', 'Elovl3', 'Elovl4', 'Elovl5', 'Elovl6', 'Elovl7', 'Scd1', 'Scd2', 'Scd3', 'Scd4', 'Fads1', 'Fads2','Fads2b','Fads3','Fads6', 'Mfsd2a', 'Mfsd6', 'Mfsd8', 'Mfs10', 'Mfsd14a', 'Mfsd14b', 'Cyp2d34', 'Cyp4f18', 'Cyp1a2', 'Cyp2c50', 'Cyp4a12a', 'Cyp4a12b', 'Cyp2c50') #you can choose any gene name  but by default it show the sig genes , previously this code had c('Fasn','Wap','Csn2','Insr') UNCERTAIN about CNR3 to find homologous if it is pcdha10 or not, used Pcdha10 for mouse which has different homologene ID number that that of humans; MYPF does not exist as a gene (possible typo? when indeed it is MYLF?); 
+genes.of.interest <- c('Cxcl13','Cxcr5','Ccr6','Ccr7', 'Il12a', 'Fut7', 'Tnfsf14', 'Cr2', 'Azgp1','Aicda', 'Lef1', 'Cd19', 'Cd22', 'Siglecg','Foxp3', 'Cxcr5', 'Ntrk1', 'Sstr4', 'Pla2g2d', 'Pla2g5', 'Pla2g3','Pla2g4f','Pla2g6', 'Cyp4f18', 'Agtr2', 'Fabp3', 'Zan', 'Cntnap2', 'Foxp3', 'Pax5','Il10', 'Pcdha10','Cnr2', 'Kcna1', 'Azgp1', 'Lef1', 'Cd79a','Cd3d', 'Cd247', 'Cd4', 'Cd3g', 'Cd28', 'Cd3e', 'Ccr7', 'Lck', 'Blk', 'Itk', 'Syk', 'Myoz2', 'Mypn', 'Mybph', 'Myom2', 'Myh8', 'Myh7', 'Myh4', 'Myh1', 'Myl2','Myl1', 'MYPF', 'Acta1','Ryr1','Csrp3','Prkag3', 'Tnnt2','Tnnt3', 'Acaca', 'Srebf1', 'Acly', 'Fasn', 'Rps6kb1', 'Eif4ebp1', 'Acat1','Akt1', 'Rps14', 'Plin1', 'Plin2',  'Fabp4', 'Dgat1', 'Dgat2', 'Lpl', 'Pnpla2', 'Gpat3', 'Acsl1', 'Acsl3', 'Acsl4', 'Acsl5', 'Acsl6', 'Elovl1', 'Elovl2', 'Elovl3', 'Elovl4', 'Elovl5', 'Elovl6', 'Elovl7', 'Scd1', 'Scd2', 'Scd3', 'Scd4', 'Fads1', 'Fads2','Fads2b','Fads3','Fads6', 'Mfsd2a', 'Mfsd6', 'Mfsd8', 'Mfs10', 'Mfsd14a', 'Mfsd14b', 'Cyp2d34', 'Cyp4f18', 'Cyp1a2', 'Cyp2c50', 'Cyp4a12a', 'Cyp4a12b', 'Cyp2c50','Adipoq') #you can choose any gene name  but by default it show the sig genes , previously this code had c('Fasn','Wap','Csn2','Insr') UNCERTAIN about CNR3 to find homologous if it is pcdha10 or not, used Pcdha10 for mouse which has different homologene ID number that that of humans; MYPF does not exist as a gene (possible typo? when indeed it is MYLF?); 
 #from the DESEQ model
 deseq.results.file <-  'DESeq2 Results.csv'
 deseq.results <- read_csv(deseq.results.file)
@@ -202,6 +203,8 @@ gene.sets <-
           genes=list('Acly', 'Acaca','Acacb','Fasn','Scd1', 'Elovl1','Elovl5', 'Fads1','Fads2')) %>%
         add_row(name="Thermogenesis Genes",
           genes=list('Ucp1','Ucp2','Ucp3','Sln','Prdm16')) %>%
+          add_row(name="D Series Resolvin Signaling",
+          genes=list('Pld1','Fpr2','Gpr32','Gpr18','Cmklr1','Ltb4r')) %>%
       add_row(name="Protectin Metabolism",
           genes=list('Ptgs1','Ptgs2','Ptgds','Cyp1a1','Cyp1a2','Lta4h','Alox12','Alox12b','Alox12e','Alox15','Alox5','Alox8','Aloxe3','Gpx3','Gpx4','Cyp2e1','Cyp3a4','Cyp2c8','Cyp2d6','Cyp2c9','Hpgd','Ephx1','Ephx2','Ephx3','Ephx4','Gstm4','Ltc4s')) # from https://reactome.org/PathwayBrowser/#/R-HSA-9018677&PATH=R-HSA-1430728,R-HSA-556833,R-HSA-9018678&DTAB=MT
   
