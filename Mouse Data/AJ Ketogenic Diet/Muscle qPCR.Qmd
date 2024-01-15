@@ -52,22 +52,23 @@ qPCR for several ketolytic genes, done on three separate days
 ```{r data-entry}
 library(readr)
 aj.mapping.file <- 'AJ Mapping Data.csv'
-run.1.file  <- 'Muscle qPCR Run 1.csv'
-run.2.file <- 'Muscle qPCR Run 2.csv'
-run.3.file <- 'Muscle qPCR Run 3.csv'
+run.file  <- 'Muscle qPCR Ketolysis - Well Results.csv'
 
-mapping.data <- read_csv(aj.mapping.file)
-run.1.data <- read_csv(run.1.file,na="Undetermined") %>% mutate(Plate="First") %>% filter(Target !="Rplp0")
-run.2.data <- read_csv(run.2.file,na="Undetermined") %>% mutate(Plate="Second") %>% filter(!(Well %in% c("B1","A12")))
-run.3.data <- read_csv(run.3.file,na="Undetermined") %>% mutate(Plate="Third")
+mapping.data <- read_csv(aj.mapping.file) %>% mutate(Mouse=as.factor(Mouse))
+run.data <- read_csv(run.file,na="Undetermined", skip=13)  %>%
+  rename("Mouse"="Sample Name") %>%
+  filter(Mouse!="No Sample") %>%
+  rename("Target"="Target Name") 
 
-run.data <- bind_rows(run.1.data,run.2.data,run.3.data) %>%
-  left_join(mapping.data,by=c("Sample"="Mouse"))
+mapped.run.data <-
+  run.data %>%
+  full_join(mapping.data, by="Mouse") %>%
+  select(Mouse,Diet,Cohort,Sex,Target,Cq)
+
 ```
 
-The mapping file is in `r aj.mapping.file` and the two qPCR runs are in `r run.1.file` and `r run.2.file`
+The mapping file is in `r aj.mapping.file` and the two qPCR runs are in `r run.file`.
 
-Why is there six replicates of some samples, like 4102
 
 # Analysis
 
@@ -77,9 +78,9 @@ Rearranged data so that replicates are in long format
 
 ```{r quality-check}
 qpcr.data.unclean <- 
-  run.data %>%
-  select(Diet,Cohort,Sex,Sample,Target,Cq) %>%
-  group_by(Diet,Cohort,Sex,Sample,Target) %>%
+  mapped.run.data %>%
+  select(Diet,Cohort,Sex,Mouse,Target,Cq) %>%
+  group_by(Diet,Cohort,Sex,Mouse,Target) %>%
   summarize(Ct.mean = mean(Cq,na.rm=T),
             Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T))
 
@@ -91,13 +92,12 @@ qpcr.data.unclean <-
 #   select(Cq,Well,Plate)
 
 
-run.data.clean <- filter(run.data,!(Well=="H9"&Plate=="First"),
-                         !(Well=="E3"&Plate=="Second"))
+run.data.clean <- mapped.run.data
 
 qpcr.data <-
   run.data.clean %>%
-  select(Diet,Cohort,Sex,Sample,Target,Cq) %>%
-  group_by(Diet,Cohort,Sex,Sample,Target) %>%
+  select(Diet,Cohort,Sex,Mouse,Target,Cq) %>%
+  group_by(Diet,Cohort,Sex,Mouse,Target) %>%
   summarize(Ct.mean = mean(Cq,na.rm=T),
             Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T))
 
@@ -106,13 +106,15 @@ qpcr.data <-
 # Normalization
 
 ```{r norm}
+remove.mice <- c()
+
 analysed.data <-
   qpcr.data %>%
   ungroup %>%
-  filter(!(Sample %in% c('4106','4108'))) %>%
-  group_by(Diet,Cohort,Sex,Sample) %>%
+  filter(!(Mouse %in% remove.mice)) %>%
+  group_by(Diet,Cohort,Sex,Mouse) %>%
   mutate(Ct.norm = Ct.mean-Ct.mean[Target=="Rplp0"]) %>%
-  group_by(Diet,Sex,Target,Sample) %>%
+  group_by(Diet,Sex,Target,Mouse) %>%
   mutate(Ct.quant = 2^-Ct.norm) 
 
 summarized.data <-
@@ -148,7 +150,7 @@ analysed.data %>%
 
 ```{r bdh1-muscle-expression}
 library(ggplot2)
-ggplot(summarized.data %>% filter(Target=="BDH1"),
+ggplot(summarized.data %>% filter(Target=="Bdh1"),
        aes(y=Mean.rel,
            ymin=Mean.rel-Mean.rel.se,
            ymax=Mean.rel+Mean.rel.se,
@@ -164,7 +166,7 @@ ggplot(summarized.data %>% filter(Target=="BDH1"),
 # OXCT1
 
 ```{r oxct1-muscle-expression}
-ggplot(summarized.data %>% filter(Target=="OXCT1"),
+ggplot(summarized.data %>% filter(Target=="Oxct1"),
        aes(y=Mean.rel,
            ymin=Mean.rel-Mean.rel.se,
            ymax=Mean.rel+Mean.rel.se,
@@ -197,44 +199,6 @@ ggplot(summarized.data %>% filter(Target=="Slc16a1"),
 slc16a1.plot
 ```
 
-# SLC16A6
-
-```{r slc16a6-muscle-expression}
-ggplot(summarized.data %>% filter(Target=="Slc16a6"),
-       aes(y=Mean.rel,
-           ymin=Mean.rel-Mean.rel.se,
-           ymax=Mean.rel+Mean.rel.se,
-           x=Sex,
-           fill=Diet)) +
-  geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(width = .5, position = position_dodge(0.75)) +
-  labs(title="Slc16a6",
-       y="Relative Expression",
-       x="") -> slc16a6.plot
-
-slc16a6.plot
-```
-
-# Summary Plots
-
-```{r ketolytic-muscle-expression}
-ggplot(summarized.data %>% filter(Target!="Rplp0"),
-       aes(y=Mean.rel,
-           ymin=Mean.rel-Mean.rel.se,
-           ymax=Mean.rel+Mean.rel.se,
-           x=Sex,
-           fill=Diet)) +
-  geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(width = .5, position = position_dodge(0.75)) +
-  facet_grid(.~Target) +
-  labs(title="Ketolytic Gene Expression",
-       y="Relative Expression",
-       x="") +
-  scale_fill_grey() +
-  theme_classic(base_size = 16) +
-  theme(legend.position=c(0.9,0.8))
-
-```
 
 # Statistics
 
@@ -257,7 +221,7 @@ Did 2x2 ANOVA analyses
 library(broom)
 
 interaction.results <- data.frame()
-for (gene in c("BDH1","OXCT1","Slc16a1","Slc16a6")) {
+for (gene in c("Bdh1","Oxct1","Slc16a1")) {
 temp.result <- lm(Ct.quant ~ Diet*Sex,data=filter(analysed.data, Target==gene)) %>% 
   tidy %>% 
   mutate(Gene=gene) %>% 
@@ -268,7 +232,7 @@ interaction.results <- bind_rows(interaction.results,temp.result)
 kable(interaction.results,caption="Test for Diet-Sex Interactions")
 
 main.results <- data.frame()
-for (gene in c("BDH1","OXCT1","Slc16a1","Slc16a6")) {
+for (gene in c("Bdh1","Oxct1","Slc16a1")) {
 temp.result <- lm(Ct.quant ~ Diet+Sex,data=filter(analysed.data, Target==gene)) %>% 
   tidy %>% 
   mutate(Gene=gene) 
@@ -316,33 +280,6 @@ analysed.data %>%
 #Slc16a1 :: 4108 seems variable, not due to technical variation
 ```
 
-# Comparing SLC16 Expression
-
-```{r slc16a1-slc16a6-comparason}
-analysed.data %>%
-  ungroup %>%
-  group_by(Target) %>%
-  summarize(Avg=mean(Ct.quant,na.rm=T),
-            SE = se(Ct.quant)) %>%
-  filter(Target %in% c("Slc16a1","Slc16a6")) %>%
-  mutate(Rel.Avg = Avg/min(Avg),
-         Rel.SE = SE/min(Avg)) -> Slc16.summary
-  
-kable(Slc16.summary, caption="Relative expression of MCT isoforms")
-
-ggplot(Slc16.summary,
-       aes(y=Rel.Avg,
-           ymin=Rel.Avg-Rel.SE,
-           ymax=Rel.Avg+Rel.SE,
-           x=Target)) +
-  geom_bar(stat="identity") +
-  geom_errorbar(width=0.5) +
-  labs(y="Relative Expression",
-       x="",
-       title="MCT1 Isoforms in Quadriceps") +
-  theme_classic(base_size = 16)
-
-```
 
 # Session Information
 
