@@ -62,8 +62,8 @@ run.data <- read_csv(run.file,na="Undetermined", skip=13)  %>%
 
 mapped.run.data <-
   run.data %>%
-  full_join(mapping.data, by="Mouse") %>%
-  select(Mouse,Diet,Cohort,Sex,Target,Cq)
+  left_join(mapping.data, by="Mouse") %>%
+  select(Mouse,Diet,Cohort,Sex,Target,Cq,Well)
 
 ```
 
@@ -82,14 +82,18 @@ qpcr.data.unclean <-
   select(Diet,Cohort,Sex,Mouse,Target,Cq) %>%
   group_by(Diet,Cohort,Sex,Mouse,Target) %>%
   summarize(Ct.mean = mean(Cq,na.rm=T),
-            Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T))
+            Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T),
+            n=length(Cq))
 
-# tech.outliers <- arrange(qpcr.data.unclean,-Ct.range)
-# tech.outliers %>% kable(caption="Technical Outliers")
+tech.outliers <- arrange(qpcr.data.unclean,-Ct.range) %>%
+  filter(Ct.range>1)
+tech.outliers %>% kable(caption="Technical Outliers")
 
-# run.data %>%
-#   filter(Target=="OXCT1",Sample=="4102") %>%
-#   select(Cq,Well,Plate)
+#samples that are technical outliers
+mapped.run.data %>%
+   filter(Target=="Bdh1",Mouse=="4108") %>%
+   select(Target,Mouse,Cq,Well) %>%
+  kable
 
 
 run.data.clean <- mapped.run.data
@@ -132,7 +136,7 @@ summarized.data <-
 ```{r quality check}
 tech.outliers <- arrange(qpcr.data,-Ct.range)
 tech.outliers %>% 
-  filter(Ct.range>2,Ct.mean<30) %>%
+  filter(Ct.range>1,Ct.mean<30) %>%
   kable(caption="Technical Outliers")
 
 #biological outliers
@@ -142,7 +146,7 @@ analysed.data %>%
          Diff.from.mean = Ct.quant-mean(Ct.quant)) %>%
   arrange(-abs(Diff.from.mean)) %>% 
   head %>% 
-  kable
+  kable(caption="Potential biolocigal outliers")
   
 ```
 
@@ -217,6 +221,8 @@ analysed.data %>%
 
 Did 2x2 ANOVA analyses
 
+### Gene-Diet Analyses
+
 ```{r anova}
 library(broom)
 
@@ -251,6 +257,8 @@ main.results.formatted <-
 kable(main.results.formatted,caption="Test for Diet and Sex Effects on Expression")
 ```
 
+## Pairwise Analyses
+
 ```{r pairwise-analyses}
 library(car)
 analysed.data %>%
@@ -272,10 +280,10 @@ analysed.data %>%
 ```
 
 ```{r outlier-samples}
-analysed.data %>%
-  filter(Target=="Slc16a1") %>%
-  filter(Sex=="F") %>%
-  kable(caption="Visually inspected outliers")
+# analysed.data %>%
+#   filter(Target=="Slc16a1") %>%
+#   filter(Sex=="F") %>%
+#   kable(caption="Visually inspected outliers")
 
 #Slc16a1 :: 4108 seems variable, not due to technical variation
 ```
