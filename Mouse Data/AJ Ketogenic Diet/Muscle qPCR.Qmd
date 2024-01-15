@@ -154,7 +154,7 @@ analysed.data %>%
 
 ```{r bdh1-muscle-expression}
 library(ggplot2)
-ggplot(summarized.data %>% filter(Target=="Bdh1"),
+bdh1.plot <- ggplot(summarized.data %>% filter(Target=="Bdh1"),
        aes(y=Mean.rel,
            ymin=Mean.rel-Mean.rel.se,
            ymax=Mean.rel+Mean.rel.se,
@@ -162,9 +162,24 @@ ggplot(summarized.data %>% filter(Target=="Bdh1"),
            fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
   geom_errorbar(width = .5, position = position_dodge(0.75)) +
+    theme_classic() +
+  theme(legend.position="none")+
   labs(title="Bdh1",
        y="Relative Expression",
        x="")
+
+ggplot(analysed.data %>% filter(Target=="Bdh1"),
+       aes(y=Ct.quant,
+           x=Sex,
+           fill=Diet)) +
+  geom_boxplot()+
+  theme_classic() +
+  theme(legend.position="none")+
+  labs(title="Bdh1",
+       y="Relative Expression",
+       x="")
+
+bdh1.plot
 ```
 
 # OXCT1
@@ -178,11 +193,24 @@ ggplot(summarized.data %>% filter(Target=="Oxct1"),
            fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
   geom_errorbar(width = .5, position = position_dodge(0.75)) +
+    theme_classic() +
+  theme(legend.position="none")+
   labs(title="Oxct1",
        y="Relative Expression",
        x="") -> oxct.plot
 
 oxct.plot
+
+ggplot(analysed.data %>% filter(Target=="Oxct1"),
+       aes(y=Ct.quant,
+           x=Sex,
+           fill=Diet)) +
+  geom_boxplot()+
+  theme_classic() +
+  theme(legend.position="none")+
+  labs(title="Oxct1",
+       y="Relative Expression",
+       x="")
 ```
 
 # SLC16A1
@@ -196,11 +224,33 @@ ggplot(summarized.data %>% filter(Target=="Slc16a1"),
            fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
   geom_errorbar(width = .5, position = position_dodge(0.75)) +
+  theme_classic() +
+  theme(legend.position="none")+
+
   labs(title="Slc16a1",
        y="Relative Expression",
        x="") -> slc16a1.plot
 
 slc16a1.plot
+
+ggplot(analysed.data %>% filter(Target=="Slc16a1"),
+       aes(y=Ct.quant,
+           x=Sex,
+           fill=Diet)) +
+  geom_boxplot()+
+  theme_classic() +
+  theme(legend.position="none")+
+  labs(title="Slc16a1",
+       y="Relative Expression",
+       x="")
+```
+## Combined Plots
+
+```{r ketolysis-combined}
+library(gridExtra)
+
+grid.arrange(slc16a1.plot,bdh1.plot,oxct.plot,nrow=1)
+
 ```
 
 
