@@ -52,22 +52,27 @@ qPCR for several ketolytic genes, done on three separate days
 ```{r data-entry}
 library(readr)
 aj.mapping.file <- 'AJ Mapping Data.csv'
-run.file  <- 'Muscle qPCR Ketolysis - Well Results.csv'
+run.file.1  <- 'Muscle qPCR Ketolysis Well Results - Plate 1.csv'
+run.file.2  <- 'Muscle qPCR Ketolysis Well Results - Plate 2.csv'
 
 mapping.data <- read_csv(aj.mapping.file) %>% mutate(Mouse=as.factor(Mouse))
-run.data <- read_csv(run.file,na="Undetermined", skip=13)  %>%
-  rename("Mouse"="Sample Name") %>%
+run.data <- rbind(read_csv(run.file.1,na="Undetermined", skip=25),
+                 read_csv(run.file.2,na="Undetermined", skip=25)) %>%
+  rename("Mouse"="Sample") %>%
   filter(Mouse!="No Sample") %>%
-  rename("Target"="Target Name") 
+  mutate(Mouse=as.factor(Mouse))
 
+library(forcats)
 mapped.run.data <-
   run.data %>%
   left_join(mapping.data, by="Mouse") %>%
-  select(Mouse,Diet,Cohort,Sex,Target,Cq,Well)
+  select(Mouse,Diet,Cohort,Sex,Target,Cq,Well) %>%
+  mutate(Diet = fct_recode(Diet,"KD"="Ketogenic",
+                          "CD"="Control"))
 
 ```
 
-The mapping file is in `r aj.mapping.file` and the two qPCR runs are in `r run.file`.
+The mapping file is in `r aj.mapping.file` and the two qPCR runs are in `r run.file.1` and `r run.file.2`.
 
 
 # Analysis
@@ -81,6 +86,7 @@ qpcr.data.unclean <-
   mapped.run.data %>%
   select(Diet,Cohort,Sex,Mouse,Target,Cq) %>%
   group_by(Diet,Cohort,Sex,Mouse,Target) %>%
+  mutate(Cq=as.numeric(Cq)) %>%
   summarize(Ct.mean = mean(Cq,na.rm=T),
             Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T),
             n=length(Cq))
@@ -101,10 +107,10 @@ run.data.clean <- mapped.run.data
 qpcr.data <-
   run.data.clean %>%
   select(Diet,Cohort,Sex,Mouse,Target,Cq) %>%
+  mutate(Cq=as.numeric(Cq)) %>%
   group_by(Diet,Cohort,Sex,Mouse,Target) %>%
   summarize(Ct.mean = mean(Cq,na.rm=T),
             Ct.range = max(Cq,na.rm=T)-min(Cq,na.rm=T))
-
 ```
 
 # Normalization
@@ -127,8 +133,8 @@ summarized.data <-
   summarise(Mean.exp = mean(Ct.quant),
             Mean.se = se(Ct.quant)) %>%
   group_by(Target) %>%
-  mutate(Mean.rel = Mean.exp/Mean.exp[Diet=="Control"&Sex=="F"],
-         Mean.rel.se = Mean.se/Mean.exp[Diet=="Control"&Sex=="F"]) 
+  mutate(Mean.rel = Mean.exp/Mean.exp[Diet=="CD"&Sex=="F"],
+         Mean.rel.se = Mean.se/Mean.exp[Diet=="CD"&Sex=="F"]) 
 ```
 
 ## Quality Check
@@ -162,8 +168,13 @@ bdh1.plot <- ggplot(summarized.data %>% filter(Target=="Bdh1"),
            fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
   geom_errorbar(width = .5, position = position_dodge(0.75)) +
-    theme_classic() +
-  theme(legend.position="none")+
+  theme_classic(base_size=16) +
+  theme(legend.position=c(0.3,0.9),
+        legend.background=element_rect(fill = alpha("white", 0)),
+        #legend.text = element_text(size = 6),
+        legend.title=element_blank(),
+        plot.title=element_text(face = "italic")) +
+  scale_fill_grey()+
   labs(title="Bdh1",
        y="Relative Expression",
        x="")
@@ -173,7 +184,7 @@ ggplot(analysed.data %>% filter(Target=="Bdh1"),
            x=Sex,
            fill=Diet)) +
   geom_boxplot()+
-  theme_classic() +
+   theme_classic(base_size=16) +
   theme(legend.position="none")+
   labs(title="Bdh1",
        y="Relative Expression",
@@ -193,8 +204,11 @@ ggplot(summarized.data %>% filter(Target=="Oxct1"),
            fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
   geom_errorbar(width = .5, position = position_dodge(0.75)) +
-    theme_classic() +
-  theme(legend.position="none")+
+  theme_classic(base_size=16) +
+  theme(legend.position="none",
+        legend.title=element_blank(),
+        plot.title=element_text(face = "italic")) +
+    scale_fill_grey()+
   labs(title="Oxct1",
        y="Relative Expression",
        x="") -> oxct.plot
@@ -206,7 +220,7 @@ ggplot(analysed.data %>% filter(Target=="Oxct1"),
            x=Sex,
            fill=Diet)) +
   geom_boxplot()+
-  theme_classic() +
+   theme_classic(base_size=16) +
   theme(legend.position="none")+
   labs(title="Oxct1",
        y="Relative Expression",
@@ -224,9 +238,11 @@ ggplot(summarized.data %>% filter(Target=="Slc16a1"),
            fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
   geom_errorbar(width = .5, position = position_dodge(0.75)) +
-  theme_classic() +
-  theme(legend.position="none")+
-
+  theme_classic(base_size=16) +
+  theme(legend.position="none",
+        legend.title=element_blank(),
+        plot.title=element_text(face = "italic"))+
+  scale_fill_grey()+
   labs(title="Slc16a1",
        y="Relative Expression",
        x="") -> slc16a1.plot
@@ -238,7 +254,7 @@ ggplot(analysed.data %>% filter(Target=="Slc16a1"),
            x=Sex,
            fill=Diet)) +
   geom_boxplot()+
-  theme_classic() +
+   theme_classic(base_size=16) +
   theme(legend.position="none")+
   labs(title="Slc16a1",
        y="Relative Expression",
@@ -314,9 +330,9 @@ library(car)
 analysed.data %>%
   group_by(Target,Sex) %>%
   filter(Target!="Rplp0") %>%
-  summarize(Pct.Decrease = (mean(Ct.quant[Diet=="Control"],na.rm=T)-mean(Ct.quant[Diet=="Ketogenic"],na.rm=T))/mean(Ct.quant[Diet=="Control"],na.rm=T)*100,
-            Shapiro=min(shapiro.test(Ct.quant[Diet=="Ketogenic"])$p.value,
-                        shapiro.test(Ct.quant[Diet=="Control"])$p.value),
+  summarize(Pct.Decrease = (mean(Ct.quant[Diet=="CD"],na.rm=T)-mean(Ct.quant[Diet=="KD"],na.rm=T))/mean(Ct.quant[Diet=="CD"],na.rm=T)*100,
+            Shapiro=min(shapiro.test(Ct.quant[Diet=="KD"])$p.value,
+                        shapiro.test(Ct.quant[Diet=="CD"])$p.value),
             Levene=leveneTest(Ct.quant~Diet)$"Pr(>F)"[1],
             Mann.Whitney=wilcox.test(Ct.quant~Diet)$p.value,
             Welch=t.test(Ct.quant~Diet,var.equal = F)$p.value,
