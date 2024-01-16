@@ -66,7 +66,7 @@ library(forcats)
 mapped.run.data <-
   run.data %>%
   left_join(mapping.data, by="Mouse") %>%
-  select(Mouse,Diet,Cohort,Sex,Target,Cq,Well) %>%
+  select(Mouse,Diet,Cohort,Sex,Target,Cq,`Well Position`) %>%
   mutate(Diet = fct_recode(Diet,"KD"="Ketogenic",
                           "CD"="Control"))
 
@@ -97,12 +97,14 @@ tech.outliers %>% kable(caption="Technical Outliers")
 
 #samples that are technical outliers
 mapped.run.data %>%
-   filter(Target=="Bdh1",Mouse=="4108") %>%
-   select(Target,Mouse,Cq,Well) %>%
+   filter(Target=="Bdh1",Mouse=="1753") %>%
+   select(Target,Mouse,Cq,`Well Position`) %>%
   kable
 
 
-run.data.clean <- mapped.run.data
+run.data.clean <- mapped.run.data %>%
+  filter(!(Target=="Bdh1"&`Well Position`=="E13")) %>%
+  filter(!(Target=="Bdh1"&`Well Position`=="A7"))
 
 qpcr.data <-
   run.data.clean %>%
@@ -297,7 +299,7 @@ for (gene in c("Bdh1","Oxct1","Slc16a1")) {
 temp.result <- lm(Ct.quant ~ Diet*Sex,data=filter(analysed.data, Target==gene)) %>% 
   tidy %>% 
   mutate(Gene=gene) %>% 
-  filter(term=="DietKetogenic:SexM")
+  filter(term=="DietKD:SexM")
 interaction.results <- bind_rows(interaction.results,temp.result)
 }
 

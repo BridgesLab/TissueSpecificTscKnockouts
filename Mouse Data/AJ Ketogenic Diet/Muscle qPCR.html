@@ -137,7 +137,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>This script was most recently run on Mon Jan 15 19:33:43 2024 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.</p>
+<p>This script was most recently run on Mon Jan 15 19:45:09 2024 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.</p>
 <section id="purpose" class="level1">
 <h1>Purpose</h1>
 <p>Analyse mRNA expression from AJ Muscles</p>
@@ -165,7 +165,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>mapped.run.data <span class="ot">&lt;-</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  run.data <span class="sc">%&gt;%</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mapping.data, <span class="at">by=</span><span class="st">"Mouse"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Mouse,Diet,Cohort,Sex,Target,Cq,Well) <span class="sc">%&gt;%</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Mouse,Diet,Cohort,Sex,Target,Cq,<span class="st">`</span><span class="at">Well Position</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Diet =</span> <span class="fu">fct_recode</span>(Diet,<span class="st">"KD"</span><span class="ot">=</span><span class="st">"Ketogenic"</span>,</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                          <span class="st">"CD"</span><span class="ot">=</span><span class="st">"Control"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -301,8 +301,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#samples that are technical outliers</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mapped.run.data <span class="sc">%&gt;%</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span>,Mouse<span class="sc">==</span><span class="st">"4108"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(Target,Mouse,Cq,Well) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span>,Mouse<span class="sc">==</span><span class="st">"1753"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(Target,Mouse,Cq,<span class="st">`</span><span class="at">Well Position</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  kable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped">
@@ -311,94 +311,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <th style="text-align: left;">Target</th>
 <th style="text-align: left;">Mouse</th>
 <th style="text-align: left;">Cq</th>
-<th style="text-align: right;">Well</th>
+<th style="text-align: left;">Well Position</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">28.734764834730484</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: left;">1753</td>
+<td style="text-align: left;">31.77053828853247</td>
+<td style="text-align: left;">A1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">28.734764834730484</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: left;">1753</td>
+<td style="text-align: left;">33.43067393781932</td>
+<td style="text-align: left;">A7</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">29.10279941135176</td>
-<td style="text-align: right;">12</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">29.10279941135176</td>
-<td style="text-align: right;">12</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">28.92018585386854</td>
-<td style="text-align: right;">18</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">28.92018585386854</td>
-<td style="text-align: right;">18</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">30.068173883007034</td>
-<td style="text-align: right;">99</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">30.068173883007034</td>
-<td style="text-align: right;">99</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">30.77486044399233</td>
-<td style="text-align: right;">105</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">30.77486044399233</td>
-<td style="text-align: right;">105</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">29.958249917786922</td>
-<td style="text-align: right;">111</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: left;">4108</td>
-<td style="text-align: left;">29.958249917786922</td>
-<td style="text-align: right;">111</td>
+<td style="text-align: left;">1753</td>
+<td style="text-align: left;">31.875779261704572</td>
+<td style="text-align: left;">A13</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>run.data.clean <span class="ot">&lt;-</span> mapped.run.data</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>qpcr.data <span class="ot">&lt;-</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  run.data.clean <span class="sc">%&gt;%</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Diet,Cohort,Sex,Mouse,Target,Cq) <span class="sc">%&gt;%</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Cq=</span><span class="fu">as.numeric</span>(Cq)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Cohort,Sex,Mouse,Target) <span class="sc">%&gt;%</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Ct.mean =</span> <span class="fu">mean</span>(Cq,<span class="at">na.rm=</span>T),</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">Ct.range =</span> <span class="fu">max</span>(Cq,<span class="at">na.rm=</span>T)<span class="sc">-</span><span class="fu">min</span>(Cq,<span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>run.data.clean <span class="ot">&lt;-</span> mapped.run.data <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span><span class="sc">&amp;</span><span class="st">`</span><span class="at">Well Position</span><span class="st">`</span><span class="sc">==</span><span class="st">"E13"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span><span class="sc">&amp;</span><span class="st">`</span><span class="at">Well Position</span><span class="st">`</span><span class="sc">==</span><span class="st">"A7"</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>qpcr.data <span class="ot">&lt;-</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  run.data.clean <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Diet,Cohort,Sex,Mouse,Target,Cq) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Cq=</span><span class="fu">as.numeric</span>(Cq)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Cohort,Sex,Mouse,Target) <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Ct.mean =</span> <span class="fu">mean</span>(Cq,<span class="at">na.rm=</span>T),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">Ct.range =</span> <span class="fu">max</span>(Cq,<span class="at">na.rm=</span>T)<span class="sc">-</span><span class="fu">min</span>(Cq,<span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="normalization" class="level1">
@@ -447,15 +395,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">CD</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">M</td>
-<td style="text-align: left;">1750</td>
-<td style="text-align: left;">Bdh1</td>
-<td style="text-align: right;">27.3</td>
-<td style="text-align: right;">2.80</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">KD</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">F</td>
@@ -464,7 +403,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">26.7</td>
 <td style="text-align: right;">2.09</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">CD</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">F</td>
@@ -473,7 +412,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">29.6</td>
 <td style="text-align: right;">2.04</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">CD</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">F</td>
@@ -482,7 +421,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">23.2</td>
 <td style="text-align: right;">1.87</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">CD</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">F</td>
@@ -491,7 +430,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">26.9</td>
 <td style="text-align: right;">1.59</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">CD</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">F</td>
@@ -833,13 +772,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>temp.result <span class="ot">&lt;-</span> <span class="fu">lm</span>(Ct.quant <span class="sc">~</span> Diet<span class="sc">*</span>Sex,<span class="at">data=</span><span class="fu">filter</span>(analysed.data, Target<span class="sc">==</span>gene)) <span class="sc">%&gt;%</span> </span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  tidy <span class="sc">%&gt;%</span> </span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Gene=</span>gene) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">"DietKetogenic:SexM"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">"DietKD:SexM"</span>)</span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>interaction.results <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(interaction.results,temp.result)</span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(interaction.results,<span class="at">caption=</span><span class="st">"Test for Diet-Sex Interactions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table>
+<table class="table table-sm table-striped">
 <caption>Test for Diet-Sex Interactions</caption>
 <thead>
 <tr class="header">
@@ -852,6 +791,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </thead>
 <tbody>
+<tr class="odd">
+<td style="text-align: left;">DietKD:SexM</td>
+<td style="text-align: right;">-0.012</td>
+<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">-1.080</td>
+<td style="text-align: right;">0.287</td>
+<td style="text-align: left;">Bdh1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DietKD:SexM</td>
+<td style="text-align: right;">-0.030</td>
+<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">-1.671</td>
+<td style="text-align: right;">0.103</td>
+<td style="text-align: left;">Oxct1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DietKD:SexM</td>
+<td style="text-align: right;">-0.020</td>
+<td style="text-align: right;">0.032</td>
+<td style="text-align: right;">-0.625</td>
+<td style="text-align: right;">0.536</td>
+<td style="text-align: left;">Slc16a1</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -893,26 +856,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: left;">(Intercept)</td>
 <td style="text-align: right;">0.020</td>
 <td style="text-align: right;">0.005</td>
-<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.001</td>
 <td style="text-align: right;">100.0</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Bdh1</td>
 <td style="text-align: left;">DietKD</td>
-<td style="text-align: right;">-0.010</td>
+<td style="text-align: right;">-0.008</td>
 <td style="text-align: right;">0.005</td>
-<td style="text-align: right;">0.065</td>
-<td style="text-align: right;">-47.7</td>
+<td style="text-align: right;">0.113</td>
+<td style="text-align: right;">-41.7</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Bdh1</td>
 <td style="text-align: left;">SexM</td>
-<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.015</td>
 <td style="text-align: right;">0.005</td>
-<td style="text-align: right;">0.007</td>
-<td style="text-align: right;">76.3</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">74.9</td>
 <td style="text-align: left;">*</td>
 </tr>
 <tr class="even">
@@ -1035,12 +998,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <tr class="even">
 <td style="text-align: left;">Bdh1</td>
 <td style="text-align: left;">M</td>
-<td style="text-align: right;">36.85</td>
-<td style="text-align: right;">0.008</td>
-<td style="text-align: right;">0.441</td>
-<td style="text-align: right;">0.100</td>
-<td style="text-align: right;">0.078</td>
-<td style="text-align: right;">0.061</td>
+<td style="text-align: right;">32.69</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.317</td>
+<td style="text-align: right;">0.161</td>
+<td style="text-align: right;">0.129</td>
+<td style="text-align: right;">0.109</td>
 <td style="text-align: left;">Mann Whitney</td>
 </tr>
 <tr class="odd">
