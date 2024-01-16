@@ -322,7 +322,8 @@ main.results.formatted <-
   mutate(Sig=case_when(p.value<0.05&term!="(Intercept)"~"*",
                        .default=""))
 
-kable(main.results.formatted,caption="Test for Diet and Sex Effects on Expression")
+kable(main.results.formatted,caption="Test for Diet and Sex Effects on Expression",
+      digits=c(0,0,3,3,11,1))
 ```
 
 ## Pairwise Analyses

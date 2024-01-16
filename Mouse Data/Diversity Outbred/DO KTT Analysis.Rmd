@@ -1,0 +1,426 @@
+---
+title: "Ketone Tolerance in Male DO Mice"
+author: "Cody Cousineau and Dave Bridges"
+date: "August 10, 2023"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+
+
+```{r setup, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+```{r data-input}
+library(readr) #loads the readr package
+filename <- "Diversity Outbred Data.csv" 
+
+DO.Data <- read_csv(filename)
+
+
+DO.baseline.ketone.data <- 
+  DO.Data %>% 
+  group_by(ID) %>%
+  select(ID, BK_0, BK_15, BK_30, BK_45, BK_60)
+ 
+
+DO.followup.ketone.data <- 
+  DO.Data %>% 
+  group_by(ID) %>%
+  select(ID, FK_0, FK_15, FK_30, FK_45, FK_60)
+  
+
+DO.Data <- 
+  DO.Data %>% 
+  group_by(ID) %>%
+  mutate(B_AUC = BK_0+BK_15+BK_30+BK_45+BK_60) %>%
+  mutate(F_AUC = FK_0+FK_15+FK_30+FK_45+FK_60) %>%
+  mutate(B_AUC.bl = B_AUC-(5*BK_0)) %>% #baseline corrected (time zero x number of time points)
+  mutate(F_AUC.bl = F_AUC-(5*FK_0)) %>%
+  mutate(AUC.change=F_AUC.bl-B_AUC.bl)
+```
+
+The raw data for this script can be found in `r filename`.  This script can be found in `r getwd()` and was most recently updated on `r date()`.
+
+# Ketone levels
+
+```{r ktt-dotplot, fig.cap="Ketone tolerance tests by treatments"}
+DO.baseline.ktt.data.long <-
+  pivot_longer(DO.baseline.ketone.data, cols = BK_0:BK_60, names_to='TimeStamp', values_to="ketone") %>%
+  separate(TimeStamp, sep="BK_", into=c("Letter","Time")) %>%
+  mutate(ketone = as.numeric(ketone)) %>%
+  mutate(Time = as.numeric(Time))
+
+library(ggplot2)
+ggplot(DO.baseline.ktt.data.long,
+            aes(y=ketone, x=Time)) +
+  geom_jitter(width=0.3, alpha=0.5) +
+  geom_smooth(method="loess") +
+  labs(title="Ketone Tolerance Test",
+       subtitle="Baseline KTT",
+       y="Blood Ketones (mg/dL)") 
+
+DO.followup.ktt.data.long <-
+  pivot_longer(DO.followup.ketone.data, cols = FK_0:FK_60, names_to='TimeStamp', values_to="ketone") %>%
+  separate(TimeStamp, sep="FK_", into=c("Letter","Time")) %>%
+  mutate(ketone = as.numeric(ketone)) %>%
+  mutate(Time = as.numeric(Time))
+
+ggplot(DO.followup.ktt.data.long,
+            aes(y=ketone, x=Time)) +
+  geom_jitter(width=0.3, alpha=0.5) +
+  geom_smooth(method="loess") +
+  labs(title="Ketone Tolerance Test",
+       subtitle="Follow-up KTT",
+       y="Blood Ketones (mg/dL)") 
+
+library(forcats)
+DO.ktt.data.long <-
+  DO.Data %>%
+  select(ID, starts_with('BK'),starts_with('FK')) %>%
+  pivot_longer(cols = BK_0:FK_60, names_to='TimeStamp', values_to="ketone") %>%
+  separate(TimeStamp, sep="_", into=c("Letter","Time")) %>%
+  mutate(ketone = as.numeric(ketone)) %>%
+  mutate(Time = as.numeric(Time)) %>%
+  mutate(Stage=fct_recode(Letter,
+                          "Baseline"="BK",
+                          "Follow-Up"="FK"))
+  
+DO.ktt.data.long %>%
+  ggplot(aes(y=ketone,x=Time,col=Stage)) +
+    geom_jitter(width=0.3, alpha=0.5) +
+  geom_smooth(method="loess") +
+  labs(title="Ketone Tolerance Test",
+       y="Blood Ketones (mg/dL)") 
+```
+
+# Area Under the Curve
+
+```{r AUC-analysis}
+DO.all.AUC.data <-
+  DO.Data %>%
+  group_by(ID) %>%
+  select(ID, B_AUC, F_AUC,B_AUC.bl, F_AUC.bl) %>%
+  mutate(AUC.change=F_AUC.bl-B_AUC.bl)
+
+ggplot(DO.all.AUC.data,
+            aes(y=F_AUC, x=B_AUC)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests",
+       subtitle="Comparison of AUCs",
+       y="Follow-Up AUC",
+       x="Baseline AUC") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+ggplot(DO.all.AUC.data %>% na.omit,
+            aes(y=F_AUC.bl, x=B_AUC.bl)) +
+  geom_point() +
+  geom_smooth(method="lm", show.legend = T) +
+  labs(title="AUC of Ketone Tolerance Tests",
+       subtitle="Baseline Corrected AUC",
+       y="Follow-Up AUC",
+       x="Baseline AUC") +
+  geom_abline(slope=1,show.legend = T,lty=2) +
+  expand_limits(x = 0, y = 0) 
+
+library(ggrepel)
+DO.all.AUC.data %>%
+  select(ID,ends_with('.bl'),AUC.change) %>%
+  na.omit %>%
+  pivot_longer(ends_with('.bl'), values_to="AUC") %>%
+  mutate(Stage=fct_recode(name,
+                       "Baseline"="B_AUC.bl",
+                       "Follow-Up"="F_AUC.bl")) %>%
+  ggplot(aes(y=AUC,x=Stage,group=ID,col=AUC.change>0)) +
+  geom_line() +
+  geom_label_repel(aes(label=ID),size=2)
+```
+
+
+```{r KTT-associations}
+
+ggplot(DO.Data,
+            aes(y=B_AUC, x=BK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Baseline AUCs and Baseline T0 Ketones",
+       y="Baseline AUC",
+       x="Baseline Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+ggplot(DO.Data,
+            aes(y=B_AUC, x=FK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Baseline AUCs and Follow-Up T0 Ketones",
+       y="Baseline AUC",
+       x="Follow-Up Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+ggplot(DO.Data,
+            aes(y=F_AUC, x=BK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Follow-Up AUCs and Baseline T0 Ketones",
+       y="Follow-Up AUC",
+       x="Baseline Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+ggplot(DO.Data,
+            aes(y=F_AUC, x=FK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Follow-Up AUCs and Follow-Up T0 Ketones",
+       y="Follow-Up AUC",
+       x="Follow-Up Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+DO.all.AUC.data <-
+  DO.Data %>%
+  group_by(ID) %>%
+  select(ID, B_AUC, F_AUC,B_AUC.bl, F_AUC.bl, BK_0, FK_0) %>%
+  mutate(AUC.change=F_AUC.bl-B_AUC.bl)
+
+ggplot(DO.all.AUC.data,
+            aes(y=B_AUC.bl, x=BK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Baseline AUCs and Baseline T0 Ketones",
+       y="Baseline AUC.bl",
+       x="Baseline Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+ggplot(DO.Data,
+            aes(y=B_AUC.bl, x=FK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Baseline AUCs and Follow-Up T0 Ketones",
+       y="Baseline AUC.bl",
+       x="Follow-Up Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+ggplot(DO.Data,
+            aes(y=F_AUC.bl, x=BK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Follow-Up AUCs and Baseline T0 Ketones",
+       y="Follow-Up AUC.bl",
+       x="Baseline Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+ggplot(DO.Data,
+            aes(y=F_AUC.bl, x=FK_0)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(title="AUC of Ketone Tolerance Tests VS Time Zero Ketones",
+       subtitle="Comparison of Follow-Up AUCs and Follow-Up T0 Ketones",
+       y="Follow-Up AUC.bl",
+       x="Follow-Up Ketones") +
+    geom_abline(slope=1,lty=2) +
+  expand_limits(x = 0, y = 0)
+
+```
+
+# Statistics
+
+At a population level is there an increase or decrease in AUC
+
+```{r auc-comparasion-stats}
+library(broom)
+t.test(DO.all.AUC.data$AUC.change,mu=0) %>% tidy %>% kable(caption="One sample t test for whether the change in AOC is greater than zero", digits=c(2,2,8,0,2,2,0,0))
+  
+with(DO.all.AUC.data, wilcox.test(B_AUC,F_AUC,paired=T))%>% tidy %>% kable(caption="Pairwise wilcoxon test comparing baseline to follow up AUC", digits=c(0,8,0,0))
+  
+with(DO.all.AUC.data, wilcox.test(B_AUC.bl,F_AUC.bl,paired=T))%>% tidy %>% kable(caption="Pairwise wilcoxon test comparing corrected baseline to follow up AUC", digits=c(0,8,0,0))
+
+```
+
+How many strains have an increase vs decrease in AUC
+
+```{r strain-count}
+DO.all.AUC.data %>%
+  group_by(AUC.change<0) %>%
+  count %>%
+  kable(caption="Number of strains with a decrease in corrected AUC from baseline to follow up.")
+
+DO.all.AUC.data %>%
+  arrange(AUC.change) %>%
+  kable(caption="Strains sorted by corrected change in AUC")
+```
+
+Is there a relationship between baseline and follow-up AUC?
+
+```{r auc-stats}
+DO.Data %>%
+  ungroup %>%
+  rename("AUC.Baseline"="B_AUC",
+         "AUC.Followup"="F_AUC",
+         "AUC.Baseline.Cor"="B_AUC.bl",
+         "AUC.Followup.Cor"="F_AUC.bl") %>%
+  summarize_at(.vars=vars('AUC.Baseline':'AUC.change'),
+               .funs=list(mean=~mean(.,na.rm=T),
+                          sd=~sd(.,na.rm=T),
+                          n=~length(.),
+                          shapiro=~shapiro.test(.)$p.value)) %>%
+  pivot_longer(cols=everything(),
+               names_sep="_",
+               names_to=c("Measure","Statistic")) %>%
+  pivot_wider(names_from=Statistic,
+              values_from=value) %>%
+  kable(caption="Summary Statistics for DO KTT")
+
+library(broom)
+ with(DO.all.AUC.data, cor.test(B_AUC,F_AUC,method="spearman")) %>% tidy %>% kable(caption="Correlation between baseline and follow up AUC")
+ 
+  with(DO.Data, cor.test(B_AUC.bl,F_AUC.bl,method="spearman")) %>% tidy %>% kable(caption="Correlation between corrected baseline and follow up AUC")
+  
+  with(DO.Data, cor.test(B_AUC,BK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between baseline AUC and baseline ketones")
+  
+  with(DO.Data, cor.test(B_AUC,FK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between baseline AUC and follow-up ketones")
+  
+  with(DO.Data, cor.test(F_AUC,BK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between follow-up AUC and baseline ketones")
+    
+  with(DO.Data, cor.test(F_AUC,FK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between follow-up AUC and follow-up ketones")
+  
+  with(DO.all.AUC.data, cor.test(B_AUC.bl,BK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between baseline AUC and baseline ketones")
+  
+  with(DO.all.AUC.data, cor.test(B_AUC.bl,FK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between baseline AUC and follow-up ketones")
+  
+  with(DO.all.AUC.data, cor.test(F_AUC.bl,BK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between follow-up AUC and baseline ketones")
+    
+  with(DO.all.AUC.data, cor.test(F_AUC.bl,FK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between follow-up AUC and follow-up ketones")
+```
+
+
+# Association with Cholesterol
+
+```{r ktt-cholesterol}
+# are these values normally distributed?
+DO.Data %>%
+  ungroup %>%
+  select('B_AUC.bl','F_AUC.bl','AUC.change') %>%
+  summarize_all(.funs=list(shapiro=~shapiro.test(.)$p.value)) %>%
+  kable(caption="Shapiro.wilk tests for each KTT parameter")
+# can use parametric values                                                                   
+
+library(tibble)
+DO.Data %>%
+  mutate(Weight.Gain=BW6-BW3) %>%
+  select(ID,B_AUC.bl,F_AUC.bl,AUC.change,BW3,Weight.Gain,B,F,Difference) %>%
+  rename("Baseline KTT"="B_AUC.bl",
+         "Followup KTT"="F_AUC.bl",
+         "Change in KTT"="AUC.change",
+         "Baseline Weight"="BW3",
+         "Weight Gain"="Weight.Gain",
+         "Baseline Cholesterol"="B",
+         "Followup Cholestrol"="F",
+         "Change in Cholesterol"="Difference") -> KTT.data.all
+
+KTT.matrix <- 
+  KTT.data.all %>%
+  na.omit %>%
+  column_to_rownames(var="ID") 
+  
+
+library(corrplot)
+cor.matrix <- cor(KTT.matrix,use="all.obs")[1:3,4:8]
+corrplot(cor.matrix,method="square",tl.col = "black")  
+corrplot(cor.matrix,method="shade",tl.col = "black")  
+corrplot(cor.matrix,method="number",tl.col = "black")  
+
+ggplot(KTT.data.all,
+       aes(y=`Weight Gain`,
+           x=`Followup KTT`)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic(base_size = 16)
+
+ggplot(KTT.data.all,
+       aes(y=`Change in Cholesterol`,
+           x=`Baseline KTT`)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic(base_size = 16)-> plot.cor.1
+
+ggplot(KTT.data.all,
+       aes(y=`Weight Gain`,
+           x=`Followup KTT`)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic(base_size = 16)-> plot.cor.2
+
+ggplot(KTT.data.all,
+       aes(y=`Weight Gain`,
+           x=`Change in KTT`)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic(base_size = 16) -> plot.cor.3
+
+plot.cor.1
+plot.cor.2
+plot.cor.3
+
+library(gridExtra)
+grid.arrange(plot.cor.1,plot.cor.2,plot.cor.3,nrow=1)
+
+library(rstatix)
+cor_pmat(KTT.matrix)[1:3,4:8] %>% as.data.frame -> cor.pvals
+rownames(cor.pvals) <- c("Baseline KTT","Followup KTT","Change in KTT")
+cor.pvals %>% kable(caption="P-values for correlation tests")
+
+
+```
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```
+
