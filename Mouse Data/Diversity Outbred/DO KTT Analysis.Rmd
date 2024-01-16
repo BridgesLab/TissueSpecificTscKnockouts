@@ -306,17 +306,33 @@ How many strains have an increase vs decrease in AUC
 ```{r strain-count}
 DO.all.AUC.data %>%
   group_by(AUC.change<0) %>%
-  count %>%
+  count -> strain.count
+
+strain.count %>%
   kable(caption="Number of strains with a decrease in corrected AUC from baseline to follow up.")
+
+strain.count %>% filter(!is.na(`AUC.change < 0`)) %>% pull(n) %>%
+  chisq.test(p=c(1,1),rescale.p = T) %>%
+  tidy %>%
+  kable(caption='Chi-squared test for equal increasers and decreasers in baseline corrected AUC',
+        digits=c(1,10,1))
 
 DO.all.AUC.data %>%
   arrange(AUC.change) %>%
   kable(caption="Strains sorted by corrected change in AUC")
 ```
 
-Is there a relationship between baseline and follow-up AUC?
+
+
+## Is there a relationship between baseline and follow-up AUC?
 
 ```{r auc-stats}
+library(car)
+leveneTest(DO.Data$B_AUC.bl,DO.Data$F_AUC.bl) %>% 
+  tidy %>% 
+  kable(caption="Levene's test comparing baseline to follow up baseline adjusted KTT AUC",
+        digits=c(2,99,1,1))
+
 DO.Data %>%
   ungroup %>%
   rename("AUC.Baseline"="B_AUC",
@@ -332,7 +348,9 @@ DO.Data %>%
                names_sep="_",
                names_to=c("Measure","Statistic")) %>%
   pivot_wider(names_from=Statistic,
-              values_from=value) %>%
+              values_from=value) -> summary.statistics
+
+summary.statistics %>%
   kable(caption="Summary Statistics for DO KTT")
 
 library(broom)
@@ -356,6 +374,8 @@ library(broom)
     
   with(DO.all.AUC.data, cor.test(F_AUC.bl,FK_0,method="spearman")) %>% tidy %>% kable(caption="Correlation between follow-up AUC and follow-up ketones")
 ```
+
+The ratio of $SD_{followup}/SD_{baseline}$ was `r filter(summary.statistics, Measure %in% c('AUC.Baseline.Cor','AUC.Followup.Cor'))[2,'sd']/filter(summary.statistics, Measure %in% c('AUC.Baseline.Cor','AUC.Followup.Cor'))[1,'sd']`
 
 
 # Association with Cholesterol
