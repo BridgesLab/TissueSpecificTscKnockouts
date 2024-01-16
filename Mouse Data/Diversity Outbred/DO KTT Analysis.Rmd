@@ -169,7 +169,8 @@ DO.all.AUC.data %>%
   ggplot(aes(y=AUC,x=Stage,group=ID,col=AUC.change>0)) +
   geom_line() +
   labs(y="Baseline adjusted area under curve",
-       x="") +
+       x="",
+       title="Changes in BHB disposal") +
   theme_classic(base_size=16) +
   theme(legend.position=c(0.2,0.8))+
   scale_color_grey(name="Increased with Diet")
