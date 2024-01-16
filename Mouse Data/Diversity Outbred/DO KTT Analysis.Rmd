@@ -121,8 +121,11 @@ DO.ktt.data.long %>%
   ggplot(aes(y=ketone,x=Time,col=Stage)) +
     geom_jitter(width=0.3, alpha=0.5) +
   geom_smooth(method="loess") +
-  labs(title="Ketone Tolerance Test",
-       y="Blood Ketones (mg/dL)") 
+  labs(title="Diversity Outbred Mice",
+       y="Blood Ketone Bodies (mg/dL)") +
+  theme_classic(base_size=16) +
+  theme(legend.position=c(0.75,0.75)) +
+  scale_color_grey()
 ```
 
 # Area Under the Curve
@@ -156,6 +159,21 @@ ggplot(DO.all.AUC.data %>% na.omit,
   geom_abline(slope=1,show.legend = T,lty=2) +
   expand_limits(x = 0, y = 0) 
 
+DO.all.AUC.data %>%
+  select(ID,ends_with('.bl'),AUC.change) %>%
+  na.omit %>%
+  pivot_longer(ends_with('.bl'), values_to="AUC") %>%
+  mutate(Stage=fct_recode(name,
+                       "Baseline"="B_AUC.bl",
+                       "Follow-Up"="F_AUC.bl")) %>%
+  ggplot(aes(y=AUC,x=Stage,group=ID,col=AUC.change>0)) +
+  geom_line() +
+  labs(y="Baseline adjusted area under curve",
+       x="") +
+  theme_classic(base_size=16) +
+  theme(legend.position=c(0.2,0.8))+
+  scale_color_grey(name="Increased with Diet")
+
 library(ggrepel)
 DO.all.AUC.data %>%
   select(ID,ends_with('.bl'),AUC.change) %>%
@@ -166,7 +184,7 @@ DO.all.AUC.data %>%
                        "Follow-Up"="F_AUC.bl")) %>%
   ggplot(aes(y=AUC,x=Stage,group=ID,col=AUC.change>0)) +
   geom_line() +
-  geom_label_repel(aes(label=ID),size=2)
+  geom_label_repel(aes(label=ID),size=2) 
 ```
 
 
