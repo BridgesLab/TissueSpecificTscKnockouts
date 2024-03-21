@@ -1,0 +1,401 @@
+---
+title: "Effects of Ketogenic Diet on Liver mRNA Expression"
+author: "Cody Cousineau and Dave Bridges"
+date: "July 10 2017"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: no
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+
+
+# Experimental Details
+
+The QPCR was conducted in accordance with the following protocol:
+http://bridgeslab.sph.umich.edu/protocols/index.php/QPCR
+
+# Raw Data
+
+```{r datafiles}
+sample.mapping.file <- 'Sample Mapping.csv'
+run.1.file <- 'Liver qPCR Ketogenic Results.csv'
+```
+
+The qPCR raw data can be found in:
+
+* `r run.1.file`
+
+```{r data-input}
+library(readr) #loads the readr package
+#load sample mapping file
+mapping.filename <- 'AJ Mapping Data.csv'
+mapping.data <- read_csv(mapping.filename,
+                         col_types = cols(Mouse=col_factor(levels=NULL),
+                                          Sex=col_factor(levels=NULL),
+                                          Diet=col_factor(levels=NULL))) %>% 
+  distinct(Mouse, .keep_all=TRUE) %>% 
+  select(Mouse, Sex, Diet)
+
+#set some columns as factors
+column.settings <- cols(Well = col_factor(levels = NULL),
+                        `Sample` = col_factor(levels = NULL),
+                        `Diet` = col_factor(levels = c("Control","Ketogenic Diet")),
+                        `Target` = col_factor(levels = NULL))
+#load qPCR result files
+run.1.data <- read_csv(file=run.1.file, skip=12,
+                       col_types = column.settings,
+                       na=c("Undetermined"))
+# renamed Hmgcs2 to correct for input error
+library(forcats)
+run.1.data$`Target` <- fct_recode(run.1.data$`Target`, Hmgcs2 = "Hmgsc2")
+
+#used only second run of BDH1
+run.1.data <- 
+  run.1.data %>%
+  filter(!(`Experiment Name` == "2017-10-06 184851.eds"&`Target`=="BDH1"))
+
+#combined all three runs into a single data frame
+
+combined.data <- left_join(run.1.data, mapping.data, by=c("Sample"="Mouse"))
+
+#indicate unreliable data
+
+#Removed sample A8 from the second run, as it was 
+
+#removed bad wells from third plate
+bad.wells.3 <- c('O6','O8','P6','P8','M6','K6','O5','N3','A10','N4','P4','G1')
+#plate layout is wrong, recheck this.
+
+combined.data.clean <- 
+  combined.data %>%
+  filter(!(Well=="A8"&`Experiment Name`=="2017-10-20 190758.eds"))  %>%
+  filter(!(Well=="I9"&`Experiment Name`=="2017-10-20 190758.eds"))  %>%
+  filter(!(Well %in% bad.wells.3&`Experiment Name`=='2018-07-16 204121.eds')) %>%
+  filter(!(`Sample`==4116)) #removed no amplification
+  
+#merge qPCR results into single dataset
+qpcr.data <- droplevels(combined.data.clean)
+
+#combine technical replicates
+qpcr.results <-
+  qpcr.data %>%
+  group_by(`Sample`,`Target`, `Diet.x`, Sex) %>%
+  summarize(Ct.mean = mean(Cq, na.rm=T),
+            Ct.min = min(Cq, na.rm=T),
+            Ct.max = max(Cq, na.rm=T),
+            n = length(Cq)) %>%
+  mutate(Ct.range = Ct.max-Ct.min)
+
+kable(filter(qpcr.results, Ct.range>1 & `Target`=='Fgf21') %>%
+        arrange(desc(Ct.range)), caption="Samples where Ct range between technical replicates exceeds 1")
+
+filter(qpcr.data, `Sample`==4111&`Target`=="Gdf15") %>% select(Well, Cq, `Experiment Name`)
+```
+
+These data can be found in `r getwd()`.  This script was most recently updated on `r date()`.
+
+
+# Analysis
+
+```{r qpcr-analysis}
+control.gene <- 'Rplp0'
+control.group <- 'Control'
+control.sex <- 'F'
+
+all.samples.with.control <- as.character(filter(qpcr.results, `Target`==control.gene)$`Sample`)
+
+sample.results <-
+  filter(qpcr.results, `Sample` %in% all.samples.with.control) %>%
+  mutate(Quant = 2^-Ct.mean) %>%
+  group_by(`Sample`) %>%
+  mutate(Quant.norm = Quant/Quant[`Target`==control.gene]) %>%
+  group_by(`Target`) %>%
+  mutate(Rel.norm = Quant.norm/mean(Quant.norm[`Diet.x`==control.group&Sex==control.sex], na.rm=T))
+
+summary.results <-
+  sample.results %>%
+  group_by(`Target`, `Diet.x`, Sex) %>%
+  summarize(Expression=mean(Rel.norm, na.rm=T),
+            Expression.se = se(Rel.norm)) 
+
+kable(summary.results, caption="Summarized Results")
+```
+
+# Control Genes
+
+```{r control-gene-boxplot}
+library(ggplot2)
+genes <- c("Actb","Gapd","Pgk1","Rplp0","Rplp13")
+p <- ggplot(
+  filter(sample.results, `Target` %in% genes),
+  aes(y=Rel.norm, x=`Target`))
+p + geom_boxplot(aes(color=`Diet.x`)) + 
+  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+  labs(title="Control Genes") +
+  facet_grid(Sex~.)
+```
+
+# BDH1
+
+BDH1 is an expected positive control.  D-beta-hydroxybutyrate dehydrogenase, mitochondrial catalyzes the interconversion between acetoacetate and 3-hydroxybutyrate in the mitochondria:
+
+$$Acetoacetate + NAD \rightleftharpoons 3-Hydroxybutyrate + NADH$$
+
+```{r bdh1-boxplot}
+library(ggplot2)
+gene <- 'BDH1'
+
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex, Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="BDH1 Expression on a per sample basis")
+
+p <- ggplot(
+  filter(sample.results, `Target`==gene),
+  aes(y=Rel.norm, x=Sex))
+p + geom_boxplot(aes(color=`Diet.x`)) + 
+  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+  labs(title=gene)
+
+sample.results %>%
+  filter(Target==gene) %>%
+  group_by(Diet.x,Sex) %>%
+  summarize(Mean = mean(Rel.norm,na.rm=T),
+            SE = se(Rel.norm)) %>%
+  ggplot(aes(y=Mean,
+             x=Sex,
+             ymin=Mean-SE,
+             ymax=Mean+SE,
+             fill=Diet.x)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
+
+#stats
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='BDH1')) %>% summary
+
+lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
+    filter(Target=='BDH1')) %>% summary
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='BDH1' & Sex=='F')) %>% summary
+```
+
+```{r bdh1-barplot}
+p <- ggplot(
+  filter(summary.results, `Target`==gene),
+  aes(y=Expression, group=`Diet.x`,x=Sex))
+p + geom_bar(position=position_dodge(), stat="identity",aes(fill=Diet.x)) +
+  geom_errorbar(aes(ymin=Expression-Expression.se, ymax=Expression + Expression.se,),
+                  width=.25,                    # Width of the error bars
+                  position=position_dodge(.9)) +
+  labs(title=gene)
+```
+
+# Slc16a6
+
+This is only for the second primer
+
+```{r slc16a6-boxplot}
+library(ggplot2)
+gene <- 'Slc16a6V2'
+
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex,Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="Hmgcs2 Expression on a per sample basis")
+
+library(ggrepel)
+p <- ggplot(
+  filter(sample.results, `Target`==gene),
+  aes(y=Rel.norm, x=Sex,label=Sample))
+p + geom_boxplot(aes(color=`Diet.x`)) + 
+  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+  labs(title=gene) +
+  geom_text_repel(min.segment.length = 0)
+
+sample.results %>%
+  filter(Target==gene) %>%
+  group_by(Diet.x,Sex) %>%
+  summarize(Mean = mean(Rel.norm,na.rm=T),
+            SE = se(Rel.norm)) %>%
+  ggplot(aes(y=Mean,
+             x=Sex,
+             ymin=Mean-SE,
+             ymax=Mean+SE,
+             fill=Diet.x)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
+
+#stats
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='Slc16a6V2')) %>% summary
+
+lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
+    filter(Target=='Slc16a6V2')) %>% summary
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='Slc16a6V2'& Sex=='M')) %>% summary
+```
+
+```{r slc16a6-barplot}
+p <- ggplot(
+  filter(summary.results, `Target`==gene),
+  aes(y=Expression, group=`Diet.x`,x=Sex))
+p + geom_bar(position=position_dodge(), stat="identity",aes(fill=`Diet.x`)) +
+  geom_errorbar(aes(ymin=Expression-Expression.se, ymax=Expression + Expression.se,),
+                  width=.25,                    # Width of the error bars
+                  position=position_dodge(.9)) +
+  labs(title=gene)
+```
+
+# HMGCS2
+
+```{r hmgcs2-boxplot}
+library(ggplot2)
+gene <- 'HMGCS2_2'
+
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex,Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="Hmgcs2 Expression on a per sample basis")
+
+p <- ggplot(
+  filter(sample.results, `Target`==gene),
+  aes(y=Rel.norm, x=Sex,label=Sample))
+p + geom_boxplot(aes(color=`Diet.x`)) + 
+  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+  labs(title=gene) +
+  geom_text_repel(min.segment.length = 0)
+```
+
+```{r hmgcs2-barplot}
+sample.results %>%
+  filter(Target==gene) %>%
+  group_by(Diet.x,Sex) %>%
+  summarize(Mean = mean(Rel.norm,na.rm=T),
+            SE = se(Rel.norm)) %>%
+  ggplot(aes(y=Mean,
+             x=Sex,
+             ymin=Mean-SE,
+             ymax=Mean+SE,
+             fill=Diet.x)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
+```
+
+
+## FGF21 and GDF15
+
+
+
+
+
+
+
+```{r Hmgcl-boxplot}
+library(ggplot2)
+gene <- 'HMGCL_2'
+
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex, Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="HMGCL Expression on a per sample basis")
+
+p <- ggplot(
+  filter(sample.results, `Target`==gene),
+  aes(y=Rel.norm, x=Sex,label=Sample))
+p + geom_boxplot(aes(color=`Diet.x`)) + 
+  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+  labs(title=gene)+
+  geom_text_repel(min.segment.length = 0)
+
+
+sample.results %>%
+  filter(Target==gene) %>%
+  group_by(Diet.x,Sex) %>%
+  summarize(Mean = mean(Rel.norm,na.rm=T),
+            SE = se(Rel.norm)) %>%
+  ggplot(aes(y=Mean,
+             x=Sex,
+             ymin=Mean-SE,
+             ymax=Mean+SE,
+             fill=Diet.x)) +
+  geom_bar(stat='identity',position="dodge",width=0.75) +
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
+
+#stats
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='HMGCL_2')) %>% summary
+
+lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
+    filter(Target=='HMGCL_2')) %>% summary
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='HMGCL_2' & Sex=='F')) %>% summary
+```
+
+```{r Hmgcs2-boxplot}
+library(ggplot2)
+gene <- 'HMGCS2_2'
+
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex, Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="HMGCS2 Expression on a per sample basis")
+
+p <- ggplot(
+  filter(sample.results, `Target`==gene),
+  aes(y=Rel.norm, x=Sex,label=Sample))
+p + geom_boxplot(aes(color=`Diet.x`)) + 
+  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+  labs(title=gene) +
+  geom_text_repel(min.segment.length = 0)
+
+#stats
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='HMGCS2_2')) %>% summary
+
+lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
+    filter(Target=='HMGCS2_2')) %>% summary
+
+lm(Rel.norm ~ Diet.x, data=sample.results  %>%
+    filter(Target=='HMGCS2_2' & Sex=='F')) %>% summary
+```
+
+Describe the analysis as you intersperse code chunks
+
+# Interpretation
+
+
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```
+
