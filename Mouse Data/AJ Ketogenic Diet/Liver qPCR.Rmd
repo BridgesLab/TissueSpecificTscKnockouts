@@ -91,22 +91,22 @@ run.1.data <-
 
 #combined all three runs into a single data frame
 
-combined.data <- left_join(run.1.data, mapping.data, by=c("Sample"="Mouse"))
+combined.data <- left_join(run.1.data, mapping.data, by=c("Sample"="Mouse")) %>%
+  rename("Diet"="Diet.x")
 
 #indicate unreliable data
 
 #Removed sample A8 from the second run, as it was 
 
-#removed bad wells from third plate
+#removed bad wells from third plate, these are technical replicate outliers
 bad.wells.3 <- c('O6','O8','P6','P8','M6','K6','O5','N3','A10','N4','P4','G1')
-#plate layout is wrong, recheck this.
 
 combined.data.clean <- 
   combined.data %>%
   filter(!(Well=="A8"&`Experiment Name`=="2017-10-20 190758.eds"))  %>%
   filter(!(Well=="I9"&`Experiment Name`=="2017-10-20 190758.eds"))  %>%
   filter(!(Well %in% bad.wells.3&`Experiment Name`=='2018-07-16 204121.eds')) %>%
-  filter(!(`Sample`==4116)) #removed no amplification
+  filter(!(`Sample`==4116)) #removed sample almost no amplification (based on control genes)
   
 #merge qPCR results into single dataset
 qpcr.data <- droplevels(combined.data.clean)
@@ -114,7 +114,7 @@ qpcr.data <- droplevels(combined.data.clean)
 #combine technical replicates
 qpcr.results <-
   qpcr.data %>%
-  group_by(`Sample`,`Target`, `Diet.x`, Sex) %>%
+  group_by(`Sample`,`Target`, `Diet`, Sex) %>%
   summarize(Ct.mean = mean(Cq, na.rm=T),
             Ct.min = min(Cq, na.rm=T),
             Ct.max = max(Cq, na.rm=T),
@@ -124,7 +124,7 @@ qpcr.results <-
 kable(filter(qpcr.results, Ct.range>1 & `Target`=='Fgf21') %>%
         arrange(desc(Ct.range)), caption="Samples where Ct range between technical replicates exceeds 1")
 
-filter(qpcr.data, `Sample`==4111&`Target`=="Gdf15") %>% select(Well, Cq, `Experiment Name`)
+#filter(qpcr.data, `Sample`==4111&`Target`=="Gdf15") %>% select(Well, Cq, `Experiment Name`)
 ```
 
 These data can be found in `r getwd()`.  This script was most recently updated on `r date()`.
@@ -145,11 +145,11 @@ sample.results <-
   group_by(`Sample`) %>%
   mutate(Quant.norm = Quant/Quant[`Target`==control.gene]) %>%
   group_by(`Target`) %>%
-  mutate(Rel.norm = Quant.norm/mean(Quant.norm[`Diet.x`==control.group&Sex==control.sex], na.rm=T))
+  mutate(Rel.norm = Quant.norm/mean(Quant.norm[`Diet`==control.group&Sex==control.sex], na.rm=T))
 
 summary.results <-
   sample.results %>%
-  group_by(`Target`, `Diet.x`, Sex) %>%
+  group_by(`Target`, `Diet`, Sex) %>%
   summarize(Expression=mean(Rel.norm, na.rm=T),
             Expression.se = se(Rel.norm)) 
 
@@ -164,8 +164,8 @@ genes <- c("Actb","Gapd","Pgk1","Rplp0","Rplp13")
 p <- ggplot(
   filter(sample.results, `Target` %in% genes),
   aes(y=Rel.norm, x=`Target`))
-p + geom_boxplot(aes(color=`Diet.x`)) + 
-  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+p + geom_boxplot(aes(color=`Diet`)) + 
+  geom_point(aes(color=`Diet`), position=position_dodge(width=0.75)) +
   labs(title="Control Genes") +
   facet_grid(Sex~.)
 ```
@@ -180,49 +180,40 @@ $$Acetoacetate + NAD \rightleftharpoons 3-Hydroxybutyrate + NADH$$
 library(ggplot2)
 gene <- 'BDH1'
 
-kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex, Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="BDH1 Expression on a per sample basis")
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet`, Sex, Rel.norm) %>% select(`Diet`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="BDH1 Expression on a per sample basis")
 
 p <- ggplot(
   filter(sample.results, `Target`==gene),
   aes(y=Rel.norm, x=Sex))
-p + geom_boxplot(aes(color=`Diet.x`)) + 
-  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+p + geom_boxplot(aes(color=`Diet`)) + 
+  geom_point(aes(color=`Diet`), position=position_dodge(width=0.75)) +
   labs(title=gene)
 
+#stats
+library(broom)
+
+
+lm(Rel.norm ~ Diet * Sex, data=sample.results  %>%
+    filter(Target=='BDH1')) %>% tidy %>% kable(caption="Sex and diet effects on BDH1 in liver")
+
+lm(Rel.norm ~ Diet + Sex, data=sample.results  %>%
+    filter(Target=='BDH1')) %>% tidy %>% kable(caption="Sex and diet effects on BDH1 in liver")
+```
+
+```{r bdh1-barplot}
 sample.results %>%
   filter(Target==gene) %>%
-  group_by(Diet.x,Sex) %>%
+  group_by(Diet,Sex) %>%
   summarize(Mean = mean(Rel.norm,na.rm=T),
             SE = se(Rel.norm)) %>%
   ggplot(aes(y=Mean,
              x=Sex,
              ymin=Mean-SE,
              ymax=Mean+SE,
-             fill=Diet.x)) +
+             fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
-
-#stats
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='BDH1')) %>% summary
-
-lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
-    filter(Target=='BDH1')) %>% summary
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='BDH1' & Sex=='F')) %>% summary
-```
-
-```{r bdh1-barplot}
-p <- ggplot(
-  filter(summary.results, `Target`==gene),
-  aes(y=Expression, group=`Diet.x`,x=Sex))
-p + geom_bar(position=position_dodge(), stat="identity",aes(fill=Diet.x)) +
-  geom_errorbar(aes(ymin=Expression-Expression.se, ymax=Expression + Expression.se,),
-                  width=.25,                    # Width of the error bars
-                  position=position_dodge(.9)) +
-  labs(title=gene)
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5) -> bdh1.barplot
+bdh1.barplot
 ```
 
 # Slc16a6
@@ -233,51 +224,42 @@ This is only for the second primer
 library(ggplot2)
 gene <- 'Slc16a6V2'
 
-kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex,Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="Hmgcs2 Expression on a per sample basis")
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet`, Sex,Rel.norm) %>% select(`Diet`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="Hmgcs2 Expression on a per sample basis")
 
 library(ggrepel)
 p <- ggplot(
   filter(sample.results, `Target`==gene),
   aes(y=Rel.norm, x=Sex,label=Sample))
-p + geom_boxplot(aes(color=`Diet.x`)) + 
-  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+p + geom_boxplot(aes(color=`Diet`)) + 
+  geom_point(aes(color=`Diet`), position=position_dodge(width=0.75)) +
   labs(title=gene) +
   geom_text_repel(min.segment.length = 0)
 
+#stats
+
+lm(Rel.norm ~ Diet * Sex, data=sample.results  %>%
+    filter(Target=='Slc16a6V2')) %>% tidy %>% kable(caption="Sex and diet effects on Slc16a6 in liver")
+
+lm(Rel.norm ~ Diet + Sex, data=sample.results  %>%
+    filter(Target=='Slc16a6V2')) %>% tidy %>% kable(caption="Sex and diet effects on Slc16a6 in liver")
+
+```
+
+```{r slc16a6-barplot}
 sample.results %>%
   filter(Target==gene) %>%
-  group_by(Diet.x,Sex) %>%
+  group_by(Diet,Sex) %>%
   summarize(Mean = mean(Rel.norm,na.rm=T),
             SE = se(Rel.norm)) %>%
   ggplot(aes(y=Mean,
              x=Sex,
              ymin=Mean-SE,
              ymax=Mean+SE,
-             fill=Diet.x)) +
+             fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5) -> slc16a6.barplot
 
-#stats
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='Slc16a6V2')) %>% summary
-
-lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
-    filter(Target=='Slc16a6V2')) %>% summary
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='Slc16a6V2'& Sex=='M')) %>% summary
-```
-
-```{r slc16a6-barplot}
-p <- ggplot(
-  filter(summary.results, `Target`==gene),
-  aes(y=Expression, group=`Diet.x`,x=Sex))
-p + geom_bar(position=position_dodge(), stat="identity",aes(fill=`Diet.x`)) +
-  geom_errorbar(aes(ymin=Expression-Expression.se, ymax=Expression + Expression.se,),
-                  width=.25,                    # Width of the error bars
-                  position=position_dodge(.9)) +
-  labs(title=gene)
+slc16a6.barplot
 ```
 
 # HMGCS2
@@ -286,111 +268,99 @@ p + geom_bar(position=position_dodge(), stat="identity",aes(fill=`Diet.x`)) +
 library(ggplot2)
 gene <- 'HMGCS2_2'
 
-kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex,Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="Hmgcs2 Expression on a per sample basis")
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet`, Sex,Rel.norm) %>% select(`Diet`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="Hmgcs2 Expression on a per sample basis")
 
 p <- ggplot(
   filter(sample.results, `Target`==gene),
   aes(y=Rel.norm, x=Sex,label=Sample))
-p + geom_boxplot(aes(color=`Diet.x`)) + 
-  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
-  labs(title=gene) +
-  geom_text_repel(min.segment.length = 0)
+p + geom_boxplot(aes(color=`Diet`)) + 
+  geom_point(aes(color=`Diet`), position=position_dodge(width=0.75)) +
+  labs(title=gene) 
+
+lm(Rel.norm ~ Diet * Sex, data=sample.results  %>%
+    filter(Target=='HMGCS2_2')) %>% tidy %>% kable(caption="Sex and diet effects on Hmgcs2 in liver", digits=c(0,2,3,2,99))
+
+lm(Rel.norm ~ Diet + Sex, data=sample.results  %>%
+    filter(Target=='HMGCS2_2')) %>% tidy %>% kable(caption="Sex and diet effects on Hmgcs2 in liver")
+
+lm(Rel.norm ~ Diet, data=sample.results  %>%
+    filter(Target=='HMGCS2_2'&Sex=="M")) %>% tidy %>% kable(caption="Diet effects on Hmgcs2 in male livers",digits=c(0,2,3,2,99))
+
+lm(Rel.norm ~ Diet, data=sample.results  %>%
+    filter(Target=='HMGCS2_2'&Sex=="F")) %>% tidy %>% kable(caption="Diet effects on Hmgcs2 in female livers")
 ```
 
 ```{r hmgcs2-barplot}
 sample.results %>%
   filter(Target==gene) %>%
-  group_by(Diet.x,Sex) %>%
+  group_by(Diet,Sex) %>%
   summarize(Mean = mean(Rel.norm,na.rm=T),
             SE = se(Rel.norm)) %>%
   ggplot(aes(y=Mean,
              x=Sex,
              ymin=Mean-SE,
              ymax=Mean+SE,
-             fill=Diet.x)) +
+             fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5) -> hmgcs2.barplot
+
+hmgcs2.barplot
 ```
 
-
-## FGF21 and GDF15
-
-
-
-
-
-
+# HMGCL
 
 ```{r Hmgcl-boxplot}
 library(ggplot2)
 gene <- 'HMGCL_2'
 
-kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex, Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="HMGCL Expression on a per sample basis")
+kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet`, Sex, Rel.norm) %>% select(`Diet`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="HMGCL Expression on a per sample basis")
 
 p <- ggplot(
   filter(sample.results, `Target`==gene),
   aes(y=Rel.norm, x=Sex,label=Sample))
-p + geom_boxplot(aes(color=`Diet.x`)) + 
-  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
+p + geom_boxplot(aes(color=`Diet`)) + 
+  geom_point(aes(color=`Diet`), position=position_dodge(width=0.75)) +
   labs(title=gene)+
   geom_text_repel(min.segment.length = 0)
 
 
+#stats
+lm(Rel.norm ~ Diet * Sex, data=sample.results  %>%
+    filter(Target=='HMGCL_2')) %>% tidy %>% kable(caption="Sex and diet effects on Hmgcl in liver", digits=c(0,2,3,2,99))
+
+lm(Rel.norm ~ Diet + Sex, data=sample.results  %>%
+    filter(Target=='HMGCL_2')) %>% tidy %>% kable(caption="Sex and diet effects on Hmgcl in liver")
+
+lm(Rel.norm ~ Diet, data=sample.results  %>%
+    filter(Target=='HMGCL_2'&Sex=="M")) %>% tidy %>% kable(caption="Diet effects on Hmgcl in male livers",digits=c(0,2,3,2,99))
+
+lm(Rel.norm ~ Diet, data=sample.results  %>%
+    filter(Target=='HMGCL_2'&Sex=="F")) %>% tidy %>% kable(caption="Diet effects on Hmgcl in female livers")
+```
+
+```{r hmgcl-barplot}
 sample.results %>%
   filter(Target==gene) %>%
-  group_by(Diet.x,Sex) %>%
+  group_by(Diet,Sex) %>%
   summarize(Mean = mean(Rel.norm,na.rm=T),
             SE = se(Rel.norm)) %>%
   ggplot(aes(y=Mean,
              x=Sex,
              ymin=Mean-SE,
              ymax=Mean+SE,
-             fill=Diet.x)) +
+             fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),width=0.5)
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5) -> hmgcl.barplot
 
-#stats
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='HMGCL_2')) %>% summary
-
-lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
-    filter(Target=='HMGCL_2')) %>% summary
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='HMGCL_2' & Sex=='F')) %>% summary
+hmgcl.barplot
 ```
+## Combined Plots
 
-```{r Hmgcs2-boxplot}
-library(ggplot2)
-gene <- 'HMGCS2_2'
+```{r liver-plots-combined}
+library(gridExtra)
 
-kable(filter(sample.results, `Target`==gene) %>% arrange(`Diet.x`, Sex, Rel.norm) %>% select(`Diet.x`, Sex, `Sample`, Ct.mean, Ct.range, Rel.norm), caption="HMGCS2 Expression on a per sample basis")
-
-p <- ggplot(
-  filter(sample.results, `Target`==gene),
-  aes(y=Rel.norm, x=Sex,label=Sample))
-p + geom_boxplot(aes(color=`Diet.x`)) + 
-  geom_point(aes(color=`Diet.x`), position=position_dodge(width=0.75)) +
-  labs(title=gene) +
-  geom_text_repel(min.segment.length = 0)
-
-#stats
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='HMGCS2_2')) %>% summary
-
-lm(Rel.norm ~ Diet.x + Sex, data=sample.results  %>%
-    filter(Target=='HMGCS2_2')) %>% summary
-
-lm(Rel.norm ~ Diet.x, data=sample.results  %>%
-    filter(Target=='HMGCS2_2' & Sex=='F')) %>% summary
+grid.arrange(hmgcl.barplot,hmgcs2.barplot,bdh1.barplot, nrow=1)
 ```
-
-Describe the analysis as you intersperse code chunks
-
-# Interpretation
-
 
 
 # Session Information
