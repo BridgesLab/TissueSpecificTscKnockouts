@@ -42,7 +42,7 @@ color.scheme <- c('#00274c', '#ffcb05')
 
 # Purpose
 
-
+Evaluate hepatic gene expression of ketogenic genes
 
 # Experimental Details
 
@@ -212,7 +212,15 @@ sample.results %>%
              ymax=Mean+SE,
              fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),width=0.5) -> bdh1.barplot
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5) +
+  theme_classic(base_size=16) +
+  theme(legend.position="none",
+        legend.title=element_blank(),
+        plot.title=element_text(face = "italic"))+
+  scale_fill_grey()+
+  labs(title="Liver Bdh1",
+       y="Relative Expression",
+       x="")-> bdh1.barplot
 bdh1.barplot
 ```
 
@@ -302,7 +310,15 @@ sample.results %>%
              ymax=Mean+SE,
              fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),width=0.5) -> hmgcs2.barplot
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5)  +
+  theme_classic(base_size=16) +
+  theme(legend.position="none",
+        legend.title=element_blank(),
+        plot.title=element_text(face = "italic"))+
+  scale_fill_grey()+
+  labs(title="Liver Hmgcs2",
+       y="Relative Expression",
+       x="") -> hmgcs2.barplot
 
 hmgcs2.barplot
 ```
@@ -339,7 +355,11 @@ lm(Rel.norm ~ Diet, data=sample.results  %>%
 ```
 
 ```{r hmgcl-barplot}
+library(forcats)
 sample.results %>%
+  mutate(Diet = fct_recode(as.factor(Diet),
+                           "CD"="Control",
+                           "KD"="Ketogenic Diet")) %>%
   filter(Target==gene) %>%
   group_by(Diet,Sex) %>%
   summarize(Mean = mean(Rel.norm,na.rm=T),
@@ -350,13 +370,21 @@ sample.results %>%
              ymax=Mean+SE,
              fill=Diet)) +
   geom_bar(stat='identity',position="dodge",width=0.75) +
-  geom_errorbar(position=position_dodge(width=0.75),width=0.5) -> hmgcl.barplot
+  geom_errorbar(position=position_dodge(width=0.75),width=0.5)  +
+  theme_classic(base_size=16) +
+  theme(legend.position=c(0.7,0.8),
+        legend.title=element_blank(),
+        plot.title=element_text(face = "italic"))+
+  scale_fill_grey()+
+  labs(title="Liver Hmgcl",
+       y="Relative Expression",
+       x="")-> hmgcl.barplot
 
 hmgcl.barplot
 ```
 ## Combined Plots
 
-```{r liver-plots-combined}
+```{r liver-ketogenesis-plots-combined}
 library(gridExtra)
 
 grid.arrange(hmgcl.barplot,hmgcs2.barplot,bdh1.barplot, nrow=1)
