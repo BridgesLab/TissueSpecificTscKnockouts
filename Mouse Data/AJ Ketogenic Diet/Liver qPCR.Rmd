@@ -169,6 +169,11 @@ p + geom_boxplot(aes(color=`Diet`)) +
   labs(title="Control Genes") +
   facet_grid(Sex~.)
 ```
+# Sample Sizes
+
+```{r sample sizes}
+sample.results %>% filter(Target=="Rplp0") %>% group_by(Diet,Sex) %>% count %>% kable(caption="Number of mice per group")
+```
 
 # BDH1
 
