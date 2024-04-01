@@ -450,7 +450,7 @@ library(gridExtra)
 grid.arrange(plot.cor.1,plot.cor.2,plot.cor.3,nrow=1)
 
 library(rstatix)
-cor_pmat(KTT.matrix)[1:3,4:8] %>% as.data.frame -> cor.pvals
+cor_pmat(KTT.matrix)[1:3,4:9] %>% as.data.frame -> cor.pvals
 rownames(cor.pvals) <- c("Baseline KTT","Followup KTT","Change in KTT")
 cor.pvals %>% kable(caption="P-values for correlation tests")
 
