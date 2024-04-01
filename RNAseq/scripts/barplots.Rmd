@@ -123,7 +123,7 @@ MitochondrialCalcium_genes <- c('Mcu','Micu1','Micu2','Micu3','Slc8a1','Scl8a2',
 er_stress <- c('Xbp1','Atf4','Hspa5','Ddit3')
 er_stress_select <- c('Xbp1','Atf4','Atf6','Ern1','Hspa5','Ddit3','Trib3')
 irx_genes <- c('Irx3','Irx5')
-ketosis_muscle <- c('Hmgcl','Oxct1','Bdh1','Slc16a1')
+ketosis_muscle <- c('Acat1','Oxct1','Bdh1','Slc16a1')
 ketosis_receptors <- c('Hcar2','Ffar3')
 ketone_body_generation <- c('Hmgcl','Bdh1','Slc16a1')
 pfk_2_isoforms <- c('Pfkfb1', 'Pfkfb2', 'Pfkfb3', 'Pfkfb4')
