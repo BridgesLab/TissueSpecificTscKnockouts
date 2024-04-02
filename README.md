@@ -13,7 +13,8 @@ This repository contains raw data for studies done by the [Bridges Lab](http://b
 
 | Publication | Dataset | Tag |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| Stephenson EJ, Redd JR, Snyder DS, Tran QT, Lu B, Peloquin MJ, Mulcahy MC, Harvey I, Fisher K, Han JC, Qi N, Saltiel AR, Bridges D. Skeletal Muscle mTORC1 Activation Increases Energy Expenditure and Reduces Longevity in Mice. bioRxiv. . [doi:10.1101/720540](https://doi.org/10.1101/720540). | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg)](http://dx.doi.org/10.5281/zenodo.3359627) | [muscleTSC-v1.0](https://github.com/BridgesLab/TissueSpecificTscKnockouts/releases/tag/muscleTSC-v1.0 ) |
+| Stephenson EJ, Redd JR, Snyder DS, Tran QT, Lu B, Peloquin MJ, Mulcahy MC, Harvey I, Fisher K, Han JC, Qi N, Saltiel AR, and Bridges D. Skeletal Muscle mTORC1 Activation Increases Energy Expenditure and Reduces Longevity in Mice. bioRxiv. [doi:10.1101/720540](https://doi.org/10.1101/720540). | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg)](http://dx.doi.org/10.5281/zenodo.3359627) | [muscleTSC-v1.0](https://github.com/BridgesLab/TissueSpecificTscKnockouts/releases/tag/muscleTSC-v1.0 ) |
+| Cousineau CM, Snyder D, Redd JR, Turner S, Carr T and Bridges D.  Reduced beta-hydroxybutyrate disposal after ketogenic diet feeding in mice. | | |
 
 
 # Struture of this Repository
