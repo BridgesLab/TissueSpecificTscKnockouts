@@ -1,0 +1,933 @@
+---
+title: "aTSC Lipidomics"
+author: "Noura El Habbal and Dave Bridges"
+date: "12/14/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r global_options, include=FALSE}
+library(knitr)
+library(survival)
+library("car")
+#figures made will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(tidyverse)
+library(dplyr)
+library(broom)
+library(readr)
+library(forcats)
+library(car)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+```{r data_files}
+library(readr) #loads the readr package
+atsclipidomics.data <- 'aTSC Lipidomics .csv' #make this a separate line, you can use any variable you want
+```
+
+```{r data-input}
+lipidomics.data <- read_csv(atsclipidomics.data, na=c("N/A",NA)) %>% mutate(Genotype = relevel(as.factor(Genotype), ref="WT"))
+```
+
+
+```{r SFA ratio}
+library(ggplot2)
+library(tidyr)
+
+#Percentages
+
+sfamufapufa.percentage <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%SFA`, na.rm=T),
+            SE.Average.sfa= se(`%SFA`)) %>%
+    mutate(Average.mufa= mean(`%MUFA`, na.rm=T),
+            SE.Average.mufa= se(`%MUFA`)) %>%
+    mutate(Average.pufa= mean(`%PUFA`, na.rm=T),
+            SE.Average.pufa= se(`%PUFA`)) 
+sfamufapufa.percentage%>% pull(Average.sfa) #or average.sfa or average.mufa to see the averages only
+#based on averages, the effect sizes are as follows:
+#SFA effect size: 46.8-42.2 / 42.2 *100= 10.9% reduction in SFA of KO compared to WT
+#MUFA effect size: 35.2-31.5 / 31.5 *100= 11.75% increase in MUFA in KO
+#PUFA effect size: 22.7-21.7 / 21.7 * 100= 4.6% increase in PUFA in KO 
+
+#Barplot SFA%
+ggplot(sfamufapufa.percentage,
+       aes(x=Genotype, y=Average.sfa, fill=Genotype))+
+  geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  #labs(x="Genotype", y="Average Sum of SFA (%)",title="Average SFA % of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Sum of SFA (%)",
+         x="Maternal Genotype")
+
+#Statistics
+#%SFA
+shapiro.percentKOsfa<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%SFA`)
+shapiro.percentKOsfa #p-value = 0.8 --> normal distribution of KO SFA%
+
+shapiro.percentWTsfa<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%SFA`)
+shapiro.percentWTsfa #p-value = 0.7 --> normal distribution of WT SFA%
+  
+library(car)
+leveneTest(`%SFA`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p-value=0.899 --> assume equal variance
+
+t.test(`%SFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %SFA by maternal genotype") #p=0.008
+```
+
+```{r MUFA}
+
+#Barplot MUFA
+ggplot(sfamufapufa.percentage, is.na=NA,
+       aes(x=`Genotype`, y=Average.mufa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5, aes(ymin=Average.mufa - SE.Average.mufa, ymax=Average.mufa + SE.Average.mufa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Sum of MUFA (%)",title="Average MUFA % of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Sum of MUFA (%)",
+         x="Maternal Genotype")
+
+#Statistics %MUFA
+shapiro.percentKOmufa<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%MUFA`)
+shapiro.percentKOmufa #p-value = 1 --> normal distribution of KO MUFA%
+
+shapiro.percentWTmufa<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%MUFA`)
+shapiro.percentWTmufa #p-value = 0.6 --> normal distribution of WT MUFA%
+  
+library(car)
+leveneTest(`%MUFA`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p-value=0.751 --> assume equal variance
+
+t.test(`%MUFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %MUFA by maternal genotype") #p=0.009
+```
+
+```{r PUFA}
+#Barplot PUFA%
+ggplot(sfamufapufa.percentage, is.na=NA,
+       aes(x=`Genotype`, y=Average.pufa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5,aes(ymin=Average.pufa - SE.Average.pufa, ymax=Average.pufa + SE.Average.pufa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Sum of PUFA (%)",title="Average PUFA % of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Sum of PUFA (%)",
+         x="Maternal Genotype")
+
+#Statistics %PUFA
+shapiro.percentKOpufa<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%PUFA`)
+shapiro.percentKOpufa #p-value = 0.07 --> normal distribution of KO PUFA%
+
+shapiro.percentWTmufa<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%PUFA`)
+shapiro.percentWTmufa #p-value = 0.04 --> not normal distribution of WT PUFA%
+
+wilcox.test(`%PUFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %MUFA by maternal genotype") #p=0.69
+```
+
+```{r MUFA SFA Ratio}
+#MUFA/SFA ratio
+mufasfaratio <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.ratio= mean(`MUFA/SFA`, na.rm=T),
+            SE.Average.ratio= se(`MUFA/SFA`))
+mufasfaratio%>% pull(Average.ratio)
+#effect size: 0.836-0.676 / 0.676 *100= 23.67% increase in MUFA/SFa ratio in KO
+
+ggplot(mufasfaratio, is.na=NA,
+       aes(x=`Genotype`, y=Average.ratio, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5,aes(ymin=Average.ratio - SE.Average.ratio, ymax=Average.ratio + SE.Average.ratio))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average MUFA/SFA Ratio",title="Average MUFA:SFA ratio of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="MUFA/SFA Ratio",
+         x="Maternal Genotype")
+
+#Statistics MUFA/SFa ratio
+shapiro.percentKOratio<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`MUFA/SFA`)
+shapiro.percentKOratio #p-value = 0.4 --> normal distribution of KO PUFA%
+
+shapiro.percentWTratio<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`MUFA/SFA`)
+shapiro.percentWTratio #p-value = 0.9 --> normal distribution of WT PUFA%
+
+leveneTest(`MUFA/SFA`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.815
+
+t.test(`MUFA/SFA`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption= "Student's t-test for MUFA/SFA ratio by maternal genotype") #p=0.004
+```
+
+```{r sum LCFA}
+sumLCFA <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.lcfa= mean(`Sum (n mol)`, na.rm=T),
+            SE.Average.lcfa= se(`Sum (n mol)`))
+
+ggplot(sumLCFA, is.na=NA,
+       aes(x=`Genotype`, y=Average.lcfa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat='identity') +
+   geom_errorbar(width=0.5,aes(ymin=Average.lcfa - SE.Average.lcfa, ymax=Average.lcfa + SE.Average.lcfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Sum of LCFA (n mol)",title="Average Sum of LCFA of milk by Genotype")
+ scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="Sum of LCFA (n mol)",
+         x="Maternal Genotype")
+
+
+#Statistics sum LCFA
+shapiro.percentKOLCFA<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`Sum (n mol)`)
+shapiro.percentKOLCFA #p-value = 0.4 --> normal distribution of KO PUFA%
+
+shapiro.percentWTLCFA<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`Sum (n mol)`)
+shapiro.percentWTLCFA #p-value = 0.4 --> normal distribution of WT PUFA%
+
+leveneTest(`Sum (n mol)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.264
+
+t.test(`Sum (n mol)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for LCFA sum by maternal genotype") #p=0.189
+```
+
+```{r 18:4 n3 FA}
+# 18:4 n-3 percentage
+percent184 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%18:4 (n-3)`, na.rm=T),
+            SE.Average.sfa= se(`%18:4 (n-3)`))
+percent184%>% pull(Average.sfa)
+#effect size= 1.293-0.809 / 0.809 *100 = 59.83% increase in KO
+
+ggplot(percent184, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+ geom_bar(position= "dodge", stat= "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 18:4",title="Average %18:4 of milk by Genotype")
+   scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="18:4 n-3 (%)",
+         x="Maternal Genotype")
+
+#Statistics `%18:4 (n-3)
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:4 (n-3)`)
+shapiro.percentKO #p-value = 0.7 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%18:4 (n-3)`)
+shapiro.percentWT #p-value = 0.4 --> normal distribution of WT %
+
+leveneTest(`%18:4 (n-3)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.236 #assume equal variances
+
+t.test(`%18:4 (n-3)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for `%18:4 (n-3) by maternal genotype") #p=0.081
+```
+
+```{r 22:5 n3 FA}
+#22:5 n-3 percentage
+percent225n3 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%22:5 (n-3)`, na.rm=T),
+            SE.Average.sfa= se(`%22:5 (n-3)`))
+percent225n3%>% pull(Average.sfa)
+
+ggplot(percent225n3, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position="dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 22:5 (%)",title="Average %22:5 (n-3) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="22:5 n-3 (%)",
+         x="Maternal Genotype")
+
+#Statistics `%22:5 (n-3)
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:5 (n-3)`)
+shapiro.percentKO #p-value = 0.7 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%22:5 (n-3)`)
+shapiro.percentWT #p-value = 0.1 --> normal distribution of WT %
+
+leveneTest(`%22:5 (n-3)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.14 #assume equal variances
+
+t.test(`%22:5 (n-3)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %22:5 (n-3) by maternal genotype") #p=0.124
+```
+
+```{r 22:5 n6 FA}
+#22:5 n-6 percentage
+percent225n6 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%22:5 (n-6)`, na.rm=T),
+            SE.Average.sfa= se(`%22:5 (n-6)`))
+
+ggplot(percent225n6, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 22:5 (%)",title="Average %22:5 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="22:5 n-6 (%)",
+         x="Maternal Genotype")
+#Statistics `%22:5 (n-6)
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:5 (n-6)`)
+shapiro.percentKO #p-value = 0.2 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%22:5 (n-6)`)
+shapiro.percentWT #p-value = 0.1 --> normal distribution of WT %
+
+leveneTest(`%22:5 (n-6)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.595 #assume equal variances
+
+t.test(`%22:5 (n-6)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %22:5 (n-6) by maternal genotype") #p=0.366
+```
+
+```{r 20:4 n6 FA}
+#20:4 n-6 percentage
+percent204n6 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%20:4 (n-6)`, na.rm=T),
+            SE.Average.sfa= se(`%20:4 (n-6)`))
+
+ggplot(percent204n6, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 20:4 (%)",title="Average %20:4 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="20:4 n-6 (%)",
+         x="Maternal Genotype")
+
+#Statistics 
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%20:4 (n-6)`)
+shapiro.percentKO #p-value = 0.4 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%20:4 (n-6)`)
+shapiro.percentWT #p-value = 0.05 --> not normal distribution of WT %
+
+wilcox.test(`%20:4 (n-6)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable(caption="Student's t-test for %20:4 (n-6) by maternal genotype") #p=0.584
+```
+
+```{r 22:4 n6 FA}
+#22:4 n-6 percentage
+percent224n6 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%22:4 (n-6)`, na.rm=T),
+            SE.Average.sfa= se(`%22:4 (n-6)`))
+
+ggplot(percent224n6, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat= "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 22:4 (%)",title="Average %22:4 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="22:4 n-6 (%)",
+         x="Maternal Genotype")
+
+#Statistics 
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:4 (n-6)`)
+shapiro.percentKO #p-value = 0.8 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%22:4 (n-6)`)
+shapiro.percentWT #p-value = 0.05 --> normal distribution of WT %
+
+wilcox.test(`%22:4 (n-6)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %22:5 (n-6) by maternal genotype") #p=0.841
+```
+
+```{r 20:3 n6 FA}
+#20:3 n-6 percentage
+percent203n6 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%20:3 (n-6)`, na.rm=T),
+            SE.Average.sfa= se(`%20:3 (n-6)`))
+
+ggplot(percent203n6, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5, aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 20:3 (%)",title="Average %20:3 (n-6) of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="20:3 n-6 (%)",
+         x="Maternal Genotype")
+
+#Statistics 20:3 (n-6)
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%20:3 (n-6)`)
+shapiro.percentKO #p-value = 0.9 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%20:3 (n-6)`)
+shapiro.percentWT #p-value = 0.9 --> normal distribution of WT %
+
+leveneTest(`%20:3 (n-6)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.735 #assume equal variances
+
+t.test(`%20:3 (n-6)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %20:3 (n-6) by maternal genotype") #p=0.292
+```
+
+```{r 18:2 n6 FA}
+# 18:2 n6 percentage
+percent182 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%18:2 (n-6)cc`, na.rm=T),
+            SE.Average.sfa= se(`%18:2 (n-6)cc`))
+
+ggplot(percent182, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 18:2 (cc)",title="Average %18:2 of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="18:2 n-6 (%)",
+         x="Maternal Genotype")
+
+#Statistics %18:2 (n-6)cc
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:2 (n-6)cc`)
+shapiro.percentKO #p-value = 0.4 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%18:2 (n-6)cc`)
+shapiro.percentWT #p-value = 0.8 --> normal distribution of WT %
+
+leveneTest(`%18:2 (n-6)cc`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.182 #assume equal variances
+
+t.test(`%18:2 (n-6)cc`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %18:2 (n-6)cc by maternal genotype") #p=0.86
+```
+
+```{r 18:3 n6 FA}
+#18:3 n-6 percentage
+percent183 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.sfa= mean(`%18:3 (n-6)`, na.rm=T),
+            SE.Average.sfa= se(`%18:3 (n-6)`))
+
+ggplot(percent183, is.na=NA,
+       aes(x=`Genotype`, y=Average.sfa, fill=`Genotype`))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.sfa - SE.Average.sfa, ymax=Average.sfa + SE.Average.sfa))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average Percent of 18:3",title="Average %18:3 of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="18:3 n-6 (%)",
+         x="Maternal Genotype")
+  
+#Statistics %18:3 (n-6)
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:3 (n-6)`)
+shapiro.percentKO #p-value = 0.2 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%18:3 (n-6)`)
+shapiro.percentWT #p-value = 0.08 --> normal distribution of WT %
+
+leveneTest(`%18:3 (n-6)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.657 #assume equal variances
+
+t.test(`%18:3 (n-6)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %18:3 (n-6) by maternal genotype") #p=0.201
+```
+
+``` {r n6:n3 ratio and percentages}
+library(ggplot2)
+library(tidyr)
+library(car)
+n6n3ratio <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.omegaratio= mean(`Ratio n6/n3`, na.rm=T),
+            SE.Average.omegaratio= se(`Ratio n6/n3`))
+n6n3ratio%>%pull(Average.omegaratio)
+#effect size of n6:n3 ratio= 7.55-5.77 / 5.77 * 100= 30.85% reduction in KO compared to WT
+
+ggplot(n6n3ratio, is.na=NA,
+       aes(x=Genotype, y=Average.omegaratio, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.omegaratio - SE.Average.omegaratio, ymax=Average.omegaratio + SE.Average.omegaratio))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average n6/n3 ratio",title="Average n6/n3 ratio of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="n-6:n-3 Ratio",
+         x="Maternal Genotype")
+
+#Statistics Ratio n6/n3
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`Ratio n6/n3`)
+shapiro.percentKO #p-value = 0.5 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`Ratio n6/n3`)
+shapiro.percentWT #p-value = 0.05 --> not normal distribution of WT %
+
+wilcox.test(`Ratio n6/n3`~Genotype, data=lipidomics.data)%>% tidy() %>% kable(caption="Student's t-test for Ratio n6/n3 by maternal genotype") #p=0.008
+
+
+#Percentages per omega type
+n6n3.percentage <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.n3= mean(`%n3`, na.rm=T),
+            SE.Average.n3= se(`%n3`)) %>%
+  mutate(Average.n6= mean(`%n6`, na.rm=T),
+            SE.Average.n6= se(`%n6`))
+n6n3.percentage%>% pull(Average.n3)
+#Effect size of %n3: 3.34-2.6 / 2.6 *100= 28.46% increase in KO compared to WT
+
+ggplot(n6n3.percentage, is.na=NA,
+       aes(x=Genotype, y=Average.n3, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3 - SE.Average.n3, ymax=Average.n3 + SE.Average.n3))+
+    #facet_grid(~`Ethnic Group`) +
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average n3 percentage (%) ",title="Average n3 percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="n-3 (%)",
+         x="Maternal Genotype")
+
+#Statistics
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%n3`)
+shapiro.percentKO #p-value = 0.4 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%n3`)
+shapiro.percentWT #p-value = 0.08 -->  normal distribution of WT %
+
+leveneTest(`%n3`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.502
+t.test(`%n3`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %n3 by maternal genotype")   #p=0.013
+
+
+ggplot(n6n3.percentage, is.na=NA,
+       aes(x=Genotype, y=Average.n6, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n6 - SE.Average.n6, ymax=Average.n6 + SE.Average.n6))+
+    #facet_grid(~`Ethnic Group`) +
+  theme_classic() +
+  expand_limits(y=0)+
+ # labs(x="Genotype", y="Average n6 percentage (%) ",title="Average n6 percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="n-6 (%)",
+         x="Maternal Genotype")
+#Statistics
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%n6`)
+shapiro.percentKO #p-value = 0.04 --> not normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%n6`)
+shapiro.percentWT #p-value = 0.3 --> normal distribution of WT %
+
+wilcox.test(`%n6`~Genotype, data=lipidomics.data)%>% tidy() %>% kable(caption="Student's t-test for %n6 by maternal genotype") #p=0.69
+```
+``` {r omega3 ALA EPA DHA values}
+library(ggplot2)
+library(tidyr)
+library(car)
+#ALA 18:3
+ALA <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.n3= mean(`18:3 (n-3)`, na.rm=T),
+            SE.Average.n3= se(`18:3 (n-3)`)) %>%
+  mutate(Average.n3percent = mean(`%18:3 (n-3)`, na.rm=T),
+            SE.Average.n3percent=se(`%18:3 (n-3)`))
+
+ggplot(ALA, is.na=NA,
+       aes(x=Genotype, y=Average.n3percent, fill=Genotype))+
+  geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average ALA (%)",title="Average ALA Percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="ALA (%)",
+         x="Maternal Genotype")
+  
+#Statistics
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%18:3 (n-3)`)
+shapiro.percentKO #p-value = 0.5 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%18:3 (n-3)`)
+shapiro.percentWT #p-value = 0.4 -->  normal distribution of WT %
+
+leveneTest(`%18:3 (n-3)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.901
+t.test(`%18:3 (n-3)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %18:3 (n-3) by maternal genotype")   #p=0.833
+
+#EPA 20:5
+EPA <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.n3= mean(`20:5 (n-3)`, na.rm=T),
+            SE.Average.n3= se(`20:5 (n-3)`)) %>%
+  mutate(Average.n3percent = mean(`%20:5 (n-3)`, na.rm=T),
+            SE.Average.n3percent=se(`%20:5 (n-3)`))
+
+ggplot(EPA, is.na=NA,
+       aes(x=Genotype, y=Average.n3percent, fill=Genotype))+
+ geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="Average EPA (%)",title="Average EPA Percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+         axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="EPA (%)",
+         x="Maternal Genotype")
+
+#Statistics
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%20:5 (n-3)`)
+shapiro.percentKO #p-value = 0.5 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%20:5 (n-3)`)
+shapiro.percentWT #p-value = 0.4 -->  normal distribution of WT %
+
+leveneTest(`%20:5 (n-3)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.319
+t.test(`%20:5 (n-3)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %18:3 (n-3) by maternal genotype")   #p=0.556
+
+#DHA 22:6
+DHA <- lipidomics.data %>%
+  group_by(Genotype) %>%
+   mutate(Average.n3= mean(`22:6 (n-3)`, na.rm=T),
+            SE.Average.n3= se(`22:6 (n-3)`)) %>%
+  mutate(Average.n3percent = mean(`%22:6 (n-3)`, na.rm=T),
+            SE.Average.n3percent=se(`%22:6 (n-3)`))
+DHA %>% pull(Average.n3percent)
+#Effect size of DHA: 0.736-0.517 / 0.517 *100= 42.36% increase in KO compared to WT
+
+ggplot(DHA, is.na=NA,
+       aes(x=Genotype, y=Average.n3percent, fill=Genotype))+
+ geom_bar(position = "dodge", stat = "identity")+
+   geom_errorbar(width=0.5,aes(ymin=Average.n3percent - SE.Average.n3percent, ymax=Average.n3percent + SE.Average.n3percent))+
+  theme_classic() +
+  expand_limits(y=0)+
+  #labs(x="Genotype", y="DHA (%)",title="Average DHA Percentage of milk by Genotype")
+  scale_fill_grey() +
+    scale_color_grey() +
+    theme_classic() +
+    theme(text=element_text(size=18),
+          axis.text.x = element_text(vjust = 0.5, hjust=0.5))+
+  theme(legend.position = "none")+
+    labs(y="DHA (%)",
+         x="Maternal Genotype")
+  
+#Statistics
+shapiro.percentKO<- shapiro.test(x=filter(lipidomics.data, Genotype == "KO")$`%22:6 (n-3)`)
+shapiro.percentKO #p-value = 0.5 --> normal distribution of KO %
+
+shapiro.percentWT<- shapiro.test(x=filter(lipidomics.data, Genotype == "WT")$`%22:6 (n-3)`)
+shapiro.percentWT #p-value = 0.4 -->  normal distribution of WT %
+
+leveneTest(`%22:6 (n-3)`~Genotype, data=lipidomics.data)%>% tidy() %>% kable() #p=0.091
+t.test(`%22:6 (n-3)`~Genotype, data=lipidomics.data, var.equal=T)%>% tidy() %>% kable(caption="Student's t-test for %22:6 (n-3) by maternal genotype")   #p=0.031
+```
+
+# Lipid Summary
+
+```{r summary-table}
+shapiro.result <- function(x) shapiro.test(x)$p.value
+library(car)
+
+pairwise.results <- 
+  lipidomics.data %>%
+  select(Genotype,starts_with('%'),`MUFA/SFA`,`Ratio n6/n3` ) %>%
+  pivot_longer(!Genotype, names_to='Lipid') %>%
+  group_by(Lipid) %>%
+  summarize(
+    Levene=leveneTest(value ~ Genotype)$`Pr(>F)`[1],
+    Mann.Whitney=wilcox.test(value ~ Genotype)$p.value,
+    Welch=t.test(value ~ Genotype, var.equal=F)$p.value,
+    Student=t.test(value ~ Genotype, var.equal=T)$p.value)
+
+shapiro.results <- lipidomics.data %>%
+  group_by(Genotype) %>%
+  summarise_at(.vars=vars(starts_with('%'),`MUFA/SFA`,`Ratio n6/n3`),
+               .funs=shapiro.result) %>%
+  pivot_longer(!Genotype, names_to='Lipid') %>%
+  pivot_wider(names_from='Genotype',values_from='value') %>%
+  rename(Shapiro.WT = WT,
+         Shapiro.KO = KO) 
+
+library(gtools)
+summary.stats <- 
+  full_join(shapiro.results,pairwise.results) %>%
+  mutate(Test = case_when(
+    Shapiro.WT < 0.05 ~ 'Mann Whitney',
+    Shapiro.KO < 0.05 ~ 'Mann Whitney',
+    Levene < 0.05 ~ 'Welch',
+    Levene > 0.05 ~ 'Student')) %>%
+  mutate(P.Value = case_when(
+    Test == 'Mann Whitney' ~ Mann.Whitney,
+    Test == 'Welch' ~ Welch,
+    Test == 'Student' ~ Student)) %>%
+  mutate(Sig=stars.pval(P.Value))
+
+lipidomics.data %>%
+  group_by(Genotype) %>%
+  summarise_at(.vars=vars(starts_with('%'),`MUFA/SFA`,`Ratio n6/n3`),
+               .funs=mean) %>%
+  pivot_longer(!Genotype, names_to='Lipid') %>%
+  pivot_wider(names_from='Genotype',values_from='value') %>%
+  mutate(Percent.Change = KO/WT*100) %>%
+  full_join(select(summary.stats, Lipid, Test,P.Value,Sig)) %>% 
+    kable(caption="Changes in lipids (percent)") 
+
+lipidomics.data %>%
+  group_by(Genotype) %>%
+  summarise_at(.vars=vars(starts_with('%'),`MUFA/SFA`,`Ratio n6/n3`),
+               .funs=list(mean=mean,se=se)) %>%
+  pivot_longer(!Genotype, names_to=c('Lipid','Statistic'), names_sep="_") %>%
+  pivot_wider(names_from=c('Genotype','Statistic'), names_sep="_", values_from='value') %>%
+  mutate(Percent.Change = KO_mean/WT_mean*100) %>%
+  full_join(select(summary.stats, Lipid, Test,P.Value,Sig)) %>% 
+    write_csv("Summary Table of Lipidomics Data.csv") #supplemental figure
+
+lipidomics.data %>%
+  group_by(Name) %>%
+  pivot_longer(!Genotype, names_to='Lipid') %>%
+  group_by(Genotype,Lipid) %>%
+  summarize(Avg = mean(value),
+            SD = sd(value)) %>%
+  mutate(Rel.SD = SD/Avg*100) %>%
+  pull(Rel.SD) %>%
+  mean
+```
+
+```{r pufa-barplots}
+library(forcats)
+
+aa <- lipidomics.data %>%
+  group_by(Genotype) %>%
+  mutate(Genotype = fct_recode(Genotype,
+                               "Wild-Type"='WT',
+                               'adipTsc1 KO'='KO')) %>%
+  summarise(Average = mean(`%20:4 (n-6)`, na.rm=T),
+            SE= se(`%20:4 (n-6)`)) %>%
+  ggplot(aes(y=Average,
+         x=Genotype,
+         ymin=Average-SE,
+         ymax=Average+SE)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(title='AA', 
+       y='Percent of Fatty Acids',
+       x='') +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+ala <- lipidomics.data %>%
+  group_by(Genotype) %>%
+  mutate(Genotype = fct_recode(Genotype,
+                               "Wild-Type"='WT',
+                               'adipTsc1 KO'='KO')) %>%
+  summarise(Average = mean(`%18:3 (n-3)`, na.rm=T),
+            SE= se(`%18:3 (n-3)`)) %>%
+  ggplot(aes(y=Average,
+         x=Genotype,
+         ymin=Average-SE,
+         ymax=Average+SE)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(title='ALA', 
+       y='Percent of Fatty Acids',
+       x='') +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+dha <- lipidomics.data %>%
+  group_by(Genotype) %>%
+  mutate(Genotype = fct_recode(Genotype,
+                               "Wild-Type"='WT',
+                               'adipTsc1 KO'='KO')) %>%
+  summarise(Average = mean(`%22:6 (n-3)`, na.rm=T),
+            SE= se(`%22:6 (n-3)`)) %>%
+  ggplot(aes(y=Average,
+         x=Genotype,
+         ymin=Average-SE,
+         ymax=Average+SE)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(title='DHA', 
+       y='Percent of Fatty Acids',
+       x='') +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+epa <- lipidomics.data %>%
+  group_by(Genotype) %>%
+  mutate(Genotype = fct_recode(Genotype,
+                               "Wild-Type"='WT',
+                               'adipTsc1 KO'='KO')) %>%
+  summarise(Average = mean(`%20:5 (n-3)`, na.rm=T),
+            SE= se(`%20:5 (n-3)`)) %>%
+  ggplot(aes(y=Average,
+         x=Genotype,
+         ymin=Average-SE,
+         ymax=Average+SE)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(title='EPA', 
+       y='Percent of Fatty Acids',
+       x='') +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+library(gridExtra)
+
+grid.arrange(aa, ala,epa,dha, nrow=1)
+
+n6.n3 <- lipidomics.data %>%
+  group_by(Genotype) %>%
+  mutate(Genotype = fct_recode(Genotype,
+                               "Wild-Type"='WT',
+                               'adipTsc1 KO'='KO')) %>%
+  summarise(Average = mean(`Ratio n6/n3`, na.rm=T),
+            SE= se(`Ratio n6/n3`)) %>%
+  ggplot(aes(y=Average,
+         x=Genotype,
+         ymin=Average-SE,
+         ymax=Average+SE)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(title='N6:N3 Ratio', 
+       y='',
+       x='') +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+mufa.sfa <- lipidomics.data %>%
+  group_by(Genotype) %>%
+  mutate(Genotype = fct_recode(Genotype,
+                               "Wild-Type"='WT',
+                               'adipTsc1 KO'='KO')) %>%
+  summarise(Average = mean(`MUFA/SFA`, na.rm=T),
+            SE= se(`MUFA/SFA`)) %>%
+  ggplot(aes(y=Average,
+         x=Genotype,
+         ymin=Average-SE,
+         ymax=Average+SE)) +
+  geom_bar(stat='identity') +
+  geom_errorbar(width=0.5) +
+  labs(title='Ratio of MUFA/SFA', 
+       y='',
+       x='') +
+  theme_classic() +
+  theme(text=element_text(size=16),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+grid.arrange(n6.n3, mufa.sfa, nrow=1)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

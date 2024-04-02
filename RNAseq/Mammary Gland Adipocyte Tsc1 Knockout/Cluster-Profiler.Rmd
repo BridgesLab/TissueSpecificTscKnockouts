@@ -1,0 +1,186 @@
+---
+title: "Cluster Profiler Analysis for aTSC Mammary Glands"
+author: "Dave Bridges"
+date: "December 21, 2020"
+output:
+  html_document:
+    highlight: tango
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    highlight: tango
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures-noura/',
+               echo=FALSE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+
+
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+# Purpose
+
+To use cluster profiler as part of DOSE to do gene set enrichments
+
+# Raw Data
+
+GSEA was run with folders put in this subfolder
+
+```{r data-input, message=FALSE}
+library(readr) #loads the readr package
+gene.list.file <- 'GSEA Ranked File - Effects of aTSC Knockout.rnk'
+gene.list <- read_tsv(gene.list.file, col_names = c('Gene','logFC'))
+
+gene.list.file.mouse <- 'GSEA Ranked File - Effects of aTSC Knockout - Mouse.rnk'
+gene.list.mouse <- read_tsv(gene.list.file.mouse, col_names = c('Gene','logFC'))
+
+gene.list.file.exp <- 'GSEA Ranked File - Effects of aTSC Knockout expressed.rnk'
+gene.list.exp <- read_tsv(gene.list.file.exp, col_names = c('Gene','logFC'))
+
+library(org.Hs.eg.db)
+gene.mapping <- stack(unlist(mget(x=gene.list$Gene,envir=org.Hs.egALIAS2EG,ifnotfound=NA)))
+
+library(tidyr)
+gene.list <-
+  gene.list %>%
+  full_join(gene.mapping, by=c('Gene'='ind')) %>%
+  na.omit
+
+genes <- gene.list %>% pull(logFC)
+names(genes) <- gene.list$values
+
+mouse.gene.list <- gene.list.mouse$logFC
+names(mouse.gene.list) <- gene.list.mouse$Gene
+```
+
+# Gene Ontology
+
+```{r go-bp, fig.cap="GO-BP Enrichment Plot"}
+library(clusterProfiler)
+gsea.gene.list <- gene.list$logFC
+names(gsea.gene.list) <- gene.list$values
+gsea.gene.list <- sort(gsea.gene.list, decreasing=T)
+#for mice
+library(org.Mm.eg.db)
+go.bp <- gseGO(geneList     = mouse.gene.list,
+              OrgDb        = org.Mm.eg.db,
+              keyType = "SYMBOL",
+              ont          = "BP",
+              minGSSize    = 10,
+              maxGSSize    = 500,
+              eps=0,
+              pvalueCutoff = 0.05,
+              verbose      = TRUE)
+
+go.bp %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant GO - BP Pathays")
+
+go.bp.file <- 'GSEA Results - Gene Ontology - Biological Pathways.csv'
+go.bp %>%
+  as.data.frame %>%
+  write_csv(file=go.bp.file)
+
+library(enrichplot)
+go.bp <- pairwise_termsim(go.bp, method="JC")
+go.bp.simplified <- simplify(go.bp, cutoff=0.7, by='p.adjust', select_fun=min)
+
+library(enrichplot)
+library(ggnewscale)
+cnetplot(go.bp.simplified, foldChange=mouse.gene.list,node_label="category")
+heatplot(go.bp.simplified, foldChange = mouse.gene.list)
+
+go.bp <- pairwise_termsim(go.bp, method="JC")
+emapplot(go.bp, layout="nicely", color="NES",
+         cex_line=0.5,
+         showCategory = 50,
+         cex_label_category=0.5)
+gseaplot2(go.bp, geneSetID = c(1,7,8))
+
+as.data.frame(go.bp) %>%
+  mutate(Significant = if_else(qvalues<0.05, 'Significant','NS')) %>%
+  mutate(Direction =  if_else(NES > 0, 'Upregulated', 'Downregulated'))  %>%
+  group_by(Significant,Direction) %>%
+  count %>%
+  kable(caption="Summary pf GO-BP pathways")
+```
+
+# Wikipathways
+
+From DisGeNET
+
+```{r wp, fig.cap="Wikipathways enrichment plot"}
+# need entrez ids
+
+
+mouse.gene.list.wp <- mouse.gene.list
+names(mouse.gene.list.wp) <- bitr(names(mouse.gene.list), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")$ENTREZID
+
+wp <- gseWP(geneList     = mouse.gene.list.wp, 
+             verbose=F,
+             organism="Mus musculus") 
+
+wp %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant Wikipathways")
+
+wp.file <- 'GSEA Results - Wikipathways.csv'
+wp %>%
+  as.data.frame %>%
+  write_csv(file=wp.file)
+
+gseaplot2(wp, geneSetID = 1:2)
+```
+
+
+# Cell Markers
+
+```{r cell-markers, fig.cap="Cell markers enrichment plot"}
+cell_marker_data <- vroom::vroom('http://bio-bigdata.hrbmu.edu.cn/CellMarker/download/Human_cell_markers.txt')
+
+## instead of `cellName`, users can use other features (e.g. `cancerType`)
+cells <- cell_marker_data %>%
+    dplyr::select(cellName, geneID) %>%
+    dplyr::mutate(geneID = strsplit(geneID, ', ')) %>%
+    tidyr::unnest()
+cm <- GSEA(genes, TERM2GENE = cells) 
+
+cm %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant cell types")
+
+cm.file <- 'GSEA Results - Cell Marker.csv'
+cm %>%
+  as.data.frame %>%
+  write_csv(file=cm.file)
+
+cm <- pairwise_termsim(cm, method="JC")
+emapplot(cm, color='NES')
+upsetplot(cm)
+ridgeplot(cm, fill="NES")
+```
+
+# Session Information
+
+```{r session-information, echo=T}
+sessionInfo()
+```

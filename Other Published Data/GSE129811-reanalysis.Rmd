@@ -1,0 +1,102 @@
+---
+title: "Re-Analysis of GSE129811"
+author: "Dave Bridges"
+date: "March 19, 2021"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This is based on the Forsstrom *et al.* paper which did RNAseq on muscle biopsies from patients with mitochondrial myopathy https://doi.org/10.1016/j.cmet.2019.08.019.  This script was most recently run on `r date()`.
+
+```{r data-entry}
+library(readr)
+counts.file <- "GSE129811_AWVM29samples.HTSeq.counts.tsv.gz"
+counts.data <- read_tsv(counts.file)
+
+patient.file <- "GSE129811_Readme_PatientControlMatching.txt"
+patient.data <- read_table(patient.file)
+
+#had to manually assemble from https://www.ncbi.nlm.nih.gov/gds/?term=GSE129811[ACCN]%20AND%20gsm[ETYP] used only time 0
+mapping.table <- data.frame(Sample='AWVM23_P0',Patient='Patient3',Time=0) %>%
+  add_row(Sample='AWVM20_P0',Patient='Patient4',Time=0) %>% 
+  add_row(Sample='AWVM26_P0',Patient='Patient5',Time=0) %>%
+  add_row(Sample='AWVM17_P0',Patient='Patient2',Time=0) %>%
+  add_row(Sample='AWVM13_C0',Patient='Control9',Time=0) %>%
+  add_row(Sample='AWVM15_C0',Patient='Control8',Time=0) %>%
+  add_row(Sample='AWVM09_C0',Patient='Control7',Time=0) %>%
+  add_row(Sample='AWVM11_C0',Patient='Control6',Time=0) %>%
+  add_row(Sample='AWVM03_C0',Patient='Control5',Time=0) %>%
+  add_row(Sample='AWVM07_C0',Patient='Control4',Time=0) %>%
+  add_row(Sample='AWVM05_C0',Patient='Control3',Time=0) %>%
+  add_row(Sample='AWVM01_C0',Patient='Control1',Time=0) %>%
+  mutate(Group=case_when(grepl('^Patient',Patient) ~ 'Myopathy',
+                         grepl('^Control',Patient) ~ 'Control'))
+  
+
+```
+
+Reanalyzed from counts file at `r counts.file`.
+
+Patient mapping is below
+
+```{r mapping.table}
+mapping.table %>% kable
+```
+
+# DESeq Analysis
+
+Used bulk, unpaired analysisof only the 14 time zero samples
+
+```{r deseq-analysis}
+library(DESeq2)
+counts.data.used <- 
+  counts.data %>%
+  select(GeneID,contains(mapping.table$Sample)) %>%
+  tibble::column_to_rownames('GeneID')
+
+dds <- DESeqDataSetFromMatrix(countData = counts.data.used,
+                              colData = mapping.table,
+                              design = ~ Group)
+
+dds$Sample <- relevel(dds$Group, ref="Control")
+dds <- DESeq(dds)
+res <- results(dds)
+```
+
+# Analysis
+
+```{r gse129811-analysis-plots}
+plotCounts(dds, gene='ENSG00000170290', intgroup="Group",main="SLN") #SLN
+plotCounts(dds, gene='ENSG00000128272', intgroup="Group",main="ATF4") #ATF4
+plotCounts(dds, gene='ENSG00000130513', intgroup="Group",main="GDF15") #GDF15
+plotCounts(dds, gene='ENSG00000116717', intgroup="Group",main="GADD45A") #GADD45A
+```
+```{r session-info}
+sessionInfo()
+```

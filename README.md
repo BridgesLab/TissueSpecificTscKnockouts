@@ -13,9 +13,10 @@ This repository contains raw data for studies done by the [Bridges Lab](http://b
 
 | Publication | Dataset | Tag |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| Stephenson EJ, Redd JR, Snyder DS, Tran QT, Lu B, Peloquin MJ, Mulcahy MC, Harvey I, Fisher K, Han JC, Qi N, Saltiel AR, and Bridges D. Skeletal Muscle mTORC1 Activation Increases Energy Expenditure and Reduces Longevity in Mice. bioRxiv. [doi:10.1101/720540](https://doi.org/10.1101/720540). | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg)](http://dx.doi.org/10.5281/zenodo.3359627) | [muscleTSC-v1.0](https://github.com/BridgesLab/TissueSpecificTscKnockouts/releases/tag/muscleTSC-v1.0 ) |
-| Cousineau CM, Snyder D, Redd JR, Turner S, Carr T and Bridges D.  Reduced beta-hydroxybutyrate disposal after ketogenic diet feeding in mice. | | |
 
+| Stephenson EJ, Redd JR, Snyder DS, Tran QT, Lu B, Peloquin MJ, Mulcahy MC, Harvey I, Fisher K, Han JC, Qi N, Saltiel AR, and Bridges D. Skeletal Muscle mTORC1 Activation Increases Energy Expenditure and Reduces Longevity in Mice. bioRxiv. [doi:10.1101/720540](https://doi.org/10.1101/720540). | [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.22193.svg)](http://dx.doi.org/10.5281/zenodo.3359627) | [muscleTSC-v1.0](https://github.com/BridgesLab/TissueSpecificTscKnockouts/releases/tag/muscleTSC-v1.0 ) |
+| El Habbal N, Meyer AC, Hafner H, Redd JR, Carlson Z, Mulcahy MC, Gregg B, Bridges D. A mouse model of adipocyte mTORC1 activation increases milk fat. bioRxiv. [doi:10.1101/2021.07.01.450596](https://www.biorxiv.org/content/10.1101/2021.07.01.450596v1). | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106602.svg)](https://doi.org/10.5281/zenodo.5106602) | [mammaryTSC-v0.1](https://github.com/BridgesLab/TissueSpecificTscKnockouts/releases/tag/mammaryTSC-v0.1) |
+| Cousineau CM, Snyder D, Redd JR, Turner S, Carr T and Bridges D.  Reduced beta-hydroxybutyrate disposal after ketogenic diet feeding in mice. | | |
 
 # Struture of this Repository
 
@@ -35,5 +36,5 @@ Other Published Data
 
 # Licence
 
-This CushingAcromegalyStudy data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0.  For more information see [LICENSE](https://github.com/BridgesLab/CushingAcromegalyStudy/blob/master/LICENSE)
+This TissueSpecificTscKnockouts data is made available under the Open Data Commons Attribution License: http://opendatacommons.org/licenses/by/1.0.  For more information see [LICENSE](https://github.com/BridgesLab/TissueSpecificTscKnockouts/blob/master/LICENSE)
 

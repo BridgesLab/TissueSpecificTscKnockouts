@@ -1,0 +1,122 @@
+---
+title: "Re-Analysis of GSE158605"
+author: "Dave Bridges"
+date: "March 19, 2021"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+#figures makde will go to directory called figures, will make them as both png and pdf files 
+opts_chunk$set(fig.path='figures/',
+               echo=TRUE, warning=FALSE, message=FALSE,dev=c('png','pdf'))
+options(scipen = 2, digits = 3)
+# set echo and message to TRUE if you want to display code blocks and code output respectively
+knitr::knit_hooks$set(inline = function(x) {
+  knitr:::format_sci(x, 'md')
+})
+superpose.eb <- function (x, y, ebl, ebu = ebl, length = 0.08, ...)
+  arrows(x, y + ebu, x, y - ebl, angle = 90, code = 3,
+  length = length, ...)
+  
+se <- function(x) sd(x, na.rm=T)/sqrt(length(x))
+#load these packages, nearly always needed
+library(tidyr)
+library(dplyr)
+library(broom)
+# sets maize and blue color scheme
+color.scheme <- c('#00274c', '#ffcb05')
+```
+
+This is based on the Torrence *et al.* paper which did RNAseq on TSC knockotu cells treated with tunicamycin, insulin or rapamycirapamycin https://www.ncbi.nlm.nih.gov/pubmed/33646118.  This script was most recently run on `r date()`.
+
+```{r data-entry}
+library(readr)
+counts.file <- "GSE158605_Tm_counts.csv.gz"
+counts.data <- read_csv(counts.file) %>%
+    tibble::column_to_rownames('geneID')
+
+mapping.data <- counts.data %>%
+  colnames %>% 
+  data.frame() %>%
+  rename_at(1,~"Sample") %>%
+  mutate(Genotype = case_when(grepl('^WT',Sample) ~ "WT",
+                              grepl('^KO',Sample) ~ "ATF4_KO")) %>%
+  mutate(Treatment = case_when(grepl('Tu',Sample) ~ 'Tunicamycin',
+                               grepl('MC',Sample) ~ 'MC',
+                               TRUE~'Vehicle')) %>%
+  mutate(Time = case_when(grepl('4h',Sample)~4,
+                          grepl('8h',Sample)~8,
+                          grepl('16h',Sample)~16,
+                          TRUE~0)) %>%
+  mutate_all(.funs=factor) %>%
+  mutate(Genotype = relevel(Genotype,ref="WT"),
+         Treatment = relevel(Treatment, ref="Vehicle")) #left time as a factor
+
+  
+
+```
+
+Reanalyzed from counts file at `r counts.file`.
+
+# DESeq Analysis
+
+```{r deseq-analysis}
+library(DESeq2)
+
+dds <- DESeqDataSetFromMatrix(countData = counts.data,
+                              colData = mapping.data,
+                              design = ~ Treatment+Time+Genotype+Treatment:Genotype)
+
+dds <- DESeq(dds)
+res <- results(dds)
+```
+
+# Analysis
+
+```{r GSE158605-analysis-plots}
+plotCounts(dds, gene='ENSMUSG00000042045', intgroup=c('Treatment','Time','Genotype'),main="SLN") #SLN
+plotCounts(dds, gene='ENSMUSG00000042406', intgroup=c('Treatment','Time','Genotype'),main="ATF4") #ATF4
+plotCounts(dds, gene='ENSMUSG00000038508', intgroup=c('Treatment','Genotype'),main="GDF15") #GDF15
+plotCounts(dds, gene='ENSMUSG00000036390', intgroup=c('Genotype'),main="GADD45A") #GADD45A
+
+library(ggplot2)
+plotCounts(dds, gene="ENSMUSG00000036390", 
+           intgroup=c('Treatment','Time','Genotype'),
+          returnData=TRUE) %>% 
+  ggplot(aes(x = Time, y = count, color = Genotype)) + 
+  geom_point(position=position_jitter(w = 0.1,h = 0)) +
+  labs(title="GADD45A") +
+  facet_grid(.~Treatment)
+
+plotCounts(dds, gene="ENSMUSG00000038508", 
+           intgroup=c('Treatment','Time','Genotype'),
+          returnData=TRUE) %>% 
+  ggplot(aes(x = Time, y = count, color = Genotype)) + 
+  geom_point(position=position_jitter(w = 0.1,h = 0)) +
+  labs(title="GDF15") +
+  facet_grid(.~Treatment)
+
+plotCounts(dds, gene="ENSMUSG00000042406", 
+           intgroup=c('Treatment','Time','Genotype'),
+          returnData=TRUE) %>% 
+  ggplot(aes(x = Time, y = count, color = Genotype)) + 
+  geom_point(position=position_jitter(w = 0.1,h = 0)) +
+  labs(title="ATF4") +
+  facet_grid(.~Treatment)
+
+plotCounts(dds, gene="ENSMUSG00000042045", 
+           intgroup=c('Treatment','Time','Genotype'),
+          returnData=TRUE) %>% 
+  ggplot(aes(x = Time, y = count, color = Genotype)) + 
+  geom_point(position=position_jitter(w = 0.1,h = 0)) +
+  labs(title="SLN") +
+  facet_grid(.~Treatment)
+```
+```{r session-info}
+sessionInfo()
+```
