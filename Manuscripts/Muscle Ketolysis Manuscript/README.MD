@@ -8,9 +8,9 @@ This document indicates where the raw data for each Figure panel can be found, a
 
 | Figure | Script | Figure |
 | ------ | ------ | ------ |
-| Figure 1A | Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance/Ketone Tolerance Tests.Rmd | ktt-lineplot-2.pdf |
-| Figure 1B | Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance/Ketone Tolerance Tests.Rmd | ketone-tolerance-auc-1.pdf |
-| Figure 1C | | |
+| Figure 1A | RNAseq/scripts/barplots.Rmd | ketosis_muscle-barplot-1.pdf |
+| Figure 1B | Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance/Ketone Tolerance Tests.Rmd | ktt-lineplot-2.pdf |
+| Figure 1C | Mouse Data/Muscle Tsc1 Knockout/Ketone Tolerance/Ketone Tolerance Tests.Rmd | ketone-tolerance-auc-1.pdf |
 | Figure 2A | Mouse Data/AJ Ketogenic Diet/Ketone Tolerance Tests.Rmd | ktt-lineplot-2.pdf |
 | Figure 2B | Mouse Data/AJ Ketogenic Diet/Ketone Tolerance Tests.Rmd | ktt-lineplot-3.pdf |
 | Figure 2C | Mouse Data/AJ Ketogenic Diet/Ketone Tolerance Tests.Rmd | ktt-auc-norm-2.pdf |
