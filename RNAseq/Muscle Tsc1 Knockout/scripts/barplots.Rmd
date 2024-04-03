@@ -101,13 +101,13 @@ fatty_acid_uptake_no_FABP3 <- c('Ldlr','Scarb1','Lpl','Abcc1','Cd36','Fatp1','Go
 cb_receptors <- c('Cnr1','Cnr2')
 fabp_cd36 <- c('Fabp3','Cd36')
 serca <- c('Atp2a1','Atp2a2','Atp2a3')
-
+creatine_kinase <- c('Cka','Ckb','Ckm','Ckmt1','Ckmt2','Slc6a8','Gatm','Gamt')
 mitochondrial_genes <- c('mt-Nd1','mt-Nd2','mt-Nd4','mt-Nd4l','mt-Nd5','mt-Co1','mt-Co2','mt-Co3','mt-Atp6','mt-Atp8','mt-Cytb','mt-Rnr1','mt-Rnr2')
 uncouplers <- c('Ucp1','Ucp2','Ucp3')
 Jnk_related_genes <- c('Slc25a13','Slc1a1','Slc3a1','Slc1a2','Slc1a4','Mdfi','Map3k9')
 aa_transporters <- c(paste('Slc1a',seq(1,7), sep=""), paste('Slc3a',seq(1,2), sep="") ,c('Slc6a14','Slc6a15','Slc6a17','Slc6a18','Slc6a19'), paste('Slc7a',seq(1,14), sep="") ,paste('Slc36a',seq(1,4), sep=""),paste('Slc38a',seq(1,11), sep=""),paste('Slc43a',seq(1,5), sep=""))
 aa_transporters_up <- c('Slc1a1','Slc1a2','Slc1a4','Slc3a1','Slc3a2','Slc7a1','Slc7a5','Slc7a6','Slc7a13','Slc6a17','Slc6a18','Slc6a19','Slc38a1','Slc38a10','Slc43a2')
-mitofusins <- c('Mfn1','Mfn2','Opa1')
+mitofusins <- c('Mfn1','Mfn2','Opa1','Mgm1','Drp1','Dnm1')
 
 transporters_up <- c('Slc1a1','Slc1a2','Slc1a4','Slc3a1','Slc3a2','Slc7a1','Slc7a5','Slc7a6','Slc7a13','Slc6a17','Slc6a18','Slc6a19','Slc38a1','Slc38a10','Slc43a2','Cd36','Fabp3')
 jnk_activators <- c('Map3k1','Map3k4','Map3k9','Map3k10','Map3k11','Map3k5','Map2k4','Map2k7','Mapk8','Mapk9','Mapk10','Jun','Fos','Atf4')
@@ -142,7 +142,7 @@ atf4_related <- c('Atf4','Eif2b1','Eif2b2','Cebpa','Cebpb','Cebpd','Cebpg','Maf'
 atf4_muscle <- c('Gadd45a','Cdkn1a','Gdf15','Slc7a5','Slc38a2','Slc6a9', 'Aars', 'Iars', 'Nars', 'Lars', 'Sars', 'Mars', 'Cars', 'Yars', 'Tars','Trib3','Atf3','Atf5','Ddit3')
 atf4_muscle_metabolic <- c('Got1','Gpt2','Mthfd2','Aldh18a1','Aldh1l2','Gpx1','Mgstl1','Eifebp1', 'Eif2s2','Eif3c','Grb10', 'Nurp1','Herpudl', 'Igfbp7','Arhgef2','Vegfa','Cebpg','Atf5','Fgf21')
 atf4_targets <- c('Gadd45a','Cdkn1a','Grb10','Gdf15','Slc7a5','Lars','Nars','Sars','Ddit3','Hspa5')
-gene.data.name <- c('tsc_isoforms','glycogen_genes','pp1_regulatory_subunits','interleukins','srebp','linoleate_metabolism','myokines','tg_synthesis','lipolysis','oglnac_metabolisn','ribosomes','ppar_isoforms','b_oxidation','ppard_targets','myosin_heavy_chain','myosin_heavy_chain_main','slow_twitch_genes','fast_twitch_genes','myotubular_degradation','muscle_differentiation','autophagy','mitochondrial_genes','fatty_acid_uptake','fatty_acid_uptake_no_FABP3','fabp_cd36','cb_receptors','oxidative_markers_rosenbaum','serca','uncouplers','Jnk_related_genes','aa_transporters','aa_transporters_up','jnk_activators','hippo','guridi_genes','guridi_genes_2','FGF21_related','MitochondrialCalcium_genes','mitofusins','ca_reuptake','er_stress','irx_genes','ketosis_muscle','ketone_body_generation','ketosis_receptors','pfk_2_isoforms','er_stress_select','gdf_isoforms','tgf_beta_superfamily','fiber_markers','sln','bcaa','glo','atf4_related','atf4_muscle','atf4_muscle_metabolic','atf4_targets')
+gene.data.name <- c('tsc_isoforms','glycogen_genes','pp1_regulatory_subunits','interleukins','srebp','linoleate_metabolism','myokines','tg_synthesis','lipolysis','oglnac_metabolisn','ribosomes','ppar_isoforms','b_oxidation','ppard_targets','myosin_heavy_chain','myosin_heavy_chain_main','slow_twitch_genes','fast_twitch_genes','myotubular_degradation','muscle_differentiation','autophagy','mitochondrial_genes','fatty_acid_uptake','fatty_acid_uptake_no_FABP3','fabp_cd36','cb_receptors','oxidative_markers_rosenbaum','serca','uncouplers','Jnk_related_genes','aa_transporters','aa_transporters_up','jnk_activators','hippo','guridi_genes','guridi_genes_2','FGF21_related','MitochondrialCalcium_genes','mitofusins','ca_reuptake','er_stress','irx_genes','ketosis_muscle','ketone_body_generation','ketosis_receptors','pfk_2_isoforms','er_stress_select','gdf_isoforms','tgf_beta_superfamily','fiber_markers','sln','bcaa','glo','atf4_related','atf4_muscle','atf4_muscle_metabolic','atf4_targets','creatine_kinase')
 
 for (name in gene.data.name){
   #name <- as.name(name) #convert string to variable name
