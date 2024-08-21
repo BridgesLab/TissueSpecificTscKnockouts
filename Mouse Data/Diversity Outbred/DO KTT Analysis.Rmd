@@ -377,6 +377,51 @@ library(broom)
 
 The ratio of $SD_{followup}/SD_{baseline}$ was `r filter(summary.statistics, Measure %in% c('AUC.Baseline.Cor','AUC.Followup.Cor'))[2,'sd']/filter(summary.statistics, Measure %in% c('AUC.Baseline.Cor','AUC.Followup.Cor'))[1,'sd']`
 
+## Bayesian Approach to Baseline vs Followup
+
+First I wanted to evaluate the relationship between baseline and followup KTT (area under the curve, baseline corrected) in the DO mice.  I used default priors with a normal (gausian) distribution
+
+```{r baseline-followup-bayesian}
+#| output: false
+library(brms)
+
+auc.fit.brms <- brm(F_AUC.bl~B_AUC.bl,
+                    data=DO.all.AUC.data,
+                  sample_prior = TRUE)
+
+prior_summary(auc.fit.brms) %>% kable(caption="Prior probabilities summary for relationship betwen baseline and followup AUC")
+kable(data.frame(
+  Parameter = names(rhat(auc.fit.brms)),
+  Rhat = format(rhat(auc.fit.brms), nsmall = 5)),
+caption="Rhat values for model fitting between baseline and followup (should b between 0.99 and 1.01 for convergence",
+row.names = F)
+
+library(broom.mixed)
+tidy(auc.fit.brms) %>% kable(caption="Summary of the relationship between baseline and followup")
+plot(auc.fit.brms)
+hypothesis(auc.fit.brms, "B_AUC.bl>0") # testing for whether baseline AUC has any effect on followup AUC
+
+as_draws_df(auc.fit.brms) %>%
+  ggplot(aes(x=b_B_AUC.bl)) +
+  geom_density(fill=color.scheme[1]) +
+  geom_vline(xintercept=0,color=color.scheme[2],lty=2) +
+  labs(y="",
+       x="Effect of baseline AUC on followup AUC",
+       title="Posterior probabilities") +
+  theme_classic(base_size=16)
+kable(bayes_R2(auc.fit.brms),caption="Estimates for R2 between baseline and followup AUC")
+
+
+r2.probs <- bayes_R2(auc.fit.brms, summary=F) #summary false is to get the posterior probabilities
+ggplot(data=r2.probs, aes(x=R2)) +
+  geom_density(fill=color.scheme[1]) +
+  geom_vline(xintercept=0,color=color.scheme[2],lty=2) +
+  labs(y="",
+       x="R2",
+       title="Posterior probabilities for R2") +
+  lims(x=c(0,1)) +
+  theme_classic(base_size=16)
+```
 
 # Association with Cholesterol
 
