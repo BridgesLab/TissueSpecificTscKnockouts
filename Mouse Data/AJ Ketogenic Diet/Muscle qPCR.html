@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Cody Cousineau, Trey Carr, and Dave Bridges">
+<meta name="dcterms.date" content="2019-08-08">
+
+<title>Ketone Tolerance in CD/KD A/J Mice</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="Muscle qPCR_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Muscle qPCR_files/libs/quarto-html/quarto.js"></script>
+<script src="Muscle qPCR_files/libs/quarto-html/popper.min.js"></script>
+<script src="Muscle qPCR_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Muscle qPCR_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Muscle qPCR_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Muscle qPCR_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Muscle qPCR_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Muscle qPCR_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Muscle qPCR_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Ketone Tolerance in CD/KD A/J Mice</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Cody Cousineau, Trey Carr, and Dave Bridges </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 8, 2019</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This script was most recently run on Tue Jan 16 12:18:41 2024 and can be found in /Users/davebrid/Documents/GitHub/TissueSpecificTscKnockouts/Mouse Data/AJ Ketogenic Diet.</p>
+<section id="purpose" class="level1">
+<h1>Purpose</h1>
+<p>Analyse mRNA expression from AJ Muscles</p>
+</section>
+<section id="experimental-details" class="level1">
+<h1>Experimental Details</h1>
+<p>qPCR for several ketolytic genes, done on three separate days</p>
+</section>
+<section id="raw-data" class="level1">
+<h1>Raw Data</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>aj.mapping.file <span class="ot">&lt;-</span> <span class="st">'AJ Mapping Data.csv'</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>run.file<span class="fl">.1</span>  <span class="ot">&lt;-</span> <span class="st">'Muscle qPCR Ketolysis Well Results - Plate 1.csv'</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>run.file<span class="fl">.2</span>  <span class="ot">&lt;-</span> <span class="st">'Muscle qPCR Ketolysis Well Results - Plate 2.csv'</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mapping.data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(aj.mapping.file) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Mouse=</span><span class="fu">as.factor</span>(Mouse))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>run.data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">read_csv</span>(run.file<span class="fl">.1</span>,<span class="at">na=</span><span class="st">"Undetermined"</span>, <span class="at">skip=</span><span class="dv">25</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">read_csv</span>(run.file<span class="fl">.2</span>,<span class="at">na=</span><span class="st">"Undetermined"</span>, <span class="at">skip=</span><span class="dv">25</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"Mouse"</span><span class="ot">=</span><span class="st">"Sample"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Mouse<span class="sc">!=</span><span class="st">"No Sample"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Mouse=</span><span class="fu">as.factor</span>(Mouse))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>mapped.run.data <span class="ot">&lt;-</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  run.data <span class="sc">%&gt;%</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mapping.data, <span class="at">by=</span><span class="st">"Mouse"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Mouse,Diet,Cohort,Sex,Target,Cq,<span class="st">`</span><span class="at">Well Position</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Diet =</span> <span class="fu">fct_recode</span>(Diet,<span class="st">"KD"</span><span class="ot">=</span><span class="st">"Ketogenic"</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                          <span class="st">"CD"</span><span class="ot">=</span><span class="st">"Control"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The mapping file is in AJ Mapping Data.csv and the two qPCR runs are in Muscle qPCR Ketolysis Well Results - Plate 1.csv and Muscle qPCR Ketolysis Well Results - Plate 2.csv.</p>
+</section>
+<section id="analysis" class="level1">
+<h1>Analysis</h1>
+</section>
+<section id="quality-check" class="level1">
+<h1>Quality Check</h1>
+<p>Rearranged data so that replicates are in long format</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>qpcr.data.unclean <span class="ot">&lt;-</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  mapped.run.data <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Diet,Cohort,Sex,Mouse,Target,Cq) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Cohort,Sex,Mouse,Target) <span class="sc">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Cq=</span><span class="fu">as.numeric</span>(Cq)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Ct.mean =</span> <span class="fu">mean</span>(Cq,<span class="at">na.rm=</span>T),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">Ct.range =</span> <span class="fu">max</span>(Cq,<span class="at">na.rm=</span>T)<span class="sc">-</span><span class="fu">min</span>(Cq,<span class="at">na.rm=</span>T),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">n=</span><span class="fu">length</span>(Cq))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>tech.outliers <span class="ot">&lt;-</span> <span class="fu">arrange</span>(qpcr.data.unclean,<span class="sc">-</span>Ct.range) <span class="sc">%&gt;%</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Ct.range<span class="sc">&gt;</span><span class="dv">1</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>tech.outliers <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Technical Outliers"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Technical Outliers</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Diet</th>
+<th style="text-align: right;">Cohort</th>
+<th style="text-align: left;">Sex</th>
+<th style="text-align: left;">Mouse</th>
+<th style="text-align: left;">Target</th>
+<th style="text-align: right;">Ct.mean</th>
+<th style="text-align: right;">Ct.range</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">1750</td>
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: right;">27.3</td>
+<td style="text-align: right;">2.80</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4104</td>
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: right;">26.7</td>
+<td style="text-align: right;">2.09</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: right;">29.6</td>
+<td style="text-align: right;">2.04</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Rplp0</td>
+<td style="text-align: right;">23.2</td>
+<td style="text-align: right;">1.87</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">1753</td>
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: right;">32.4</td>
+<td style="text-align: right;">1.66</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: right;">26.9</td>
+<td style="text-align: right;">1.59</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: right;">26.0</td>
+<td style="text-align: right;">1.26</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">4095</td>
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: right;">31.5</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">1752</td>
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: right;">31.6</td>
+<td style="text-align: right;">1.03</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#samples that are technical outliers</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mapped.run.data <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span>,Mouse<span class="sc">==</span><span class="st">"1753"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(Target,Mouse,Cq,<span class="st">`</span><span class="at">Well Position</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  kable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Target</th>
+<th style="text-align: left;">Mouse</th>
+<th style="text-align: left;">Cq</th>
+<th style="text-align: left;">Well Position</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">1753</td>
+<td style="text-align: left;">31.77053828853247</td>
+<td style="text-align: left;">A1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">1753</td>
+<td style="text-align: left;">33.43067393781932</td>
+<td style="text-align: left;">A7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">1753</td>
+<td style="text-align: left;">31.875779261704572</td>
+<td style="text-align: left;">A13</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>run.data.clean <span class="ot">&lt;-</span> mapped.run.data <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span><span class="sc">&amp;</span><span class="st">`</span><span class="at">Well Position</span><span class="st">`</span><span class="sc">==</span><span class="st">"E13"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span><span class="sc">&amp;</span><span class="st">`</span><span class="at">Well Position</span><span class="st">`</span><span class="sc">==</span><span class="st">"A7"</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>qpcr.data <span class="ot">&lt;-</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  run.data.clean <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Diet,Cohort,Sex,Mouse,Target,Cq) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Cq=</span><span class="fu">as.numeric</span>(Cq)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Cohort,Sex,Mouse,Target) <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Ct.mean =</span> <span class="fu">mean</span>(Cq,<span class="at">na.rm=</span>T),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">Ct.range =</span> <span class="fu">max</span>(Cq,<span class="at">na.rm=</span>T)<span class="sc">-</span><span class="fu">min</span>(Cq,<span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="normalization" class="level1">
+<h1>Normalization</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>remove.mice <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>analysed.data <span class="ot">&lt;-</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  qpcr.data <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  ungroup <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Mouse <span class="sc">%in%</span> remove.mice)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Cohort,Sex,Mouse) <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Ct.norm =</span> Ct.mean<span class="sc">-</span>Ct.mean[Target<span class="sc">==</span><span class="st">"Rplp0"</span>]) <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Sex,Target,Mouse) <span class="sc">%&gt;%</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Ct.quant =</span> <span class="dv">2</span><span class="sc">^-</span>Ct.norm) </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>summarized.data <span class="ot">&lt;-</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  analysed.data <span class="sc">%&gt;%</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Sex,Target) <span class="sc">%&gt;%</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Mean.exp =</span> <span class="fu">mean</span>(Ct.quant),</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">Mean.se =</span> <span class="fu">se</span>(Ct.quant)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Target) <span class="sc">%&gt;%</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Mean.rel =</span> Mean.exp<span class="sc">/</span>Mean.exp[Diet<span class="sc">==</span><span class="st">"CD"</span><span class="sc">&amp;</span>Sex<span class="sc">==</span><span class="st">"F"</span>],</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">Mean.rel.se =</span> Mean.se<span class="sc">/</span>Mean.exp[Diet<span class="sc">==</span><span class="st">"CD"</span><span class="sc">&amp;</span>Sex<span class="sc">==</span><span class="st">"F"</span>]) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="quality-check-1" class="level2">
+<h2 class="anchored" data-anchor-id="quality-check-1">Quality Check</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tech.outliers <span class="ot">&lt;-</span> <span class="fu">arrange</span>(qpcr.data,<span class="sc">-</span>Ct.range)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>tech.outliers <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Ct.range<span class="sc">&gt;</span><span class="dv">1</span>,Ct.mean<span class="sc">&lt;</span><span class="dv">30</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Technical Outliers"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Technical Outliers</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Diet</th>
+<th style="text-align: right;">Cohort</th>
+<th style="text-align: left;">Sex</th>
+<th style="text-align: left;">Mouse</th>
+<th style="text-align: left;">Target</th>
+<th style="text-align: right;">Ct.mean</th>
+<th style="text-align: right;">Ct.range</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4104</td>
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: right;">26.7</td>
+<td style="text-align: right;">2.09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: right;">29.6</td>
+<td style="text-align: right;">2.04</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Rplp0</td>
+<td style="text-align: right;">23.2</td>
+<td style="text-align: right;">1.87</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: right;">26.9</td>
+<td style="text-align: right;">1.59</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">4108</td>
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: right;">26.0</td>
+<td style="text-align: right;">1.26</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#biological outliers</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>analysed.data <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Diet,Sex,Target) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Group.mean=</span><span class="fu">mean</span>(Ct.quant),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">Diff.from.mean =</span> Ct.quant<span class="sc">-</span><span class="fu">mean</span>(Ct.quant)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span><span class="fu">abs</span>(Diff.from.mean)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  head <span class="sc">%&gt;%</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Potential biolocigal outliers"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Potential biolocigal outliers</caption>
+<colgroup>
+<col style="width: 5%">
+<col style="width: 7%">
+<col style="width: 4%">
+<col style="width: 6%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Diet</th>
+<th style="text-align: right;">Cohort</th>
+<th style="text-align: left;">Sex</th>
+<th style="text-align: left;">Mouse</th>
+<th style="text-align: left;">Target</th>
+<th style="text-align: right;">Ct.mean</th>
+<th style="text-align: right;">Ct.range</th>
+<th style="text-align: right;">Ct.norm</th>
+<th style="text-align: right;">Ct.quant</th>
+<th style="text-align: right;">Group.mean</th>
+<th style="text-align: right;">Diff.from.mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">1746</td>
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: right;">24.4</td>
+<td style="text-align: right;">0.256</td>
+<td style="text-align: right;">1.79</td>
+<td style="text-align: right;">0.289</td>
+<td style="text-align: right;">0.175</td>
+<td style="text-align: right;">0.114</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">1748</td>
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: right;">25.7</td>
+<td style="text-align: right;">0.439</td>
+<td style="text-align: right;">1.84</td>
+<td style="text-align: right;">0.279</td>
+<td style="text-align: right;">0.175</td>
+<td style="text-align: right;">0.104</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">4095</td>
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: right;">26.5</td>
+<td style="text-align: right;">0.527</td>
+<td style="text-align: right;">3.21</td>
+<td style="text-align: right;">0.108</td>
+<td style="text-align: right;">0.210</td>
+<td style="text-align: right;">-0.102</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">4086</td>
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: right;">24.2</td>
+<td style="text-align: right;">0.076</td>
+<td style="text-align: right;">2.87</td>
+<td style="text-align: right;">0.137</td>
+<td style="text-align: right;">0.210</td>
+<td style="text-align: right;">-0.073</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">4094</td>
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: right;">21.9</td>
+<td style="text-align: right;">0.158</td>
+<td style="text-align: right;">1.82</td>
+<td style="text-align: right;">0.283</td>
+<td style="text-align: right;">0.210</td>
+<td style="text-align: right;">0.073</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">4102</td>
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: right;">27.1</td>
+<td style="text-align: right;">0.130</td>
+<td style="text-align: right;">3.83</td>
+<td style="text-align: right;">0.070</td>
+<td style="text-align: right;">0.143</td>
+<td style="text-align: right;">-0.073</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="bdh1" class="level1">
+<h1>BDH1</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>bdh1.plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(summarized.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>Mean.rel,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymin=</span>Mean.rel<span class="sc">-</span>Mean.rel.se,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymax=</span>Mean.rel<span class="sc">+</span>Mean.rel.se,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>Sex,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill=</span>Diet)) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">'identity'</span>,<span class="at">position=</span><span class="st">"dodge"</span>,<span class="at">width=</span><span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.75</span>)) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(<span class="fl">0.3</span>,<span class="fl">0.9</span>),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background=</span><span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="fu">alpha</span>(<span class="st">"white"</span>, <span class="dv">0</span>)),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">#legend.text = element_text(size = 6),</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"italic"</span>)) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>()<span class="sc">+</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Bdh1"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Relative Expression"</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">""</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(analysed.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Bdh1"</span>),</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>Ct.quant,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>Sex,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill=</span>Diet)) <span class="sc">+</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)<span class="sc">+</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Bdh1"</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Relative Expression"</span>,</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="figures/bdh1-muscle-expression-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>bdh1.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="figures/bdh1-muscle-expression-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="oxct1" class="level1">
+<h1>OXCT1</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(summarized.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Oxct1"</span>),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>Mean.rel,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymin=</span>Mean.rel<span class="sc">-</span>Mean.rel.se,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymax=</span>Mean.rel<span class="sc">+</span>Mean.rel.se,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>Sex,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill=</span>Diet)) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">'identity'</span>,<span class="at">position=</span><span class="st">"dodge"</span>,<span class="at">width=</span><span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.75</span>)) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"italic"</span>)) <span class="sc">+</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_grey</span>()<span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Oxct1"</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Relative Expression"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">""</span>) <span class="ot">-&gt;</span> oxct.plot</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>oxct.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="figures/oxct1-muscle-expression-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(analysed.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Oxct1"</span>),</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>Ct.quant,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>Sex,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill=</span>Diet)) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)<span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Oxct1"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Relative Expression"</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="figures/oxct1-muscle-expression-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="slc16a1" class="level1">
+<h1>SLC16A1</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(summarized.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Slc16a1"</span>),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>Mean.rel,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymin=</span>Mean.rel<span class="sc">-</span>Mean.rel.se,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymax=</span>Mean.rel<span class="sc">+</span>Mean.rel.se,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>Sex,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill=</span>Diet)) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">'identity'</span>,<span class="at">position=</span><span class="st">"dodge"</span>,<span class="at">width=</span><span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.75</span>)) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"italic"</span>))<span class="sc">+</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_grey</span>()<span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Slc16a1"</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Relative Expression"</span>,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">""</span>) <span class="ot">-&gt;</span> slc16a1.plot</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>slc16a1.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="figures/slc16a1-muscle-expression-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(analysed.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Target<span class="sc">==</span><span class="st">"Slc16a1"</span>),</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y=</span>Ct.quant,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x=</span>Sex,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill=</span>Diet)) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_classic</span>(<span class="at">base_size=</span><span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)<span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Slc16a1"</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Relative Expression"</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="figures/slc16a1-muscle-expression-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="combined-plots" class="level2">
+<h2 class="anchored" data-anchor-id="combined-plots">Combined Plots</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(slc16a1.plot,bdh1.plot,oxct.plot,<span class="at">nrow=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="figures/ketolysis-combined-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="statistics" class="level1">
+<h1>Statistics</h1>
+<section id="sample-size" class="level2">
+<h2 class="anchored" data-anchor-id="sample-size">Sample Size</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>analysed.data <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Sex,Diet,Target) <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  count <span class="sc">%&gt;%</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span><span class="st">"Target"</span>,<span class="at">values_from =</span> <span class="st">"n"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Group sizes for analyzed data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Group sizes for analyzed data</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Sex</th>
+<th style="text-align: left;">Diet</th>
+<th style="text-align: right;">Bdh1</th>
+<th style="text-align: right;">Oxct1</th>
+<th style="text-align: right;">Rplp0</th>
+<th style="text-align: right;">Slc16a1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">CD</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">KD</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">17</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="multivariate-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="multivariate-analysis">Multivariate Analysis</h2>
+<p>Did 2x2 ANOVA analyses</p>
+<section id="gene-diet-analyses" class="level3">
+<h3 class="anchored" data-anchor-id="gene-diet-analyses">Gene-Diet Analyses</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>interaction.results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (gene <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"Bdh1"</span>,<span class="st">"Oxct1"</span>,<span class="st">"Slc16a1"</span>)) {</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>temp.result <span class="ot">&lt;-</span> <span class="fu">lm</span>(Ct.quant <span class="sc">~</span> Diet<span class="sc">*</span>Sex,<span class="at">data=</span><span class="fu">filter</span>(analysed.data, Target<span class="sc">==</span>gene)) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Gene=</span>gene) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">"DietKD:SexM"</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>interaction.results <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(interaction.results,temp.result)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(interaction.results,<span class="at">caption=</span><span class="st">"Test for Diet-Sex Interactions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Test for Diet-Sex Interactions</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: left;">Gene</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">DietKD:SexM</td>
+<td style="text-align: right;">-0.012</td>
+<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">-1.080</td>
+<td style="text-align: right;">0.287</td>
+<td style="text-align: left;">Bdh1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DietKD:SexM</td>
+<td style="text-align: right;">-0.030</td>
+<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">-1.671</td>
+<td style="text-align: right;">0.103</td>
+<td style="text-align: left;">Oxct1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DietKD:SexM</td>
+<td style="text-align: right;">-0.020</td>
+<td style="text-align: right;">0.032</td>
+<td style="text-align: right;">-0.625</td>
+<td style="text-align: right;">0.536</td>
+<td style="text-align: left;">Slc16a1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>main.results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (gene <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"Bdh1"</span>,<span class="st">"Oxct1"</span>,<span class="st">"Slc16a1"</span>)) {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>temp.result <span class="ot">&lt;-</span> <span class="fu">lm</span>(Ct.quant <span class="sc">~</span> Diet<span class="sc">+</span>Sex,<span class="at">data=</span><span class="fu">filter</span>(analysed.data, Target<span class="sc">==</span>gene)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Gene=</span>gene) </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>main.results <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(main.results,temp.result)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>main.results.formatted <span class="ot">&lt;-</span> </span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  main.results <span class="sc">%&gt;%</span> </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(Gene,<span class="at">.before=</span>term) <span class="sc">%&gt;%</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>statistic) <span class="sc">%&gt;%</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Gene) <span class="sc">%&gt;%</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Pct.Change =</span> estimate<span class="sc">/</span>estimate[term<span class="sc">==</span><span class="st">"(Intercept)"</span>]<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Sig=</span><span class="fu">case_when</span>(p.value<span class="sc">&lt;</span><span class="fl">0.05</span><span class="sc">&amp;</span>term<span class="sc">!=</span><span class="st">"(Intercept)"</span><span class="sc">~</span><span class="st">"*"</span>,</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.default=</span><span class="st">""</span>))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(main.results.formatted,<span class="at">caption=</span><span class="st">"Test for Diet and Sex Effects on Expression"</span>,</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">11</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Test for Diet and Sex Effects on Expression</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Gene</th>
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">Pct.Change</th>
+<th style="text-align: left;">Sig</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.020</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">5.20e-04</td>
+<td style="text-align: right;">100.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">DietKD</td>
+<td style="text-align: right;">-0.008</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">1.13e-01</td>
+<td style="text-align: right;">-41.7</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">SexM</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">8.98e-03</td>
+<td style="text-align: right;">74.9</td>
+<td style="text-align: left;">*</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.119</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.00e+00</td>
+<td style="text-align: right;">100.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: left;">DietKD</td>
+<td style="text-align: right;">-0.063</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">8.44e-09</td>
+<td style="text-align: right;">-52.8</td>
+<td style="text-align: left;">*</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: left;">SexM</td>
+<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">5.53e-02</td>
+<td style="text-align: right;">15.1</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.158</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">0.00e+00</td>
+<td style="text-align: right;">100.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: left;">DietKD</td>
+<td style="text-align: right;">-0.028</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">6.44e-02</td>
+<td style="text-align: right;">-17.9</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: left;">SexM</td>
+<td style="text-align: right;">0.047</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">4.72e-03</td>
+<td style="text-align: right;">30.0</td>
+<td style="text-align: left;">*</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="pairwise-analyses" class="level2">
+<h2 class="anchored" data-anchor-id="pairwise-analyses">Pairwise Analyses</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>analysed.data <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Target,Sex) <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Target<span class="sc">!=</span><span class="st">"Rplp0"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Pct.Decrease =</span> (<span class="fu">mean</span>(Ct.quant[Diet<span class="sc">==</span><span class="st">"CD"</span>],<span class="at">na.rm=</span>T)<span class="sc">-</span><span class="fu">mean</span>(Ct.quant[Diet<span class="sc">==</span><span class="st">"KD"</span>],<span class="at">na.rm=</span>T))<span class="sc">/</span><span class="fu">mean</span>(Ct.quant[Diet<span class="sc">==</span><span class="st">"CD"</span>],<span class="at">na.rm=</span>T)<span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">Shapiro=</span><span class="fu">min</span>(<span class="fu">shapiro.test</span>(Ct.quant[Diet<span class="sc">==</span><span class="st">"KD"</span>])<span class="sc">$</span>p.value,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">shapiro.test</span>(Ct.quant[Diet<span class="sc">==</span><span class="st">"CD"</span>])<span class="sc">$</span>p.value),</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">Levene=</span><span class="fu">leveneTest</span>(Ct.quant<span class="sc">~</span>Diet)<span class="sc">$</span><span class="st">"Pr(&gt;F)"</span>[<span class="dv">1</span>],</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">Mann.Whitney=</span><span class="fu">wilcox.test</span>(Ct.quant<span class="sc">~</span>Diet)<span class="sc">$</span>p.value,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">Welch=</span><span class="fu">t.test</span>(Ct.quant<span class="sc">~</span>Diet,<span class="at">var.equal =</span> F)<span class="sc">$</span>p.value,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">Student=</span><span class="fu">t.test</span>(Ct.quant<span class="sc">~</span>Diet,<span class="at">var.equal =</span> T)<span class="sc">$</span>p.value) <span class="sc">%&gt;%</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Test=</span><span class="fu">case_when</span>(Shapiro<span class="sc">&lt;</span><span class="fl">0.05</span><span class="sc">~</span><span class="st">"Mann Whitney"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>                        Levene<span class="sc">&lt;</span><span class="fl">0.05</span><span class="sc">~</span><span class="st">"Welch's"</span>,</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.default=</span><span class="st">"Student's"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption=</span><span class="st">"Pairwise tests for effects of diet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Pairwise tests for effects of diet</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 5%">
+<col style="width: 16%">
+<col style="width: 10%">
+<col style="width: 8%">
+<col style="width: 16%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Target</th>
+<th style="text-align: left;">Sex</th>
+<th style="text-align: right;">Pct.Decrease</th>
+<th style="text-align: right;">Shapiro</th>
+<th style="text-align: right;">Levene</th>
+<th style="text-align: right;">Mann.Whitney</th>
+<th style="text-align: right;">Welch</th>
+<th style="text-align: right;">Student</th>
+<th style="text-align: left;">Test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">2.45</td>
+<td style="text-align: right;">0.110</td>
+<td style="text-align: right;">0.425</td>
+<td style="text-align: right;">0.945</td>
+<td style="text-align: right;">0.901</td>
+<td style="text-align: right;">0.895</td>
+<td style="text-align: left;">Student’s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bdh1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">32.69</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.317</td>
+<td style="text-align: right;">0.161</td>
+<td style="text-align: right;">0.129</td>
+<td style="text-align: right;">0.109</td>
+<td style="text-align: left;">Mann Whitney</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">39.54</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">0.318</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: left;">Mann Whitney</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oxct1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">50.83</td>
+<td style="text-align: right;">0.199</td>
+<td style="text-align: right;">0.089</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: left;">Student’s</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9.86</td>
+<td style="text-align: right;">0.622</td>
+<td style="text-align: right;">0.651</td>
+<td style="text-align: right;">0.534</td>
+<td style="text-align: right;">0.452</td>
+<td style="text-align: right;">0.432</td>
+<td style="text-align: left;">Student’s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Slc16a1</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">16.67</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">0.969</td>
+<td style="text-align: right;">0.111</td>
+<td style="text-align: right;">0.100</td>
+<td style="text-align: right;">0.096</td>
+<td style="text-align: left;">Student’s</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># analysed.data %&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(Target=="Slc16a1") %&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(Sex=="F") %&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   kable(caption="Visually inspected outliers")</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Slc16a1 :: 4108 seems variable, not due to technical variation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="session-information" class="level1">
+<h1>Session Information</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.2.2 (2022-10-31)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur ... 10.16
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] car_3.1-2     carData_3.0-5 broom_1.0.5   gridExtra_2.3 ggplot2_3.4.4
+ [6] forcats_1.0.0 readr_2.1.4   dplyr_1.1.3   tidyr_1.3.0   knitr_1.44   
+
+loaded via a namespace (and not attached):
+ [1] pillar_1.9.0      compiler_4.2.2    tools_4.2.2       digest_0.6.33    
+ [5] bit_4.0.5         gtable_0.3.4      jsonlite_1.8.7    evaluate_0.22    
+ [9] lifecycle_1.0.3   tibble_3.2.1      pkgconfig_2.0.3   rlang_1.1.1      
+[13] cli_3.6.1         rstudioapi_0.15.0 yaml_2.3.7        parallel_4.2.2   
+[17] xfun_0.40         fastmap_1.1.1     withr_2.5.2       generics_0.1.3   
+[21] vctrs_0.6.4       htmlwidgets_1.6.2 hms_1.1.3         grid_4.2.2       
+[25] bit64_4.0.5       tidyselect_1.2.0  glue_1.6.2        R6_2.5.1         
+[29] fansi_1.0.5       vroom_1.6.4       rmarkdown_2.25    farver_2.1.1     
+[33] purrr_1.0.2       tzdb_0.4.0        magrittr_2.0.3    backports_1.4.1  
+[37] scales_1.2.1      htmltools_0.5.6.1 abind_1.4-5       colorspace_2.1-0 
+[41] labeling_0.4.3    utf8_1.2.4        munsell_0.5.0     crayon_1.5.2     </code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
