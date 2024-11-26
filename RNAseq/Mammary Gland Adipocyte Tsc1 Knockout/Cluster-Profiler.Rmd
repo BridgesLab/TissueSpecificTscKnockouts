@@ -114,14 +114,14 @@ cnetplot(go.bp.simplified, foldChange=mouse.gene.list,node_label="category")
 heatplot(go.bp.simplified, foldChange = mouse.gene.list)
 
 go.bp <- pairwise_termsim(go.bp, method="JC")
-emapplot(go.bp, layout="nicely", color="NES",
-         cex_line=0.5,
-         showCategory = 50,
-         cex_label_category=0.5)
-gseaplot2(go.bp, geneSetID = c(1,7,8))
+# emapplot(go.bp, layout="nicely", color="NES",
+#          cex_line=0.5,
+#          showCategory = 50,
+#          cex_label_category=0.5)
+# gseaplot2(go.bp, geneSetID = c(1,7,8))
 
 as.data.frame(go.bp) %>%
-  mutate(Significant = if_else(qvalues<0.05, 'Significant','NS')) %>%
+  mutate(Significant = if_else(qvalue<0.05, 'Significant','NS')) %>%
   mutate(Direction =  if_else(NES > 0, 'Upregulated', 'Downregulated'))  %>%
   group_by(Significant,Direction) %>%
   count %>%
@@ -134,32 +134,31 @@ From DisGeNET
 
 ```{r wp, fig.cap="Wikipathways enrichment plot"}
 # need entrez ids
-
-
-mouse.gene.list.wp <- mouse.gene.list
-names(mouse.gene.list.wp) <- bitr(names(mouse.gene.list), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")$ENTREZID
-
-wp <- gseWP(geneList     = mouse.gene.list.wp, 
-             verbose=F,
-             organism="Mus musculus") 
-
-wp %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant Wikipathways")
-
-wp.file <- 'GSEA Results - Wikipathways.csv'
-wp %>%
-  as.data.frame %>%
-  write_csv(file=wp.file)
-
-gseaplot2(wp, geneSetID = 1:2)
+# 
+# 
+# mouse.gene.list.wp <- mouse.gene.list
+# names(mouse.gene.list.wp) <- bitr(names(mouse.gene.list), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Mm.eg.db")$ENTREZID
+# 
+# wp <- gseWP(geneList = names(mouse.gene.list.wp), 
+#              verbose=F,
+#              organism="Mus musculus") 
+# 
+# wp %>% select(ID, Description, pvalue,p.adjust, NES ) %>% kable(caption="Significant Wikipathways")
+# 
+# wp.file <- 'GSEA Results - Wikipathways.csv'
+# wp %>%
+#   as.data.frame %>%
+#   write_csv(file=wp.file)
+# 
+# gseaplot2(wp, geneSetID = 1:2)
 ```
 
 
 # Cell Markers
 
-```{r cell-markers, fig.cap="Cell markers enrichment plot"}
+```{ cell-markers, fig.cap="Cell markers enrichment plot"}
 cell_marker_data <- vroom::vroom('http://bio-bigdata.hrbmu.edu.cn/CellMarker/download/Human_cell_markers.txt')
 
-## instead of `cellName`, users can use other features (e.g. `cancerType`)
 cells <- cell_marker_data %>%
     dplyr::select(cellName, geneID) %>%
     dplyr::mutate(geneID = strsplit(geneID, ', ')) %>%
@@ -177,6 +176,29 @@ cm <- pairwise_termsim(cm, method="JC")
 emapplot(cm, color='NES')
 upsetplot(cm)
 ridgeplot(cm, fill="NES")
+```
+
+# Transcription Factors
+
+```{r transfac}
+library(fgsea)
+library(msigdbr)
+
+# Retrieve TRANSFAC gene sets from MSigDB
+transfac_genesets <- msigdbr(species = "Mus musculus", category = "C3", subcategory = "TFT:TFT_Legacy")
+
+# Format gene sets for fgsea
+transfac_list <- split(transfac_genesets$gene_symbol, transfac_genesets$gs_name)
+
+# Run fgsea with TRANSFAC gene sets
+fgsea_results <- fgsea(pathways = transfac_list, 
+                       stats = mouse.gene.list,
+                       minSize = 15,
+                       maxSize = 500,
+                       nperm = 1000)
+
+# Analyze and visualize results
+# Sort re
 ```
 
 # Session Information
