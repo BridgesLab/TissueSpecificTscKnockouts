@@ -383,18 +383,26 @@ First I wanted to evaluate the relationship between baseline and followup KTT (a
 
 ```{r baseline-followup-bayesian}
 #| output: false
+
 library(brms)
 
 auc.fit.brms <- brm(F_AUC.bl~B_AUC.bl,
                     data=DO.all.AUC.data,
-                  sample_prior = TRUE)
+                    sample_prior = TRUE)
+```
 
+Here is a summary of this modeling
+
+```{r baseline-followup-bayesian-analysis}
 prior_summary(auc.fit.brms) %>% kable(caption="Prior probabilities summary for relationship betwen baseline and followup AUC")
 kable(data.frame(
   Parameter = names(rhat(auc.fit.brms)),
   Rhat = format(rhat(auc.fit.brms), nsmall = 5)),
 caption="Rhat values for model fitting between baseline and followup (should b between 0.99 and 1.01 for convergence",
 row.names = F)
+
+library(broom.mixed)
+tidy(auc.fit.brms, effects = "ran_pars", ess = TRUE) %>% kable(caption="Model random effects for the relationship between baseline and followup AUC.  ESS should be >400 samples")
 
 library(broom.mixed)
 tidy(auc.fit.brms) %>% kable(caption="Summary of the relationship between baseline and followup")
