@@ -274,6 +274,7 @@ ggplot(data=allmergeddata,
        aes(x=Areaum2, fill=Genotype, na.rm= T ))+
   geom_density(alpha=0.8)+
   expand_limits(y=0)+ 
+  xlim(x=c(0,1000)) +
   theme_classic() + 
      scale_fill_grey() +
     scale_color_grey() +
