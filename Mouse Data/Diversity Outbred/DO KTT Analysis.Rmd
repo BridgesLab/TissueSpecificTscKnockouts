@@ -445,7 +445,8 @@ DO.Data %>%
 library(tibble)
 DO.Data %>%
   mutate(Weight.Gain=BW6-BW3) %>%
-  select(ID,B_AUC.bl,F_AUC.bl,AUC.change,BW3,Weight.Gain,Cholesterol.Baseline,Cholesterol.Followup,Cholesterol.Difference) %>%
+  select(ID,B_AUC.bl,F_AUC.bl,AUC.change,BW3,Weight.Gain,Cholesterol.Baseline,Cholesterol.Followup,Cholesterol.Difference,TG.Baseline,	TG.Followup) %>%
+  mutate("Change in Triglycerides"=TG.Followup-TG.Baseline) %>%
   rename("Baseline KTT"="B_AUC.bl",
          "Followup KTT"="F_AUC.bl",
          "Change in KTT"="AUC.change",
@@ -453,7 +454,9 @@ DO.Data %>%
          "Weight Gain"="Weight.Gain",
          "Baseline Cholesterol"="Cholesterol.Baseline",
          "Followup Cholestrol"="Cholesterol.Followup",
-         "Change in Cholesterol"="Cholesterol.Difference") -> KTT.data.all
+         "Change in Cholesterol"="Cholesterol.Difference",
+         "Baseline Triglycerides"="TG.Baseline",
+         "Folowup Triglycerides"="TG.Followup") -> KTT.data.all
 
 KTT.matrix <- 
   KTT.data.all %>%
@@ -462,7 +465,7 @@ KTT.matrix <-
   
 
 library(corrplot)
-cor.matrix <- cor(KTT.matrix,use="all.obs")[1:3,4:8]
+cor.matrix <- cor(KTT.matrix,use="all.obs")[1:3,4:11]
 corrplot(cor.matrix,method="square",tl.col = "black")  
 corrplot(cor.matrix,method="shade",tl.col = "black")  
 corrplot(cor.matrix,method="number",tl.col = "black")  
