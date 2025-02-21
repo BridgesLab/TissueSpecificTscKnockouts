@@ -132,7 +132,7 @@ as.data.frame(go.bp) %>%
 
 From DisGeNET
 
-```{r wp, fig.cap="Wikipathways enrichment plot"}
+```{ wp, fig.cap="Wikipathways enrichment plot"}
 # need entrez ids
 # 
 # 
@@ -180,7 +180,7 @@ ridgeplot(cm, fill="NES")
 
 # Transcription Factors
 
-```{r transfac}
+```{r transfac, fig.cap="Top enriched pathway."}
 library(fgsea)
 library(msigdbr)
 
@@ -194,11 +194,18 @@ transfac_list <- split(transfac_genesets$gene_symbol, transfac_genesets$gs_name)
 fgsea_results <- fgsea(pathways = transfac_list, 
                        stats = mouse.gene.list,
                        minSize = 15,
-                       maxSize = 500,
-                       nperm = 1000)
+                       maxSize = 500)
 
 # Analyze and visualize results
-# Sort re
+# Sort results by p-value
+fgsea_results <- fgsea_results[order(pval), ]
+
+# Display top results
+#head(fgsea_results)
+
+# Plot top enriched pathway
+top_pathway <- fgsea_results$pathway[1]
+plotEnrichment(transfac_list[[top_pathway]], mouse.gene.list) 
 ```
 
 # Session Information

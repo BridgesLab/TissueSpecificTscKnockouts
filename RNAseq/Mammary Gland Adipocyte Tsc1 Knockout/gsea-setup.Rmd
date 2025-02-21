@@ -60,7 +60,8 @@ These data can be found in **`r getwd()`**.
 ```{r genes.of.interest}
 library(readr)
 deseq.results.file <-  'DESeq2 Results.csv'
-deseq.results <- read_csv(deseq.results.file)
+deseq.results <- read_csv(deseq.results.file) %>%
+  filter(baseMean>100) # filter for base counts have to be above 25
 
 ```
 
@@ -71,12 +72,12 @@ Needs human gene identifiers, re-arranged in order by fold change, output into a
 ```{r human-gene-table}
 human.mouse.mapping.table <- 'http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt'
 mapping.table <- read_tsv(human.mouse.mapping.table) %>%
-  select(`Common Organism Name`,Symbol,`HomoloGene ID`) 
+  select(`Common Organism Name`,Symbol,`DB Class Key`) 
   
 wide.mapping.table <- pivot_wider(mapping.table,
                                   names_from=`Common Organism Name`,
                                   values_from = Symbol,
-                                  id_cols=`HomoloGene ID`) %>%
+                                  id_cols=`DB Class Key`) %>%
   rename("Mouse"='mouse, laboratory') %>%
   mutate(Mouse=as.factor(as.character(Mouse))) %>%
     mutate(human=as.factor(as.character(human)))
