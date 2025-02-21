@@ -445,15 +445,15 @@ DO.Data %>%
 library(tibble)
 DO.Data %>%
   mutate(Weight.Gain=BW6-BW3) %>%
-  select(ID,B_AUC.bl,F_AUC.bl,AUC.change,BW3,Weight.Gain,B,F,Difference) %>%
+  select(ID,B_AUC.bl,F_AUC.bl,AUC.change,BW3,Weight.Gain,Cholesterol.Baseline,Cholesterol.Followup,Cholesterol.Difference) %>%
   rename("Baseline KTT"="B_AUC.bl",
          "Followup KTT"="F_AUC.bl",
          "Change in KTT"="AUC.change",
          "Baseline Weight"="BW3",
          "Weight Gain"="Weight.Gain",
-         "Baseline Cholesterol"="B",
-         "Followup Cholestrol"="F",
-         "Change in Cholesterol"="Difference") -> KTT.data.all
+         "Baseline Cholesterol"="Cholesterol.Baseline",
+         "Followup Cholestrol"="Cholesterol.Followup",
+         "Change in Cholesterol"="Cholesterol.Difference") -> KTT.data.all
 
 KTT.matrix <- 
   KTT.data.all %>%
