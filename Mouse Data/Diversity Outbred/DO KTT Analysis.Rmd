@@ -516,6 +516,22 @@ cor.pvals %>% kable(caption="P-values for correlation tests")
 
 ```
 
+## Regression Tree for Cholesterol Changes
+
+```{r regression-tree-cholesterol}
+library(rpart)
+
+prepared_data <- DO.Data %>%
+  mutate(`Change in Cholesterol` = as.numeric(Cholesterol_Followup) - as.numeric(Cholesterol_Baseline)) %>%
+    select(-ID,-Cholesterol_Followup) 
+
+tree.chol <- rpart(`Change in Cholesterol` ~ ., data = prepared_data, method = "anova")
+
+library(rpart.plot)
+rpart.plot(tree.chol, uniform = TRUE, main = "Regression Tree for Cholesterol Changes", 
+        extra = 1, branch = 0.5, digits = 2, fallen.leaves = TRUE)
+```
+
 # Session Information
 
 ```{r session-info}
