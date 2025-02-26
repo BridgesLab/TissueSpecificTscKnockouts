@@ -447,14 +447,15 @@ DO.Data %>%
   mutate(Weight.Gain=BW6-BW3) %>%
   select(ID,B_AUC.bl,F_AUC.bl,AUC.change,BW3,Weight.Gain,Cholesterol_Baseline,Cholesterol_Followup,TG_Baseline,	TG_Followup,BG1,BG2) %>%
   mutate("Change in Triglycerides"=TG_Followup-TG_Baseline,
-         "Change in Cholesterol"=Cholesterol_Followup-Cholesterol_Baseline) %>%
+         "Change in Cholesterol"=Cholesterol_Followup-Cholesterol_Baseline,
+         "Change in Glucose"=BG2-BG1) %>%
   rename("Baseline KTT"="B_AUC.bl",
          "Followup KTT"="F_AUC.bl",
          "Change in KTT"="AUC.change",
          "Baseline Weight"="BW3",
-         "Weight Gain"="Weight.Gain",
+         "Change in Weight"="Weight.Gain",
          "Baseline Cholesterol"="Cholesterol_Baseline",
-         "Followup Cholestrol"="Cholesterol_Followup",
+         "Followup Cholesterol"="Cholesterol_Followup",
          "Baseline Triglycerides"="TG_Baseline",
          "Folowup Triglycerides"="TG_Followup",
          "Baseline Glucose"="BG1",
@@ -467,13 +468,13 @@ KTT.matrix <-
   
 
 library(corrplot)
-cor.matrix <- cor(KTT.matrix,use="all.obs")[1:3,4:13]
+cor.matrix <- cor(KTT.matrix,use="all.obs")[1:3,4:14]
 corrplot(cor.matrix,method="square",tl.col = "black")  
 corrplot(cor.matrix,method="shade",tl.col = "black")  
 corrplot(cor.matrix,method="number",tl.col = "black")  
 
 ggplot(KTT.data.all,
-       aes(y=`Weight Gain`,
+       aes(y=`Change in Weight`,
            x=`Followup KTT`)) +
   geom_point() +
   geom_smooth(method="lm") +
@@ -487,14 +488,14 @@ ggplot(KTT.data.all,
   theme_classic(base_size = 16)-> plot.cor.1
 
 ggplot(KTT.data.all,
-       aes(y=`Weight Gain`,
+       aes(y=`Change in Weight`,
            x=`Followup KTT`)) +
   geom_point() +
   geom_smooth(method="lm") +
   theme_classic(base_size = 16)-> plot.cor.2
 
 ggplot(KTT.data.all,
-       aes(y=`Weight Gain`,
+       aes(y=`Change in Weight`,
            x=`Change in KTT`)) +
   geom_point() +
   geom_smooth(method="lm") +
@@ -508,7 +509,7 @@ library(gridExtra)
 grid.arrange(plot.cor.1,plot.cor.2,plot.cor.3,nrow=1)
 
 library(rstatix)
-cor_pmat(KTT.matrix)[1:3,4:9] %>% as.data.frame -> cor.pvals
+cor_pmat(KTT.matrix)[1:3,4:15] %>% as.data.frame -> cor.pvals
 rownames(cor.pvals) <- c("Baseline KTT","Followup KTT","Change in KTT")
 cor.pvals %>% kable(caption="P-values for correlation tests")
 
