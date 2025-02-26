@@ -532,6 +532,101 @@ rpart.plot(tree.chol, uniform = TRUE, main = "Regression Tree for Cholesterol Ch
         extra = 1, branch = 0.5, digits = 2, fallen.leaves = TRUE)
 ```
 
+### Bootstrapping of regression trees
+
+```{r regression-tree-cholesterol-bootstrapping}
+#used perplexity.ai
+bootstrap_trees <- function(data, n_bootstrap = 10000) {
+  results <- list()
+  for (i in 1:n_bootstrap) {
+    boot_sample <- data[sample(nrow(prepared_data), replace = TRUE), ]
+    boot_tree <- rpart(`Change in Cholesterol` ~ ., data = data, method = "anova")
+    results[[i]] <- boot_tree
+  }
+  return(results)
+}
+
+bootstrapped_trees <- bootstrap_trees(prepared_data)
+
+#analyse node frequency
+node_frequency <- function(tree_list) {
+  node_counts <- table(unlist(lapply(tree_list, function(t) t$frame$var)))
+  node_freq <- prop.table(node_counts)
+  return(sort(node_freq, decreasing = TRUE))
+}
+
+node_freq <- node_frequency(bootstrapped_trees)
+print(node_freq)
+
+#barplot of node frequencies
+ggplot(as.data.frame(node_freq) %>% mutate(Var1=fct_recode(as.factor(Var1),"None"="<leaf>")), 
+       aes(x = reorder(Var1, Freq), y = Freq)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = "Node Frequencies from Bootstrapped Trees", y = "Frequency") +
+  theme_classic(base_size = 16) 
+```
+
+### Bayesian Analysis of Node Frequenciefs
+
+```{r bayesian-node-frequencies}
+library(brms)
+library(dplyr)
+library(kableExtra)
+
+# 1. Your observed frequency of <leaf>
+leaf_frequency <- 0.571  # From your previous rpart analysis
+n_trees <- 1000  # Number of bootstrapped trees (adjust if different)
+leaf_count <- round(leaf_frequency * n_trees) #Number of leaf nodes
+
+# 2. Create the data for brms
+data_for_brms <- data.frame(
+  successes = leaf_count,
+  trials = n_trees
+)
+
+# 3. Define and fit the brms model
+#    - Beta prior: Here, Beta(1, 1) is a uniform prior (all proportions equally likely a priori).
+#      You can change this to a more informative prior if you have prior knowledge.
+
+proportion_model <- brm(
+  successes | trials(trials) ~ 1,  # Intercept-only model (modeling a single proportion)
+  data = data_for_brms,
+  family = binomial(),           # Binomial family (for proportions)
+  prior = prior(beta(1, 1), class = "Intercept"), #Set the beta prior 
+  sample_prior = TRUE,          # draw samples from the prior for prior predictive checks
+  chains = 4,                  # Multiple chains for MCMC convergence
+  iter = 2000,                  # Number of MCMC iterations per chain
+  warmup = 1000                 # Warmup iterations
+)
+
+# Summarize the model
+summary(proportion_model)
+
+# 4. Calculate the Bayes Factor for proportion > 0
+#    - We'll approximate this by calculating the posterior probability
+#      that the proportion is greater than 0.  Since a proportion *must* be
+#      greater than zero, technically we are calculating the proportion the 
+#      the value is greater than 0 *given your prior*.  But since the prior
+#      assigns some probability to values less than 0 (which is not possible),
+#      this test essentially calculates the probability that the proportion
+#      is very small.
+
+hypothesis_result <- hypothesis(proportion_model, "Intercept > 0")
+print(hypothesis_result)
+kable(bayes_R2(proportion_model),caption="Estimates for R2 between baseline and followup AUC")
+plot(proportion_model)
+pp_check(proportion_model)
+
+prior_summary(proportion_model) %>% kable(caption="Prior probabilities summary for relationship betwen baseline and followup AUC")
+kable(data.frame(
+  Parameter = names(rhat(proportion_model)),
+  Rhat = format(rhat(proportion_model), nsmall = 5)),
+  caption="Rhat values for model fitting between baseline and followup (should b between 0.99 and 1.01 for convergence",
+  row.names = F)
+
+```
+
 # Session Information
 
 ```{r session-info}
