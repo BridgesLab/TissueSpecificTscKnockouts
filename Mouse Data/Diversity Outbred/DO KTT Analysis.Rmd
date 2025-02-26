@@ -567,7 +567,39 @@ ggplot(as.data.frame(node_freq) %>% mutate(Var1=fct_recode(as.factor(Var1),"None
   theme_classic(base_size = 16) 
 ```
 
-### Bayesian Analysis of Node Frequenciefs
+### Plotting Glycerol Followup vs Change in Cholesterol
+
+```{r glycerol-followup-cholesterol}
+library(ggplot2)
+ggplot(prepared_data,
+       aes(y=`Change in Cholesterol`,
+           x=Glycerol_Followup)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic(base_size = 16) 
+
+lm(`Change in Cholesterol`~Glycerol_Followup,data=prepared_data) %>%
+  tidy %>%
+  kable(caption="Linear model for change in cholesterol vs followup glycerol")
+```
+
+### Plotting Ketones During KTT vs Change in Cholesterol
+
+```{r fk45-followup-cholesterol}
+library(ggplot2)
+ggplot(prepared_data,
+       aes(y=`Change in Cholesterol`,
+           x=FK_45)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_classic(base_size = 16) 
+
+lm(`Change in Cholesterol`~FK_45,data=prepared_data) %>%
+  tidy %>%
+  kable(caption="Linear model for change in cholesterol vs followup glycerol")
+```
+
+### Bayesian Analysis of Node Frequencies
 
 ```{r bayesian-node-frequencies}
 library(brms)
